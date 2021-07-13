@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:bs58check/bs58check.dart' as bs58check;
+import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:collection/collection.dart';
 
@@ -11,7 +11,7 @@ final toplNetMap = {'hex': '0x01', 'decimal': 1};
 final valhallaMap = {'hex': '0x10', 'decimal': 16};
 final networksDefault = <String, Map>{
   'private': privateMap,
-  'toplNet': toplNetMap,
+  'toplnet': toplNetMap,
   'valhalla': valhallaMap
 };
 
@@ -24,6 +24,7 @@ Map<String, dynamic> validateAddressByNetwork(
   result['success'] = false;
   if (!isValidNetwork(networkPrefix)) {
     result['errorMsg'] = 'Invalid network provided';
+    return result;
   }
 
   if (address.isEmpty) {
@@ -32,37 +33,38 @@ Map<String, dynamic> validateAddressByNetwork(
   }
 
 // get the decimal of the network prefix. It should always be a valid network prefix due to the first conditional, but the language constraint requires us to check if it is null first.
-  var networkHex = (networksDefault[networkPrefix] ?? const {})['hex'];
+  var networkDecimal = (networksDefault[networkPrefix] ?? const {})['decimal'];
 
 // run validation on the address
 
-  var decodedAddress = bs58check.decode(address);
+  var decodedAddress = Base58Decode(address);
 
 // validation: base58 38 byte obj that matches the networkPrefix hex value
 
   if (decodedAddress.length != ADDRESS_LENGTH ||
-      decodedAddress.first != networkHex) {
+      decodedAddress.first != networkDecimal) {
     result['errorMsg'] = 'Invalid address for network: ' + networkPrefix;
+    return result;
   } else {
     //address has correct length and matches the network, now validate the checksum
     if (!_validChecksum(decodedAddress)) {
       result['errorMsg'] = 'Addresses with invalid checksums found';
+      return result;
     }
   }
 
-  if (result['errorMsg'] == null || result['errorMsg'].isEmpty) {
-    result['success'] = true;
-  }
+  result['success'] = true;
 
   return result;
 }
 
 // Verify that the payload has not been corrupted by checking that the checksum is valid
-bool _validChecksum(Uint8List payload) {
-  final checksumBuffer = payload.sublist(0, 34);
-
+bool _validChecksum(List<int> payload) {
+  final msgBuffer = Uint8List.fromList(payload).sublist(0, 34);
+  final checksumBuffer =
+      Uint8List.fromList(payload).sublist(34, payload.length);
 // hash message (bytes 0-33)
-  final hashChecksumBuffer = createHash(checksumBuffer).sublist(0, 4);
+  final hashChecksumBuffer = createHash(msgBuffer).sublist(0, 4);
 
 // verify checksum bytes match
   return ListEquality().equals(checksumBuffer, hashChecksumBuffer);
