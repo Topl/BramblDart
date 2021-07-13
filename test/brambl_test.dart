@@ -93,9 +93,9 @@ void main() {
     });
 
     // validate addresses failure address invalid checksum
-    test('validate address by network failure wrong network decimal', () {
+    test('validate address by network failure invalid checksum', () {
       final validationRes = validateAddressByNetwork(
-          'valhalla', '3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh41lDD');
+          'valhalla', '3NKunrdUtKdWRXz33PazioBLgc7uynUQkM1bwLUfURpxt6V99VRQ');
 
       expect(validationRes['success'], false);
       expect(
