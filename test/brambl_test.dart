@@ -1,3 +1,4 @@
+import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/utils/address_utils.dart';
 import 'package:test/test.dart';
 
@@ -100,6 +101,46 @@ void main() {
       expect(validationRes['success'], false);
       expect(
           validationRes['errorMsg'], 'Addresses with invalid checksums found');
+    });
+  });
+
+  group('get network prefix for address tests', () {
+    // test get network prefix for address success (private)
+    test('getAddressNetwork success private', () {
+      final networkResult = getAddressNetwork(
+          'AUAvJqLKc8Un3C6bC4aj8WgHZo74vamvX8Kdm6MhtdXgw51cGfix');
+      expect(networkResult['success'], true);
+      expect(networkResult['networkPrefix'], 'private');
+    });
+
+    // test get network prefix for address success (valhalla)
+    test('getAddressNetwork success valhalla', () {
+      final networkResult = getAddressNetwork(
+          '3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk');
+      expect(networkResult['success'], true);
+      expect(networkResult['networkPrefix'], 'valhalla');
+    });
+
+    // test get network prefix for address success (toplnet)
+    test('getAddressNetwork success toplnet', () {
+      final networkResult = getAddressNetwork(
+          '9d3Ny7sXoezon5DkAEqkHRjmZCitVLLdoTMqAKhRiKDWU8YZfax');
+      expect(networkResult['success'], true);
+      expect(networkResult['networkPrefix'], 'toplnet');
+    });
+
+    // test get network prefix for address failure
+    test('getAddressNetwork failure', () {
+      final networkResult =
+          getAddressNetwork('sXoezon5DkAEqkHRjmZCitVLLdoTMqAKhRiKDWU8YZfax');
+      expect(networkResult['success'], false);
+      expect(networkResult['error'], 'invalid network prefix found');
+    });
+
+    // test get network prefix for address failure empty
+    test('getAddressNetwork failure empty string', () {
+      expect(
+          () => getAddressNetwork(''), throwsA(TypeMatcher<Base58Exception>()));
     });
   });
 }

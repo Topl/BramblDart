@@ -17,6 +17,28 @@ final networksDefault = <String, Map>{
 
 final ADDRESS_LENGTH = 38;
 
+Map<String, dynamic> getAddressNetwork(address) {
+  final decodedAddress = Base58Decode(address);
+  final result = Map<String, dynamic>();
+  result['success'] = false;
+
+  if (decodedAddress.isNotEmpty) {
+    validNetworks.forEach((prefix) {
+      if ((networksDefault[prefix] ?? const {})['decimal'] ==
+          decodedAddress.first) {
+        result['networkPrefix'] = prefix;
+      }
+    });
+    if (result['networkPrefix'] == null ||
+        !isValidNetwork(result['networkPrefix'])) {
+      result['error'] = 'invalid network prefix found';
+    } else {
+      result['success'] = true;
+    }
+  }
+  return result;
+}
+
 Map<String, dynamic> validateAddressByNetwork(
     String networkPrefix, String address) {
 // response on completion of the validation
