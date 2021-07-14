@@ -17,4 +17,3 @@ dependencies:
   collection: ^1.15.0
   fast_base58: ^0.2.0
   bip39: ^1.0.6
-

@@ -5,7 +5,7 @@
 class Network {
   static const toplTestNetPrivate = 0x40;
   static const toplPublic = 0x01;
-  static const toplTestnetPublic = 0x10;
+  static const toplTestNetPublic = 0x10;
 
   final bool testnet;
   final int networkPrefix;
@@ -13,6 +13,6 @@ class Network {
   Network(this.testnet, this.networkPrefix);
 
   factory Network.Toplnet() => Network(false, toplPublic);
-  factory Network.Valhalla() => Network(true, toplTestnetPublic);
+  factory Network.Valhalla() => Network(true, toplTestNetPublic);
   factory Network.Private() => Network(true, toplTestNetPrivate);
 }
