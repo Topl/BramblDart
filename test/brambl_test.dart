@@ -1,4 +1,6 @@
+import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/utils/address_utils.dart';
+import 'package:mubrambl/src/utils/key_utils.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -100,6 +102,102 @@ void main() {
       expect(validationRes['success'], false);
       expect(
           validationRes['errorMsg'], 'Addresses with invalid checksums found');
+    });
+  });
+
+  group('get network prefix for address tests', () {
+    // test get network prefix for address success (private)
+    test('getAddressNetwork success private', () {
+      final networkResult = getAddressNetwork(
+          'AUAvJqLKc8Un3C6bC4aj8WgHZo74vamvX8Kdm6MhtdXgw51cGfix');
+      expect(networkResult['success'], true);
+      expect(networkResult['networkPrefix'], 'private');
+    });
+
+    // test get network prefix for address success (valhalla)
+    test('getAddressNetwork success valhalla', () {
+      final networkResult = getAddressNetwork(
+          '3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk');
+      expect(networkResult['success'], true);
+      expect(networkResult['networkPrefix'], 'valhalla');
+    });
+
+    // test get network prefix for address success (toplnet)
+    test('getAddressNetwork success toplnet', () {
+      final networkResult = getAddressNetwork(
+          '9d3Ny7sXoezon5DkAEqkHRjmZCitVLLdoTMqAKhRiKDWU8YZfax');
+      expect(networkResult['success'], true);
+      expect(networkResult['networkPrefix'], 'toplnet');
+    });
+
+    // test get network prefix for address failure
+    test('getAddressNetwork failure', () {
+      final networkResult =
+          getAddressNetwork('sXoezon5DkAEqkHRjmZCitVLLdoTMqAKhRiKDWU8YZfax');
+      expect(networkResult['success'], false);
+      expect(networkResult['error'], 'invalid network prefix found');
+    });
+
+    // test get network prefix for address failure empty
+    test('getAddressNetwork failure empty string', () {
+      expect(
+          () => getAddressNetwork(''), throwsA(TypeMatcher<Base58Exception>()));
+    });
+  });
+
+  group('test generatePubKeyHashAddress', () {
+    // testing the generation of address using the hash of the public key
+
+    // test generate address for valid network, valid propositionType, valid publicKey
+    // valhalla
+    test('generatePubKeyHashAddress success', () {
+      final addressResult = generatePubKeyHashAddress(
+          str2ByteArray('3L92EtcUV6Eh8G5A9iBnFhitLuTdzeZ814SuMD5dzDqv'),
+          'valhalla',
+          'PublicKeyCurve25519');
+      expect(addressResult['success'], true);
+      expect(addressResult['address'],
+          '3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk');
+    });
+
+    // test generate address for valid network, valid propositionType, valid publicKey
+    // private
+    test('generatePubKeyHashAddress success private', () {
+      final addressResult = generatePubKeyHashAddress(
+          str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjogYHS7n'),
+          'private',
+          'PublicKeyCurve25519');
+      expect(addressResult['success'], true);
+      expect(addressResult['address'],
+          'AU9xd9iQ8JHz9dUKiYnDXoPFwahoonUGQHbbSG6SW1ZXu4K7nbx7');
+    });
+
+    // test generate address for valid network, valid propositionType, invalid publicKey
+    test('generatePubKeyHashAddress failure invalidPublicKey', () {
+      final addressResult = generatePubKeyHashAddress(
+          str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog'),
+          'private',
+          'PublicKeyCurve25519');
+      expect(addressResult['success'], false);
+      expect(addressResult['errorMsg'], 'Invalid publicKey length');
+    });
+
+    // test generate address for invalid network, valid propositionType, invalid publicKey
+    test('generatePubKeyHashAddress failure invalid network', () {
+      final addressResult = generatePubKeyHashAddress(
+          str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog'),
+          'privacy',
+          'PublicKeyCurve25519');
+      expect(addressResult['success'], false);
+    });
+
+    // test generate address for valid network, invalid propositionType, invalid publicKey
+    test('generatePubKeyHashAddress failure invalid network', () {
+      final addressResult = generatePubKeyHashAddress(
+          str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog'),
+          'private',
+          'PublicKeyCurve25518');
+      expect(addressResult['success'], false);
     });
   });
 }
