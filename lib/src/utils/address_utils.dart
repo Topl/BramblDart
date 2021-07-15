@@ -19,7 +19,7 @@ final ADDRESS_LENGTH = 38;
 
 Map<String, dynamic> getAddressNetwork(address) {
   final decodedAddress = Base58Decode(address);
-  final result = Map<String, dynamic>();
+  final result = <String, dynamic>{};
   result['success'] = false;
 
   if (decodedAddress.isNotEmpty) {
@@ -42,7 +42,7 @@ Map<String, dynamic> getAddressNetwork(address) {
 Map<String, dynamic> validateAddressByNetwork(
     String networkPrefix, String address) {
 // response on completion of the validation
-  var result = Map<String, dynamic>();
+  var result = <String, dynamic>{};
   result['success'] = false;
   if (!isValidNetwork(networkPrefix)) {
     result['errorMsg'] = 'Invalid network provided';
