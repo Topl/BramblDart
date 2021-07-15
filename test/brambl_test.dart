@@ -1,5 +1,6 @@
 import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/utils/address_utils.dart';
+import 'package:mubrambl/src/utils/key_utils.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -141,6 +142,45 @@ void main() {
     test('getAddressNetwork failure empty string', () {
       expect(
           () => getAddressNetwork(''), throwsA(TypeMatcher<Base58Exception>()));
+    });
+  });
+
+  group('test key utilities', () {
+    // test key recovery success
+    test('keyRecovery success', () {
+      final cipherParams = CipherParams('NPL8XoWBJL1x539wb19jL8');
+      final crypto = Crypto(
+          '2DbmnQiaUyBrgZka4ZhrGibop7gf6wQsLtTfFeTVQkYv',
+          'scrypt',
+          '3zHMnaVUNqcbLqKdA9G5EWy2CDRmvvDZZjW7FBChdM3ru6UJWxDECNPqchuNDjyyTrmFGSRN2m34NeDD8oL1PiUn',
+          '7Z7Z99siQvzRUdcX9SH1s45F4mMsYSa3YYXFq7Tqq5Ns',
+          'aes-256-ctr',
+          cipherParams);
+      final address = '3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk';
+      final kdfParams = KDFParams(32, 262144, 8, 1);
+
+      final keys = recover('test', KeyFile(crypto, address), kdfParams);
+      expect(keys, [
+        'DvovrPBee6AVQKaA7Ldd6ZSmvFaXptXadntrjeSCjroE',
+        '3L92EtcUV6Eh8G5A9iBnFhitLuTdzeZ814SuMD5dzDqv'
+      ]);
+    });
+
+    // throws exception if password is incorrect (anagram)
+    test('keyRecovery incorrect anagram', () {
+      final cipherParams = CipherParams('NPL8XoWBJL1x539wb19jL8');
+      final crypto = Crypto(
+          '2DbmnQiaUyBrgZka4ZhrGibop7gf6wQsLtTfFeTVQkYv',
+          'scrypt',
+          '3zHMnaVUNqcbLqKdA9G5EWy2CDRmvvDZZjW7FBChdM3ru6UJWxDECNPqchuNDjyyTrmFGSRN2m34NeDD8oL1PiUn',
+          '7Z7Z99siQvzRUdcX9SH1s45F4mMsYSa3YYXFq7Tqq5Ns',
+          'aes-256-ctr',
+          cipherParams);
+      final address = '3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk';
+      final kdfParams = KDFParams(32, 262144, 8, 1);
+
+      expect(() => recover('estt', KeyFile(crypto, address), kdfParams),
+          throwsA(TypeMatcher<ArgumentError>()));
     });
   });
 }
