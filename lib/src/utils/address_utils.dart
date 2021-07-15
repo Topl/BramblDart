@@ -5,17 +5,72 @@ import 'package:collection/collection.dart';
 
 /// TODO: Feature: support custom defined networks
 final validNetworks = ['private', 'toplnet', 'valhalla'];
+final validPropositionTypes = [
+  'PublicKeyCurve25519',
+  'ThresholdCurve25519',
+  'ED25519'
+];
 
-final privateMap = {'hex': '0x40', 'decimal': 64};
-final toplNetMap = {'hex': '0x01', 'decimal': 1};
-final valhallaMap = {'hex': '0x10', 'decimal': 16};
-final networksDefault = <String, Map>{
+final privateMap = <String, int>{'hex': 0x40, 'decimal': 64};
+final toplNetMap = <String, int>{'hex': 0x01, 'decimal': 1};
+final valhallaMap = <String, int>{'hex': 0x10, 'decimal': 16};
+final networksDefault = <String, Map<String, int>>{
   'private': privateMap,
   'toplnet': toplNetMap,
   'valhalla': valhallaMap
 };
+final propositionMap = <String, int>{
+  'PublicKeyCurve25519': 0x01,
+  'ThresholdCurve25519': 0x02,
+  'ED25519': 0x03
+};
 
 final ADDRESS_LENGTH = 38;
+
+Map<String, dynamic> generatePubKeyHashAddress(
+    Uint8List publicKey, String networkPrefix, String propositionType) {
+  final result = <String, dynamic>{};
+  result['success'] = false;
+  final b = BytesBuilder();
+
+  // validate network prefix
+
+  if (!isValidNetwork(networkPrefix)) {
+    result['errorMsg'] = 'Invalid network provided';
+    return result;
+  }
+
+  // validate propositionType
+
+  if (!isValidPropositionType(propositionType)) {
+    result['errorMsg'] = 'Invalid proposition type provided';
+    return result;
+  }
+
+  // validate public key
+  if (publicKey.length != 32) {
+    result['errorMsg'] = 'Invalid publicKey length';
+    return result;
+  }
+
+  final networkHex = getHexByNetwork(networkPrefix);
+  // network hex + proposition hex
+  b.add([networkHex, propositionMap[propositionType] ?? 0x01]);
+  b.add(createHash(publicKey));
+  final concatEvidence = b.toBytes().sublist(0, 34);
+  final hashChecksumBuffer = createHash(concatEvidence).sublist(0, 4);
+  b.clear();
+  b.add(concatEvidence);
+  b.add(hashChecksumBuffer);
+  final address = b.toBytes().sublist(0, 38);
+  result['address'] = Base58Encode(address);
+  result['success'] = true;
+  return result;
+}
+
+int getHexByNetwork(networkPrefix) {
+  return (networksDefault[networkPrefix] ?? const {})['hex'] ?? 0x01;
+}
 
 Map<String, dynamic> getAddressNetwork(address) {
   final decodedAddress = Base58Decode(address);
@@ -92,9 +147,13 @@ bool _validChecksum(List<int> payload) {
   return ListEquality().equals(checksumBuffer, hashChecksumBuffer);
 }
 
-///
+/// Validates whether the network passed in is valid
 bool isValidNetwork(String networkPrefix) {
-  return networkPrefix.isNotEmpty && validNetworks.contains(networkPrefix);
+  return validNetworks.contains(networkPrefix);
+}
+
+bool isValidPropositionType(String propositionType) {
+  return validPropositionTypes.contains(propositionType);
 }
 
 /// Recover plaintext private key from secret-storage object.
