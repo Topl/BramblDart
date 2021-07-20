@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the HDNode class from the brambl library, for the Dart programming language.">
-  <title>HDNode class - brambl library - Dart API</title>
+  <meta name="description" content="API docs for the SigningKey class from the brambl library, for the Dart programming language.">
+  <title>SigningKey class - brambl library - Dart API</title>
 
 
   
@@ -30,9 +30,9 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">mubrambl</a></li>
     <li><a href="../brambl/brambl-library.html">brambl</a></li>
-    <li class="self-crumb">HDNode class</li>
+    <li class="self-crumb">SigningKey class</li>
   </ol>
-  <div class="self-name">HDNode</div>
+  <div class="self-name">SigningKey</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -51,7 +51,7 @@
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
   <li><a href="../index.html">mubrambl</a></li>
   <li><a href="../brambl/brambl-library.html">brambl</a></li>
-  <li class="self-crumb">HDNode class</li>
+  <li class="self-crumb">SigningKey class</li>
 </ol>
 
 
@@ -103,19 +103,14 @@
 
   <div id="dartdoc-main-content" class="main-content">
       <div>
-<h1><span class="kind-class">HDNode</span> class 
+<h1><span class="kind-class">SigningKey</span> class 
     <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
  
 </h1></div>
 
     
 <section class="desc markdown">
-  <p>The Hierarchically Deterministic tree structure was a standard created for Bitcoin but lends itself well to a wide variety of blockchains that rely on private keys.</p>
-<p>For a more detailed technical understanding:</p>
-<ul>
-<li>BIP-32: The hierarchical deterministic description: <a href="https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki">https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki</a></li>
-<li>BIP-39: The method used to derive the BIP-32 seed from human-readable sequence of words (mnemonic)</li>
-</ul>
+  <p>Class that provides the signing functionality for a given key-pair</p>
 </section>
 
 
@@ -124,11 +119,11 @@
       <h2>Constructors</h2>
 
       <dl class="constructor-summary-list">
-        <dt id="HDNode" class="callable">
-          <span class="name"><a href="../brambl/HDNode/HDNode.html">HDNode</a></span><span class="signature">()</span>
+        <dt id="SigningKey" class="callable">
+          <span class="name"><a href="../brambl/SigningKey/SigningKey.html">SigningKey</a></span><span class="signature">(<span class="parameter" id="-param-keyPair"><span class="type-annotation"><a href="https://pub.dev/documentation/cryptography/2.0.2/cryptography/SimpleKeyPair-class.html">SimpleKeyPair</a></span> <span class="parameter-name">keyPair</span></span>)</span>
         </dt>
         <dd>
-           
+          Create a new signingKey for <code>keyPair</code> 
         </dd>
       </dl>
     </section>
@@ -137,18 +132,6 @@
       <h2>Properties</h2>
 
       <dl class="properties">
-        <dt id="depth" class="property">
-  <span class="name"><a href="../brambl/HDNode/depth.html">depth</a></span>
-  <span class="signature">&#8596; <a href="https://api.dart.dev/stable/2.13.1/dart-core/int-class.html">int</a></span> 
-
-</dt>
-<dd>
-  <a href="https://api.dart.dev/stable/2.13.1/dart-core/int-class.html">int</a> The depth of this HDNode. This will match the number of components (less one, the m/) of the path.
-Most developers will not need to use this. 
-  <div class="features">read / write</div>
-
-</dd>
-
         <dt id="hashCode" class="property inherited">
   <span class="name"><a href="https://api.dart.dev/stable/2.13.1/dart-core/Object/hashCode.html">hashCode</a></span>
   <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.13.1/dart-core/int-class.html">int</a></span> 
@@ -160,27 +143,14 @@ Most developers will not need to use this.
 
 </dd>
 
-        <dt id="index" class="property">
-  <span class="name"><a href="../brambl/HDNode/index.html">index</a></span>
-  <span class="signature">&#8596; <a href="https://api.dart.dev/stable/2.13.1/dart-core/int-class.html">int</a></span> 
+        <dt id="keyPair" class="property">
+  <span class="name"><a href="../brambl/SigningKey/keyPair.html">keyPair</a></span>
+  <span class="signature">&#8594; <a href="https://pub.dev/documentation/cryptography/2.0.2/cryptography/SimpleKeyPair-class.html">SimpleKeyPair</a></span> 
 
 </dt>
 <dd>
-  <a href="https://api.dart.dev/stable/2.13.1/dart-core/int-class.html">int</a> The index of this HDNode. This will match the last component of the path.
-Most developers will not need to use this. 
-  <div class="features">read / write</div>
-
-</dd>
-
-        <dt id="parentFingerprint" class="property">
-  <span class="name"><a href="../brambl/HDNode/parentFingerprint.html">parentFingerprint</a></span>
-  <span class="signature">&#8596; <a href="https://api.dart.dev/stable/2.13.1/dart-core/int-class.html">int</a></span> 
-
-</dt>
-<dd>
-  <a href="https://api.dart.dev/stable/2.13.1/dart-core/int-class.html">int</a> The fingerprint is meant as an index to quickly match parent and children nodes together, however collisions may occur and software should verify matching nodes.
-Most developers will not need to use this. 
-  <div class="features">read / write</div>
+   
+  <div class="features">read-only</div>
 
 </dd>
 
@@ -201,6 +171,19 @@ Most developers will not need to use this.
     <section class="summary offset-anchor" id="instance-methods">
       <h2>Methods</h2>
       <dl class="callables">
+        <dt id="computeSharedSecret" class="callable">
+  <span class="name"><a href="../brambl/SigningKey/computeSharedSecret.html">computeSharedSecret</a></span><span class="signature">(<wbr><span class="parameter" id="computeSharedSecret-param-otherKey"><span class="type-annotation"><a href="../brambl/SigningKey-class.html">SigningKey</a></span> <span class="parameter-name">otherKey</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.13.1/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/cryptography/2.0.2/cryptography/SecretKey-class.html">SecretKey</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Compute the shared secret with the <code>otherKey</code>. The <code>otherKey</code> must be a signing key from another party. <a href="../brambl/SigningKey/computeSharedSecret.html">[...]</a>
+  
+
+</dd>
+
         <dt id="noSuchMethod" class="callable inherited">
   <span class="name"><a href="https://api.dart.dev/stable/2.13.1/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.13.1/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
     <span class="returntype parameter">&#8594; dynamic</span>
@@ -211,6 +194,19 @@ Most developers will not need to use this.
 <dd class="inherited">
   Invoked when a non-existent method or property is accessed. <a href="https://api.dart.dev/stable/2.13.1/dart-core/Object/noSuchMethod.html">[...]</a>
   <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="signEvidence" class="callable">
+  <span class="name"><a href="../brambl/SigningKey/signEvidence.html">signEvidence</a></span><span class="signature">(<wbr><span class="parameter" id="signEvidence-param-evidence"><span class="type-annotation">dynamic</span> <span class="parameter-name">evidence</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.13.1/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/cryptography/2.0.2/cryptography/Signature-class.html">Signature</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Sign the <code>evidence</code> and return the signature. This method is asynchronous 
+  
 
 </dd>
 
@@ -257,24 +253,24 @@ Most developers will not need to use this.
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
     <ol>
 
-    <li class="section-title"><a href="../brambl/HDNode-class.html#constructors">Constructors</a></li>
-    <li><a href="../brambl/HDNode/HDNode.html">HDNode</a></li>
+    <li class="section-title"><a href="../brambl/SigningKey-class.html#constructors">Constructors</a></li>
+    <li><a href="../brambl/SigningKey/SigningKey.html">SigningKey</a></li>
 
 
     <li class="section-title">
-      <a href="../brambl/HDNode-class.html#instance-properties">Properties</a>
+      <a href="../brambl/SigningKey-class.html#instance-properties">Properties</a>
     </li>
-    <li><a href="../brambl/HDNode/depth.html">depth</a></li>
     <li class="inherited"><a href="https://api.dart.dev/stable/2.13.1/dart-core/Object/hashCode.html">hashCode</a></li>
-    <li><a href="../brambl/HDNode/index.html">index</a></li>
-    <li><a href="../brambl/HDNode/parentFingerprint.html">parentFingerprint</a></li>
+    <li><a href="../brambl/SigningKey/keyPair.html">keyPair</a></li>
     <li class="inherited"><a href="https://api.dart.dev/stable/2.13.1/dart-core/Object/runtimeType.html">runtimeType</a></li>
 
-    <li class="section-title"><a href="../brambl/HDNode-class.html#instance-methods">Methods</a></li>
+    <li class="section-title"><a href="../brambl/SigningKey-class.html#instance-methods">Methods</a></li>
+    <li><a href="../brambl/SigningKey/computeSharedSecret.html">computeSharedSecret</a></li>
     <li class="inherited"><a href="https://api.dart.dev/stable/2.13.1/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../brambl/SigningKey/signEvidence.html">signEvidence</a></li>
     <li class="inherited"><a href="https://api.dart.dev/stable/2.13.1/dart-core/Object/toString.html">toString</a></li>
 
-    <li class="section-title inherited"><a href="../brambl/HDNode-class.html#operators">Operators</a></li>
+    <li class="section-title inherited"><a href="../brambl/SigningKey-class.html#operators">Operators</a></li>
     <li class="inherited"><a href="https://api.dart.dev/stable/2.13.1/dart-core/Object/operator_equals.html">operator ==</a></li>
 
 

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the createHash function from the brambl library, for the Dart programming language.">
+  <title>createHash function - brambl library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="../static-assets/github.css">
+  <link rel="stylesheet" href="../static-assets/styles.css">
+  <link rel="icon" href="../static-assets/favicon.png">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">mubrambl</a></li>
+    <li><a href="../brambl/brambl-library.html">brambl</a></li>
+    <li class="self-crumb">createHash function</li>
+  </ol>
+  <div class="self-name">createHash</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">mubrambl</a></li>
+  <li><a href="../brambl/brambl-library.html">brambl</a></li>
+  <li class="self-crumb">createHash function</li>
+</ol>
+
+
+    <h5>brambl library</h5>
+    <ol>
+  <li class="section-title"><a href="../brambl/brambl-library.html#classes">Classes</a></li>
+  <li><a href="../brambl/CipherParams-class.html">CipherParams</a></li>
+  <li><a href="../brambl/Crypto-class.html">Crypto</a></li>
+  <li><a href="../brambl/HDNode-class.html">HDNode</a></li>
+  <li><a href="../brambl/KDFParams-class.html">KDFParams</a></li>
+  <li><a href="../brambl/KeyFile-class.html">KeyFile</a></li>
+  <li><a href="../brambl/Mnemonic-class.html">Mnemonic</a></li>
+  <li><a href="../brambl/SigningKey-class.html">SigningKey</a></li>
+
+
+
+
+  <li class="section-title"><a href="../brambl/brambl-library.html#properties">Properties</a></li>
+  <li><a href="../brambl/ADDRESS_LENGTH.html">ADDRESS_LENGTH</a></li>
+  <li><a href="../brambl/DIGEST_LENGTH.html">DIGEST_LENGTH</a></li>
+  <li><a href="../brambl/networksDefault.html">networksDefault</a></li>
+  <li><a href="../brambl/privateMap.html">privateMap</a></li>
+  <li><a href="../brambl/propositionMap.html">propositionMap</a></li>
+  <li><a href="../brambl/toplNetMap.html">toplNetMap</a></li>
+  <li><a href="../brambl/valhallaMap.html">valhallaMap</a></li>
+  <li><a href="../brambl/validNetworks.html">validNetworks</a></li>
+  <li><a href="../brambl/validPropositionTypes.html">validPropositionTypes</a></li>
+
+  <li class="section-title"><a href="../brambl/brambl-library.html#functions">Functions</a></li>
+  <li><a href="../brambl/aesCtrProcess.html">aesCtrProcess</a></li>
+  <li><a href="../brambl/createHash.html">createHash</a></li>
+  <li><a href="../brambl/deriveKey.html">deriveKey</a></li>
+  <li><a href="../brambl/generatePubKeyHashAddress.html">generatePubKeyHashAddress</a></li>
+  <li><a href="../brambl/getAddressNetwork.html">getAddressNetwork</a></li>
+  <li><a href="../brambl/getHexByNetwork.html">getHexByNetwork</a></li>
+  <li><a href="../brambl/getMac.html">getMac</a></li>
+  <li><a href="../brambl/isValidNetwork.html">isValidNetwork</a></li>
+  <li><a href="../brambl/isValidPropositionType.html">isValidPropositionType</a></li>
+  <li><a href="../brambl/keysEncodedFormat.html">keysEncodedFormat</a></li>
+  <li><a href="../brambl/recover.html">recover</a></li>
+  <li><a href="../brambl/str2ByteArray.html">str2ByteArray</a></li>
+  <li><a href="../brambl/validateAddressByNetwork.html">validateAddressByNetwork</a></li>
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-left-->
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-function">createHash</span> function 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    <section class="multi-line-signature">
+        
+
+<span class="returntype"><a href="https://api.dart.dev/stable/2.13.1/dart-typed_data/Uint8List-class.html">Uint8List</a></span>
+<span class="name ">createHash</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="createHash-param-buffer"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.13.1/dart-typed_data/Uint8List-class.html">Uint8List</a></span> <span class="parameter-name">buffer</span></span></li>
+</ol>)
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Returns the Blake2b (<a href="https://en.wikipedia.org/wiki/BLAKE_(hash_function)">https://en.wikipedia.org/wiki/BLAKE_(hash_function)</a>) digest of the <code>buffer</code></p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Uint8List createHash(Uint8List buffer) {
+  final blake2b = Blake2bDigest(digestSize: DIGEST_LENGTH);
+  return blake2b.process(buffer);
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    mubrambl
+      1.0.0
+  </span>
+
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js"></script>
+<script src="../static-assets/script.js"></script>
+
+
+
+</body>
+
+</html>
+
