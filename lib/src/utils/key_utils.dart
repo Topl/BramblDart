@@ -7,6 +7,9 @@ import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:pointycastle/export.dart' as pc;
 import 'package:collection/collection.dart';
 
+/// Recover plaintext private key from secret-storage key object.
+///
+/// [password] is the user supplied password (takes in a [String]). [keyStorage] is a [KeyFile] object and the [kdfParams] are the key derivation parameters.
 List<String> recover(String password, KeyFile keyStorage, KDFParams kdfParams) {
   Uint8List verifyAndDecrypt(
       Uint8List derivedKey, Uint8List iv, String cipherText, Uint8List mac) {
@@ -25,7 +28,10 @@ List<String> recover(String password, KeyFile keyStorage, KDFParams kdfParams) {
       deriveKey(password, salt, kdfParams), iv, cipherText, mac));
 }
 
-// Parse the byte array and split into a [secretKey, publicKey]
+/// Parse the [keysBuffer] and split into a secretKey and a publicKey
+///
+/// The input parameter [keysBuffer] is a [Uint8List] containing both keys.
+/// It returns an array with the sk as the first element and the pk as the second element
 List<String> keysEncodedFormat(Uint8List keysBuffer) {
   if (keysBuffer.length != 64) {
     throw ArgumentError('Invalid keysBuffer.');
@@ -36,7 +42,12 @@ List<String> keysEncodedFormat(Uint8List keysBuffer) {
   ];
 }
 
-// Derive secret key from password with key derivation function
+/// Derive secret key from password with key derivation function
+/// The first parameter is a [password] (must be a string)
+/// The second parameter is a [Uint8List] of randomly generated salt
+/// The third parameter [kdfParams] are the key derivation parameters.
+///
+/// This function returns a [Uint8List] of the secret key derived from the password
 Uint8List deriveKey(String password, Uint8List salt, KDFParams kdfParams) {
   // convert password to Uint8Array
   final encodedPassword = str2ByteArray(password, enc: 'latin1');
@@ -52,14 +63,22 @@ Uint8List deriveKey(String password, Uint8List salt, KDFParams kdfParams) {
   return scrypt.process(encodedPassword);
 }
 
-// Symmetric privateKey + secretKey using secret (derived) key.
-
+/// Helper function that runs the AES-CTR-256 algorithm
+/// First parameter is the [String] to be processed.
+/// The second parameter is the [key] used in the AES-CTR-256 algorithm
+/// The final parameter is the initialization vector [iv] for the CTR
+///
+/// Returns a [Uint8List] of the processed data.
 Uint8List aesCtrProcess(String cipherText, Uint8List key, Uint8List iv) {
   final ctr = pc.CTRStreamCipher(pc.AESFastEngine())
     ..init(false, pc.ParametersWithIV(pc.KeyParameter(key), iv));
   return ctr.process(str2ByteArray(cipherText));
 }
 
+/// Calculate the message authentication code from the secret [derivedKey] key and the encrypted text [cipherText]. The MAC is the Blake2b-256 hash of the byte array formed by concatenating the last 16 bytes of the derived key with the ciphertext key's contents.
+///
+/// The first parameter [derivedKey] is a [Uint8List] of the key derived from the password. The second parameter [cipherText] is the text encrypted with the secretKey
+/// This function returns the Base-58 encoded MAC
 Uint8List getMac(Uint8List derivedKey, String cipherText) {
   var buffer = <int>[];
   var valueToHash = derivedKey.sublist(16, 32);
@@ -68,6 +87,9 @@ Uint8List getMac(Uint8List derivedKey, String cipherText) {
   return createHash(Uint8List.fromList(buffer));
 }
 
+/// Convert a string to a byte list with an optional encoding specified. If the encoding is not specified, Base58 encoding will be assumed so long as the input is valid.
+///
+/// Requires a [str] of type [String] as well as an [enc] encoding of the [String] and returns a [Uint8List] containing the input data
 Uint8List str2ByteArray(String str, {String enc = ''}) {
   if (enc == 'latin1') {
     return latin1.encode(str);
@@ -76,7 +98,7 @@ Uint8List str2ByteArray(String str, {String enc = ''}) {
   }
 }
 
-// Container to make it easier to work with kdf parameters
+/// Container to make it easier to work with kdf parameters
 class KDFParams {
   final int dkLen;
   final int n;
@@ -95,7 +117,7 @@ class KDFParams {
   String toString() => jsonEncode({'dkLen': dkLen, 'n': n, 'r': r, 'p': p});
 }
 
-// Container to make it easier to work with crypto parameters
+/// Container to make it easier to work with crypto parameters
 class Crypto {
   final String mac;
   final String kdf;
@@ -126,13 +148,13 @@ class Crypto {
       });
 }
 
-// Container to make it easier to work with cipherParams
+/// Container to make it easier to work with cipherParams
 class CipherParams {
   final String iv;
 
   CipherParams(this.iv);
 
-  // Create an instance of CipherParams from a Map (Json)
+  /// Create an instance of CipherParams from a Map (Json)
   CipherParams.fromMap(Map<String, dynamic> cipherParamMap)
       : iv = cipherParamMap['iv'];
 
@@ -140,7 +162,7 @@ class CipherParams {
   String toString() => jsonEncode({'iv': iv});
 }
 
-// Container to make it easier to work with keyfiles
+/// Container to make it easier to work with keyfiles
 class KeyFile {
   final Crypto crypto;
   final String address;
