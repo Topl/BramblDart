@@ -28,6 +28,11 @@ final propositionMap = <String, int>{
 
 final ADDRESS_LENGTH = 38;
 
+///Generate Hash Address using the Public Key and Network Prefix
+/// First parameter is the Base-58 encoded byte list of the public key
+/// The second parameter is the prefix of the network where the address will be used
+/// Third is the type of proposition used
+/// Returns the address and whether or not the operation was successful
 Map<String, dynamic> generatePubKeyHashAddress(
     Uint8List publicKey, String networkPrefix, String propositionType) {
   final result = <String, dynamic>{};
@@ -69,10 +74,13 @@ Map<String, dynamic> generatePubKeyHashAddress(
   return result;
 }
 
+/// Returns the hex value for a given networkPrefix
 int getHexByNetwork(networkPrefix) {
   return (networksDefault[networkPrefix] ?? const {})['hex'] ?? 0x01;
 }
 
+/// Returns the networkPrefix for a valid address
+/// Returns {success: boolean, networkPrefix: <prefix if found>, error: "<message>"}
 Map<String, dynamic> getAddressNetwork(address) {
   final decodedAddress = Base58Decode(address);
   final result = <String, dynamic>{};
@@ -95,6 +103,13 @@ Map<String, dynamic> getAddressNetwork(address) {
   return result;
 }
 
+/// Checks if the address is valid by the following 4 steps:
+/// 1. Verify that the address is not null.
+/// 2. Verify that the address is 38 bytes long.
+/// 3. Verify that it matches the network
+/// 4. Verify that the hash matches the checksum
+/// The first argument is the prefix to validate against and the second argument is the address to run the validation on.
+/// Result object with whether or not the operation was successful and whether or not the address is valid for a given network
 Map<String, dynamic> validateAddressByNetwork(
     String networkPrefix, String address) {
 // response on completion of the validation
@@ -136,7 +151,7 @@ Map<String, dynamic> validateAddressByNetwork(
   return result;
 }
 
-// Verify that the payload has not been corrupted by checking that the checksum is valid
+/// Verify that the payload has not been corrupted by checking that the checksum is valid
 bool _validChecksum(List<int> payload) {
   final msgBuffer = Uint8List.fromList(payload).sublist(0, 34);
   final checksumBuffer =
@@ -153,6 +168,7 @@ bool isValidNetwork(String networkPrefix) {
   return validNetworks.contains(networkPrefix);
 }
 
+/// Validates whether the proposition passed in is valid
 bool isValidPropositionType(String propositionType) {
   return validPropositionTypes.contains(propositionType);
 }
@@ -164,16 +180,3 @@ Uint8List str2ByteArray(String str, {String enc = ''}) {
     return Uint8List.fromList(Base58Decode(str));
   }
 }
-
-/// Recover plaintext private key from secret-storage object.
-
-// Map<String, dynamic> recover(String password, Map<String, dynamic> keyStore,
-//     Map<String, dynamic> kdfParams) {
-//   /// verify that message authentication codes match, then decrypt
-//   ///
-//   Map<String, dynamic> verifyAndDecrypt(Uint8List derivedKey, Uint8List iv,
-//       String cipherText, String mac, String algo) {}
-// }
-
-/// Calculate message authentication code from secret (derived) key and encrypted text. The
-
