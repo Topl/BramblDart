@@ -13,9 +13,4 @@ Uint8List createHash(Uint8List buffer) {
   return blake2b.process(buffer);
 }
 
-Uint8List hmacSHA512(Uint8List key, Uint8List data) {
-  final _tmp = HMac(SHA512Digest(), 128)..init(KeyParameter(key));
-  return _tmp.process(data);
-}
-
 const ED25519 = 'ed25519';
