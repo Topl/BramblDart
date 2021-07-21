@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
@@ -154,6 +155,14 @@ bool isValidNetwork(String networkPrefix) {
 
 bool isValidPropositionType(String propositionType) {
   return validPropositionTypes.contains(propositionType);
+}
+
+Uint8List str2ByteArray(String str, {String enc = ''}) {
+  if (enc == 'latin1') {
+    return latin1.encode(str);
+  } else {
+    return Uint8List.fromList(Base58Decode(str));
+  }
 }
 
 /// Recover plaintext private key from secret-storage object.

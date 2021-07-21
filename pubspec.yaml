@@ -15,5 +15,5 @@ dependencies:
   fast_base58: ^0.2.0
   bip39: ^1.0.6
   logging: ^1.0.1
-  cryptography: ^2.0.2
+  ed25519_hd_key: ^2.1.0
 
