@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:pointycastle/digests/blake2b.dart';
-import 'package:pointycastle/export.dart';
 
 /// The cryptographic hash functions (https://en.wikipedia.org/wiki/Cryptographic_hash_function) are a specific family of hash function
 
