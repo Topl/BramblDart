@@ -1,5 +1,5 @@
+import 'package:mubrambl/src/SLIP0010_ed25519_derivation.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
-import 'package:mubrambl/src/ed25519_derivation.dart';
 import 'package:test/test.dart';
 
 ///
@@ -79,7 +79,7 @@ Future<void> keyDerivationTest(
   final vector = vectors[testVectorIndex];
   final path = vector['path'];
 
-  final ed25519_derivation = Ed25519Derivation(ED25519, seed);
+  final ed25519_derivation = SLIP0010_Ed25519Derivation(ED25519, seed);
 
   final derivedPath = await ed25519_derivation.derivePath(path);
 

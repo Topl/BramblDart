@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
-import 'package:mubrambl/src/utils/address_utils.dart';
+import 'package:mubrambl/src/utils/key_utils.dart';
 
 import 'utils/byte_utils.dart';
 
@@ -9,11 +9,13 @@ abstract class DerivationSchemeInterface {
   Future<Map<String, dynamic>> derivePath(String path);
 }
 
-class Ed25519Derivation implements DerivationSchemeInterface {
+/// Universal private key derivation from master private key
+class SLIP0010_Ed25519Derivation implements DerivationSchemeInterface {
   late String curve;
   late Uint8List seedBuffer;
 
-  Ed25519Derivation(_curve, _seed) {
+  //Fully specified constructor
+  SLIP0010_Ed25519Derivation(_curve, _seed) {
     curve = _curve;
     if (_seed is String) {
       seedBuffer = str2ByteArray(_seed, enc: 'latin1');
@@ -26,6 +28,9 @@ class Ed25519Derivation implements DerivationSchemeInterface {
     }
   }
 
+  /// Format the Topl keys (public and private)
+  /// Public key is an Ed25519 public key (32 bytes) which is then converted to a hex string for easy transfer
+  /// The Private Key is an Ed25519 extended private key (64 bytes) which is then converted to a hex string for easy transfer.
   Future<Map<String, dynamic>> formatKeys(KeyData key, String path) async {
     return {
       'path': path,
@@ -36,16 +41,19 @@ class Ed25519Derivation implements DerivationSchemeInterface {
     };
   }
 
+  /// Retrieves curve specific keys on a given path
   Future<Map<String, dynamic>> curveSpecificDerivation(String path) async {
     final addressKeys = await ED25519_HD_KEY.derivePath(path, seedBuffer);
     return await formatKeys(addressKeys, path);
   }
 
+  // Computes the public key which can be used to generate a Topl Address
   Future<List<int>> _computePublicKey(List<int> privateKey,
       {bool withZeroByte = true}) async {
     return await ED25519_HD_KEY.getPublicKey(privateKey, withZeroByte);
   }
 
+  /// Note: Apostrophe in the path indicates that BIP32 hardened derivation is used.
   @override
   Future<Map<String, dynamic>> derivePath(String path) {
     if (path == 'm') {
