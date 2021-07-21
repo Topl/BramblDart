@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
