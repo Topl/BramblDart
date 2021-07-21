@@ -3,10 +3,11 @@ import 'dart:typed_data';
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:mubrambl/src/utils/address_utils.dart';
 
+import 'models/keys.dart';
 import 'utils/byte_utils.dart';
 
 abstract class DerivationSchemeInterface {
-  Future<Map<String, dynamic>> derivePath(String path);
+  Future<Keys> derivePath(String path);
 }
 
 class Ed25519Derivation implements DerivationSchemeInterface {
@@ -26,17 +27,17 @@ class Ed25519Derivation implements DerivationSchemeInterface {
     }
   }
 
-  Future<Map<String, dynamic>> formatKeys(KeyData key, String path) async {
-    return {
-      'path': path,
-      'publicKey':
-          toHex((Uint8List.fromList((await _computePublicKey(key.key))))),
-      'chainCode': toHex(Uint8List.fromList(key.chainCode)),
-      'privateKey': toHex(Uint8List.fromList(key.key))
-    };
+  Future<Keys> formatKeys(KeyData key, String path) async {
+    return Keys(
+        null,
+        null,
+        path,
+        toHex(Uint8List.fromList(key.chainCode)),
+        toHex((Uint8List.fromList((await _computePublicKey(key.key))))),
+        toHex(Uint8List.fromList(key.key)));
   }
 
-  Future<Map<String, dynamic>> curveSpecificDerivation(String path) async {
+  Future<Keys> curveSpecificDerivation(String path) async {
     final addressKeys = await ED25519_HD_KEY.derivePath(path, seedBuffer);
     return await formatKeys(addressKeys, path);
   }
@@ -47,7 +48,7 @@ class Ed25519Derivation implements DerivationSchemeInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> derivePath(String path) {
+  Future<Keys> derivePath(String path) {
     if (path == 'm') {
       return masterKey;
     } else {
@@ -55,7 +56,7 @@ class Ed25519Derivation implements DerivationSchemeInterface {
     }
   }
 
-  Future<Map<String, dynamic>> get masterKey async {
+  Future<Keys> get masterKey async {
     final masterKey = await ED25519_HD_KEY.getMasterKeyFromSeed(seedBuffer);
     return await formatKeys(masterKey, 'm');
   }
