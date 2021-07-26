@@ -1,11 +1,12 @@
 import 'dart:typed_data';
 import 'package:bip39/src/bip39_base.dart' as bip39;
 
+// Class that contains static methods for generating mnemonics
 class Mnemonic {
-  /// generate bip39 mnemonic
+  /// generates the bip39 mnemonic
   static String generate({int strength = 128}) =>
       bip39.generateMnemonic(strength: strength);
 
-  // create root seed from mnemonic
+  /// create root seed from mnemonic
   static Uint8List toSeed(String mnemonic) => bip39.mnemonicToSeed(mnemonic);
 }

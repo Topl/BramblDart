@@ -1,6 +1,5 @@
 import 'package:fast_base58/fast_base58.dart';
-import 'package:mubrambl/src/utils/address_utils.dart';
-import 'package:mubrambl/src/utils/key_utils.dart';
+import 'package:mubrambl/src/utils/util.dart';
 import 'package:test/test.dart';
 
 void main() {
