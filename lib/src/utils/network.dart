@@ -1,7 +1,6 @@
 /// Container for information about topl networks
 ///
 /// This could be used also for other than Torus networks when this library gets extended
-
 /// A **Network** represents a Topl network
 class Network {
   static const toplTestNetPrivate = 0x40;

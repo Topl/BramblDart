@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:pointycastle/digests/sha512.dart';
 import 'package:pointycastle/key_derivators/api.dart';
 import 'package:pointycastle/key_derivators/pbkdf2.dart';
@@ -12,8 +12,8 @@ import 'package:pointycastle/macs/hmac.dart';
 
 Uint8List generateSeed(Uint8List entropy, Uint8List password) {
   const ITER = 4096;
-  final keyDerivator = PBKDF2KeyDerivator(HMac(SHA512Digest(), 64));
-  final params = Pbkdf2Parameters(entropy, ITER, 32);
+  final keyDerivator = PBKDF2KeyDerivator(HMac(SHA512Digest(), XPRV_SIZE));
+  final params = Pbkdf2Parameters(entropy, ITER, XPRV_SIZE);
   keyDerivator.init(params);
   return keyDerivator.process(password);
 }
