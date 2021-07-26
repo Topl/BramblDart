@@ -144,6 +144,45 @@ void main() {
     });
   });
 
+  group('test key utilities', () {
+    // test key recovery success
+    test('keyRecovery success', () {
+      final cipherParams = CipherParams('NPL8XoWBJL1x539wb19jL8');
+      final crypto = Crypto(
+          '2DbmnQiaUyBrgZka4ZhrGibop7gf6wQsLtTfFeTVQkYv',
+          'scrypt',
+          '3zHMnaVUNqcbLqKdA9G5EWy2CDRmvvDZZjW7FBChdM3ru6UJWxDECNPqchuNDjyyTrmFGSRN2m34NeDD8oL1PiUn',
+          '7Z7Z99siQvzRUdcX9SH1s45F4mMsYSa3YYXFq7Tqq5Ns',
+          'aes-256-ctr',
+          cipherParams);
+      final address = '3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk';
+      final kdfParams = KDFParams(32, 262144, 8, 1);
+
+      final keys = recover('test', KeyFile(crypto, address), kdfParams);
+      expect(keys, [
+        'DvovrPBee6AVQKaA7Ldd6ZSmvFaXptXadntrjeSCjroE',
+        '3L92EtcUV6Eh8G5A9iBnFhitLuTdzeZ814SuMD5dzDqv'
+      ]);
+    });
+
+    // throws exception if password is incorrect (anagram)
+    test('keyRecovery incorrect anagram', () {
+      final cipherParams = CipherParams('NPL8XoWBJL1x539wb19jL8');
+      final crypto = Crypto(
+          '2DbmnQiaUyBrgZka4ZhrGibop7gf6wQsLtTfFeTVQkYv',
+          'scrypt',
+          '3zHMnaVUNqcbLqKdA9G5EWy2CDRmvvDZZjW7FBChdM3ru6UJWxDECNPqchuNDjyyTrmFGSRN2m34NeDD8oL1PiUn',
+          '7Z7Z99siQvzRUdcX9SH1s45F4mMsYSa3YYXFq7Tqq5Ns',
+          'aes-256-ctr',
+          cipherParams);
+      final address = '3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk';
+      final kdfParams = KDFParams(32, 262144, 8, 1);
+
+      expect(() => recover('estt', KeyFile(crypto, address), kdfParams),
+          throwsA(TypeMatcher<ArgumentError>()));
+    });
+  });
+
   group('test generatePubKeyHashAddress', () {
     // testing the generation of address using the hash of the public key
 
@@ -152,7 +191,7 @@ void main() {
     test('generatePubKeyHashAddress success', () {
       final addressResult = generatePubKeyHashAddress(
           str2ByteArray('3L92EtcUV6Eh8G5A9iBnFhitLuTdzeZ814SuMD5dzDqv'),
-          'valhalla',
+          0x10,
           'PublicKeyCurve25519');
       expect(addressResult['success'], true);
       expect(addressResult['address'],
@@ -164,7 +203,7 @@ void main() {
     test('generatePubKeyHashAddress success private', () {
       final addressResult = generatePubKeyHashAddress(
           str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjogYHS7n'),
-          'private',
+          0x40,
           'PublicKeyCurve25519');
       expect(addressResult['success'], true);
       expect(addressResult['address'],
@@ -175,7 +214,7 @@ void main() {
     test('generatePubKeyHashAddress failure invalidPublicKey', () {
       final addressResult = generatePubKeyHashAddress(
           str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog'),
-          'private',
+          0x10,
           'PublicKeyCurve25519');
       expect(addressResult['success'], false);
       expect(addressResult['errorMsg'], 'Invalid publicKey length');
@@ -185,7 +224,7 @@ void main() {
     test('generatePubKeyHashAddress failure invalid network', () {
       final addressResult = generatePubKeyHashAddress(
           str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog'),
-          'privacy',
+          0x02,
           'PublicKeyCurve25519');
       expect(addressResult['success'], false);
     });
@@ -194,7 +233,7 @@ void main() {
     test('generatePubKeyHashAddress failure invalid network', () {
       final addressResult = generatePubKeyHashAddress(
           str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog'),
-          'private',
+          0x40,
           'PublicKeyCurve25518');
       expect(addressResult['success'], false);
     });

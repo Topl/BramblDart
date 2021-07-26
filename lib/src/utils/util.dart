@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:collection/collection.dart';
+import 'package:mubrambl/src/models/keyfile.dart';
+import 'package:mubrambl/src/utils/errors.dart';
 import 'package:pointycastle/export.dart' as pc;
 
 /// TODO: Feature: support custom defined networks
@@ -91,7 +93,8 @@ Map<String, dynamic> getAddressNetwork(address) {
     validNetworks.forEach((prefix) {
       if ((networksDefault[prefix] ?? const {})['decimal'] ==
           decodedAddress.first) {
-        result['networkPrefix'] = prefix;
+        result['networkPrefixString'] = prefix;
+        result['networkPrefix'] = (networksDefault[prefix] ?? const {})['hex'];
       }
     });
     if (result['networkPrefix'] == null ||
@@ -333,110 +336,15 @@ Uint8List str2ByteArray(String str, {String enc = ''}) {
   }
 }
 
-/// Container to make it easier to work with kdf parameters
-class KDFParams {
-  final int dkLen;
-  final int n;
-  final int r;
-  final int p;
-
-  KDFParams(this.dkLen, this.n, this.r, this.p);
-
-  KDFParams.fromMap(Map<String, dynamic> kdfParamMap)
-      : dkLen = kdfParamMap['dkLen'],
-        n = kdfParamMap['N'],
-        r = kdfParamMap['r'],
-        p = kdfParamMap['p'];
-
-  @override
-  String toString() => jsonEncode({'dkLen': dkLen, 'n': n, 'r': r, 'p': p});
-}
-
-/// Container to make it easier to work with crypto parameters
-class Crypto {
-  final String mac;
-  final String kdf;
-  final String cipherText;
-  final String kdfSalt;
-  final String cipher;
-  final CipherParams cipherParams;
-
-  Crypto(this.mac, this.kdf, this.cipherText, this.kdfSalt, this.cipher,
-      this.cipherParams);
-
-  Crypto.fromMap(Map<String, dynamic> cryptoMap)
-      : mac = cryptoMap['mac'],
-        kdf = cryptoMap['kdf'],
-        cipherText = cryptoMap['cipherText'],
-        kdfSalt = cryptoMap['kdfSalt'],
-        cipher = cryptoMap['cipher'],
-        cipherParams = cryptoMap['cipherParams'];
-
-  @override
-  String toString() => jsonEncode({
-        'mac': mac,
-        'kdf': kdf,
-        'cipherText': cipherText,
-        'kdfSalt': kdfSalt,
-        'cipher': cipher,
-        'cipherParams': cipherParams
-      });
-}
-
-/// Container to make it easier to work with cipherParams
-class CipherParams {
-  final String iv;
-
-  CipherParams(this.iv);
-
-  /// Create an instance of CipherParams from a Map (Json)
-  CipherParams.fromMap(Map<String, dynamic> cipherParamMap)
-      : iv = cipherParamMap['iv'];
-
-  @override
-  String toString() => jsonEncode({'iv': iv});
-}
-
-/// Container to make it easier to work with keyfiles
-class KeyFile {
-  final Crypto crypto;
-  final String address;
-
-  KeyFile(this.crypto, this.address);
-
-  KeyFile.fromMap(Map<String, dynamic> keyfileMap)
-      : address = keyfileMap['address'],
-        crypto = keyfileMap['crypto'];
-
-  @override
-  String toString() => jsonEncode({'crypto': crypto, 'address': address});
-}
-
-/// Container for information about topl networks
-///
-/// This could be used also for other than Torus networks when this library gets extended
-
-/// A **Network** represents a Topl network
-class Network {
-  static const toplTestNetPrivate = 0x40;
-  static const toplPublic = 0x01;
-  static const toplTestNetPublic = 0x10;
-
-  /// whether or not this network instance is a test net [bool]
-  final bool testnet;
-
-  /// the networkPrefix of the network ([int])
-  final int networkPrefix;
-
-  Network(this.testnet, this.networkPrefix);
-
-  factory Network.Toplnet() => Network(false, toplPublic);
-  factory Network.Valhalla() => Network(true, toplTestNetPublic);
-  factory Network.Private() => Network(true, toplTestNetPrivate);
-}
-
 /// Interface for dart:io [File].
 abstract class FileSystem {
   Future<bool> exists(String filename);
   Future<void> remove(String filename);
+}
+
+getOrFail(result) {
+  if (!result) {
+    throw ToplCryptoError('Result not defined');
+  }
+  return result;
 }
