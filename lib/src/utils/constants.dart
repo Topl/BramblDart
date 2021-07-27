@@ -1,1 +1,1 @@
-const MAX_ADDRESS_GAP = 20;
+const XPRV_SIZE = 96;

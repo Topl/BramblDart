@@ -1,6 +1,6 @@
 import 'package:fast_base58/fast_base58.dart';
-import 'package:mubrambl/src/utils/address_utils.dart';
-import 'package:mubrambl/src/utils/key_utils.dart';
+import 'package:mubrambl/src/credentials/keystore.dart';
+import 'package:mubrambl/src/utils/util.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -111,7 +111,8 @@ void main() {
       final networkResult = getAddressNetwork(
           'AUAvJqLKc8Un3C6bC4aj8WgHZo74vamvX8Kdm6MhtdXgw51cGfix');
       expect(networkResult['success'], true);
-      expect(networkResult['networkPrefix'], 'private');
+      expect(networkResult['networkPrefixString'], 'private');
+      expect(networkResult['networkPrefix'], 0x40);
     });
 
     // test get network prefix for address success (valhalla)
@@ -119,7 +120,8 @@ void main() {
       final networkResult = getAddressNetwork(
           '3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk');
       expect(networkResult['success'], true);
-      expect(networkResult['networkPrefix'], 'valhalla');
+      expect(networkResult['networkPrefixString'], 'valhalla');
+      expect(networkResult['networkPrefix'], 0x10);
     });
 
     // test get network prefix for address success (toplnet)
@@ -127,7 +129,8 @@ void main() {
       final networkResult = getAddressNetwork(
           '9d3Ny7sXoezon5DkAEqkHRjmZCitVLLdoTMqAKhRiKDWU8YZfax');
       expect(networkResult['success'], true);
-      expect(networkResult['networkPrefix'], 'toplnet');
+      expect(networkResult['networkPrefixString'], 'toplnet');
+      expect(networkResult['networkPrefix'], 0x01);
     });
 
     // test get network prefix for address failure
@@ -157,7 +160,7 @@ void main() {
           'PublicKeyCurve25519');
       expect(addressResult['success'], true);
       expect(addressResult['address'],
-          '3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk');
+          Base58Decode('3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk'));
     });
 
     // test generate address for valid network, valid propositionType, valid publicKey
@@ -169,14 +172,14 @@ void main() {
           'PublicKeyCurve25519');
       expect(addressResult['success'], true);
       expect(addressResult['address'],
-          'AU9xd9iQ8JHz9dUKiYnDXoPFwahoonUGQHbbSG6SW1ZXu4K7nbx7');
+          Base58Decode('AU9xd9iQ8JHz9dUKiYnDXoPFwahoonUGQHbbSG6SW1ZXu4K7nbx7'));
     });
 
     // test generate address for valid network, valid propositionType, invalid publicKey
     test('generatePubKeyHashAddress failure invalidPublicKey', () {
       final addressResult = generatePubKeyHashAddress(
           str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog'),
-          'private',
+          'valhalla',
           'PublicKeyCurve25519');
       expect(addressResult['success'], false);
       expect(addressResult['errorMsg'], 'Invalid publicKey length');
@@ -186,7 +189,7 @@ void main() {
     test('generatePubKeyHashAddress failure invalid network', () {
       final addressResult = generatePubKeyHashAddress(
           str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog'),
-          'privacy',
+          'val',
           'PublicKeyCurve25519');
       expect(addressResult['success'], false);
     });

@@ -1,7 +1,6 @@
 /// Container for information about topl networks
 ///
 /// This could be used also for other than Torus networks when this library gets extended
-
 /// A **Network** represents a Topl network
 class Network {
   static const toplTestNetPrivate = 0x40;
@@ -11,12 +10,15 @@ class Network {
   /// whether or not this network instance is a test net [bool]
   final bool testnet;
 
-  /// the networkPrefix of the network ([int])
+  /// the networkPrefix of the network in hex ([int])
   final int networkPrefix;
 
-  Network(this.testnet, this.networkPrefix);
+  // the string of the networkPrefix
+  final String networkPrefixString;
 
-  factory Network.Toplnet() => Network(false, toplPublic);
-  factory Network.Valhalla() => Network(true, toplTestNetPublic);
-  factory Network.Private() => Network(true, toplTestNetPrivate);
+  const Network(this.testnet, this.networkPrefix, this.networkPrefixString);
+
+  factory Network.Toplnet() => Network(false, toplPublic, 'toplnet');
+  factory Network.Valhalla() => Network(true, toplTestNetPublic, 'valhalla');
+  factory Network.Private() => Network(true, toplTestNetPrivate, 'private');
 }

@@ -69,7 +69,7 @@ Map<String, dynamic> generatePubKeyHashAddress(
   b.add(concatEvidence);
   b.add(hashChecksumBuffer);
   final address = b.toBytes().sublist(0, 38);
-  result['address'] = Base58Encode(address);
+  result['address'] = address;
   result['success'] = true;
   return result;
 }
@@ -90,11 +90,12 @@ Map<String, dynamic> getAddressNetwork(address) {
     validNetworks.forEach((prefix) {
       if ((networksDefault[prefix] ?? const {})['decimal'] ==
           decodedAddress.first) {
-        result['networkPrefix'] = prefix;
+        result['networkPrefixString'] = prefix;
+        result['networkPrefix'] = (networksDefault[prefix] ?? const {})['hex'];
       }
     });
     if (result['networkPrefix'] == null ||
-        !isValidNetwork(result['networkPrefix'])) {
+        !isValidNetwork(result['networkPrefixString'])) {
       result['error'] = 'invalid network prefix found';
     } else {
       result['success'] = true;
@@ -173,10 +174,74 @@ bool isValidPropositionType(String propositionType) {
   return validPropositionTypes.contains(propositionType);
 }
 
-Uint8List str2ByteArray(String str, {String enc = ''}) {
-  if (enc == 'latin1') {
-    return latin1.encode(str);
-  } else {
-    return Uint8List.fromList(Base58Decode(str));
+final hexRegex = RegExp('^(0x)?[0-9a-fA-F]{1,}\$');
+
+String toHex(Uint8List bArr) {
+  var length = bArr.length;
+  if (length <= 0) {
+    return '';
   }
+  var cArr = Uint8List(length << 1);
+  var i = 0;
+  for (var i2 = 0; i2 < length; i2++) {
+    var i3 = i + 1;
+    var cArr2 = [
+      '0',
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      'a',
+      'b',
+      'c',
+      'd',
+      'e',
+      'f'
+    ];
+
+    var index = (bArr[i2] >> 4) & 15;
+    cArr[i] = cArr2[index].codeUnitAt(0);
+    i = i3 + 1;
+    cArr[i3] = cArr2[bArr[i2] & 15].codeUnitAt(0);
+  }
+  return String.fromCharCodes(cArr);
+}
+
+bool isValidHex(String hex) {
+  return hexRegex.hasMatch(hex);
+}
+
+int hex(int c) {
+  if (c >= '0'.codeUnitAt(0) && c <= '9'.codeUnitAt(0)) {
+    return c - '0'.codeUnitAt(0);
+  } else if (c >= 'A'.codeUnitAt(0) && c <= 'F'.codeUnitAt(0)) {
+    return (c - 'A'.codeUnitAt(0)) + 10;
+  } else {
+    throw ArgumentError('invalid hex value');
+  }
+}
+
+Uint8List toUnitList(String str) {
+  var length = str.length;
+  if (length % 2 != 0) {
+    str = '0' + str;
+    length++;
+  }
+  var s = str.toUpperCase().codeUnits;
+  var bArr = Uint8List(length >> 1);
+  for (var i = 0; i < length; i += 2) {
+    bArr[i >> 1] = ((hex(s[i]) << 4) | hex(s[i + 1]));
+  }
+  return bArr;
+}
+
+/// Interface for dart:io [File].
+abstract class FileSystem {
+  Future<bool> exists(String filename);
+  Future<void> remove(String filename);
 }
