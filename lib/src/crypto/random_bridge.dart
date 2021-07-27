@@ -15,6 +15,7 @@ class RandomBridge implements SecureRandom {
   @override
   String get algorithmName => 'DartRandom';
 
+  /// This method generates a random Big Integer in a secure way
   @override
   BigInt nextBigInteger(int bitLength) {
     final fullBytes = bitLength ~/ 8;
@@ -28,6 +29,8 @@ class RandomBridge implements SecureRandom {
   }
 
   @override
+
+  /// This method iterates through a list of bytes to return the next set of [count] bytes
   Uint8List nextBytes(int count) {
     final list = Uint8List(count);
 
@@ -39,18 +42,26 @@ class RandomBridge implements SecureRandom {
   }
 
   @override
+
+  /// This method generates a random Uint16
   int nextUint16() => dartRandom.nextInt(1 << 16);
 
   @override
+
+  /// This method generates a random Uint32
   int nextUint32() {
     // this is 2^32. We can't write 1 << 32 because that evaluates to 0 on js
     return dartRandom.nextInt(4294967296);
   }
 
   @override
+
+  /// This method generates a random Uint8
   int nextUint8() => dartRandom.nextInt(1 << 8);
 
   @override
+
+  /// this method is necessary to implement the super class but it is ignored because we are using a dependency to generate the seed
   void seed(CipherParameters params) {
     // ignore, dartRandom will already be seeded if wanted
   }

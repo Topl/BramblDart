@@ -142,13 +142,13 @@ class KeyStore {
     final derivedMac = _getMac(derivedKey, crypto['cipherText'] as String);
     if (Base58Encode(derivedMac) != crypto['mac']) {
       throw ArgumentError(
-          'Could not unlock wallet file. You either supplied the wrong password or the file is corrupted');
+          'Invalid MAC: Could not unlock wallet file. You either supplied the wrong password or the file is corrupted');
     }
 
     // We only support this mode at the moment
     if (crypto['cipher'] != 'aes-128-ctr') {
       throw ArgumentError(
-          'Wallet file uses ${crypto["cipher"]} as cipher, but only aes-128-ctr is supported.');
+          'Invalid Cipher: Wallet file uses ${crypto["cipher"]} as cipher, but only aes-128-ctr is supported.');
     }
 
     final iv = str2ByteArray(crypto['cipherparams']['iv'] as String);
@@ -204,6 +204,7 @@ class KeyStore {
   }
 }
 
+/// This is a utility function that is used by the keystore to decode strings that are used in the encrypted json
 Uint8List str2ByteArray(String str, {String enc = ''}) {
   if (enc == 'latin1') {
     return latin1.encode(str);
