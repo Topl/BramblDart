@@ -97,7 +97,7 @@ Map<String, dynamic> getAddressNetwork(address) {
       }
     });
     if (result['networkPrefix'] == null ||
-        !isValidNetwork(result['networkPrefix'])) {
+        !isValidNetwork(result['networkPrefixString'])) {
       result['error'] = 'invalid network prefix found';
     } else {
       result['success'] = true;
