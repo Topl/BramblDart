@@ -3,6 +3,11 @@ import 'dart:typed_data';
 import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:collection/collection.dart';
+<<<<<<< HEAD
+=======
+import 'package:mubrambl/src/utils/errors.dart';
+import 'package:pointycastle/export.dart' as pc;
+>>>>>>> 60b4486172b16721aab0e7722bd4f974972feda5
 
 /// TODO: Feature: support custom defined networks
 final validNetworks = ['private', 'toplnet', 'valhalla'];

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:mubrambl/src/credentials/keystore.dart';
+import 'package:mubrambl/src/models/keystore.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:test/test.dart';
 

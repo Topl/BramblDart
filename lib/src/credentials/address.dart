@@ -13,7 +13,7 @@ class ToplAddress {
 
   final Uint8List addressBytes;
 
-  /// An ethereum address from the raw address bytes.
+  /// An Topl address from the raw address bytes.
   const ToplAddress(this.addressBytes)
       : assert(addressBytes.length == addressByteLength);
 
