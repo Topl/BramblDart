@@ -19,4 +19,5 @@ dependencies:
   crypto: ^3.0.1
   cryptography: ^2.0.2
   convert: ^3.0.1
+  uuid: ^3.0.4
 
