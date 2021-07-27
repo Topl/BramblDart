@@ -51,9 +51,9 @@ class _ScryptKeyDerivator extends _KeyDerivator {
   final String name = 'scrypt';
 }
 
-/// Represents a key store file. Wallets are used to securely store credentials
+/// Represents a key store file. KeyStores are used to securely store credentials
 /// like a private key belonging to a Topl address. The private key in a
-/// wallet is encrypted with a secret password that needs to be known in order
+/// keystore is encrypted with a secret password that needs to be known in order
 /// to obtain the private key.
 class KeyStore {
   // The credentials stored in this key store file
@@ -96,13 +96,13 @@ class KeyStore {
   /// v2 Topl key store.
   factory KeyStore.fromJson(String encoded, String password) {
     /*
-      In order to read the wallet and obtain the secret key stored in it, we
+      In order to read the keystore and obtain the secret key stored in it, we
       need to do the following:
       1: Key Derivation: Based on the key derivator specified (either pbdkdf2 or
          scryt), we need to use the password to obtain the aes key used to
          decrypt the private key.
       2: Using the obtained aes key and the iv parameter, decrypt the private
-         key stored in the wallet.
+         key stored in the keystore.
     */
 
     final data = json.decode(encoded);
@@ -114,7 +114,7 @@ class KeyStore {
           version,
           'version',
           'Library only supports '
-              'version 2 of wallet files at the moment. However, the following value'
+              'version 2 of key store files at the moment. However, the following value'
               ' has been given:');
     }
 
@@ -142,13 +142,13 @@ class KeyStore {
     final derivedMac = _getMac(derivedKey, crypto['cipherText'] as String);
     if (Base58Encode(derivedMac) != crypto['mac']) {
       throw ArgumentError(
-          'Invalid MAC: Could not unlock wallet file. You either supplied the wrong password or the file is corrupted');
+          'Invalid MAC: Could not unlock key store file. You either supplied the wrong password or the file is corrupted');
     }
 
     // We only support this mode at the moment
     if (crypto['cipher'] != 'aes-128-ctr') {
       throw ArgumentError(
-          'Invalid Cipher: Wallet file uses ${crypto["cipher"]} as cipher, but only aes-128-ctr is supported.');
+          'Invalid Cipher: key store file uses ${crypto["cipher"]} as cipher, but only aes-128-ctr is supported.');
     }
 
     final iv = str2ByteArray(crypto['cipherparams']['iv'] as String);
