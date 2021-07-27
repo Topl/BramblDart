@@ -17,6 +17,11 @@ void main() {
 
       final keystore = KeyStore.fromJson(json.encode(keystoreData), password);
       expect(toHex(keystore.privateKey.as_ref), privateKey);
+
+      final encodedWallet = json.decode(keystore.toJson()) as Map;
+
+      expect(encodedWallet['crypto']['ciphertext'],
+          keystoreData['crypto']['ciphertext']);
     }, tags: 'expensive');
   });
 }
