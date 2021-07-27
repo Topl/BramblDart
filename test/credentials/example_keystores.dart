@@ -22,7 +22,7 @@ const content = '''
       "version" : 2
     },
     "password": "test",
-    "priv": "c0151693a809cd259e206a3165e3797938caf63c84631fcda3abf83cfd03687d"
+    "priv": "c0151693a809cd259e206a3165e3797938caf63c84631fcda3abf83cfd03687d229e7aa0e40f033ba026c65e43cffd3bfeb25a70192e392ad76ad16807595f6d"
   }
 }
 ''';

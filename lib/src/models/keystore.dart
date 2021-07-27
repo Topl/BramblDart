@@ -155,9 +155,7 @@ class KeyStore {
 
     final aes = _initCipher(false, derivedKey, iv);
 
-    final keysEncodedFormat = aes.process(encryptedPrivateKey);
-
-    final privateKey = keysEncodedFormat.sublist(0, 32);
+    final privateKey = aes.process(encryptedPrivateKey);
 
     final credentials = XPrv(privateKey);
 
