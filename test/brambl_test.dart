@@ -160,7 +160,7 @@ void main() {
           'PublicKeyCurve25519');
       expect(addressResult['success'], true);
       expect(addressResult['address'],
-          '3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk');
+          Base58Decode('3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk'));
     });
 
     // test generate address for valid network, valid propositionType, valid publicKey
@@ -172,7 +172,7 @@ void main() {
           'PublicKeyCurve25519');
       expect(addressResult['success'], true);
       expect(addressResult['address'],
-          'AU9xd9iQ8JHz9dUKiYnDXoPFwahoonUGQHbbSG6SW1ZXu4K7nbx7');
+          Base58Decode('AU9xd9iQ8JHz9dUKiYnDXoPFwahoonUGQHbbSG6SW1ZXu4K7nbx7'));
     });
 
     // test generate address for valid network, valid propositionType, invalid publicKey

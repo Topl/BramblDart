@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:fast_base58/fast_base58.dart';
+import 'package:mubrambl/src/credentials/x_prv.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:mubrambl/src/crypto/random_bridge.dart';
-import 'package:mubrambl/src/models/x_prv.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:mubrambl/src/utils/uuid.dart';
 import 'package:pointycastle/api.dart';

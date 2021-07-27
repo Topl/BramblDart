@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:collection/collection.dart';
-import 'package:mubrambl/src/utils/errors.dart';
-import 'package:pointycastle/export.dart' as pc;
 
 /// TODO: Feature: support custom defined networks
 final validNetworks = ['private', 'toplnet', 'valhalla'];
@@ -71,7 +68,7 @@ Map<String, dynamic> generatePubKeyHashAddress(
   b.add(concatEvidence);
   b.add(hashChecksumBuffer);
   final address = b.toBytes().sublist(0, 38);
-  result['address'] = Base58Encode(address);
+  result['address'] = address;
   result['success'] = true;
   return result;
 }
