@@ -1,5 +1,5 @@
 import 'package:cryptography/cryptography.dart';
-import 'package:mubrambl/src/utils/key_utils.dart';
+import 'package:mubrambl/src/credentials/keystore.dart';
 
 /// Class that provides the signing functionality for a given key-pair
 class SigningKey {
