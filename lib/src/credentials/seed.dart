@@ -1,6 +1,6 @@
 import 'package:bip32_ed25519/bip32_ed25519.dart';
-import 'package:ed25519_edwards/ed25519_edwards.dart';
 import 'package:mubrambl/src/credentials/x_prv.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/errors.dart';
 
 /// Seed used to generate the root private key of the HD.
@@ -11,9 +11,9 @@ class Seed {
   Seed(this.bytes);
 
   factory Seed.from_bytes(Uint8List buffer) {
-    if (buffer.length != SeedSize) {
+    if (buffer.length != SEED_SIZE) {
       throw InvalidSeedSize(
-          'Invalid Seed Size, expected $SeedSize bytes, but received ${buffer.length} bytes.');
+          'Invalid Seed Size, expected $SEED_SIZE bytes, but received ${buffer.length} bytes.');
     }
     return Seed(buffer);
   }
