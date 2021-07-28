@@ -47,6 +47,7 @@ XPub derive_child_public(XPub xPub, int index) {
       .keyBytes));
 }
 
+/// Generates a public key from the extended secret
 Uint8List mk_public_key(Uint8List extended_secret) {
   var left = List.filled(TweetNaCl.publicKeyLength, 0);
   var pk =

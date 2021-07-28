@@ -5,11 +5,10 @@ import 'package:mubrambl/src/utils/errors.dart';
 
 /// Seed used to generate the root private key of the HD.
 class Seed {
-  /// create a Seed by taking ownership of the given array
-
   Uint8List bytes;
   Seed(this.bytes);
 
+  /// create a Seed by taking ownership of the given array
   factory Seed.from_bytes(Uint8List buffer) {
     if (buffer.length != SEED_SIZE) {
       throw InvalidSeedSize(
@@ -25,6 +24,7 @@ class Seed {
   Uint8List get as_ref => bytes;
 }
 
+/// Function that is used for the testing of the Seed class
 void seed_xprv_eq(Seed seed, Uint8List expectedXPrv) {
   final xPrv = XPrv.generate_from_seed(seed.as_ref);
   compare_xprv(xPrv.as_ref, expectedXPrv);

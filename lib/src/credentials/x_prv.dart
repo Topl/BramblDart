@@ -3,8 +3,6 @@ import 'dart:typed_data';
 
 import 'package:bip32_ed25519/bip32_ed25519.dart';
 import 'package:collection/collection.dart';
-import 'package:convert/convert.dart';
-import 'package:crypto/crypto.dart';
 import 'package:hex/hex.dart';
 import 'package:mubrambl/src/credentials/seed.dart';
 import 'package:mubrambl/src/credentials/x_pub.dart';
@@ -77,6 +75,7 @@ class XPrv {
     return XPrv(bytes);
   }
 
+  ///Generate an Extended Private Key from the BIP 39 seed
   factory XPrv.generate_from_bip_39(Seed seed) {
     final output = ExtendedSigningKey.fromSeed(seed.as_ref.sublist(0, 32))
         .keyBytes
@@ -105,6 +104,9 @@ class XPrv {
     return XPub.from_bytes(out);
   }
 
+  /// Public parent key to public child key
+  ///
+  /// Computes a child extended private key from the parent extended private key.
   XPrv derive_child(int index) {
     return XPrv(Uint8List.fromList(
         Bip32Ed25519KeyDerivation().ckdPriv(Bip32SigningKey(bytes), index)));
@@ -113,153 +115,8 @@ class XPrv {
   Uint8List get as_ref => bytes;
 }
 
-/// Private parent key to private child key
-///
-/// It computes a child extended private key from the parent extended private key.
-/// It is only defined for non-hardened child keys.
-// XPrv derive_child_private(XPrv xPrv, BigInt index) {
-//   /*
-//      * If so (hardened child):
-//      *    let Z = HMAC-SHA512(Key = cpar, Data = 0x00 || ser256(left(kpar)) || ser32(i)).
-//      *    let I = HMAC-SHA512(Key = cpar, Data = 0x01 || ser256(left(kpar)) || ser32(i)).
-//      * If not (normal child):
-//      *    let Z = HMAC-SHA512(Key = cpar, Data = 0x02 || serP(point(kpar)) || ser32(i)).
-//      *    let I = HMAC-SHA512(Key = cpar, Data = 0x03 || serP(point(kpar)) || ser32(i)).
-//      **/
-
-//   final ekey = xPrv.as_ref.sublist(0, 64);
-//   final kl = ekey.sublist(0, 32);
-//   final kr = ekey.sublist(32, 64);
-//   final chaincode = xPrv.as_ref.sublist(64);
-//   final seri = le(index);
-
-//   var zmacOutput = AccumulatorSink<Digest>();
-//   var imacOutput = AccumulatorSink<Digest>();
-//   final zmac = Hmac(sha512, chaincode).startChunkedConversion(zmacOutput);
-//   final imac = Hmac(sha512, chaincode).startChunkedConversion(imacOutput);
-
-//   switch (to_type(index)) {
-//     case (DerivationType.Soft):
-//       {
-//         final pk = mk_public_key(ekey);
-//         final firstChunk = [0x2];
-//         final secondChunk = pk;
-//         final thirdChunk = seri;
-//         final altFirstChunk = [0x3];
-//         zmac.add(firstChunk);
-//         zmac.add(secondChunk);
-//         zmac.add(thirdChunk);
-//         zmac.close();
-//         imac.add(altFirstChunk);
-//         imac.add(secondChunk);
-//         imac.add(thirdChunk);
-//         imac.close();
-//       }
-//       break;
-//     case (DerivationType.Hard):
-//       {
-//         final firstChunk = [0x0];
-//         final secondChunk = ekey;
-//         final thirdChunk = seri;
-//         final altFirstChunk = [0x1];
-//         zmac.add(firstChunk);
-//         zmac.add(secondChunk);
-//         zmac.add(thirdChunk);
-//         zmac.close();
-//         imac.add(altFirstChunk);
-//         imac.add(secondChunk);
-//         imac.add(thirdChunk);
-//         imac.close();
-//       }
-//   }
-
-//   final zout = zmacOutput.events.single.bytes;
-//   final zl = Uint8List.fromList(zout.sublist(0, 32));
-//   final zr = Uint8List.fromList(zout.sublist(32, 64));
-
-//   // left = kl + 8 * trunc28(zl)
-//   final left = add28_mul8(kl, zl);
-//   // right = zr + kr
-//   final right = add_256bits(kr, zr);
-
-//   final iout = imacOutput.events.single.bytes;
-//   final cc = Uint8List.fromList(iout.sublist(32));
-//   return XPrv(mk_xprv(left, right, cc));
-// }
-
+/// This function is used in the unit testing around the extended private key
 void compare_xprv(Uint8List xPrv, Uint8List expected_xPrv) {
   assert(eq(xPrv.sublist(64), expected_xPrv.sublist(64)), 'chain code');
   assert(eq(xPrv.sublist(0, 64), expected_xPrv.sublist(0, 64)), 'extended key');
-}
-
-DerivationType to_type(BigInt index) {
-  if (index >= BigInt.from(0x80000000)) {
-    return DerivationType.Hard;
-  } else {
-    return DerivationType.Soft;
-  }
-}
-
-enum DerivationType {
-  Soft,
-  Hard,
-}
-
-Uint8List le(BigInt i) {
-  return Uint8List.fromList([
-    i.toUnsigned(8).toInt(),
-    (i >> 8).toUnsigned(8).toInt(),
-    (i >> 16).toUnsigned(8).toInt(),
-    (i >> 32).toUnsigned(8).toInt()
-  ]);
-}
-
-Uint8List add28_mul8(Uint8List x, Uint8List y) {
-  assert(x.length == 32);
-  assert(y.length == 32);
-
-  final out = Uint8List(32);
-
-  var carry = BigInt.zero.toUnsigned(16);
-  for (var i = 0; i < 28; i++) {
-    final r = BigInt.from(x[i]).toUnsigned(16) +
-        (BigInt.from(y[i]).toUnsigned(16) << 3) +
-        carry;
-    out[i] = (r & BigInt.from(0xff)).toUnsigned(8).toInt();
-    carry = (r >> 8).toUnsigned(16);
-  }
-  for (var i = 28; i < 32; i++) {
-    final r = BigInt.from(x[i]) + carry;
-    out[i] = (r & BigInt.from(0xff)).toUnsigned(8).toInt();
-    carry = (r >> 8).toUnsigned(16);
-  }
-  return out;
-}
-
-Uint8List add_256bits(Uint8List x, Uint8List y) {
-  assert(x.length == 32);
-  assert(y.length == 32);
-
-  final out = Uint8List(32);
-
-  var carry = BigInt.zero.toUnsigned(16);
-  for (var i = 0; i < 32; i++) {
-    final r = BigInt.from(x[i].toUnsigned(16)) +
-        BigInt.from(y[i].toUnsigned(16)) +
-        carry;
-    out[i] = r.toUnsigned(8).toInt();
-    carry = (r >> 8).toUnsigned(16);
-  }
-  return out;
-}
-
-Uint8List mk_xprv(Uint8List kl, Uint8List kr, Uint8List cc) {
-  assert(kl.length == 32);
-  assert(kr.length == 32);
-  assert(cc.length == ChainCode.chainCodeLength);
-  final output = Uint8List(XPRV_SIZE);
-  output.setRange(0, 32, kl);
-  output.setRange(32, 64, kr);
-  output.setRange(64, 96, cc);
-  return output;
 }
