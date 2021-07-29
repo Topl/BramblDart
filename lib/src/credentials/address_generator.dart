@@ -4,6 +4,7 @@ import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/x_pub.dart';
 import 'package:mubrambl/src/utils/network.dart';
 
+/// Class that will be used by the Credential Manager to generate addresses
 class AddressGenerator {
   final String publicKeyBase58;
   final Network network;
@@ -15,6 +16,7 @@ class AddressGenerator {
 
   String get rootKey => publicKeyBase58;
 
+  /// Uses the cached root public key to generate new addresses
   generate(List<int> idxs) {
     // cache credential manager public key
     var k = _credentialManagerPublicKey ??= XPub.from_base58(publicKeyBase58);
