@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:mubrambl/src/bip32-ed25519/bip32_ed25519.dart';
+import 'package:mubrambl/src/crypto/keystore.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:pinenacl/key_derivation.dart';
 
@@ -21,9 +21,9 @@ class ToplKey extends Bip32Ed25519 {
   Bip32Key doImport(String key) {
     // First we try the verify key as it's very cheap computationally.
     try {
-      return Bip32VerifyKey.decode(key);
+      return Bip32VerifyKey(str2ByteArray(key));
     } catch (e) {
-      return Bip32SigningKey.decode(key);
+      return Bip32SigningKey(str2ByteArray(key));
     }
   }
 }

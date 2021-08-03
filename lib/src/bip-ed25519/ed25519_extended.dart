@@ -12,9 +12,6 @@ class ExtendedSigningKey extends SigningKey {
   ExtendedSigningKey(Uint8List secretBytes) : this.fromValidBytes(secretBytes);
   ExtendedSigningKey.fromSeed(Uint8List seed) : this(_seedToSecret(seed));
 
-  ExtendedSigningKey.decode(String keyString, {Encoder coder = decoder})
-      : this(coder.decode(keyString));
-
   ExtendedSigningKey.generate()
       : this.normalizeBytes(PineNaClUtils.randombytes(keyLength));
 
@@ -95,9 +92,4 @@ class ExtendedSigningKey extends SigningKey {
 
     return SignedMessage.fromList(signedMessage: sm);
   }
-
-  static const decoder = Bech32Coder(hrp: 'ed25519e_sk');
-
-  @override
-  Encoder get encoder => decoder;
 }

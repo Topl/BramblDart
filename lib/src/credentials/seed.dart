@@ -1,5 +1,4 @@
 import 'package:bip32_ed25519/bip32_ed25519.dart';
-import 'package:mubrambl/src/credentials/x_prv.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/errors.dart';
 
@@ -22,10 +21,4 @@ class Seed {
   }
 
   Uint8List get as_ref => bytes;
-}
-
-/// Function that is used for the testing of the Seed class
-void seed_xprv_eq(Seed seed, Uint8List expectedXPrv) {
-  final xPrv = XPrv.generate_from_seed(seed.as_ref);
-  compare_xprv(xPrv.as_ref, expectedXPrv);
 }

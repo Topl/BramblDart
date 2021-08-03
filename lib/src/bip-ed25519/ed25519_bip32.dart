@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:mubrambl/src/crypto/keystore.dart';
 import 'package:pinenacl/ed25519.dart';
 import 'package:pinenacl/digests.dart';
 import 'package:pinenacl/tweetnacl.dart';
@@ -27,7 +28,7 @@ class Bip32Ed25519 extends Bip32Ed25519KeyDerivation with Bip32KeyTree {
     this.root = master(masterSeed);
   }
   Bip32Ed25519.seed(String seed) {
-    this.root = master(HexCoder.instance.decode(seed));
+    this.root = master(str2ByteArray(seed));
   }
 
   Bip32Ed25519.import(String key) {
@@ -40,7 +41,7 @@ class Bip32Ed25519 extends Bip32Ed25519KeyDerivation with Bip32KeyTree {
   /// FIXME: BIP32-ED25519 specific depth check
   static final int maxDepth = 1048576 - 1;
 
-  /// The default implementation of the origianl BIP32-ED25519's master key
+  /// The default implementation of the origil BIP32-ED25519's master key
   /// generation.
   Bip32Key master(Uint8List masterSecret) {
     final secretBytes = Hash.sha512(masterSecret);
@@ -63,9 +64,9 @@ class Bip32Ed25519 extends Bip32Ed25519KeyDerivation with Bip32KeyTree {
   @override
   Bip32Key doImport(String key) {
     try {
-      return Bip32VerifyKey.decode(key);
+      return Bip32VerifyKey(str2ByteArray(key));
     } catch (e) {
-      return Bip32SigningKey.decode(key);
+      return Bip32SigningKey(str2ByteArray(key));
     }
   }
 }
@@ -227,11 +228,6 @@ class Bip32VerifyKey extends VerifyKey with Bip32PublicKey {
     _chainCode = ChainCode(suffix);
   }
 
-  Bip32VerifyKey.decode(String data, {Encoder coder = decoder})
-      : super.decode(data, coder: coder) {
-    _chainCode = ChainCode(suffix);
-  }
-
   Bip32VerifyKey.fromKeyBytes(Uint8List pubBytes, Uint8List chainCodeBytes,
       {int depth = 0})
       : this([...pubBytes, ...chainCodeBytes].toUint8List());
@@ -254,20 +250,12 @@ class Bip32VerifyKey extends VerifyKey with Bip32PublicKey {
     return Bip32Ed25519KeyDerivation.instance.ckdPub(this, index)
         as Bip32VerifyKey;
   }
-
-  static const decoder = Bech32Coder(hrp: 'root_xpk');
-
-  @override
-  Encoder get encoder => decoder;
 }
 
 class Bip32SigningKey extends ExtendedSigningKey with Bip32PrivateKey {
   /// Throws Error as it is very dangerous to have non prune-to-buffered bytes.
   Bip32SigningKey(Uint8List secretBytes, {int depth = 0})
       : this.normalizeBytes(validateKeyBits(secretBytes), depth: depth);
-
-  Bip32SigningKey.decode(String key, {Encoder coder = decoder})
-      : this(coder.decode(key));
 
   Bip32SigningKey.generate()
       : this.normalizeBytes(TweetNaCl.randombytes(keyLength));
@@ -339,9 +327,4 @@ class Bip32SigningKey extends ExtendedSigningKey with Bip32PrivateKey {
     return Bip32Ed25519KeyDerivation.instance.ckdPriv(this, index)
         as Bip32SigningKey;
   }
-
-  static const decoder = Bech32Coder(hrp: 'root_xsk');
-
-  @override
-  Encoder get encoder => decoder;
 }
