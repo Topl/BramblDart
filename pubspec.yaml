@@ -22,4 +22,5 @@ dependencies:
   uuid: ^3.0.4
   hex: ^0.2.0
   ed25519_edwards: ^0.2.1
+  built_collection: ^5.1.0
 
