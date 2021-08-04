@@ -25,9 +25,19 @@ class TokenMetadata {
   /// Asset Website
   final String? url;
 
-  TokenMetadata(this.name, this.description, this.url);
+  TokenMetadata({required this.name, required this.description, this.url});
 
   @override
   String toString() =>
       'TokenMetadata(name: $name url: $url description: $description';
 }
+
+/// returns 'poly' as the currency unit, whereas all other native assets are identified by their assetCode, a Base58 encoded string.
+/// For consistency, poly unit values must be converted to poly strings.
+///
+final polyToken = Token(
+    name: 'poly',
+    quantity: '200000000',
+    data: TokenMetadata(
+        name: 'poly',
+        description: 'Principal token used for paying network fees on Topl'));
