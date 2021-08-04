@@ -19,12 +19,12 @@ class ToplNetwork {
 
   static ToplNetwork network(NetworkName networkName) {
     if (_map.isEmpty) {
-      _map[NetworkName.private] = ToplNetwork(
-          NetworkName.private, 'localhost:8082', toplTestNetPrivate);
-      _map[NetworkName.valhalla] = ToplNetwork(NetworkName.valhalla,
-          'https://staging.vertx.topl.services/valhalla', toplTestNetPublic);
-      _map[NetworkName.toplnet] = ToplNetwork(
-          NetworkName.toplnet, 'https://torus.topl.services', toplPublic);
+      _map[NetworkName.private] =
+          ToplNetwork(NetworkName.private, '', toplTestNetPrivate);
+      _map[NetworkName.valhalla] =
+          ToplNetwork(NetworkName.valhalla, '', toplTestNetPublic);
+      _map[NetworkName.toplnet] =
+          ToplNetwork(NetworkName.toplnet, '', toplPublic);
     }
     return _map[networkName]!;
   }

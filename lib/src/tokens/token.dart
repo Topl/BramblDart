@@ -37,7 +37,7 @@ class TokenMetadata {
 ///
 final polyToken = Token(
     name: 'poly',
-    quantity: '200000000',
+    quantity: '200000000000000000',
     data: TokenMetadata(
         name: 'poly',
         description: 'Principal token used for paying network fees on Topl'));
