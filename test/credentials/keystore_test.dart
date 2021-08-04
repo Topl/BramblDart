@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-import 'package:mubrambl/src/credentials/keystore.dart';
-import 'package:mubrambl/src/utils/util.dart';
+import 'package:mubrambl/src/crypto/keystore.dart';
 import 'package:test/test.dart';
 
 import 'example_keystores.dart' as data;
@@ -15,8 +14,8 @@ void main() {
       final privateKey = content['priv'] as String;
       final keystoreData = content['json'] as Map;
 
-      final keystore = KeyStore.fromJson(json.encode(keystoreData), password);
-      expect(toHex(keystore.privateKey.as_ref), privateKey);
+      final keystore = KeyStore.fromV1Json(json.encode(keystoreData), password);
+      expect(keystore.privateKey, privateKey);
 
       final encodedWallet = json.decode(keystore.toJson()) as Map;
 
