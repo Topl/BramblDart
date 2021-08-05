@@ -1,11 +1,7 @@
 import 'dart:typed_data';
 import 'package:fast_base58/fast_base58.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/credentials/address_generator.dart';
-import 'package:mubrambl/src/credentials/x_pub.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:collection/collection.dart';
-import 'package:mubrambl/src/utils/network.dart';
 
 /// TODO: Feature: support custom defined networks
 final validNetworks = ['private', 'toplnet', 'valhalla'];
@@ -241,24 +237,6 @@ Uint8List toUnitList(String str) {
     bArr[i >> 1] = ((hex(s[i]) << 4) | hex(s[i + 1]));
   }
   return bArr;
-}
-
-///
-///Generates Topl addresses from an AddressGenerator
-///BIP32 public key. This key should have been generated following the
-///BIP39 path
-///
-List<String> getAddresses(AddressGenerator addressGenerator, List<int> indexes,
-    Network network, String propositionType) {
-  final addresses = <String>[];
-  final keyPtr = XPub.from_base58(addressGenerator.publicKeyBase58);
-  for (var i = 0; i < indexes.length; i++) {
-    final toplAddress =
-        ToplAddress.fromPublicKey(keyPtr.as_ref, network, propositionType);
-    final toplAddressEncoded = toplAddress.base58;
-    addresses.add(toplAddressEncoded);
-  }
-  return addresses;
 }
 
 /// Interface for dart:io [File].
