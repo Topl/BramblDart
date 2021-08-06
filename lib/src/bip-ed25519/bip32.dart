@@ -1,3 +1,5 @@
+import 'package:mubrambl/src/bip-ed25519/ed25519_bip32.dart';
+import 'package:mubrambl/src/crypto/keystore.dart';
 import 'package:pinenacl/api.dart';
 
 class ChainCode extends ByteList {
@@ -57,7 +59,14 @@ abstract class Bip32KeyTree {
   bool get isPrivate => root is Bip32PrivateKey;
 
   Bip32Key master(Uint8List seed);
-  Bip32Key doImport(String key);
+  static Bip32Key doImport(String key) {
+    // First we try the verify key as it's very cheap computationally.
+    try {
+      return Bip32VerifyKey(str2ByteArray(key));
+    } catch (e) {
+      return Bip32SigningKey(str2ByteArray(key));
+    }
+  }
 
   Bip32Key pathToKey(String path) {
     final kind = path.split('/').removeAt(0);

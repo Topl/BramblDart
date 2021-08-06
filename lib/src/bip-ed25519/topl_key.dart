@@ -18,7 +18,7 @@ class ToplKey extends Bip32Ed25519 {
   }
 
   @override
-  Bip32Key doImport(String key) {
+  static Bip32Key doImport(String key) {
     // First we try the verify key as it's very cheap computationally.
     try {
       return Bip32VerifyKey(str2ByteArray(key));

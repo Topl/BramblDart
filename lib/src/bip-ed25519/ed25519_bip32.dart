@@ -62,7 +62,7 @@ class Bip32Ed25519 extends Bip32Ed25519KeyDerivation with Bip32KeyTree {
   }
 
   @override
-  Bip32Key doImport(String key) {
+  static Bip32Key doImport(String key) {
     try {
       return Bip32VerifyKey(str2ByteArray(key));
     } catch (e) {
