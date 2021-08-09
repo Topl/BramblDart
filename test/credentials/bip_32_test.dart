@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:mubrambl/src/bip-ed25519/ed25519_bip32.dart';
+import 'package:mubrambl/src/bip/topl.dart';
 import 'package:test/test.dart';
 
 final chainPairs = [
