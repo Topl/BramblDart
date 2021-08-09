@@ -15,6 +15,7 @@ Uint8List createHash(Uint8List buffer) {
   return blake2b.process(buffer);
 }
 
+/// This is the method that we are using to generate the hmac used in deriving the mac
 Uint8List hmacSHA512(Uint8List key, Uint8List data) {
   final _tmp = HMac(SHA512Digest(), 128)..init(KeyParameter(key));
   return _tmp.process(data);

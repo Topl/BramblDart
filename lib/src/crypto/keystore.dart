@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:mubrambl/src/crypto/random_bridge.dart';
-import 'package:mubrambl/src/models/x_prv.dart';
+import 'package:mubrambl/src/utils/network.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:mubrambl/src/utils/uuid.dart';
 import 'package:pointycastle/api.dart';
@@ -12,6 +12,25 @@ import 'package:pointycastle/key_derivators/api.dart';
 import 'package:pointycastle/key_derivators/scrypt.dart' as scrypt;
 import 'package:pointycastle/stream/ctr.dart';
 import 'dart:typed_data';
+
+/// Default options for key generation as of 8.3.2021
+const defaultOptions = <String, dynamic>{
+  // symmetric cipher for private key encryption
+  'cipher': 'aes-256-ctr',
+
+  // initialization vector size in bytes
+  'ivBytes': '16',
+
+  // private key size in bytes
+  'keyBytes': '32',
+
+  // kdf parameters
+  'kdfParams': {'dkLen': 32, 'n': 262144, 'r': 8, 'p': 1},
+
+  //network
+  // ignore: unnecessary_const
+  'network': const Network(false, 0x01, 'toplnet')
+};
 
 abstract class _KeyDerivator {
   Uint8List deriveKey(Uint8List password);
@@ -39,11 +58,11 @@ class _ScryptKeyDerivator extends _KeyDerivator {
   @override
   Map<String, dynamic> encode() {
     return {
-      'dklen': dklen,
+      'dkLen': dklen,
       'n': n,
       'r': r,
       'p': p,
-      'salt': toHex(salt),
+      'salt': Base58Encode(salt),
     };
   }
 
@@ -51,13 +70,13 @@ class _ScryptKeyDerivator extends _KeyDerivator {
   final String name = 'scrypt';
 }
 
-/// Represents a key store file. Wallets are used to securely store credentials
+/// Represents a key store file. KeyStores are used to securely store credentials
 /// like a private key belonging to a Topl address. The private key in a
-/// wallet is encrypted with a secret password that needs to be known in order
+/// keystore is encrypted with a secret password that needs to be known in order
 /// to obtain the private key.
 class KeyStore {
   // The credentials stored in this key store file
-  final XPrv privateKey;
+  final String privateKey;
 
   /// The key derivator used to obtain the aes decryption key from the password
   final _KeyDerivator _derivator;
@@ -80,7 +99,7 @@ class KeyStore {
   /// The default value for [scryptN] is 8192. Be aware that this N must be a
   /// power of two.
 
-  factory KeyStore.createNew(XPrv credentials, String password, Random random,
+  factory KeyStore.createNew(String credentials, String password, Random random,
       {int scryptN = 8192, int p = 1}) {
     final passwordBytes = Uint8List.fromList(latin1.encode(password));
     final dartRandom = RandomBridge(random);
@@ -93,28 +112,28 @@ class KeyStore {
 
   /// Reads and unlocks the key store denoted in the json string given with the
   /// specified [password]. [encoded] must be the String contents of a valid
-  /// v2 Topl key store.
-  factory KeyStore.fromJson(String encoded, String password) {
+  /// v1 Topl key store.
+  factory KeyStore.fromV1Json(String encoded, String password) {
     /*
-      In order to read the wallet and obtain the secret key stored in it, we
+      In order to read the keystore and obtain the secret key stored in it, we
       need to do the following:
       1: Key Derivation: Based on the key derivator specified (either pbdkdf2 or
          scryt), we need to use the password to obtain the aes key used to
          decrypt the private key.
       2: Using the obtained aes key and the iv parameter, decrypt the private
-         key stored in the wallet.
+         key stored in the keystore.
     */
 
     final data = json.decode(encoded);
 
     // Ensure version is 2, only version that we support at the moment
     final version = data['version'];
-    if (version != 2) {
+    if (version != 1) {
       throw ArgumentError.value(
           version,
           'version',
           'Library only supports '
-              'version 2 of wallet files at the moment. However, the following value'
+              'version 1 of key store files at the moment. However, the following value'
               ' has been given:');
     }
 
@@ -124,13 +143,13 @@ class KeyStore {
 
     _KeyDerivator derivator;
 
-    final derParams = crypto['kdfparams'] as Map<String, dynamic>;
+    final salt = crypto['kdfSalt'] as String;
     derivator = _ScryptKeyDerivator(
-        derParams['dklen'] as int,
-        derParams['n'] as int,
-        derParams['r'] as int,
-        derParams['p'] as int,
-        Uint8List.fromList(str2ByteArray(derParams['salt'] as String)));
+        defaultOptions['kdfParams']['dkLen'] as int,
+        defaultOptions['kdfParams']['n'] as int,
+        defaultOptions['kdfParams']['r'] as int,
+        defaultOptions['kdfParams']['p'] as int,
+        Uint8List.fromList(str2ByteArray(salt)));
 
     // Now that we have the derivator, let's obtain the aes key:
     final encodedPassword =
@@ -142,26 +161,24 @@ class KeyStore {
     final derivedMac = _getMac(derivedKey, crypto['cipherText'] as String);
     if (Base58Encode(derivedMac) != crypto['mac']) {
       throw ArgumentError(
-          'Could not unlock wallet file. You either supplied the wrong password or the file is corrupted');
+          'Invalid MAC: Could not unlock key store file. You either supplied the wrong password or the file is corrupted');
     }
 
     // We only support this mode at the moment
-    if (crypto['cipher'] != 'aes-128-ctr') {
+    if (crypto['cipher'] != 'aes-256-ctr') {
       throw ArgumentError(
-          'Wallet file uses ${crypto["cipher"]} as cipher, but only aes-128-ctr is supported.');
+          'Invalid Cipher: key store file uses ${crypto["cipher"]} as cipher, but only aes-256-ctr is supported.');
     }
 
-    final iv = str2ByteArray(crypto['cipherparams']['iv'] as String);
+    final iv = str2ByteArray(crypto['cipherParams']['iv'] as String);
 
     final aes = _initCipher(false, derivedKey, iv);
 
-    final privateKey = aes.process(encryptedPrivateKey);
-
-    final credentials = XPrv(privateKey);
+    final privateKey = Base58Encode(aes.process(encryptedPrivateKey));
 
     final id = parseUuid(data['id'] as String);
 
-    return KeyStore._(credentials, derivator, encodedPassword, iv, id);
+    return KeyStore._(privateKey, derivator, encodedPassword, iv, id);
   }
 
   static Uint8List _getMac(Uint8List derivedKey, String cipherText) {
@@ -181,7 +198,7 @@ class KeyStore {
   List<int> _encryptPrivateKey() {
     final derived = _derivator.deriveKey(_password);
     final aes = _initCipher(true, derived, _iv);
-    return aes.process(privateKey.as_ref);
+    return aes.process(str2ByteArray(privateKey));
   }
 
   /// Encrypts the private key using the secret specified earlier and returns
@@ -204,6 +221,7 @@ class KeyStore {
   }
 }
 
+/// This is a utility function that is used by the keystore to decode strings that are used in the encrypted json
 Uint8List str2ByteArray(String str, {String enc = ''}) {
   if (enc == 'latin1') {
     return latin1.encode(str);
