@@ -30,8 +30,8 @@ class ToplAddress {
   }
 
   /// Parses a Topl address from the Base58 representation.
-  factory ToplAddress.fromBase58(String base58) {
-    return ToplAddress(Uint8List.fromList(Base58Decode(base58)));
+  factory ToplAddress.fromBase58(String base58, Network network) {
+    return ToplAddress(Uint8List.fromList(Base58Decode(base58)), network);
   }
 
   /// A hexadecimal representation of this address, padded to a length of 40

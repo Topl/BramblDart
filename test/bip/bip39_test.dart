@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:hex/hex.dart';
-import 'package:mubrambl/src/bip39/bip39_base.dart';
+import 'package:mubrambl/src/bip/bip39_base.dart';
 import 'package:test/test.dart';
 import 'package:unorm_dart/unorm_dart.dart';
 

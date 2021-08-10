@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:mubrambl/brambl.dart';
 import 'package:mubrambl/src/address/addresses.dart';
+import 'package:mubrambl/src/bip/topl.dart';
 import 'package:mubrambl/src/utils/network.dart';
 import 'package:mubrambl/src/utils/util.dart';
 
@@ -93,13 +93,13 @@ class AddressChain {
     });
   }
 
-  get addresses => _addresses;
+  Addresses get addresses => _addresses;
 
-  get publicKey => _addressGenerator.publicKeyBase58;
+  String? get publicKey => _addressGenerator.publicKeyBase58;
 
   int size() => _addresses.addresses.length;
 
-  _selfCheck() {
+  void _selfCheck() {
     assert(_isInitialized, 'AddressChain::_selfCheck(): isInitialized');
     assert(
         _addresses.addresses.length > 0, 'AddressChain::_selfCheck(): length');
