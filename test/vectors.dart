@@ -1,3 +1,4 @@
+/// These test vectors are the official BIP-39 test vectors from the original proposal
 final ENGLISH_TEST_VECTORS = [
   {
     'entropy': '00000000000000000000000000000000',
