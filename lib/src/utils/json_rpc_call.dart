@@ -42,13 +42,7 @@ Future<Result<T, String>> dioCall<T>(
     }
     return Err(
         translateErrorMessage(dioError: dioError, subject: errorSubject));
-    // } on SocketException catch (e) {
-    //   print("SocketException: ${e.message}");
-    //   if (onError != null) {
-    //     onError(exception: e);
-    //   }
   } on Exception catch (e) {
-    //print("Exception: ${e.toString()}");
     if (onError != null) {
       onError(exception: e);
     }

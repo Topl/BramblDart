@@ -23,4 +23,7 @@ dependencies:
   ed25519_edwards: ^0.2.1
   unorm_dart: ^0.2.0
   intl: ^0.17.0
+  dio: ^4.0.0
+  oxidized: ^4.2.0
+  quiver: ^3.0.1
 
