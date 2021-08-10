@@ -61,13 +61,15 @@ String translateErrorMessage({required DioError dioError, String? subject}) {
   switch (dioError.response!.statusCode) {
     case 400: //HTTP 400 return code is used when the request is not valid.
       return '${prefix}request is not valid';
+    case 401: // HTTP 401 return code is used when the user provides an empty or inaccurate api key.
+      return 'not authenticated';
     case 402: //HTTP 402 return code is used when the projects exceed their daily request limit.
       return 'exceeded daily request limit';
     case 403: //HTTP 403 return code is used when the request is not authenticated.
       return 'not authenticated';
     case 404: // HTTP 404 return code is used when the resource doesn't exist.
-      return "${prefix}doesn't exist"; // HTTP 418 return code is used when the user has been auto-banned for flooding too much after previously receiving error code 402 or 429.
-    case 418:
+      return "${prefix}doesn't exist";
+    case 418: // HTTP 418 return code is used when the user has been auto-banned for flooding too much after previously receiving error code 402 or 429.
       return 'auto-banned';
     case 429: // HTTP 429 return code is used when the user has sent too many requests in a given amount of time and therefore has been rate-limited.
       return 'rate-limited: sent too many requests';
