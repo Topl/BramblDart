@@ -51,7 +51,7 @@ Future<Result<T, String>> dioCall<T>(
 }
 
 ///
-/// vertx error codes to user readable messages
+/// network error codes to user readable messages
 ///
 String translateErrorMessage({required DioError dioError, String? subject}) {
   if (dioError.response == null) {
@@ -62,18 +62,18 @@ String translateErrorMessage({required DioError dioError, String? subject}) {
     case 400: //HTTP 400 return code is used when the request is not valid.
       return '${prefix}request is not valid';
     case 402: //HTTP 402 return code is used when the projects exceed their daily request limit.
-      return 'exceded Torus daily request limit';
+      return 'exceeded daily request limit';
     case 403: //HTTP 403 return code is used when the request is not authenticated.
       return 'not authenticated';
     case 404: // HTTP 404 return code is used when the resource doesn't exist.
       return "${prefix}doesn't exist"; // HTTP 418 return code is used when the user has been auto-banned for flooding too much after previously receiving error code 402 or 429.
     case 418:
-      return 'auto-banned from Torus';
+      return 'auto-banned';
     case 429: // HTTP 429 return code is used when the user has sent too many requests in a given amount of time and therefore has been rate-limited.
       return 'rate-limited: sent too many requests';
     case 500: //  HTTP 500 return code is used when our endpoints are having a problem.
-      return 'Torus Nodes are having problems';
+      return 'Bifrost Nodes are having problems';
     default:
-      return 'unknown torus error: ${dioError.response!.statusCode}';
+      return 'unknown network error: ${dioError.response!.statusCode}';
   }
 }
