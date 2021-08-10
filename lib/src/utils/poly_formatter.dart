@@ -11,7 +11,7 @@ import 'package:unorm_dart/unorm_dart.dart';
 /// The currency factory method allows complete customization.
 ///
 class PolyFormatter {
-  static const symbol = 'P';
+  static const symbol = 'φ';
   static const POLY = 'POLY ';
   final NumberFormat formatter;
 
