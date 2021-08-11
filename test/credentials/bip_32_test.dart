@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 //
 // BIP-44 path: m / purpose' / coin_type' / account_ix' / change_chain / address_ix
 //
-// Cardano adoption: m / 1852' / 1851' / 0' / change_chain / address_ix
+// Topl adoption: m / 1852' / 7091' / 0' / change_chain / address_ix
 //
 //
 // +--------------------------------------------------------------------------------+
