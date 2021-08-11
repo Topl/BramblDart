@@ -29,7 +29,7 @@ import 'package:test/test.dart';
 // |   Purpose Private Key    |
 // +--------------------------+
 //        |
-//        | coin type (e.g. 1815' for ADA)
+//        | coin type (e.g. 7091' for Topl)
 //        v
 // +--------------------------+
 // |  Coin Type Private Key   |
