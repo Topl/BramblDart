@@ -27,6 +27,8 @@ class KeyHash32 extends CredentialHash32 {
   KeyHash32(List<int> bytes) : super(bytes);
 }
 
+/// The abstract class of a Topl Address that contains all of the components to generate a Topl Address
+/// [see](https://topl.readme.io/docs/how-topl-addresses-are-generated)
 abstract class ToplAddress extends ByteList {
   final Network network;
   late Proposition proposition;
@@ -35,13 +37,15 @@ abstract class ToplAddress extends ByteList {
 
   AddressType get addressType;
 
+  /// Human readable address
   String toBase58() {
     return encode(Base58Encoder.instance);
   }
 
+  /// Note that this give much more detail than toBase58, designed for developers who want to inspect addresses in detail.
   @override
   String toString() {
-    return '${addressTypeString(addressType)} ${network.networkPrefixString} ${proposition.propositionName}{toBase58()}';
+    return '${addressTypeString(addressType)} ${network.networkPrefixString} ${proposition.propositionName}${toBase58()}';
   }
 
   static ToplAddress fromBase58(String address) {
@@ -49,6 +53,7 @@ abstract class ToplAddress extends ByteList {
     return fromBytes(bytes);
   }
 
+  /// Generates an address from the KeyHash32
   static ToplAddress fromBytes(List<int> bytes) {
     final networkPrefix = bytes[0];
     final addrType = bytes[1];
@@ -68,6 +73,7 @@ abstract class ToplAddress extends ByteList {
   }
 }
 
+/// Legacy Implementation of the Topl Address to support Curve 25519 signing
 class Dion_Type_1_Address extends ToplAddress {
   Dion_Type_1_Address(Network network, CredentialHash32 paymentBytes)
       : super(
@@ -86,6 +92,7 @@ class Dion_Type_1_Address extends ToplAddress {
   }
 }
 
+// Current version of the Topl Address supporting Ed25519 signing.
 class Dion_Type_3_Address extends ToplAddress {
   Dion_Type_3_Address(Network network, CredentialHash32 paymentBytes)
       : super(
