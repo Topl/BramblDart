@@ -1,55 +1,105 @@
-import 'dart:typed_data';
-
-import 'package:collection/collection.dart';
-import 'package:fast_base58/fast_base58.dart';
-import 'package:meta/meta.dart';
+import 'package:mubrambl/src/bip/topl.dart';
+import 'package:mubrambl/src/crypto/keystore.dart';
+import 'package:mubrambl/src/encoding/base_58_encoder.dart';
 import 'package:mubrambl/src/utils/network.dart';
+import 'package:mubrambl/src/utils/proposition.dart';
 import 'package:mubrambl/src/utils/util.dart';
+import 'package:pinenacl/api.dart';
 
-/// Represents an Topl address.
-@immutable
-class ToplAddress {
-  /// The length of a Topl address, in bytes.
-  static const addressByteLength = 38;
+///
+/// Address format
+///
+/// [see](https://topl.readme.io/docs/how-topl-addresses-are-generated)
+///
+enum AddressType { Dion_Type_1, Dion_Type_3 }
 
-  final Uint8List addressBytes;
+String addressTypeString(AddressType type) {
+  final s = type.toString();
+  return s.substring(s.lastIndexOf('.') + 1);
+}
+
+abstract class CredentialHash32 extends ByteList {
+  static const hashLength = 32;
+  CredentialHash32(List<int> bytes) : super(bytes, hashLength);
+}
+
+class KeyHash32 extends CredentialHash32 {
+  KeyHash32(List<int> bytes) : super(bytes);
+}
+
+abstract class ToplAddress extends ByteList {
   final Network network;
+  late Proposition proposition;
 
-  /// An Topl address from the raw address bytes.
-  const ToplAddress(this.addressBytes, this.network)
-      : assert(addressBytes.length == addressByteLength);
+  ToplAddress(this.network, List<int> bytes) : super(bytes);
 
-  /// Constructs a Topl address from a public key. The address is formed by
-  /// appending the networkPrefix, the propositionType, the last 34 bytes of the Blake2b hash of the public key + the 4 byte checksum.
-  factory ToplAddress.fromPublicKey(
-      Uint8List publicKey, Network network, String propositionType) {
-    return ToplAddress(
-        generatePubKeyHashAddress(publicKey, network.networkPrefixString,
-            propositionType)['address'] as Uint8List,
-        network);
-  }
+  AddressType get addressType;
 
-  /// Parses a Topl address from the Base58 representation.
-  factory ToplAddress.fromBase58(String base58, Network network) {
-    return ToplAddress(Uint8List.fromList(Base58Decode(base58)), network);
-  }
-
-  /// A hexadecimal representation of this address, padded to a length of 40
-  /// characters or 20 bytes, and prefixed with "0x".
-  String get base58 => Base58Encode(addressBytes);
-
-  @override
-  String toString() => base58;
-
-  @override
-  bool operator ==(other) {
-    return identical(this, other) ||
-        (other is ToplAddress &&
-            const ListEquality().equals(addressBytes, other.addressBytes));
+  String toBase58() {
+    return encode(Base58Encoder.instance);
   }
 
   @override
-  int get hashCode {
-    return hex.hashCode;
+  String toString() {
+    return '${addressTypeString(addressType)} ${network.networkPrefixString} ${proposition.propositionName}{toBase58()}';
+  }
+
+  static ToplAddress fromBase58(String address) {
+    final bytes = str2ByteArray(address);
+    return fromBytes(bytes);
+  }
+
+  static ToplAddress fromBytes(List<int> bytes) {
+    final networkPrefix = bytes[0];
+    final addrType = bytes[1];
+    switch (addrType) {
+      // Base Address
+      case 0:
+      case 1:
+        return Dion_Type_1_Address(Network.fromNetworkPrefix(networkPrefix),
+            KeyHash32(bytes.sublist(2)));
+      case 2:
+      case 3:
+        return Dion_Type_3_Address(Network.fromNetworkPrefix(networkPrefix),
+            KeyHash32(bytes.sublist(2)));
+      default:
+        throw Exception('Unsupported Topl Address, type: $addrType');
+    }
+  }
+}
+
+class Dion_Type_1_Address extends ToplAddress {
+  Dion_Type_1_Address(Network network, CredentialHash32 paymentBytes)
+      : super(
+            network,
+            generateAddressBytes(paymentBytes, network.networkPrefix,
+                Proposition.Curve25519().propositionPrefix));
+
+  Dion_Type_1_Address.fromKeys(
+    Network network,
+    Bip32Key paymentKey,
+  ) : this(network, _toHash(paymentKey));
+  @override
+  AddressType get addressType => AddressType.Dion_Type_1;
+  static CredentialHash32 _toHash(Bip32Key key) {
+    return KeyHash32(key.buffer.asInt32List());
+  }
+}
+
+class Dion_Type_3_Address extends ToplAddress {
+  Dion_Type_3_Address(Network network, CredentialHash32 paymentBytes)
+      : super(
+            network,
+            generateAddressBytes(paymentBytes, network.networkPrefix,
+                Proposition.Ed25519().propositionPrefix));
+
+  Dion_Type_3_Address.fromKeys(
+    Network network,
+    Bip32Key paymentKey,
+  ) : this(network, _toHash(paymentKey));
+  @override
+  AddressType get addressType => AddressType.Dion_Type_3;
+  static CredentialHash32 _toHash(Bip32Key key) {
+    return KeyHash32(key.buffer.asInt32List());
   }
 }
