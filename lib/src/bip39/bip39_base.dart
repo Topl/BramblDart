@@ -107,14 +107,14 @@ String mnemonicToSeedHex(String mnemonic, {String passphrase = ''}) {
 
 bool validateMnemonic(String mnemonic, String language) {
   try {
-    mnemonicToEntropy(mnemonic, language);
+    mnemonicToEntropy(mnemonic, language: language);
   } catch (e) {
     return false;
   }
   return true;
 }
 
-String mnemonicToEntropy(mnemonic, String language) {
+String mnemonicToEntropy(mnemonic, {String language = 'english'}) {
   var words = mnemonic.split(' ');
   if (words.length % 3 != 0) {
     throw ArgumentError(_INVALID_MNEMONIC);

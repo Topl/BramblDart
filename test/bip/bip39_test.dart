@@ -8,10 +8,10 @@ import '../vectors.dart';
 
 void main() {
   var i = 0;
-  // ENGLISH_TEST_VECTORS.forEach((elem) {
-  //   testVector(elem, i, 'english');
-  //   i++;
-  // });
+  ENGLISH_TEST_VECTORS.forEach((elem) {
+    testVector(elem, i, 'english');
+    i++;
+  });
   JAPANESE_TEST_VECTORS.forEach((elem) {
     testVector(elem, i, 'japanese');
     i++;
