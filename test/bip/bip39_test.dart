@@ -1,6 +1,6 @@
 import 'dart:typed_data';
-import 'package:hex/hex.dart';
 import 'package:mubrambl/src/bip/bip39_base.dart';
+import 'package:mubrambl/src/bip/topl.dart';
 import 'package:test/test.dart';
 import 'package:unorm_dart/unorm_dart.dart';
 
@@ -109,7 +109,7 @@ void testVector(Map<String, String> v, int i, String language) {
     });
     test('generate mnemonic', () {
       var randomBytes = (int size) {
-        return Uint8List.fromList(HEX.decode(v['entropy']!));
+        return Uint8List.fromList(HexCoder.instance.decode(v['entropy']!));
       };
       final code =
           generateMnemonic(randomBytes: randomBytes, language: language);
