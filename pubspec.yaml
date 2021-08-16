@@ -19,8 +19,9 @@ dependencies:
   cryptography: ^2.0.2
   convert: ^3.0.1
   uuid: ^3.0.4
-  hex: ^0.2.0
   ed25519_edwards: ^0.2.1
   unorm_dart: ^0.2.0
   intl: ^0.17.0
+  http: ^0.13.3
+  pinenacl: ^0.3.3
 

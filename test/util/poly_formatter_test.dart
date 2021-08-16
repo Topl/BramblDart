@@ -16,19 +16,19 @@ void main() {
           PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 120000000000)));
       expect(
           formatter.format(PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 120)),
-          equals('P0.000000120'));
+          equals('φ0.000000120'));
       expect(
           formatter
               .format(PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 120000)),
-          equals('P0.000120000'));
+          equals('φ0.000120000'));
       expect(
           formatter.format(
               PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 120000000)),
-          equals('P0.120000000'));
+          equals('φ0.120000000'));
       expect(
           formatter.format(
               PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 120000000000)),
-          equals('P120.000000000'));
+          equals('φ120.000000000'));
 
       expect(
           () => formatter.format(PolyAmount.fromUnitAndValue(
@@ -38,7 +38,7 @@ void main() {
       expect(
           formatter.format(
               PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 9007199254740991)),
-          equals('P9,007,199.254740991'));
+          equals('φ9,007,199.254740991'));
     });
     test('compactCurrency', () {
       final formatter = PolyFormatter.compactCurrency();
@@ -52,27 +52,27 @@ void main() {
           PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 120000000000)));
       expect(
           formatter.format(PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 120)),
-          equals('P0.000000120'));
+          equals('φ0.000000120'));
       expect(
           formatter
               .format(PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 120000)),
-          equals('P0.000120000'));
+          equals('φ0.000120000'));
       expect(
           formatter.format(
               PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 120000000)),
-          equals('P0.120000000'));
+          equals('φ0.120000000'));
       expect(
           formatter.format(
               PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 120000000000)),
-          equals('P120'));
+          equals('φ120'));
       expect(
           formatter.format(
               PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 120000000000000)),
-          equals('P120K'));
+          equals('φ120K'));
       expect(
           formatter.format(
               PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, 9007199254740991)),
-          equals('P9.01M'));
+          equals('φ9.01M'));
       expect(
           () => formatter.format(PolyAmount.fromUnitAndValue(
               PolyUnit.nanopoly, '9000000000000000000000')),

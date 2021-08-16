@@ -1,6 +1,6 @@
 import 'dart:typed_data';
-import 'package:hex/hex.dart';
 import 'package:mubrambl/src/bip/bip39_base.dart';
+import 'package:mubrambl/src/bip/topl.dart';
 import 'package:test/test.dart';
 import 'package:unorm_dart/unorm_dart.dart';
 
@@ -8,14 +8,15 @@ import '../vectors.dart';
 
 void main() {
   var i = 0;
-  // ENGLISH_TEST_VECTORS.forEach((elem) {
-  //   testVector(elem, i, 'english');
-  //   i++;
-  // });
+  ENGLISH_TEST_VECTORS.forEach((elem) {
+    testVector(elem, i, 'english');
+    i++;
+  });
   JAPANESE_TEST_VECTORS.forEach((elem) {
     testVector(elem, i, 'japanese');
     i++;
   });
+
   group('invalid entropy', () {
     test('throws for empty entropy', () {
       try {
@@ -100,7 +101,7 @@ void testVector(Map<String, String> v, int i, String language) {
       expect(entropy, equals(v['entropy']));
     });
     test('mnemonic to seed hex', () {
-      final seedHex = mnemonicToSeedHex((mnemonics), passphrase: passphrase);
+      final seedHex = mnemonicToSeedHex(mnemonics, passphrase: passphrase);
       expect(seedHex, equals(v['seed']));
     });
     test('entropy to mnemonic', () {
@@ -109,7 +110,7 @@ void testVector(Map<String, String> v, int i, String language) {
     });
     test('generate mnemonic', () {
       var randomBytes = (int size) {
-        return Uint8List.fromList(HEX.decode(v['entropy']!));
+        return Uint8List.fromList(HexCoder.instance.decode(v['entropy']!));
       };
       final code =
           generateMnemonic(randomBytes: randomBytes, language: language);

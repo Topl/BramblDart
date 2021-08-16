@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:fast_base58/fast_base58.dart';
+import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:collection/collection.dart';
 
@@ -59,6 +60,7 @@ Map<String, dynamic> generatePubKeyHashAddress(
   }
 
   final networkHex = getHexByNetwork(networkPrefix);
+  final credentialHash = createHash(publicKey);
   // network hex + proposition hex
   b.add([networkHex, propositionMap[propositionType] ?? 0x01]);
   b.add(createHash(publicKey));
@@ -69,8 +71,15 @@ Map<String, dynamic> generatePubKeyHashAddress(
   b.add(hashChecksumBuffer);
   final address = b.toBytes().sublist(0, 38);
   result['address'] = address;
+  result['credentialHash'] = credentialHash;
+  result['checksum'] = hashChecksumBuffer;
   result['success'] = true;
   return result;
+}
+
+CredentialHash32 generateAddressBytes(
+    CredentialHash32 publicKeyBytes, int networkPrefix, int propositionType) {
+  return KeyHash32([networkPrefix] + [propositionType] + publicKeyBytes);
 }
 
 /// Returns the hex value for a given networkPrefix

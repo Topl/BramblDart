@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:mubrambl/src/bip/bip.dart';
 import 'package:mubrambl/src/crypto/keystore.dart';
+import 'package:mubrambl/src/encoding/base_58_encoder.dart';
 import 'package:pinenacl/ed25519.dart';
 import 'package:pinenacl/digests.dart';
 import 'package:pinenacl/tweetnacl.dart';
@@ -249,12 +250,25 @@ class Bip32VerifyKey extends VerifyKey with Bip32PublicKey {
     return Bip32Ed25519KeyDerivation.instance.ckdPub(this, index)
         as Bip32VerifyKey;
   }
+
+  Bip32VerifyKey.decode(String data, {Encoder coder = decoder})
+      : super.decode(data, coder: coder) {
+    _chainCode = ChainCode(suffix);
+  }
+
+  static const decoder = Base58Encoder.instance;
+
+  @override
+  Encoder get encoder => decoder;
 }
 
 class Bip32SigningKey extends ExtendedSigningKey with Bip32PrivateKey {
   /// Throws Error as it is very dangerous to have non prune-to-buffered bytes.
   Bip32SigningKey(Uint8List secretBytes, {int depth = 0})
       : this.normalizeBytes(validateKeyBits(secretBytes), depth: depth);
+
+  Bip32SigningKey.decode(String key, {Encoder coder = decoder})
+      : this(coder.decode(key));
 
   Bip32SigningKey.generate()
       : this.normalizeBytes(TweetNaCl.randombytes(keyLength));
@@ -326,4 +340,9 @@ class Bip32SigningKey extends ExtendedSigningKey with Bip32PrivateKey {
     return Bip32Ed25519KeyDerivation.instance.ckdPriv(this, index)
         as Bip32SigningKey;
   }
+
+  static const decoder = Base58Encoder.instance;
+
+  @override
+  Encoder get encoder => decoder;
 }
