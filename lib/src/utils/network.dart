@@ -14,17 +14,30 @@ class Network {
   final bool testnet;
 
   /// the networkPrefix of the network in hex ([int])
-  final int? networkPrefix;
+  final int networkPrefix;
 
   // the string of the networkPrefix
   final String networkPrefixString;
 
   const Network(this.testnet, this.networkPrefix, this.networkPrefixString);
 
+  factory Network.fromNetworkPrefix(int networkPrefix) {
+    switch (networkPrefix) {
+      case 0x01:
+        return Network(false, networkPrefix, 'toplnet');
+      case 0x10:
+        return Network(true, networkPrefix, 'valhalla');
+      case 0x40:
+        return Network(true, networkPrefix, 'private');
+      default:
+        throw Exception('Unsupported Network Prefix, type:$networkPrefix');
+    }
+  }
+
   factory Network.Toplnet() =>
-      Network(false, NETWORK_REGISTRY['toplnet'], 'toplnet');
+      Network(false, NETWORK_REGISTRY['toplnet']!, 'toplnet');
   factory Network.Valhalla() =>
-      Network(true, NETWORK_REGISTRY['valhalla'], 'valhalla');
+      Network(true, NETWORK_REGISTRY['valhalla']!, 'valhalla');
   factory Network.Private() =>
-      Network(true, NETWORK_REGISTRY['private'], 'private');
+      Network(true, NETWORK_REGISTRY['private']!, 'private');
 }

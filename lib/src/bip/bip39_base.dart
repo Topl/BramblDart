@@ -1,9 +1,10 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart' show sha256;
-import 'package:hex/hex.dart';
 import 'package:mubrambl/src/HD/keygen.dart';
+import 'package:mubrambl/src/bip/bip.dart';
 import 'package:mubrambl/src/bip/wordlists/language_registry.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/errors.dart';
@@ -65,11 +66,17 @@ String generateMnemonic(
     String language = 'english'}) {
   assert(strength % 32 == 0);
   final entropy = randomBytes(strength ~/ 8);
-  return entropyToMnemonic(HEX.encode(entropy), language: language);
+  return entropyToMnemonic(HexCoder.instance.encode(entropy),
+      language: language);
 }
 
 String entropyToMnemonic(String entropyString, {String language = 'english'}) {
-  final entropy = Uint8List.fromList(HEX.decode(entropyString));
+  final entropy;
+  try {
+    entropy = Uint8List.fromList(HexCoder.instance.decode(entropyString));
+  } catch (err) {
+    throw ArgumentError('Invalid entropy');
+  }
   if (entropy.length < 16) {
     throw ArgumentError(_INVALID_ENTROPY);
   }
