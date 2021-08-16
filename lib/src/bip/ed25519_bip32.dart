@@ -41,7 +41,7 @@ class Bip32Ed25519 extends Bip32Ed25519KeyDerivation with Bip32KeyTree {
   /// FIXME: BIP32-ED25519 specific depth check
   static final int maxDepth = 1048576 - 1;
 
-  /// The default implementation of the origil BIP32-ED25519's master key
+  /// The default implementation of the original BIP32-ED25519's master key
   /// generation.
   Bip32Key master(Uint8List masterSecret) {
     final secretBytes = Hash.sha512(masterSecret);

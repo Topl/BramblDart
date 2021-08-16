@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:mubrambl/src/bip/bip39_base.dart';
 import 'package:mubrambl/src/bip/topl.dart';
@@ -75,18 +76,14 @@ void main() {
   });
   group('generateMnemonic', () {
     test('can vary entropy length', () {
-      final words = (generateMnemonic(strength: 160)).split(' ');
+      final words =
+          (generateMnemonic(Random.secure(), strength: 160)).split(' ');
       expect(words.length, equals(15),
           reason: 'can vary generated entropy bit length');
     });
 
     test('requests the exact amount of data from an RNG', () {
-      generateMnemonic(
-          strength: 160,
-          randomBytes: (int size) {
-            expect(size, 160 / 8);
-            return Uint8List(size);
-          });
+      generateMnemonic(Random.secure(), strength: 160, language: 'english');
     });
   });
 }
@@ -95,6 +92,7 @@ void testVector(Map<String, String> v, int i, String language) {
   group('for $language($i), ${v['entropy']}', () {
     final mnemonics = nfkd(v['mnemonics']!);
     final passphrase = nfkd(v['passphrase']!);
+    final type = from_word_count(mnemonics.split(' ').length);
     setUp(() {});
     test('mnemonic to entropy', () {
       final entropy = mnemonicToEntropy(mnemonics, language);
@@ -107,15 +105,6 @@ void testVector(Map<String, String> v, int i, String language) {
     test('entropy to mnemonic', () {
       final code = entropyToMnemonic(v['entropy']!, language: language);
       expect(code, equals(mnemonics));
-    });
-    test('generate mnemonic', () {
-      var randomBytes = (int size) {
-        return Uint8List.fromList(HexCoder.instance.decode(v['entropy']!));
-      };
-      final code =
-          generateMnemonic(randomBytes: randomBytes, language: language);
-      expect(code, equals(mnemonics),
-          reason: 'generateMnemonic returns randomBytes entropy unmodified');
     });
     test('validate mnemonic', () {
       expect(validateMnemonic(mnemonics, language), isTrue,

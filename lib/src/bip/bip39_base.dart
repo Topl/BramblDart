@@ -6,17 +6,15 @@ import 'package:crypto/crypto.dart' show sha256;
 import 'package:mubrambl/src/bip/bip.dart';
 import 'package:mubrambl/src/bip/keygen.dart';
 import 'package:mubrambl/src/bip/wordlists/language_registry.dart';
+import 'package:mubrambl/src/crypto/random_bridge.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/errors.dart';
 import 'package:unorm_dart/unorm_dart.dart';
 
-const int _SIZE_BYTE = 255;
 const _INVALID_MNEMONIC = 'Invalid mnemonic';
 const _INVALID_ENTROPY = 'Invalid entropy';
 const _INVALID_CHECKSUM = 'Invalid mnemonic checksum';
 const SALT_PREFIX = 'mnemonic';
-
-typedef Uint8List RandomBytes(int size);
 
 /// BIP39 mnemonics
 ///
@@ -52,22 +50,12 @@ String _deriveChecksumBits(Uint8List entropy) {
   return _bytesToBinary(Uint8List.fromList(hash.bytes)).substring(0, CS);
 }
 
-Uint8List _randomBytes(int size) {
-  final rng = Random.secure();
-  final bytes = Uint8List(size);
-  for (var i = 0; i < size; i++) {
-    bytes[i] = rng.nextInt(_SIZE_BYTE);
-  }
-  return bytes;
-}
-
-String generateMnemonic(
-    {int strength = 128,
-    RandomBytes randomBytes = _randomBytes,
-    String language = 'english'}) {
+String generateMnemonic(Random random,
+    {int strength = 128, String language = 'english'}) {
   assert(strength % 32 == 0);
-  final entropy = randomBytes(strength ~/ 8);
-  return entropyToMnemonic(HexCoder.instance.encode(entropy),
+  final entropy = Entropy.generate(
+      from_entropy_size(strength), RandomBridge(random).nextUint8);
+  return entropyToMnemonic(HexCoder.instance.encode(entropy.bytes),
       language: language);
 }
 
@@ -291,5 +279,43 @@ Type from_entropy_size(int len) {
       return Type.Type24Words;
     default:
       throw WrongKeySize(len.toString());
+  }
+}
+
+Type from_word_count(int len) {
+  switch (len) {
+    case (9):
+      return Type.Type9Words;
+    case (12):
+      return Type.Type12Words;
+    case (15):
+      return Type.Type15Words;
+    case (18):
+      return Type.Type18Words;
+    case (21):
+      return Type.Type21Words;
+    case (24):
+      return Type.Type24Words;
+    default:
+      throw WrongNumberOfWords(len.toString());
+  }
+}
+
+int to_key_size(Type t) {
+  switch (t) {
+    case (Type.Type9Words):
+      return 96;
+    case (Type.Type12Words):
+      return 128;
+    case (Type.Type15Words):
+      return 160;
+    case (Type.Type18Words):
+      return 192;
+    case (Type.Type21Words):
+      return 224;
+    case (Type.Type24Words):
+      return 256;
+    default:
+      return 0;
   }
 }
