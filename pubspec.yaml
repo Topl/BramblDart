@@ -23,4 +23,5 @@ dependencies:
   unorm_dart: ^0.2.0
   intl: ^0.17.0
   http: ^0.13.3
+  pinenacl: ^0.3.3
 

@@ -16,6 +16,7 @@ void main() {
     testVector(elem, i, 'japanese');
     i++;
   });
+
   group('invalid entropy', () {
     test('throws for empty entropy', () {
       try {
@@ -100,7 +101,7 @@ void testVector(Map<String, String> v, int i, String language) {
       expect(entropy, equals(v['entropy']));
     });
     test('mnemonic to seed hex', () {
-      final seedHex = mnemonicToSeedHex((mnemonics), passphrase: passphrase);
+      final seedHex = mnemonicToSeedHex(mnemonics, passphrase: passphrase);
       expect(seedHex, equals(v['seed']));
     });
     test('entropy to mnemonic', () {

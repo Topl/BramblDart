@@ -1,10 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart' show sha256;
-import 'package:mubrambl/src/HD/keygen.dart';
 import 'package:mubrambl/src/bip/bip.dart';
+import 'package:mubrambl/src/bip/keygen.dart';
 import 'package:mubrambl/src/bip/wordlists/language_registry.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/errors.dart';
@@ -14,6 +14,7 @@ const int _SIZE_BYTE = 255;
 const _INVALID_MNEMONIC = 'Invalid mnemonic';
 const _INVALID_ENTROPY = 'Invalid entropy';
 const _INVALID_CHECKSUM = 'Invalid mnemonic checksum';
+const SALT_PREFIX = 'mnemonic';
 
 typedef Uint8List RandomBytes(int size);
 
@@ -102,8 +103,8 @@ String entropyToMnemonic(String entropyString, {String language = 'english'}) {
 }
 
 Uint8List mnemonicToSeed(String mnemonic, {String passphrase = ''}) {
-  final pbkdf2 = PBKDF2();
-  return pbkdf2.process(mnemonic, passphrase: passphrase);
+  final salt = Uint8List.fromList(utf8.encode(SALT_PREFIX + passphrase));
+  return generateSeed(salt, passphrase: mnemonic);
 }
 
 String mnemonicToSeedHex(String mnemonic, {String passphrase = ''}) {
@@ -204,5 +205,91 @@ class MnemonicIndex {
   ///
   String to_word(DefaultDictionary d) {
     return d.lookup_word(this);
+  }
+}
+
+typedef int G();
+
+class Entropy {
+  final Uint8List bytes;
+
+  Entropy(this.bytes);
+
+  /// Retrieve an `Entropy` from the given byteArray.
+  ///
+  /// # Error
+  ///
+  /// This function may fail if the given byteArray's length is not
+  /// one of the supported entropy length.
+  ///
+  factory Entropy.fromBytes(Uint8List bytes) {
+    final t = from_entropy_size(bytes.length * 8);
+    return Entropy.newEntropy(t, bytes);
+  }
+
+  /// generate entropy using the given random generator.
+  ///
+  factory Entropy.generate(Type t, G gen) {
+    final entropy = Entropy.newEntropy(t, Uint8List(32));
+    final bytes = entropy.bytes;
+    for (var i = 0; i < bytes.length; i++) {
+      bytes[i] = gen();
+    }
+    return entropy;
+  }
+
+  factory Entropy.newEntropy(Type t, Uint8List bytes) {
+    Uint8List e;
+    switch (t) {
+      case (Type.Type9Words):
+        e = Uint8List(12);
+        break;
+      case (Type.Type12Words):
+        e = Uint8List(16);
+        break;
+      case (Type.Type15Words):
+        e = Uint8List(20);
+        break;
+      case (Type.Type18Words):
+        e = Uint8List(24);
+        break;
+      case (Type.Type21Words):
+        e = Uint8List(28);
+        break;
+      case (Type.Type24Words):
+        e = Uint8List(32);
+        break;
+      default:
+        throw WrongKeyType(t.toString());
+    }
+    return Entropy(e);
+  }
+}
+
+enum Type {
+  Type9Words,
+  Type12Words,
+  Type15Words,
+  Type18Words,
+  Type21Words,
+  Type24Words
+}
+
+Type from_entropy_size(int len) {
+  switch (len) {
+    case (96):
+      return Type.Type9Words;
+    case (128):
+      return Type.Type12Words;
+    case (160):
+      return Type.Type15Words;
+    case (192):
+      return Type.Type18Words;
+    case (224):
+      return Type.Type21Words;
+    case (256):
+      return Type.Type24Words;
+    default:
+      throw WrongKeySize(len.toString());
   }
 }
