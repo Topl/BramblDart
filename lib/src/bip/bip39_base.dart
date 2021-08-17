@@ -1,21 +1,20 @@
+import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart' show sha256;
-import 'package:mubrambl/src/HD/keygen.dart';
 import 'package:mubrambl/src/bip/bip.dart';
+import 'package:mubrambl/src/bip/keygen.dart';
 import 'package:mubrambl/src/bip/wordlists/language_registry.dart';
+import 'package:mubrambl/src/crypto/random_bridge.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/errors.dart';
 import 'package:unorm_dart/unorm_dart.dart';
 
-const int _SIZE_BYTE = 255;
 const _INVALID_MNEMONIC = 'Invalid mnemonic';
 const _INVALID_ENTROPY = 'Invalid entropy';
 const _INVALID_CHECKSUM = 'Invalid mnemonic checksum';
-
-typedef Uint8List RandomBytes(int size);
+const SALT_PREFIX = 'mnemonic';
 
 /// BIP39 mnemonics
 ///
@@ -51,22 +50,12 @@ String _deriveChecksumBits(Uint8List entropy) {
   return _bytesToBinary(Uint8List.fromList(hash.bytes)).substring(0, CS);
 }
 
-Uint8List _randomBytes(int size) {
-  final rng = Random.secure();
-  final bytes = Uint8List(size);
-  for (var i = 0; i < size; i++) {
-    bytes[i] = rng.nextInt(_SIZE_BYTE);
-  }
-  return bytes;
-}
-
-String generateMnemonic(
-    {int strength = 128,
-    RandomBytes randomBytes = _randomBytes,
-    String language = 'english'}) {
+String generateMnemonic(Random random,
+    {int strength = 128, String language = 'english'}) {
   assert(strength % 32 == 0);
-  final entropy = randomBytes(strength ~/ 8);
-  return entropyToMnemonic(HexCoder.instance.encode(entropy),
+  final entropy = Entropy.generate(
+      from_entropy_size(strength), RandomBridge(random).nextUint8);
+  return entropyToMnemonic(HexCoder.instance.encode(entropy.bytes),
       language: language);
 }
 
@@ -102,8 +91,8 @@ String entropyToMnemonic(String entropyString, {String language = 'english'}) {
 }
 
 Uint8List mnemonicToSeed(String mnemonic, {String passphrase = ''}) {
-  final pbkdf2 = PBKDF2();
-  return pbkdf2.process(mnemonic, passphrase: passphrase);
+  final salt = Uint8List.fromList(utf8.encode(SALT_PREFIX + passphrase));
+  return generateSeed(salt, passphrase: mnemonic);
 }
 
 String mnemonicToSeedHex(String mnemonic, {String passphrase = ''}) {
@@ -204,5 +193,129 @@ class MnemonicIndex {
   ///
   String to_word(DefaultDictionary d) {
     return d.lookup_word(this);
+  }
+}
+
+typedef int G();
+
+class Entropy {
+  final Uint8List bytes;
+
+  Entropy(this.bytes);
+
+  /// Retrieve an `Entropy` from the given byteArray.
+  ///
+  /// # Error
+  ///
+  /// This function may fail if the given byteArray's length is not
+  /// one of the supported entropy length.
+  ///
+  factory Entropy.fromBytes(Uint8List bytes) {
+    final t = from_entropy_size(bytes.length * 8);
+    return Entropy.newEntropy(t, bytes);
+  }
+
+  /// generate entropy using the given random generator.
+  ///
+  factory Entropy.generate(Type t, G gen) {
+    final entropy = Entropy.newEntropy(t, Uint8List(32));
+    final bytes = entropy.bytes;
+    for (var i = 0; i < bytes.length; i++) {
+      bytes[i] = gen();
+    }
+    return entropy;
+  }
+
+  factory Entropy.newEntropy(Type t, Uint8List bytes) {
+    Uint8List e;
+    switch (t) {
+      case (Type.Type9Words):
+        e = Uint8List(12);
+        break;
+      case (Type.Type12Words):
+        e = Uint8List(16);
+        break;
+      case (Type.Type15Words):
+        e = Uint8List(20);
+        break;
+      case (Type.Type18Words):
+        e = Uint8List(24);
+        break;
+      case (Type.Type21Words):
+        e = Uint8List(28);
+        break;
+      case (Type.Type24Words):
+        e = Uint8List(32);
+        break;
+      default:
+        throw WrongKeyType(t.toString());
+    }
+    return Entropy(e);
+  }
+}
+
+enum Type {
+  Type9Words,
+  Type12Words,
+  Type15Words,
+  Type18Words,
+  Type21Words,
+  Type24Words
+}
+
+Type from_entropy_size(int len) {
+  switch (len) {
+    case (96):
+      return Type.Type9Words;
+    case (128):
+      return Type.Type12Words;
+    case (160):
+      return Type.Type15Words;
+    case (192):
+      return Type.Type18Words;
+    case (224):
+      return Type.Type21Words;
+    case (256):
+      return Type.Type24Words;
+    default:
+      throw WrongKeySize(len.toString());
+  }
+}
+
+Type from_word_count(int len) {
+  switch (len) {
+    case (9):
+      return Type.Type9Words;
+    case (12):
+      return Type.Type12Words;
+    case (15):
+      return Type.Type15Words;
+    case (18):
+      return Type.Type18Words;
+    case (21):
+      return Type.Type21Words;
+    case (24):
+      return Type.Type24Words;
+    default:
+      throw WrongNumberOfWords(len.toString());
+  }
+}
+
+int to_key_size(Type t) {
+  switch (t) {
+    case (Type.Type9Words):
+      return 96;
+    case (Type.Type12Words):
+      return 128;
+    case (Type.Type15Words):
+      return 160;
+    case (Type.Type18Words):
+      return 192;
+    case (Type.Type21Words):
+      return 224;
+    case (Type.Type24Words):
+      return 256;
+    default:
+      return 0;
   }
 }

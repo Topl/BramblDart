@@ -1,3 +1,4 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/bip/topl.dart';
 import 'package:mubrambl/src/crypto/keystore.dart';
 import 'package:mubrambl/src/encoding/base_58_encoder.dart';
@@ -18,13 +19,13 @@ String addressTypeString(AddressType type) {
   return s.substring(s.lastIndexOf('.') + 1);
 }
 
-abstract class CredentialHash32 extends ByteList {
-  static const hashLength = 32;
-  CredentialHash32(List<int> bytes) : super(bytes, hashLength);
+abstract class CredentialHash38 extends ByteList {
+  static const hashLength = 38;
+  CredentialHash38(List<int> bytes) : super(bytes, hashLength);
 }
 
-class KeyHash32 extends CredentialHash32 {
-  KeyHash32(List<int> bytes) : super(bytes);
+class KeyHash38 extends CredentialHash38 {
+  KeyHash38(List<int> bytes) : super(bytes);
 }
 
 /// The abstract class of a Topl Address that contains all of the components to generate a Topl Address
@@ -53,7 +54,7 @@ abstract class ToplAddress extends ByteList {
     return fromBytes(bytes);
   }
 
-  /// Generates an address from the KeyHash32
+  /// Generates an address from the KeyHash38
   static ToplAddress fromBytes(List<int> bytes) {
     final networkPrefix = bytes[0];
     final addrType = bytes[1];
@@ -61,12 +62,20 @@ abstract class ToplAddress extends ByteList {
       // Base Address
       case 0:
       case 1:
+        if (bytes.length != CredentialHash38.hashLength + 6) {
+          //TODO: Create proper error classes
+          throw Error();
+        }
         return Dion_Type_1_Address(Network.fromNetworkPrefix(networkPrefix),
-            KeyHash32(bytes.sublist(2)));
+            KeyHash38(bytes.sublist(2)));
       case 2:
       case 3:
+        if (bytes.length != CredentialHash38.hashLength + 6) {
+          //TODO: Create proper error classes
+          throw Error();
+        }
         return Dion_Type_3_Address(Network.fromNetworkPrefix(networkPrefix),
-            KeyHash32(bytes.sublist(2)));
+            KeyHash38(bytes.sublist(2)));
       default:
         throw Exception('Unsupported Topl Address, type: $addrType');
     }
@@ -75,38 +84,24 @@ abstract class ToplAddress extends ByteList {
 
 /// Legacy Implementation of the Topl Address to support Curve 25519 signing
 class Dion_Type_1_Address extends ToplAddress {
-  Dion_Type_1_Address(Network network, CredentialHash32 paymentBytes)
+  Dion_Type_1_Address(Network network, ByteList paymentBytes)
       : super(
             network,
-            generateAddressBytes(paymentBytes, network.networkPrefix,
-                Proposition.Curve25519().propositionPrefix));
+            generateAddressBytes(paymentBytes, network.networkPrefixString,
+                Proposition.Curve25519()));
 
-  Dion_Type_1_Address.fromKeys(
-    Network network,
-    Bip32Key paymentKey,
-  ) : this(network, _toHash(paymentKey));
   @override
   AddressType get addressType => AddressType.Dion_Type_1;
-  static CredentialHash32 _toHash(Bip32Key key) {
-    return KeyHash32(key.buffer.asInt32List());
-  }
 }
 
 // Current version of the Topl Address supporting Ed25519 signing.
 class Dion_Type_3_Address extends ToplAddress {
-  Dion_Type_3_Address(Network network, CredentialHash32 paymentBytes)
+  Dion_Type_3_Address(Network network, ByteList paymentBytes)
       : super(
             network,
-            generateAddressBytes(paymentBytes, network.networkPrefix,
-                Proposition.Ed25519().propositionPrefix));
+            generateAddressBytes(paymentBytes, network.networkPrefixString,
+                Proposition.Ed25519()));
 
-  Dion_Type_3_Address.fromKeys(
-    Network network,
-    Bip32Key paymentKey,
-  ) : this(network, _toHash(paymentKey));
   @override
   AddressType get addressType => AddressType.Dion_Type_3;
-  static CredentialHash32 _toHash(Bip32Key key) {
-    return KeyHash32(key.buffer.asInt32List());
-  }
 }

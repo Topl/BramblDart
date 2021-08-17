@@ -9,6 +9,5 @@ class Proposition {
 
   factory Proposition.Curve25519() =>
       const Proposition('PublicKeyCurve25519', 0x01);
-  factory Proposition.Ed25519() =>
-      const Proposition('PublicKeyCurve25519', 0x03);
+  factory Proposition.Ed25519() => const Proposition('PublicKeyEd25519', 0x03);
 }

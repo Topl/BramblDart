@@ -6,6 +6,8 @@ class BlockNum {
   final bool useAbsolute;
   final int blockNum;
 
+  bool get isPending => !useAbsolute && blockNum == 2;
+
   /// Use the state of the blockchain at the block specified.
   const BlockNum.exact(this.blockNum) : useAbsolute = true;
 
