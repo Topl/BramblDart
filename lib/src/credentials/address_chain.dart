@@ -21,9 +21,8 @@ class AddressGenerator {
   /// Uses the cached root public key to generate new addresses
   List<String> generate(List<int> idxs) {
     // cache credential manager public key
-    _masterPubKeyPtr ??= ToplKey.doImport(publicKeyBase58!) as Bip32VerifyKey;
-    final temp = ToplKey.import(publicKeyBase58!);
-    var chainKey = temp.ckdPub(_masterPubKeyPtr as Bip32VerifyKey, 0);
+    _masterPubKeyPtr ??= Bip32VerifyKey.decode(publicKeyBase58!);
+    var chainKey = Bip32Ed25519KeyDerivation().ckdPub(_masterPubKeyPtr!, 0);
     return idxs.map((idx) {
       final addrKey = chainKey.derive(idx);
       return generatePubKeyHashAddress(Uint8List.fromList(addrKey.rawKey),
@@ -102,6 +101,6 @@ class AddressChain {
   void _selfCheck() {
     assert(_isInitialized, 'AddressChain::_selfCheck(): isInitialized');
     assert(
-        _addresses.addresses.length > 0, 'AddressChain::_selfCheck(): length');
+        _addresses.addresses.isNotEmpty, 'AddressChain::_selfCheck(): length');
   }
 }

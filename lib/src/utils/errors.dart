@@ -39,3 +39,11 @@ class WrongKeyType implements Exception {
   String cause;
   WrongKeyType(this.cause);
 }
+
+/// Received an unsupported number of mnemonic words. The parameter
+/// contains the unsupported number. Supported values are
+/// described as part of the [`Type`]
+class WrongNumberOfWords implements Exception {
+  String cause;
+  WrongNumberOfWords(this.cause);
+}
