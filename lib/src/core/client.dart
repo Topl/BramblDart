@@ -22,7 +22,7 @@ class BramblClient {
 
   /// Starts a client that connects to a JSON rpc API, available at [basePath]. The
   /// [httpClient] will be used to send requests to the rpc server.
-  /// Am isolate will be used to perform expensive operations, such as signing
+  /// An isolate will be used to perform expensive operations, such as signing
   /// transactions or computing private keys.
   BramblClient({
     Dio? httpClient,

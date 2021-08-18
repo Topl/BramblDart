@@ -1,4 +1,4 @@
-/// Exports low-level cryptographic operations needed to sign Ethereum
+/// Exports low-level cryptographic operations needed to sign Topl
 /// transactions.
 library crypto;
 
