@@ -42,8 +42,8 @@ class AssetValue extends TokenValueHolder {
   final int valueTypePrefix = 2;
   final String valueTypeString = 'Asset';
 
-// bytes (34 bytes for issuer Address + 8 bytes for asset short name)
-  final int assetCodeSize = ToplAddress.addressSize + 8;
+// bytes (1 byte for version + 34 bytes for issuer Address + 8 bytes for asset short name)
+  final int assetCodeSize = ToplAddress.addressSize + 9;
   final int metadataLimit = 127; // bytes of Latin-1 encoded string
 
   AssetValue(this.quantity, this.assetCode, this.securityRoot, this.metadata)
