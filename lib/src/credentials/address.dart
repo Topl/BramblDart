@@ -30,7 +30,7 @@ class KeyHash32 extends CredentialHash32 {
 /// The abstract class of a Topl Address that contains all of the components to generate a Topl Address
 /// [see](https://topl.readme.io/docs/how-topl-addresses-are-generated)
 abstract class ToplAddress extends ByteList {
-  static const addressSize = 38;
+  static const addressSize = 34;
 
   final Network network;
   late Proposition proposition;
@@ -92,6 +92,14 @@ class Dion_Type_1_Address extends ToplAddress {
   static CredentialHash32 _toHash(Bip32Key key) {
     return KeyHash32(key.buffer.asInt32List());
   }
+
+  Dion_Type_1_Address.fromAddressBytes(Uint8List addressBytes)
+      : super(
+            Network.fromNetworkPrefix(addressBytes.first),
+            generateAddressBytes(
+                KeyHash32(addressBytes.sublist(2)),
+                addressBytes.first,
+                Proposition.Curve25519().propositionPrefix));
 }
 
 // Current version of the Topl Address supporting Ed25519 signing.
@@ -106,6 +114,13 @@ class Dion_Type_3_Address extends ToplAddress {
     Network network,
     Bip32Key paymentKey,
   ) : this(network, _toHash(paymentKey));
+
+  Dion_Type_3_Address.fromAddressBytes(Uint8List addressBytes)
+      : super(
+            Network.fromNetworkPrefix(addressBytes.first),
+            generateAddressBytes(KeyHash32(addressBytes.sublist(2)),
+                addressBytes.first, Proposition.Ed25519().propositionPrefix));
+
   @override
   AddressType get addressType => AddressType.Dion_Type_3;
   static CredentialHash32 _toHash(Bip32Key key) {

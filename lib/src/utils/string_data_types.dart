@@ -51,7 +51,7 @@ class Latin1Data {
     }
   }
 
-  String get showLatin1Data => latin1.decode(value!);
+  String get show => latin1.decode(value!);
 }
 
 ///
@@ -92,7 +92,7 @@ class Base58Data {
     }
   }
 
-  String get showBase58String => Base58Encoder.instance.encode(value);
+  String get show => Base58Encoder.instance.encode(value);
 }
 
 ///
@@ -119,5 +119,5 @@ class Base16Data {
     }
   }
 
-  String get showBase16String => HexCoder.instance.encode(value);
+  String get show => HexCoder.instance.encode(value);
 }

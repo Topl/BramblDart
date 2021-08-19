@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
@@ -29,4 +30,15 @@ class SecurityRoot {
   String toString() {
     return Base58Encoder.instance.encode(root);
   }
+
+  /// A necessary factory constructor for creating a new AssetCode instance
+  /// from a map.
+  /// The constructor is named after the source class, in this case, AssetCode.
+  factory SecurityRoot.fromJson(Map<String, dynamic> json) =>
+      SecurityRoot.fromBase58(json['securityRoot']);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$AssetCodeToJson`.
+  Map<String, dynamic> toJson() => json.decode(toString());
 }

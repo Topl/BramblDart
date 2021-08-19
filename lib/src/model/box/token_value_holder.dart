@@ -1,18 +1,37 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
 import 'package:mubrambl/src/model/box/security_root.dart';
+
+/// This allows the `SimpleValue` class to access private members in
+/// the generated file. The value for this is *.g.dart, where
+/// the star denotes the source file name.
+part 'token_value_holder.g.dart';
 
 abstract class TokenValueHolder {
   final int quantity;
   TokenValueHolder(this.quantity);
 }
 
+@JsonSerializable(checked: true, explicitToJson: true)
 class SimpleValue extends TokenValueHolder {
   final int valueTypePrefix = 1;
   final String valueTypeString = 'Simple';
   SimpleValue(int quantity) : super(quantity);
+
+  /// A necessary factory constructor for creating a new SimpleValue instance
+  /// from a map. Pass the map to the generated `_$SimpleValueFromJson()` constructor.
+  /// The constructor is named after the source class, in this case, SimpleValue.
+  factory SimpleValue.fromJson(Map<String, dynamic> json) =>
+      _$SimpleValueFromJson(json);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$SimpleValueToJson`.
+  Map<String, dynamic> toJson() => _$SimpleValueToJson(this);
 }
 
+@JsonSerializable(checked: true, explicitToJson: true)
 class AssetValue extends TokenValueHolder {
   @override
   final int quantity;
@@ -29,4 +48,15 @@ class AssetValue extends TokenValueHolder {
 
   AssetValue(this.quantity, this.assetCode, this.securityRoot, this.metadata)
       : super(quantity);
+
+  /// A necessary factory constructor for creating a new AssetValue instance
+  /// from a map. Pass the map to the generated `_$AssetValueFromJson()` constructor.
+  /// The constructor is named after the source class, in this case, AssetValue.
+  factory AssetValue.fromJson(Map<String, dynamic> json) =>
+      _$AssetValueFromJson(json);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$AssetValueToJson`.
+  Map<String, dynamic> toJson() => _$AssetValueToJson(this);
 }
