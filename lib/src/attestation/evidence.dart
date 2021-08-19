@@ -3,6 +3,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:pinenacl/api.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
 
+part 'evidence.g.dart';
+
 final contentLength =
     32; //bytes (this is generally the output of a Blake2b-256 bit hash)
 
