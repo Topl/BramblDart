@@ -7,6 +7,7 @@ import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/extensions.dart';
 import 'package:mubrambl/src/utils/util.dart';
 
+/// AssetCode serves as a unique identifier for user issued assets
 class AssetCode {
   int assetCodeVersion;
   final ToplAddress issuer;
@@ -40,10 +41,8 @@ class AssetCode {
     return AssetCode(version, issuer, name, networkPrefix);
   }
 
-  ///
-  /// @param {string} networkPrefix prefix of network where address will be used
   /// @returns {string} return asset code
-  String serialize(String networkPrefix) {
+  String serialize() {
     final addressBytes = issuer.buffer.asUint8List();
     final slicedAddress = addressBytes.sublist(0, 34);
 

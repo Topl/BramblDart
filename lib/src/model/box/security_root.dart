@@ -6,7 +6,6 @@ import 'package:mubrambl/src/utils/constants.dart';
 
 class SecurityRoot {
   final Uint8List root;
-  final int size = 32;
 
   SecurityRoot(this.root);
 
@@ -14,7 +13,7 @@ class SecurityRoot {
     return SecurityRoot(Uint8List(BLAKE2B_256_DIGEST_SIZE));
   }
 
-  factory SecurityRoot.decode(String str) {
+  factory SecurityRoot.fromBase58(String str) {
     try {
       return SecurityRoot(Base58Encoder.instance.decode(str));
     } catch (exception) {

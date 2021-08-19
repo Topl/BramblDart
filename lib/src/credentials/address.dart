@@ -30,6 +30,8 @@ class KeyHash32 extends CredentialHash32 {
 /// The abstract class of a Topl Address that contains all of the components to generate a Topl Address
 /// [see](https://topl.readme.io/docs/how-topl-addresses-are-generated)
 abstract class ToplAddress extends ByteList {
+  static const addressSize = 38;
+
   final Network network;
   late Proposition proposition;
 
