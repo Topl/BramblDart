@@ -4,22 +4,29 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:mubrambl/src/encoding/base_58_encoder.dart';
 import 'package:mubrambl/src/utils/constants.dart';
+import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
+import 'package:mubrambl/src/utils/string_data_types.dart';
 
 class SecurityRoot {
   final Uint8List root;
 
   SecurityRoot(this.root);
 
+  factory SecurityRoot.create(Uint8List root) {
+    assert(root.length == BLAKE2B_256_DIGEST_SIZE, 'Invalid Security Root');
+    return SecurityRoot(root);
+  }
+
   factory SecurityRoot.empty() {
     return SecurityRoot(Uint8List(BLAKE2B_256_DIGEST_SIZE));
   }
 
-  factory SecurityRoot.fromBase58(String str) {
-    try {
-      return SecurityRoot(Base58Encoder.instance.decode(str));
-    } catch (exception) {
-      throw Exception('Unable to decode SecurityRoot, $exception');
-    }
+  factory SecurityRoot.apply(String str) {
+    return SecurityRoot(Base58Data.unsafe(str).value);
+  }
+
+  factory SecurityRoot.fromBase58(Base58Data data) {
+    return SecurityRoot(data.value);
   }
 
   @override
@@ -28,8 +35,11 @@ class SecurityRoot {
 
   @override
   String toString() {
-    return Base58Encoder.instance.encode(root);
+    return root.encodeAsBase58().show;
   }
+
+  @override
+  int get hashCode => root.hashCode;
 
   /// A necessary factory constructor for creating a new AssetCode instance
   /// from a map.
@@ -41,4 +51,6 @@ class SecurityRoot {
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$AssetCodeToJson`.
   Map<String, dynamic> toJson() => json.decode(toString());
+
+  Uint8List get getRoot => root;
 }
