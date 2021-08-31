@@ -73,7 +73,6 @@ class AssetCode {
       AssetCode.deserialize(json['assetCode']);
 
   /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$AssetCodeToJson`.
+  /// to JSON.
   Map<String, dynamic> toJson() => json.decode(toString());
 }
