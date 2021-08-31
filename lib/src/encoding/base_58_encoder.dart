@@ -1,6 +1,5 @@
 import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/bip/topl.dart';
-import 'package:mubrambl/src/crypto/keystore.dart';
 
 class Base58Encoder implements Encoder {
   const Base58Encoder._singleton();
@@ -14,7 +13,7 @@ class Base58Encoder implements Encoder {
 
   @override
   Uint8List decode(String data) {
-    final result = str2ByteArray(data);
+    final result = Uint8List.fromList(Base58Decode(data));
     return result;
   }
 }

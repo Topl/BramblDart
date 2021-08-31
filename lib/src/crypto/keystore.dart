@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:fast_base58/fast_base58.dart';
+import 'package:meta/meta.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:mubrambl/src/crypto/random_bridge.dart';
+import 'package:mubrambl/src/encoding/base_58_encoder.dart';
 import 'package:mubrambl/src/utils/network.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:mubrambl/src/utils/uuid.dart';
+import 'package:pinenacl/encoding.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/block/aes_fast.dart';
 import 'package:pointycastle/key_derivators/api.dart';
@@ -62,7 +65,7 @@ class _ScryptKeyDerivator extends _KeyDerivator {
       'n': n,
       'r': r,
       'p': p,
-      'salt': Base58Encode(salt),
+      'salt': Base58Encoder.instance.encode(salt),
     };
   }
 
@@ -74,6 +77,7 @@ class _ScryptKeyDerivator extends _KeyDerivator {
 /// like a private key belonging to a Topl address. The private key in a
 /// keystore is encrypted with a secret password that needs to be known in order
 /// to obtain the private key.
+@immutable
 class KeyStore {
   // The credentials stored in this key store file
   final String privateKey;
@@ -100,11 +104,13 @@ class KeyStore {
   /// power of two.
 
   factory KeyStore.createNew(String credentials, String password, Random random,
-      {int scryptN = 8192, int p = 1}) {
-    final passwordBytes = Uint8List.fromList(latin1.encode(password));
+      {int scryptN = 262144, int p = 1}) {
+    final passwordBytes =
+        Uint8List.fromList(str2ByteArray(password, enc: 'latin1'));
     final dartRandom = RandomBridge(random);
     final salt = dartRandom.nextBytes(32);
-    final derivator = _ScryptKeyDerivator(32, scryptN, 8, p, salt);
+    final derivator = _ScryptKeyDerivator(defaultOptions['kdfParams']['dkLen'],
+        scryptN, defaultOptions['kdfParams']['r'], p, salt);
     final uuid = generateUuidV4();
     final iv = dartRandom.nextBytes(128 ~/ 8);
     return KeyStore._(credentials, derivator, passwordBytes, iv, uuid);
@@ -126,7 +132,7 @@ class KeyStore {
 
     final data = json.decode(encoded);
 
-    // Ensure version is 2, only version that we support at the moment
+    // Ensure version is 1, only version that we support at the moment
     final version = data['version'];
     if (version != 1) {
       throw ArgumentError.value(
@@ -138,18 +144,24 @@ class KeyStore {
     }
 
     final crypto = data['crypto'] ?? data['Crypto'];
+    _KeyDerivator derivator;
 
     final kdf = crypto['kdf'] as String;
 
-    _KeyDerivator derivator;
-
-    final salt = crypto['kdfSalt'] as String;
-    derivator = _ScryptKeyDerivator(
-        defaultOptions['kdfParams']['dkLen'] as int,
-        defaultOptions['kdfParams']['n'] as int,
-        defaultOptions['kdfParams']['r'] as int,
-        defaultOptions['kdfParams']['p'] as int,
-        Uint8List.fromList(str2ByteArray(salt)));
+    switch (kdf) {
+      case 'scrypt':
+        final derParams = crypto['kdfparams'] as Map<String, dynamic>;
+        derivator = _ScryptKeyDerivator(
+            derParams['dkLen'] as int,
+            derParams['n'] as int,
+            derParams['r'] as int,
+            derParams['p'] as int,
+            Uint8List.fromList(str2ByteArray(derParams['salt'] as String)));
+        break;
+      default:
+        throw ArgumentError(
+            'Wallet file uses $kdf as key derivation function which is currently not supported');
+    }
 
     // Now that we have the derivator, let's obtain the aes key:
     final encodedPassword =
@@ -158,8 +170,8 @@ class KeyStore {
     final encryptedPrivateKey = str2ByteArray(crypto['cipherText'] as String);
 
     //Validate the derived key with the mac provided
-    final derivedMac = _getMac(derivedKey, crypto['cipherText'] as String);
-    if (Base58Encode(derivedMac) != crypto['mac']) {
+    final derivedMac = _getMac(derivedKey, encryptedPrivateKey);
+    if (derivedMac != crypto['mac']) {
       throw ArgumentError(
           'Invalid MAC: Could not unlock key store file. You either supplied the wrong password or the file is corrupted');
     }
@@ -181,22 +193,19 @@ class KeyStore {
     return KeyStore._(privateKey, derivator, encodedPassword, iv, id);
   }
 
-  static Uint8List _getMac(Uint8List derivedKey, String cipherText) {
-    var buffer = <int>[];
-    var valueToHash = derivedKey.sublist(16, 32);
-    buffer.addAll(valueToHash);
-    buffer.addAll(str2ByteArray(cipherText));
-    return createHash(Uint8List.fromList(buffer));
+  static String _getMac(List<int> derivedKey, List<int> cipherText) {
+    final macBody = <int>[...derivedKey.sublist(16, 32), ...cipherText];
+    return Base58Encoder.instance
+        .encode(createHash(Uint8List.fromList(macBody)));
   }
 
   static CTRStreamCipher _initCipher(
       bool forEncryption, Uint8List key, Uint8List iv) {
     return CTRStreamCipher(AESFastEngine())
-      ..init(false, ParametersWithIV(KeyParameter(key), iv));
+      ..init(forEncryption, ParametersWithIV(KeyParameter(key), iv));
   }
 
-  List<int> _encryptPrivateKey() {
-    final derived = _derivator.deriveKey(_password);
+  List<int> _encryptPrivateKey(Uint8List derived) {
     final aes = _initCipher(true, derived, _iv);
     return aes.process(str2ByteArray(privateKey));
   }
@@ -204,18 +213,21 @@ class KeyStore {
   /// Encrypts the private key using the secret specified earlier and returns
   /// a json representation of its data
   String toJson() {
-    final cipherTextBytes = _encryptPrivateKey();
+    final derivedKey = _derivator.deriveKey(_password);
+    final cipherTextBytes = _encryptPrivateKey(derivedKey);
 
     final map = {
       'crypto': {
-        'cipher': 'aes-128-ctr',
-        'cipherParams': {'iv': toHex(_iv)},
-        'cipherText': Base58Encode(Uint8List.fromList(cipherTextBytes)),
+        'cipher': 'aes-256-ctr',
+        'cipherParams': {'iv': Base58Encoder.instance.encode(_iv)},
+        'cipherText':
+            Base58Encoder.instance.encode(Uint8List.fromList(cipherTextBytes)),
         'kdf': _derivator.name,
         'kdfparams': _derivator.encode(),
-        'mac': _getMac(_derivator.deriveKey(_password),
-            Base58Encode(Uint8List.fromList(cipherTextBytes))),
-      }
+        'mac': _getMac(derivedKey, cipherTextBytes),
+      },
+      'id': uuid,
+      'version': 1
     };
     return json.encode(map);
   }
@@ -226,6 +238,6 @@ Uint8List str2ByteArray(String str, {String enc = ''}) {
   if (enc == 'latin1') {
     return latin1.encode(str);
   } else {
-    return Uint8List.fromList(Base58Decode(str));
+    return Base58Encoder.instance.decode(str);
   }
 }
