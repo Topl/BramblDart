@@ -5,8 +5,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
-import 'package:mubrambl/src/encoding/base_58_encoder.dart';
 import 'package:mubrambl/src/utils/extensions.dart';
 import 'package:pinenacl/encoding.dart';
 

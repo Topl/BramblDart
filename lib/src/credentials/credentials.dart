@@ -1,14 +1,13 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
-import 'package:mubrambl/src/bip/bip39_base.dart';
-import 'package:mubrambl/src/bip/topl.dart';
 import 'package:mubrambl/src/core/transaction.dart';
 import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/encoding/base_58_encoder.dart';
 import 'package:mubrambl/src/utils/network.dart';
 import 'package:mubrambl/src/utils/proposition.dart';
+import 'package:pinenacl/ed25519.dart';
 
 /// Anything that can sign payloads with a private key.
 abstract class Credentials {

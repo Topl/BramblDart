@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:bip_topl/bip_topl.dart';
 import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
-import 'package:mubrambl/src/crypto/random_bridge.dart';
 import 'package:mubrambl/src/utils/network.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:mubrambl/src/utils/uuid.dart';
@@ -218,14 +218,5 @@ class KeyStore {
       }
     };
     return json.encode(map);
-  }
-}
-
-/// This is a utility function that is used by the keystore to decode strings that are used in the encrypted json
-Uint8List str2ByteArray(String str, {String enc = ''}) {
-  if (enc == 'latin1') {
-    return latin1.encode(str);
-  } else {
-    return Uint8List.fromList(Base58Decode(str));
   }
 }

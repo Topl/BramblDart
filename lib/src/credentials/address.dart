@@ -1,6 +1,5 @@
-import 'package:mubrambl/src/bip/topl.dart';
+import 'package:bip_topl/bip_topl.dart';
 import 'package:mubrambl/src/crypto/keystore.dart';
-import 'package:mubrambl/src/encoding/base_58_encoder.dart';
 import 'package:mubrambl/src/utils/network.dart';
 import 'package:mubrambl/src/utils/proposition.dart';
 import 'package:mubrambl/src/utils/util.dart';
