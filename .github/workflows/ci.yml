@@ -46,7 +46,7 @@ jobs:
         with:
           path: .dart_tool
           key: dart-dependencies-${{ hashFiles('pubspec.yaml')}}
-      - uses: dart-lang:setup-dart@v1
+      - uses: dart-lang/setup-dart@v1
       - run: dart analyze --fatal-infos
   
   vm_tests:
