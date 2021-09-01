@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:mubrambl/src/bip/topl.dart';
+import 'package:bip_topl/bip_topl.dart';
 import 'package:mubrambl/src/credentials/addresses.dart';
 import 'package:mubrambl/src/utils/network.dart';
 import 'package:mubrambl/src/utils/util.dart';

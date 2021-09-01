@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:bip_topl/bip_topl.dart';
 import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/encoding/base_58_encoder.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/network.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
@@ -73,7 +73,6 @@ class AssetCode {
       AssetCode.deserialize(json['assetCode']);
 
   /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$AssetCodeToJson`.
+  /// to JSON.
   Map<String, dynamic> toJson() => json.decode(toString());
 }
