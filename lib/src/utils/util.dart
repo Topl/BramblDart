@@ -1,10 +1,8 @@
 import 'dart:typed_data';
 import 'package:fast_base58/fast_base58.dart';
-import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:collection/collection.dart';
 
-/// TODO: Feature: support custom defined networks
 final validNetworks = ['private', 'toplnet', 'valhalla'];
 final validPropositionTypes = [
   'PublicKeyCurve25519',
@@ -23,7 +21,7 @@ final networksDefault = <String, Map<String, int>>{
 final propositionMap = <String, int>{
   'PublicKeyCurve25519': 0x01,
   'ThresholdCurve25519': 0x02,
-  'ED25519': 0x03
+  'PublicKeyED25519': 0x03
 };
 
 final ADDRESS_LENGTH = 38;
@@ -75,11 +73,6 @@ Map<String, dynamic> generatePubKeyHashAddress(
   result['checksum'] = hashChecksumBuffer;
   result['success'] = true;
   return result;
-}
-
-CredentialHash32 generateAddressBytes(
-    CredentialHash32 publicKeyBytes, int networkPrefix, int propositionType) {
-  return KeyHash32([networkPrefix] + [propositionType] + publicKeyBytes);
 }
 
 /// Returns the hex value for a given networkPrefix

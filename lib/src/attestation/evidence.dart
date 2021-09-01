@@ -27,7 +27,7 @@ class Evidence {
 
   /// A necessary factory constructor for creating a new Evidence instance
   /// from a map. Pass the map to the generated `_$EvidenceFromJson()` constructor.
-  /// The constructor is named after the source class, in this case, User.
+  /// The constructor is named after the source class, in this case, Evidence.
   factory Evidence.fromJson(Map<String, dynamic> json) =>
       _$EvidenceFromJson(json);
 

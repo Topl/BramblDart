@@ -1,4 +1,5 @@
-import 'package:bip32_ed25519/bip32_ed25519.dart';
+import 'dart:typed_data';
+
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/errors.dart';
 

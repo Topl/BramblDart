@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:bip_topl/bip_topl.dart';
 import 'package:fast_base58/fast_base58.dart';
 import 'package:meta/meta.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
-import 'package:mubrambl/src/crypto/random_bridge.dart';
-import 'package:mubrambl/src/encoding/base_58_encoder.dart';
 import 'package:mubrambl/src/utils/network.dart';
-import 'package:mubrambl/src/utils/util.dart';
 import 'package:mubrambl/src/utils/uuid.dart';
 import 'package:pinenacl/encoding.dart';
 import 'package:pointycastle/api.dart';
@@ -193,6 +191,10 @@ class KeyStore {
     return KeyStore._(privateKey, derivator, encodedPassword, iv, id);
   }
 
+  // MAC stands for Message Authentication Code. This is a short piece of information that is used to authenticate a message. With the derivedKey, any changes to the MAC would mean that there has been some change in the original message's content thus ensuring data integrity of the cipherText.
+
+  // In this case, this function signing algorithm which returns the MAC given the key and the message.
+  // Please read more about our HMAC implementation here: https://en.wikipedia.org/wiki/HMAC
   static String _getMac(List<int> derivedKey, List<int> cipherText) {
     final macBody = <int>[...derivedKey.sublist(16, 32), ...cipherText];
     return Base58Encoder.instance

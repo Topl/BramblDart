@@ -1,14 +1,13 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
-import 'package:mubrambl/src/bip/bip39_base.dart';
-import 'package:mubrambl/src/bip/topl.dart';
 import 'package:mubrambl/src/core/transaction.dart';
 import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/encoding/base_58_encoder.dart';
 import 'package:mubrambl/src/utils/network.dart';
 import 'package:mubrambl/src/utils/proposition.dart';
+import 'package:pinenacl/ed25519.dart';
 
 /// Anything that can sign payloads with a private key.
 abstract class Credentials {
@@ -78,12 +77,12 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
       switch (proposition) {
         case (Proposition('PublicKeyCurve25519', 0x01)):
           return Dion_Type_1_Address.fromKeys(
-              network,
+              network.networkPrefix,
               Bip32SigningKey.fromValidBytes(Uint8List.fromList(privateKey))
                   .publicKey);
         case (Proposition('PublicKeyEd25519', 0x03)):
           return Dion_Type_3_Address.fromKeys(
-              network,
+              network.networkPrefix,
               Bip32SigningKey.fromValidBytes(Uint8List.fromList(privateKey))
                   .publicKey);
         default:
