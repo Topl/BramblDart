@@ -19,7 +19,6 @@ abstract class Addresses {
   String get purpose;
   String get coinType;
   String get addressIdx;
-  String get masterPublicKey;
   List<String> get addresses;
   List<String> get boxes;
 }
@@ -31,20 +30,17 @@ class AddressesImpl implements Addresses {
   AddressesImpl(this.a, this.addressIndex, this.mPK);
 
   @override
-  get purpose => Addresses.defaultPurpose;
+  String get purpose => Addresses.defaultPurpose;
 
   @override
-  get coinType => Addresses.defaultCoin;
+  String get coinType => Addresses.defaultCoin;
 
   @override
-  get addressIdx => addressIndex;
+  String get addressIdx => addressIndex;
 
   @override
-  get masterPublicKey => masterPublicKey;
+  List<String> get addresses => a;
 
   @override
-  get addresses => a;
-
-  @override
-  get boxes => [];
+  List<String> get boxes => [];
 }

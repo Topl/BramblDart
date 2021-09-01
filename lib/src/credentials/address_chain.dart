@@ -38,7 +38,6 @@ class AddressGenerator {
 
   /// Note: We could potentially instantiate the AddressGenerator from a json directly
   factory AddressGenerator.fromJson(data, String networkPrefix) {
-    final d = json.decode(data);
     // note that this should be a public key generated with Brambl
     final a = data;
     var publicKeyBase58 = '';
@@ -74,8 +73,7 @@ class AddressChain {
   final AddressGenerator _addressGenerator;
   bool _isInitialized = false;
   AddressChain(this._addressGenerator, String index)
-      : this._addresses =
-            AddressesImpl([], index, _addressGenerator.addressBase58);
+      : _addresses = AddressesImpl([], index, _addressGenerator.addressBase58);
 
   factory AddressChain.fromJson(data, String index, String networkPrefix) {
     final chain = AddressChain(
