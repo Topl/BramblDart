@@ -77,12 +77,12 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
       switch (proposition) {
         case (Proposition('PublicKeyCurve25519', 0x01)):
           return Dion_Type_1_Address.fromKeys(
-              network,
+              network.networkPrefix,
               Bip32SigningKey.fromValidBytes(Uint8List.fromList(privateKey))
                   .publicKey);
         case (Proposition('PublicKeyEd25519', 0x03)):
           return Dion_Type_3_Address.fromKeys(
-              network,
+              network.networkPrefix,
               Bip32SigningKey.fromValidBytes(Uint8List.fromList(privateKey))
                   .publicKey);
         default:
