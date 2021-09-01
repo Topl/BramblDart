@@ -8,7 +8,9 @@ part 'arbit_box.g.dart';
 /// Box that contains arbits as well as the ArbitBox that it is owned by a particular address
 @JsonSerializable(checked: true, explicitToJson: true)
 class ArbitBox extends TokenBox {
+  @override
   final Evidence evidence;
+  @override
   final int nonce;
   final SimpleValue simpleValue;
 
