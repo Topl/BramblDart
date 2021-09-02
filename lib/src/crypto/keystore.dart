@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:bip_topl/bip_topl.dart';
-import 'package:fast_base58/fast_base58.dart';
 import 'package:meta/meta.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:mubrambl/src/utils/network.dart';
@@ -184,7 +183,8 @@ class KeyStore {
 
     final aes = _initCipher(false, derivedKey, iv);
 
-    final privateKey = Base58Encode(aes.process(encryptedPrivateKey));
+    final privateKey =
+        Base58Encoder.instance.encode(aes.process(encryptedPrivateKey));
 
     final id = parseUuid(data['id'] as String);
 
