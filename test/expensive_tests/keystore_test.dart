@@ -29,8 +29,8 @@ void main() {
       final privateKey = content['priv'] as String;
       final keystoreData = content['json'] as Map;
 
-      final keyStore =
-          KeyStore.createNew(privateKey, password, Random.secure());
+      final keyStore = KeyStore.createNew(privateKey, password, Random.secure(),
+          scryptN: 8192);
       expect(keyStore.privateKey, privateKey);
 
       final encodedWallet = json.decode(keyStore.toJson()) as Map;

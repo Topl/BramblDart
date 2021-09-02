@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:fast_base58/fast_base58.dart';
+import 'package:bip_topl/bip_topl.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:collection/collection.dart';
 
@@ -7,7 +7,7 @@ final validNetworks = ['private', 'toplnet', 'valhalla'];
 final validPropositionTypes = [
   'PublicKeyCurve25519',
   'ThresholdCurve25519',
-  'ED25519'
+  'PublicKeyED25519'
 ];
 
 final privateMap = <String, int>{'hex': 0x40, 'decimal': 64};
@@ -83,7 +83,7 @@ int getHexByNetwork(networkPrefix) {
 /// Returns the networkPrefix for a valid address
 /// Returns {success: boolean, networkPrefix: <prefix if found>, error: "<message>"}
 Map<String, dynamic> getAddressNetwork(address) {
-  final decodedAddress = Base58Decode(address);
+  final decodedAddress = Base58Encoder.instance.decode(address);
   final result = <String, dynamic>{};
   result['success'] = false;
 
@@ -132,7 +132,7 @@ Map<String, dynamic> validateAddressByNetwork(
 
 // run validation on the address
 
-  var decodedAddress = Base58Decode(address);
+  var decodedAddress = Base58Encoder.instance.decode(address);
 
 // validation: base58 38 byte obj that matches the networkPrefix hex value
 

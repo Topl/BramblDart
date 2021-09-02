@@ -91,10 +91,8 @@ class Dion_Type_1_Address extends ToplAddress {
   Dion_Type_1_Address(NetworkId networkId, CredentialHash32 paymentBytes)
       : super(
             networkId,
-            str2ByteArray(generatePubKeyHashAddress(
-                Uint8List.fromList(paymentBytes),
-                networkIdString(networkId),
-                'PublicKeyCurve25519')['address']));
+            (generatePubKeyHashAddress(Uint8List.fromList(paymentBytes),
+                networkIdString(networkId), 'PublicKeyCurve25519'))['address']);
 
   Dion_Type_1_Address.fromKeys(
     NetworkId networkId,
@@ -103,7 +101,7 @@ class Dion_Type_1_Address extends ToplAddress {
   @override
   AddressType get addressType => AddressType.Dion_Type_1;
   static CredentialHash32 _toHash(Bip32Key key) {
-    return KeyHash32(key.buffer.asInt32List());
+    return KeyHash32(key.keyBytes);
   }
 
   Dion_Type_1_Address.fromAddressBytes(Uint8List addressBytes)
@@ -115,10 +113,8 @@ class Dion_Type_3_Address extends ToplAddress {
   Dion_Type_3_Address(NetworkId networkId, CredentialHash32 paymentBytes)
       : super(
             networkId,
-            str2ByteArray(generatePubKeyHashAddress(
-                Uint8List.fromList(paymentBytes),
-                networkIdString(networkId),
-                'PublicKeyED25519')['address']));
+            (generatePubKeyHashAddress(Uint8List.fromList(paymentBytes),
+                networkIdString(networkId), 'PublicKeyED25519'))['address']);
 
   Dion_Type_3_Address.fromKeys(
     NetworkId networkId,
@@ -131,6 +127,6 @@ class Dion_Type_3_Address extends ToplAddress {
   @override
   AddressType get addressType => AddressType.Dion_Type_3;
   static CredentialHash32 _toHash(Bip32Key key) {
-    return KeyHash32(key.buffer.asInt32List());
+    return KeyHash32(key.keyBytes);
   }
 }
