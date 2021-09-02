@@ -102,7 +102,7 @@ class KeyStore {
   /// power of two.
 
   factory KeyStore.createNew(String credentials, String password, Random random,
-      {int scryptN = 262144, int p = 1}) {
+      {int scryptN = 8192, int p = 1}) {
     final passwordBytes =
         Uint8List.fromList(str2ByteArray(password, enc: 'latin1'));
     final dartRandom = RandomBridge(random);
