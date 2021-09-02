@@ -15,7 +15,7 @@ class BramblClient {
   static const String basePath = 'http://localhost:9085';
 
   final JsonRPC jsonRpc;
-  late ExpensiveOperations _operations;
+  late final ExpensiveOperations _operations;
 
   ///Whether errors, handled or not, should be printed to the console.
   bool printErrors = false;

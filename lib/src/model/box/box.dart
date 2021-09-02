@@ -11,6 +11,7 @@ typedef Nonce = int;
 typedef BoxType = int;
 
 abstract class Box extends GenericBox {
+  @override
   final Evidence evidence;
   final Nonce nonce;
   final String typeString;

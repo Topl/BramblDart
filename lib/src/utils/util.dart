@@ -7,7 +7,7 @@ final validNetworks = ['private', 'toplnet', 'valhalla'];
 final validPropositionTypes = [
   'PublicKeyCurve25519',
   'ThresholdCurve25519',
-  'ED25519'
+  'PublicKeyED25519'
 ];
 
 final privateMap = <String, int>{'hex': 0x40, 'decimal': 64};
