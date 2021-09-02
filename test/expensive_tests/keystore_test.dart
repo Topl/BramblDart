@@ -10,19 +10,19 @@ void main() {
   final wallets = json.decode(input_keystores.content) as Map;
 
   wallets.forEach((testName, content) {
-    // test('unlocks keystore $testName', () {
-    //   final password = content['password'] as String;
-    //   final privateKey = content['priv'] as String;
-    //   final keystoreData = content['json'] as Map;
+    test('unlocks keystore $testName', () {
+      final password = content['password'] as String;
+      final privateKey = content['priv'] as String;
+      final keystoreData = content['json'] as Map;
 
-    //   final keystore = KeyStore.fromV1Json(json.encode(keystoreData), password);
-    //   expect(keystore.privateKey, privateKey);
+      final keystore = KeyStore.fromV1Json(json.encode(keystoreData), password);
+      expect(keystore.privateKey, privateKey);
 
-    //   final encodedWallet = json.decode(keystore.toJson()) as Map;
+      final encodedWallet = json.decode(keystore.toJson()) as Map;
 
-    //   expect(encodedWallet['crypto']['ciphertext'],
-    //       keystoreData['crypto']['ciphertext']);
-    // }, tags: 'expensive');
+      expect(encodedWallet['crypto']['ciphertext'],
+          keystoreData['crypto']['ciphertext']);
+    }, tags: 'expensive');
 
     test('create new keystore $testName', () {
       final password = content['password'] as String;

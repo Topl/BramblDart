@@ -3,13 +3,13 @@ const content = '''
 	"test1": {
 		"json": {
 			"crypto": {
-				"mac": "GP8a5CmvhU3fHzgAhgftVFa2GXEJJpiZkZxyVDbzzRDZ",
+				"mac": "2nzHvc51xsgwruXaBBCzmDpfctMbrTrqGd9bNU5B9gEK",
 				"kdf": "scrypt",
-				"cipherText": "2Vij2hdUuszMgeYMH1GDKvfHsdYN6NVUKsz9TPK9AyLMqSngfGhVF87bUdDTNwGAQwTPr4vz266hGGcKa5GACqLJ",
-        "kdfparams": {"dkLen": 32, "n": 8192, "r": 8, "p": 1, "salt": "DSnUQhRnUQr3oRuiB3LxB1cDJHteKvaD6KpNUsJBpgid"},
+				"cipherText": "1U6fU64PPiqwCG2NAwzqCBvsKWSgjtaLRGDK1LFvCfDczAf2dBrBhPtXuWrEBYfw7P17T4hc5KZijQRG3mXpQ5v",
+        "kdfparams": {"dkLen": 32, "n": 8192, "r": 8, "p": 1, "salt": "DnjA5Uoa5FxuZp55H1b8zs58gRMWijzXzVpMtBDMEo7d"},
 				"cipher": "aes-256-ctr",
 				"cipherParams": {
-					"iv": "Uz8Tpnst7o32wTUe3pcRd8"
+					"iv": "UVM69Sm2kSMSZYBKqA58rj"
 				}
 			},
 			"id": "3198bc9c-6672-5ab3-d995-4942343ae5b6",
@@ -21,14 +21,14 @@ const content = '''
 	"test2": {
 		"json": {
 			"crypto": {
-				"mac": "G3z85uW82QmL7KQBA3DpihsbyT3siG65pBuAQNPamFuK",
+				"mac": "64QT9VruQKQuZ5sx8f6sQZAXoM2XeYUD2oFPKK9A4SYx",
 				"kdf": "scrypt",
-				"cipherText": "5xsyeg8qzeR94adxf6qThZR3hTv5XBsC3VUz4Gkrb8VUokjYbnenpiVEavgMeQpVVStTEAzsZt46S2L7KKovvdpU",
+				"cipherText": "2BEcfU5JnxKLcmY8YF3JpjXERUrjNecbWhEf5waQjM3kWpDMBkpcNNU1F2MFtW5h7TrkFYZGvQsnm32GFj7T32T2",
 				
-        "kdfparams": {"dkLen": 32, "n": 8192, "r": 8, "p": 1, "salt": "7Z7Z99siQvzRUdcX9SH1s45F4mMsYSa3YYXFq7Tqq5Ns"},
+        "kdfparams": {"dkLen": 32, "n": 8192, "r": 8, "p": 1, "salt": "AkcGTrtdVUX8qoWQtfH6jcSjHNURReK8xafr3CzTmmdn"},
 				"cipher": "aes-256-ctr",
 				"cipherParams": {
-					"iv": "QF8HcJc6zFdg3q2auwF6y1"
+					"iv": "8LmXgTcew9fKdrK3b81t14"
 				}
 			},
 			"id": "3198bc9c-6672-5ab3-d995-4942343ae5b6",
@@ -40,13 +40,13 @@ const content = '''
 	"test3": {
 		"json": {
 			"crypto": {
-				"mac": "HDQ5jdPENXiQjGPJgrvghyisqkxG6jTikHSzsEHajApC",
+				"mac": "DTKt6k9ZNUHt7zbA5CrduUmohqR9sdk6U4nzNMjNCzfY",
 				"kdf": "scrypt",
-				"cipherText": "4hXZAgRdde2R3ZqECzzwrHBus5C6WM9UJxeRXprKCHVYTCvLjL31oWxivk5WapTUAyF5HuKyHzDsLb4tEvrXRr9B",
-        "kdfparams": {"dkLen": 32, "n": 8192, "r": 8, "p": 1,"salt": "6wU1N3zsDrtijjbm95J5gFAeKx3BEsRSXqwGz3UsdDJW"},
+				"cipherText": "4cLgFe1jzNdgkTaK2BUpsJb3jgtguKXqDUB89UZGHuV6mtAJPg9XDyJN7Tav9nqj48tkna7YmW8n2NcHiGa2Lus1",
+        "kdfparams": {"dkLen": 32, "n": 8192, "r": 8, "p": 1,"salt": "FY12CedmY2sVWkNFcvmSrrn5vXP37p9LTLirKoNPGNRD"},
 				"cipher": "aes-256-ctr",
 				"cipherParams": {
-					"iv": "LLweCw7FGm8dQiZj9mB4io"
+					"iv": "6PcHMhP8vmJdKR3zXwMKnT"
 				}
 			},
 			"id": "3198bc9c-6672-5ab3-d995-4942343ae5b6",
