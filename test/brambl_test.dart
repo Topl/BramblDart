@@ -1,5 +1,4 @@
 import 'package:bip_topl/bip_topl.dart';
-import 'package:fast_base58/fast_base58.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:test/test.dart';
 
@@ -140,12 +139,6 @@ void main() {
       expect(networkResult['success'], false);
       expect(networkResult['error'], 'invalid network prefix found');
     });
-
-    // test get network prefix for address failure empty
-    test('getAddressNetwork failure empty string', () {
-      expect(
-          () => getAddressNetwork(''), throwsA(TypeMatcher<Base58Exception>()));
-    });
   });
 
   group('test generatePubKeyHashAddress', () {
@@ -159,8 +152,10 @@ void main() {
           'valhalla',
           'PublicKeyCurve25519');
       expect(addressResult['success'], true);
-      expect(addressResult['address'],
-          Base58Decode('3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk'));
+      expect(
+          addressResult['address'],
+          Base58Encoder.instance
+              .decode('3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk'));
     });
 
     // test generate address for valid network, valid propositionType, valid publicKey
@@ -171,8 +166,10 @@ void main() {
           'private',
           'PublicKeyCurve25519');
       expect(addressResult['success'], true);
-      expect(addressResult['address'],
-          Base58Decode('AU9xd9iQ8JHz9dUKiYnDXoPFwahoonUGQHbbSG6SW1ZXu4K7nbx7'));
+      expect(
+          addressResult['address'],
+          Base58Encoder.instance
+              .decode('AU9xd9iQ8JHz9dUKiYnDXoPFwahoonUGQHbbSG6SW1ZXu4K7nbx7'));
     });
 
     // test generate address for valid network, valid propositionType, invalid publicKey

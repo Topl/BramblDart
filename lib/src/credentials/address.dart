@@ -66,7 +66,6 @@ abstract class ToplAddress extends ByteList {
 
   static ToplAddress fromBase58(String address) {
     final bytes = str2ByteArray(address);
-    print(bytes);
     return fromBytes(bytes);
   }
 
