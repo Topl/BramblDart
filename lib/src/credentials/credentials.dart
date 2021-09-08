@@ -6,7 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:mubrambl/src/core/transaction.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/utils/network.dart';
-import 'package:mubrambl/src/utils/proposition.dart';
+import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:pinenacl/ed25519.dart';
 
 /// Anything that can sign payloads with a private key.
@@ -46,12 +46,12 @@ abstract class CustomTransactionSender extends Credentials {
 class ToplSigningKey extends CredentialsWithKnownAddress {
   final ByteList privateKey;
   final Network network;
-  final Proposition proposition;
+  final PropositionType propositionType;
   ToplAddress? _cachedAddress;
 
-  ToplSigningKey(this.privateKey, this.network, this.proposition);
+  ToplSigningKey(this.privateKey, this.network, this.propositionType);
 
-  ToplSigningKey.fromString(String base58, this.network, this.proposition)
+  ToplSigningKey.fromString(String base58, this.network, this.propositionType)
       : privateKey = ByteList.fromList(Base58Encoder.instance.decode(base58));
 
   /// Creates a new, random private key from the [random] number generator.
@@ -61,7 +61,7 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
   /// someone else otherwise. Just using [Random()] is a very bad idea! At least
   /// use [Random.secure()].
   factory ToplSigningKey.createRandom(
-      Random random, Type t, Network n, Proposition p) {
+      Random random, Type t, Network n, PropositionType p) {
     final key = generateNewPrivateKey(random, t);
     return ToplSigningKey(key.rawKey, n, p);
   }
@@ -74,13 +74,13 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
     if (_cachedAddress != null) {
       return _cachedAddress!;
     } else {
-      switch (proposition) {
-        case (Proposition('PublicKeyCurve25519', 0x01)):
+      switch (propositionType) {
+        case (PropositionType('PublicKeyCurve25519', 0x01)):
           return Dion_Type_1_Address.fromKeys(
               network.networkPrefix,
               Bip32SigningKey.fromValidBytes(Uint8List.fromList(privateKey))
                   .publicKey);
-        case (Proposition('PublicKeyEd25519', 0x03)):
+        case (PropositionType('PublicKeyEd25519', 0x03)):
           return Dion_Type_3_Address.fromKeys(
               network.networkPrefix,
               Bip32SigningKey.fromValidBytes(Uint8List.fromList(privateKey))

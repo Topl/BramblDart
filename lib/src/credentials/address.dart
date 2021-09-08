@@ -1,5 +1,5 @@
 import 'package:bip_topl/bip_topl.dart';
-import 'package:mubrambl/src/utils/proposition.dart';
+import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:pinenacl/api.dart';
 
@@ -46,7 +46,7 @@ abstract class ToplAddress extends ByteList {
   static const addressSize = 38;
 
   final NetworkId networkId;
-  late Proposition proposition;
+  late PropositionType propositionType;
 
   /// A Topl address from the raw address bytes
   ToplAddress(this.networkId, List<int> bytes) : super(bytes);
@@ -61,7 +61,7 @@ abstract class ToplAddress extends ByteList {
   /// Note that this give much more detail than toBase58, designed for developers who want to inspect addresses in detail.
   @override
   String toString() {
-    return '${addressTypeString(addressType)} ${networkIdString(networkId)} ${proposition.propositionName}${toBase58()}';
+    return '${addressTypeString(addressType)} ${networkIdString(networkId)} ${propositionType.propositionName}${toBase58()}';
   }
 
   static ToplAddress fromBase58(String address) {
