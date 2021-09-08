@@ -24,4 +24,5 @@ dependencies:
   meta: ^1.7.0
   bip_topl: ^0.0.1
   pinenacl: ^0.3.3
+  tuple: ^2.0.0
 

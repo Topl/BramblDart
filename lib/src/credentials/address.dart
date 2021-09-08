@@ -1,5 +1,7 @@
 import 'package:bip_topl/bip_topl.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
+import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:pinenacl/api.dart';
 
@@ -128,5 +130,34 @@ class Dion_Type_3_Address extends ToplAddress {
   AddressType get addressType => AddressType.Dion_Type_3;
   static CredentialHash32 _toHash(Bip32Key key) {
     return KeyHash32(key.keyBytes);
+  }
+}
+
+class CredentialHash32Converter
+    implements JsonConverter<CredentialHash32, List<int>> {
+  const CredentialHash32Converter();
+
+  @override
+  CredentialHash32 fromJson(List<int> json) {
+    return KeyHash32(json);
+  }
+
+  @override
+  List<int> toJson(CredentialHash32 object) {
+    return object;
+  }
+}
+
+class ToplAddressConverter implements JsonConverter<ToplAddress, String> {
+  const ToplAddressConverter();
+
+  @override
+  ToplAddress fromJson(String json) {
+    return ToplAddress.fromBase58(Base58Data.validated(json).show);
+  }
+
+  @override
+  String toJson(ToplAddress object) {
+    return object.toBase58();
   }
 }

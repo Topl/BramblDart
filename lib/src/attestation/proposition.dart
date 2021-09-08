@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/utils/errors.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/x25519.dart';
@@ -35,4 +36,18 @@ class Proposition extends ByteList {
 
   @override
   int get hashCode => buffer.hashCode;
+}
+
+class PropositionConverter implements JsonConverter<Proposition, String> {
+  const PropositionConverter();
+
+  @override
+  Proposition fromJson(String json) {
+    return Proposition.fromBase58(Base58Data.validated(json));
+  }
+
+  @override
+  String toJson(Proposition object) {
+    return object.toString();
+  }
 }
