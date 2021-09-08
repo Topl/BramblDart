@@ -98,7 +98,7 @@ packages:
       name: built_collection
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.0"
+    version: "5.1.1"
   built_value:
     dependency: transitive
     description:
@@ -190,6 +190,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
+  fast_base58:
+    dependency: "direct main"
+    description:
+      name: fast_base58
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   file:
     dependency: transitive
     description:
@@ -371,7 +378,7 @@ packages:
       name: pointycastle
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.3.2"
+    version: "3.3.4"
   pool:
     dependency: transitive
     description:
