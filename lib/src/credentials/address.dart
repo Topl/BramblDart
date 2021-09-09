@@ -40,7 +40,10 @@ class ToplAddress extends ByteList {
   late PropositionType proposition;
 
   /// A Topl address from the raw address bytes
-  ToplAddress(List<int> bytes, {this.networkId = 0x10}) : super(bytes);
+  ToplAddress(List<int> bytes,
+      {this.networkId = 0x10,
+      this.proposition = const PropositionType('PublicKeyEd25519', 0x03)})
+      : super(bytes);
 
   /// Human readable address
   String toBase58() {
