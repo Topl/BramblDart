@@ -1,23 +1,25 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:bip_topl/bip_topl.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/attestation/evidence.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:mubrambl/src/model/box/box.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
+import 'package:mubrambl/src/utils/string_data_types.dart';
 
 typedef Nonce = int;
 
-class BoxId {
+class BoxId<T> {
   final CredentialHash32 hash;
 
   BoxId(this.hash);
 
-  BoxId.apply(Uint8List bytes) : hash = KeyHash32(bytes);
+  factory BoxId.applyByteArray(Uint8List bytes) {
+    return BoxId(KeyHash32(bytes));
+  }
 
-  factory BoxId.applyBox(Box box) {
+  factory BoxId.apply(Box<T> box) {
     return BoxId.fromEviNonce(box.evidence, box.nonce);
   }
 
@@ -34,15 +36,18 @@ class BoxId {
 
   @override
   String toString() => hash.buffer.asUint8List().encodeAsBase58().show;
+}
 
-  /// A necessary factory constructor for creating a new BoxId instance
-  /// from a map.
-  /// The constructor is named after the source class, in this case, BoxId.
-  factory BoxId.fromJson(Map<String, dynamic> json) =>
-      BoxId.apply(Base58Encoder.instance.decode(json['boxId']));
+class BoxIdConverter implements JsonConverter<BoxId, String> {
+  const BoxIdConverter();
 
-  /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$BoxIdToJson`.
-  Map<String, dynamic> toJson() => json.decode(toString());
+  @override
+  BoxId fromJson(String json) {
+    return BoxId.applyByteArray(Base58Data.validated(json).value);
+  }
+
+  @override
+  String toJson(BoxId object) {
+    return object.toString();
+  }
 }
