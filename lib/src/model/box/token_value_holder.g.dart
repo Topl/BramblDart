@@ -6,23 +6,6 @@ part of 'token_value_holder.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-TokenValueHolder _$TokenValueHolderFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      'TokenValueHolder',
-      json,
-      ($checkedConvert) {
-        final val = TokenValueHolder(
-          $checkedConvert('quantity', (v) => v as int),
-        );
-        return val;
-      },
-    );
-
-Map<String, dynamic> _$TokenValueHolderToJson(TokenValueHolder instance) =>
-    <String, dynamic>{
-      'quantity': instance.quantity,
-    };
-
 SimpleValue _$SimpleValueFromJson(Map<String, dynamic> json) => $checkedCreate(
       'SimpleValue',
       json,

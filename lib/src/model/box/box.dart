@@ -75,6 +75,7 @@ class _Converter<T> implements JsonConverter<T, Object> {
     // This will only work if `object` is a native JSON type:
     //   num, String, bool, null, etc
     // Or if it has a `toJson()` function`.
+    // ignore: unnecessary_cast
     return T as Object;
   }
 }
