@@ -23,14 +23,17 @@ import 'package:pinenacl/x25519.dart';
 /// see https://docs.cardano.org/projects/cardano-wallet/en/latest/About-Address-Derivation.html
 ///
 class HdWallet {
-  final Uint8List seed;
+  late final Uint8List seed;
   final Bip32SigningKey rootSigningKey;
   final _derivator = Bip32Ed25519KeyDerivation.instance;
 
-  HdWallet({required this.seed}) : rootSigningKey = _bip32signingKey(seed);
+  HdWallet({required this.rootSigningKey});
 
-  factory HdWallet.fromHexEntropy(String hexEntropy) =>
-      HdWallet(seed: Uint8List.fromList(HexCoder.instance.decode(hexEntropy)));
+  HdWallet.fromSeed({required this.seed})
+      : rootSigningKey = _bip32signingKey(seed);
+
+  factory HdWallet.fromHexEntropy(String hexEntropy) => HdWallet.fromSeed(
+      seed: Uint8List.fromList(HexCoder.instance.decode(hexEntropy)));
 
   factory HdWallet.fromMnemonic(String mnemonic,
           {String language = 'english'}) =>
@@ -124,6 +127,17 @@ class HdWallet {
     final pair3 = derive(keys: pair2, index: change);
     final pair4 = derive(keys: pair3, index: address);
     return pair4;
+  }
+
+  Bip32KeyPair deriveLastThreeLayers(
+      {int account = defaultAccountIndex,
+      int change = defaultChange,
+      int address = defaultAddressIndex}) {
+    final rootKeys =
+        Bip32KeyPair(privateKey: rootSigningKey, publicKey: rootVerifyKey);
+    final pair0 = derive(keys: rootKeys, index: account);
+    final pair1 = derive(keys: pair0, index: change);
+    return derive(keys: pair1, index: address);
   }
 
   ToplAddress toBaseAddress(

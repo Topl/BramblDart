@@ -5,8 +5,7 @@ import 'package:pinenacl/key_derivation.dart';
 import 'package:pinenacl/x25519.dart';
 import 'package:test/test.dart';
 
-List<int> tolist(String csv) =>
-    csv.split(',').map((n) => int.parse(n)).toList();
+import '../utils/util.dart';
 
 void main() {
   final testMnemonic1 =
@@ -30,7 +29,7 @@ void main() {
   final expectedSpend0Xsk = tolist(
       '136, 51, 115, 11, 40, 131, 240, 112, 152, 86, 251, 57, 221, 61, 23, 80, 144, 158, 96, 227, 243, 3, 138, 175, 135, 16, 137, 52, 19, 17, 143, 69, 110, 238, 229, 183, 213, 73, 14, 178, 206, 210, 200, 103, 60, 97, 155, 240, 223, 70, 93, 152, 9, 106, 35, 89, 216, 201, 225, 46, 248, 94, 204, 177, 237, 38, 41, 149, 100, 209, 66, 77, 183, 244, 31, 246, 89, 71, 121, 92, 145, 162, 52, 225, 219, 254, 184, 38, 180, 69, 221, 43, 101, 219, 77, 133');
   final expectedSpend0Xvk = tolist(
-    '240, 207, 127, 6, 10, 80, 84, 195, 195, 28, 6, 241, 247, 25, 133, 59, 91, 129, 245, 186, 104, 159, 64, 50, 78, 44, 205, 14, 168, 149, 29, 218, 237, 38, 41, 149, 100, 209, 66, 77, 183, 244, 31, 246, 89, 71, 121, 92, 145, 162, 52, 225, 219, 254, 184, 38, 180, 69, 221, 43, 101, 219, 77, 133');
+      '240, 207, 127, 6, 10, 80, 84, 195, 195, 28, 6, 241, 247, 25, 133, 59, 91, 129, 245, 186, 104, 159, 64, 50, 78, 44, 205, 14, 168, 149, 29, 218, 237, 38, 41, 149, 100, 209, 66, 77, 183, 244, 31, 246, 89, 71, 121, 92, 145, 162, 52, 225, 219, 254, 184, 38, 180, 69, 221, 43, 101, 219, 77, 133');
   final expectedSpend0Base58 =
       '9gfyAYmtQMfoJtBM9Z8sHF7eEfAm72Hqy86yr8aMqcqQSmBwvvD';
   final expectedTestnetSpend0Base58 =
@@ -125,8 +124,7 @@ void main() {
       expect(entropy, equals(testEntropy1));
     });
     test('to seed hex', () {
-      final seedHex =
-          mnemonicToSeedHex(testMnemonic1, passphrase: 'TREZOR');
+      final seedHex = mnemonicToSeedHex(testMnemonic1, passphrase: 'TREZOR');
       //print("seedHex: $seedHex");
       expect(seedHex, equals(testHexSeed1));
     });
