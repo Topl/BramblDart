@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:bip_topl/bip_topl.dart';
 import 'package:mubrambl/src/attestation/proposition.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';

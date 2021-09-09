@@ -12,7 +12,7 @@ typedef Nonce = int;
 typedef BoxType = int;
 
 @JsonSerializable(checked: true, explicitToJson: true)
-abstract class Box<T> extends GenericBox {
+class Box<T> extends GenericBox {
   @override
   final Evidence evidence;
   @override
