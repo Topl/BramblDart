@@ -7,7 +7,9 @@ import 'dart:typed_data';
 
 import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/utils/extensions.dart';
+import 'package:pinenacl/api.dart';
 import 'package:pinenacl/encoding.dart';
 
 class Latin1Data {
@@ -120,4 +122,18 @@ class Base16Data {
   }
 
   String get show => HexCoder.instance.encode(value);
+}
+
+class Latin1Converter implements JsonConverter<Latin1Data, String> {
+  const Latin1Converter();
+
+  @override
+  Latin1Data fromJson(String json) {
+    return Latin1Data.validated(json);
+  }
+
+  @override
+  String toJson(Latin1Data object) {
+    return object.show;
+  }
 }
