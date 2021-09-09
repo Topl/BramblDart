@@ -127,7 +127,7 @@ class HdWallet {
   }
 
   ToplAddress toBaseAddress(
-          {required Bip32PublicKey spend, NetworkId networkId = 0x01}) =>
+          {required Bip32PublicKey spend, NetworkId networkId = 0x10}) =>
       ToplAddress.toAddress(spendCredential: spend, networkId: networkId);
 }
 

@@ -1,14 +1,10 @@
 import 'dart:typed_data';
 import 'package:bip_topl/bip_topl.dart';
 import 'package:mubrambl/src/credentials/hd_wallet_helper.dart';
-import 'package:mubrambl/src/credentials/address.dart';
 import 'package:pinenacl/key_derivation.dart';
 import 'package:pinenacl/x25519.dart';
 import 'package:test/test.dart';
 
-// const int hardened_offset = 0x80000000;
-
-// int harden(int index) => index | hardened_offset;
 List<int> tolist(String csv) =>
     csv.split(',').map((n) => int.parse(n)).toList();
 
@@ -26,28 +22,20 @@ void main() {
   final expectedPurposeXsk = tolist(
       '184,74,168,186,106,194,150,231,102,65,4,152,99,223,135,221,172,111,161,213,247,232,5,104,70,137,45,159,3,17,143,69,185,148,219,125,227,191,90,209,187,14,186,202,238,5,40,3,126,167,45,77,98,97,196,155,137,209,156,114,248,63,132,20,24,173,18,17,250,137,178,51,117,154,118,193,74,61,58,237,1,117,26,105,181,45,253,35,129,230,99,44,202,180,207,58');
   final expectedCoinTypeXsk = tolist(
-      '168,20,53,153,225,95,189,33,37,223,221,179,95,87,95,173,36,26,69,122,164,192,96,113,233,34,221,163,3,17,143,69,13,219,136,133,14,140,84,207,148,241,93,82,57,166,103,54,152,156,198,70,254,62,37,213,117,32,194,118,252,106,243,91,152,227,170,252,140,142,206,250,55,157,136,182,253,116,99,243,136,59,60,64,15,225,113,195,108,201,251,70,74,252,111,24');
+      '184, 72, 70, 147, 233, 99, 218, 194, 235, 204, 6, 15, 0, 197, 234, 111, 173, 113, 28, 18, 251, 70, 35, 211, 140, 105, 195, 174, 4, 17, 143, 69, 211, 168, 139, 201, 154, 134, 38, 19, 9, 232, 18, 145, 68, 179, 139, 120, 47, 0, 100, 85, 174, 188, 74, 28, 54, 130, 29, 116, 107, 168, 30, 144, 194, 249, 145, 147, 225, 193, 74, 143, 197, 222, 71, 11, 138, 184, 5, 200, 235, 53, 236, 125, 62, 188, 149, 24, 250, 94, 228, 199, 8, 82, 153, 186');
   final expectedAccount0Xsk = tolist(
-      '64,246,231,31,5,34,87,102,234,127,223,47,231,16,38,174,155,203,159,162,244,12,68,28,233,29,109,16,7,17,143,69,99,163,20,154,255,245,240,102,22,115,68,73,66,109,26,74,157,47,205,195,175,131,141,179,153,220,26,66,152,143,39,236,77,87,90,245,169,59,223,73,5,163,112,47,173,237,244,81,234,88,71,145,210,51,173,233,9,101,214,8,186,197,115,4');
+      '248, 72, 179, 77, 123, 176, 84, 121, 139, 50, 117, 56, 92, 232, 85, 51, 186, 160, 75, 74, 113, 203, 209, 94, 76, 144, 7, 25, 7, 17, 143, 69, 109, 104, 104, 50, 113, 64, 156, 68, 198, 9, 141, 183, 210, 45, 127, 140, 208, 190, 145, 184, 118, 243, 94, 194, 91, 24, 129, 65, 16, 172, 72, 18, 114, 36, 57, 168, 19, 129, 134, 220, 227, 183, 161, 40, 55, 223, 123, 240, 98, 57, 110, 131, 117, 104, 201, 106, 55, 125, 170, 198, 57, 206, 7, 24');
   final expectedChange0Xsk = tolist(
-      '32,252,38,192,255,180,208,38,209,162,139,214,141,102,30,46,192,248,56,119,93,226,69,198,254,58,141,139,13,17,143,69,224,178,189,12,154,221,217,239,241,203,71,202,74,183,204,47,136,167,210,244,145,190,241,11,68,112,19,130,182,133,18,35,96,160,127,43,182,21,248,82,206,177,177,173,172,158,72,208,107,10,26,177,129,220,101,177,220,6,159,132,181,88,187,203');
+      '128, 227, 218, 166, 141, 7, 162, 22, 160, 128, 94, 84, 240, 26, 162, 56, 45, 123, 7, 217, 177, 65, 127, 105, 46, 96, 105, 121, 11, 17, 143, 69, 122, 232, 215, 223, 31, 221, 156, 169, 196, 10, 138, 155, 7, 200, 188, 240, 111, 52, 101, 131, 192, 154, 24, 226, 106, 4, 126, 220, 87, 100, 58, 199, 35, 84, 15, 232, 242, 9, 33, 227, 117, 130, 15, 7, 208, 208, 194, 85, 227, 25, 100, 171, 202, 113, 44, 59, 246, 234, 149, 114, 14, 16, 175, 97');
   final expectedSpend0Xsk = tolist(
-      '16,41,227,180,98,205,86,19,164,21,138,56,61,41,138,149,60,198,210,108,65,244,169,96,247,21,18,90,21,17,143,69,194,70,255,246,50,124,72,102,231,105,50,116,96,25,83,94,245,96,206,37,0,21,11,224,246,1,224,54,119,47,202,15,23,236,32,214,162,3,215,59,218,48,86,59,210,15,41,200,58,115,47,149,36,193,106,147,177,129,121,138,250,247,136,13');
+      '136, 51, 115, 11, 40, 131, 240, 112, 152, 86, 251, 57, 221, 61, 23, 80, 144, 158, 96, 227, 243, 3, 138, 175, 135, 16, 137, 52, 19, 17, 143, 69, 110, 238, 229, 183, 213, 73, 14, 178, 206, 210, 200, 103, 60, 97, 155, 240, 223, 70, 93, 152, 9, 106, 35, 89, 216, 201, 225, 46, 248, 94, 204, 177, 237, 38, 41, 149, 100, 209, 66, 77, 183, 244, 31, 246, 89, 71, 121, 92, 145, 162, 52, 225, 219, 254, 184, 38, 180, 69, 221, 43, 101, 219, 77, 133');
   final expectedSpend0Xvk = tolist(
-      '249,22,43,145,18,98,18,183,21,0,232,157,199,218,49,17,29,252,20,102,169,242,79,72,163,78,126,165,41,210,211,56,23,236,32,214,162,3,215,59,218,48,86,59,210,15,41,200,58,115,47,149,36,193,106,147,177,129,121,138,250,247,136,13');
-  final expectedStake0Xsk = tolist(
-      '40,184,124,185,16,22,113,157,33,204,24,190,209,97,23,160,125,79,145,114,178,38,114,18,12,243,32,248,12,17,143,69,125,104,75,46,40,163,136,6,34,32,65,216,70,97,70,131,241,143,123,118,111,164,172,17,148,250,121,254,98,152,125,49,87,224,30,183,139,184,57,170,146,167,191,86,138,123,240,59,3,81,148,105,27,177,61,94,63,155,51,150,90,200,13,150');
-  final expectedStake0Xvk = tolist(
-      '198,178,48,87,100,108,196,77,168,58,125,66,86,243,155,111,205,69,182,176,228,239,165,107,172,195,228,202,189,233,179,128,87,224,30,183,139,184,57,170,146,167,191,86,138,123,240,59,3,81,148,105,27,177,61,94,63,155,51,150,90,200,13,150');
-  final expectedSpend0Bech32 =
-      'addr1qyy6nhfyks7wdu3dudslys37v252w2nwhv0fw2nfawemmn8k8ttq8f3gag0h89aepvx3xf69g0l9pf80tqv7cve0l33sdn8p3d';
-  final expectedTestnetSpend0Bech32 =
-      'addr_test1qqy6nhfyks7wdu3dudslys37v252w2nwhv0fw2nfawemmn8k8ttq8f3gag0h89aepvx3xf69g0l9pf80tqv7cve0l33sw96paj';
-
-  /// Extended Public key size in bytes
-  // const xpub_size = 64;
+    '240, 207, 127, 6, 10, 80, 84, 195, 195, 28, 6, 241, 247, 25, 133, 59, 91, 129, 245, 186, 104, 159, 64, 50, 78, 44, 205, 14, 168, 149, 29, 218, 237, 38, 41, 149, 100, 209, 66, 77, 183, 244, 31, 246, 89, 71, 121, 92, 145, 162, 52, 225, 219, 254, 184, 38, 180, 69, 221, 43, 101, 219, 77, 133');
+  final expectedSpend0Base58 =
+      '9gfyAYmtQMfoJtBM9Z8sHF7eEfAm72Hqy86yr8aMqcqQSmBwvvD';
+  final expectedTestnetSpend0Base58 =
+      '3NP8YaxGWi6jR55heHUXotfRNkfxHP6CHbU4NfKzj1vWdQgNvW3s';
   const public_key_size = 32;
-  // const choin_code_size = 32;
 
   group('topl hd_wallet test -', () {
     test('entropy to root private and public keys', () {
@@ -74,13 +62,13 @@ void main() {
           reason: 'second 32 bytes are chain code');
       expect(root_xsk.chainCode, root_xvk.chainCode,
           reason: 'chain code is identical in both private and public keys');
-      //generate chain and addresses - m/1852'/1815'/0'/0/0
+      //generate chain and addresses - m/1852'/7091'/0'/0/0
       final derivator = Bip32Ed25519KeyDerivation.instance;
       final pvt_purpose_1852 = derivator.ckdPriv(root_xsk, harden(1852));
       expect(pvt_purpose_1852, expectedPurposeXsk);
-      final pvt_coin_1815 = derivator.ckdPriv(pvt_purpose_1852, harden(1815));
-      expect(pvt_coin_1815, expectedCoinTypeXsk);
-      final pvt_account_0 = derivator.ckdPriv(pvt_coin_1815, harden(0));
+      final pvt_coin_7091 = derivator.ckdPriv(pvt_purpose_1852, harden(7091));
+      expect(pvt_coin_7091, expectedCoinTypeXsk);
+      final pvt_account_0 = derivator.ckdPriv(pvt_coin_7091, harden(0));
       expect(pvt_account_0, expectedAccount0Xsk);
       final pvt_change_0 = derivator.ckdPriv(pvt_account_0, 0);
       expect(pvt_change_0, expectedChange0Xsk);
@@ -103,19 +91,16 @@ void main() {
       final spendAddress0Pair = hdWallet.deriveAddress(address: 0);
       expect(spendAddress0Pair.privateKey, expectedSpend0Xsk);
       expect(spendAddress0Pair.publicKey, expectedSpend0Xvk);
-      final stakeAddress0Pair = hdWallet.deriveAddress(change: 2, address: 0);
-      expect(stakeAddress0Pair.privateKey, expectedStake0Xsk);
-      expect(stakeAddress0Pair.publicKey, expectedStake0Xvk);
       final addr0 = hdWallet.toBaseAddress(
           networkId: 0x01, spend: spendAddress0Pair.publicKey!);
-      expect(addr0.toBase58(), expectedSpend0Bech32);
+      expect(addr0.toBase58(), expectedSpend0Base58);
       final addr_test0 =
           hdWallet.toBaseAddress(spend: spendAddress0Pair.publicKey!);
-      expect(addr_test0.toBase58(), expectedTestnetSpend0Bech32);
+      expect(addr_test0.toBase58(), expectedTestnetSpend0Base58);
     });
   });
 
-  group('JS Brambl Test -', () {
+  group('Mnemonic Brambl Test -', () {
     test('HdWallet -', () {
       final mnemonic =
           'rude stadium move tumble spice vocal undo butter cargo win valid session question walk indoor nothing wagon column artefact monster fold gallery receive just';
@@ -124,24 +109,24 @@ void main() {
       final addr_test =
           hdWallet.toBaseAddress(spend: spendAddress0Pair.publicKey!);
       expect(addr_test.toBase58(),
-          'addr_test1qrlqwws609v256tuydd4hf5vanrwyljwftanh2ntafkkpkv3vuea47tq3shgvp2376dn5stzdz2ge90tmuac00v4cnjqm2rpzj');
+          '3NQbrzZvNbgFbivPRgkQ4GVNUz1C5pzBVoF714ccTAd3KvWPadyq');
     });
   });
 
   group('mnemonic words -', () {
     setUp(() {});
     test('validate', () {
-      expect(bip39.validateMnemonic(testMnemonic1), isTrue,
+      expect(validateMnemonic(testMnemonic1, 'english'), isTrue,
           reason: 'validateMnemonic returns true');
     });
     test('to entropy', () {
-      final String entropy = bip39.mnemonicToEntropy(testMnemonic1);
-      //print(entropy);
+      // ignore: omit_local_variable_types
+      final String entropy = mnemonicToEntropy(testMnemonic1, 'english');
       expect(entropy, equals(testEntropy1));
     });
     test('to seed hex', () {
       final seedHex =
-          bip39.mnemonicToSeedHex(testMnemonic1, passphrase: 'TREZOR');
+          mnemonicToSeedHex(testMnemonic1, passphrase: 'TREZOR');
       //print("seedHex: $seedHex");
       expect(seedHex, equals(testHexSeed1));
     });

@@ -8,7 +8,7 @@ final validNetworks = ['private', 'toplnet', 'valhalla'];
 final validPropositionTypes = [
   'PublicKeyCurve25519',
   'ThresholdCurve25519',
-  'PublicKeyED25519'
+  'PublicKeyEd25519'
 ];
 
 final privateMap = <String, int>{'hex': 0x40, 'decimal': 64};
@@ -22,7 +22,7 @@ final networksDefault = <String, Map<String, int>>{
 final propositionMap = <String, int>{
   'PublicKeyCurve25519': 0x01,
   'ThresholdCurve25519': 0x02,
-  'PublicKeyED25519': 0x03
+  'PublicKeyEd25519': 0x03
 };
 
 final ADDRESS_LENGTH = 38;
@@ -43,13 +43,12 @@ ToplAddress generatePubKeyHashAddress(
   }
 
   // validate public key
-  if (publicKey.length != 32) {
+  if (publicKey.rawKey.length != 32) {
     throw ArgumentError('Invalid publicKey length');
   }
 
-  final networkHex = getHexByNetwork(networkPrefix);
   // network hex + proposition hex
-  b.add([networkHex, propositionMap[propositionType] ?? 0x01]);
+  b.add([networkPrefix, propositionMap[propositionType] ?? 0x01]);
   b.add(createHash(Uint8List.fromList(publicKey.rawKey)));
   final concatEvidence = b.toBytes().sublist(0, 34);
   final hashChecksumBuffer = createHash(concatEvidence).sublist(0, 4);
@@ -58,11 +57,6 @@ ToplAddress generatePubKeyHashAddress(
   b.add(hashChecksumBuffer);
   final address = b.toBytes().sublist(0, 38);
   return ToplAddress(address, networkId: networkPrefix);
-}
-
-/// Returns the hex value for a given networkPrefix
-int getHexByNetwork(networkPrefix) {
-  return (networksDefault[networkPrefix] ?? const {})['hex'] ?? 0x01;
 }
 
 /// Returns the networkPrefix for a valid address
