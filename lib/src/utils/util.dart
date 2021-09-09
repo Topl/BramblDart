@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:bip_topl/bip_topl.dart';
+import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:collection/collection.dart';
 
@@ -31,48 +32,32 @@ final ADDRESS_LENGTH = 38;
 /// The second parameter is the prefix of the network where the address will be used
 /// Third is the type of proposition used
 /// Returns the address and whether or not the operation was successful
-Map<String, dynamic> generatePubKeyHashAddress(
-    Uint8List publicKey, String networkPrefix, String propositionType) {
-  final result = <String, dynamic>{};
-  result['success'] = false;
+ToplAddress generatePubKeyHashAddress(
+    Bip32PublicKey publicKey, NetworkId networkPrefix, String propositionType) {
   final b = BytesBuilder();
-
-  // validate network prefix
-
-  if (!isValidNetwork(networkPrefix)) {
-    result['errorMsg'] = 'Invalid network provided';
-    return result;
-  }
 
   // validate propositionType
 
   if (!isValidPropositionType(propositionType)) {
-    result['errorMsg'] = 'Invalid proposition type provided';
-    return result;
+    throw ArgumentError('Invalid proposition type provided');
   }
 
   // validate public key
   if (publicKey.length != 32) {
-    result['errorMsg'] = 'Invalid publicKey length';
-    return result;
+    throw ArgumentError('Invalid publicKey length');
   }
 
   final networkHex = getHexByNetwork(networkPrefix);
-  final credentialHash = createHash(publicKey);
   // network hex + proposition hex
   b.add([networkHex, propositionMap[propositionType] ?? 0x01]);
-  b.add(createHash(publicKey));
+  b.add(createHash(Uint8List.fromList(publicKey.rawKey)));
   final concatEvidence = b.toBytes().sublist(0, 34);
   final hashChecksumBuffer = createHash(concatEvidence).sublist(0, 4);
   b.clear();
   b.add(concatEvidence);
   b.add(hashChecksumBuffer);
   final address = b.toBytes().sublist(0, 38);
-  result['address'] = address;
-  result['credentialHash'] = credentialHash;
-  result['checksum'] = hashChecksumBuffer;
-  result['success'] = true;
-  return result;
+  return ToplAddress(address, networkId: networkPrefix);
 }
 
 /// Returns the hex value for a given networkPrefix
