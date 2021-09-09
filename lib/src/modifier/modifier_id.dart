@@ -16,7 +16,7 @@ class ModifierId extends ByteList {
   }
 
   factory ModifierId.empty() {
-    return ModifierId(Uint8List(1 + MODIFIER_ID_SIZE));
+    return ModifierId(Uint8List(MODIFIER_ID_SIZE));
   }
 
   factory ModifierId.fromBase58(Base58Data data) {
