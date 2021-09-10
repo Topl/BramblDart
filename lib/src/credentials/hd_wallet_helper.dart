@@ -23,17 +23,17 @@ import 'package:pinenacl/x25519.dart';
 /// see https://docs.cardano.org/projects/cardano-wallet/en/latest/About-Address-Derivation.html
 ///
 class HdWallet {
-  late final Uint8List seed;
+  late final Uint8List entropy;
   final Bip32SigningKey rootSigningKey;
   final _derivator = Bip32Ed25519KeyDerivation.instance;
 
   HdWallet({required this.rootSigningKey});
 
-  HdWallet.fromSeed({required this.seed})
-      : rootSigningKey = _bip32signingKey(seed);
+  HdWallet.fromEntropy({required this.entropy})
+      : rootSigningKey = _bip32signingKey(entropy);
 
-  factory HdWallet.fromHexEntropy(String hexEntropy) => HdWallet.fromSeed(
-      seed: Uint8List.fromList(HexCoder.instance.decode(hexEntropy)));
+  factory HdWallet.fromHexEntropy(String hexEntropy) => HdWallet.fromEntropy(
+      entropy: Uint8List.fromList(HexCoder.instance.decode(hexEntropy)));
 
   factory HdWallet.fromMnemonic(String mnemonic,
           {String language = 'english'}) =>
