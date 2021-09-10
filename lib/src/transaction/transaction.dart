@@ -197,7 +197,7 @@ class PolyTransaction extends Transaction {
   }
 }
 
-/// Class that establishes the inputs and output boxes for a poly transaction. Note that in the current iteration this supports data requests from the chain only
+/// Class that establishes the inputs and output boxes for an asset transaction. Note that in the current iteration this supports data requests from the chain only
 class AssetTransaction extends Transaction {
   @override
   final ModifierId id;
@@ -356,7 +356,7 @@ class AssetTransaction extends Transaction {
   }
 }
 
-/// Class that establishes the inputs and output boxes for a poly transaction. Note that in the current iteration this supports data requests from the chain only
+/// Class that establishes the inputs and output boxes for an arbit transaction. Note that in the current iteration this supports data requests from the chain only
 class ArbitTransaction extends Transaction {
   @override
   final ModifierId id;
