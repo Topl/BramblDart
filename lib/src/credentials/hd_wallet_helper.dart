@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bip_topl/src/bip32.dart';
@@ -24,25 +25,30 @@ import 'package:pinenacl/x25519.dart';
 ///
 class HdWallet {
   late final Uint8List entropy;
+  final String password;
   final Bip32SigningKey rootSigningKey;
   final _derivator = Bip32Ed25519KeyDerivation.instance;
 
-  HdWallet({required this.rootSigningKey});
+  HdWallet({required this.rootSigningKey, this.password = ''});
 
-  HdWallet.fromEntropy({required this.entropy})
+  HdWallet.fromEntropy({required this.entropy, this.password = ''})
       : rootSigningKey = _bip32signingKey(entropy);
 
-  factory HdWallet.fromHexEntropy(String hexEntropy) => HdWallet.fromEntropy(
-      entropy: Uint8List.fromList(HexCoder.instance.decode(hexEntropy)));
+  factory HdWallet.fromHexEntropy(String hexEntropy, {String password = ''}) =>
+      HdWallet.fromEntropy(
+          entropy: Uint8List.fromList(HexCoder.instance.decode(hexEntropy)),
+          password: password);
 
   factory HdWallet.fromMnemonic(String mnemonic,
-          {String language = 'english'}) =>
+          {String language = 'english', String password = ''}) =>
       HdWallet.fromHexEntropy(mnemonicToEntropy(mnemonic, language));
 
   Bip32VerifyKey get rootVerifyKey => rootSigningKey.verifyKey;
 
-  static Bip32SigningKey _bip32signingKey(Uint8List seed) {
-    final rawMaster = PBKDF2.hmac_sha512(Uint8List(0), seed, 4096, xprv_size);
+  static Bip32SigningKey _bip32signingKey(Uint8List entropy,
+      {String password = ''}) {
+    final salt = Uint8List.fromList(utf8.encode(SALT_PREFIX + password));
+    final rawMaster = PBKDF2.hmac_sha512(salt, entropy, 4096, xprv_size);
     final root_xsk = Bip32SigningKey.normalizeBytes(rawMaster);
     return root_xsk;
   }
