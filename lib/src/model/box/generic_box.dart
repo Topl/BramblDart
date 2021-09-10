@@ -1,20 +1,20 @@
 import 'package:mubrambl/src/attestation/evidence.dart';
 import 'package:mubrambl/src/model/box/box_id.dart';
-import 'package:pinenacl/api.dart';
 
-abstract class GenericBox extends ByteList {
+abstract class GenericBox<T> {
   /// a commitment to the proposition locking this box
   final Evidence evidence;
+  final T value;
 
   /// a one-time only, unique reference id (computed from the input transaction data)
-  final BoxId boxId;
+  late final BoxId boxId;
 
-  GenericBox(this.evidence, this.boxId, Uint8List value) : super(value);
+  GenericBox(this.evidence, this.value);
 
   @override
   bool operator ==(Object other) =>
       other is GenericBox &&
       other.boxId == boxId &&
-      other.buffer == buffer &&
+      other.value == value &&
       other.evidence == evidence;
 }

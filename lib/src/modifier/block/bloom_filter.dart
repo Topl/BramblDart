@@ -1,17 +1,20 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mubrambl/src/converters/converters.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
+
+part 'bloom_filter.g.dart';
 
 final _size = BLOOM_FILTER_BYTES * 8;
 final _numLongs = _size ~/ 64;
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class BloomFilter {
+  @Uint8ListConverter()
   final Uint8List value;
   BloomFilter(this.value);
 
@@ -32,13 +35,15 @@ class BloomFilter {
   }
 
   /// A necessary factory constructor for creating a new BloomFilter instance
-  /// from a map.
+  /// from a map. Pass the map to the generated `_$BloomFilterFromJson()` constructor.
+  /// The constructor is named after the source class, in this case, BloomFilter.
   factory BloomFilter.fromJson(Map<String, dynamic> json) =>
-      BloomFilter.fromBase58(json['bloomFilter']);
+      _$BloomFilterFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON.
-  Map<String, dynamic> toJson() => json.decode(toString());
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$BloomFilterToJson`.
+  Map<String, dynamic> toJson() => _$BloomFilterToJson(this);
 
   @override
   String toString() => Base58Encoder.instance.encode(value);

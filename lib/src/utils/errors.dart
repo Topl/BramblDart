@@ -47,3 +47,8 @@ class WrongNumberOfWords implements Exception {
   String cause;
   WrongNumberOfWords(this.cause);
 }
+
+class IncorrectEncoding implements Exception {
+  String cause;
+  IncorrectEncoding(this.cause);
+}

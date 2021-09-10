@@ -4,7 +4,7 @@ import 'package:mubrambl/src/auth/api_key_auth.dart';
 import 'package:mubrambl/src/core/expensive_operations.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
 import 'package:mubrambl/src/utils/network.dart';
-import 'package:mubrambl/src/utils/proposition.dart';
+import 'package:mubrambl/src/utils/proposition_type.dart';
 
 import '../json_rpc.dart';
 
@@ -85,8 +85,9 @@ class BramblClient {
   /// Constructs a new [Credentials] with the provided [privateKey] by using
   /// a [ToplSigningKey].
   Future<ToplSigningKey> credentialsFromPrivateKey(
-      String privateKey, Network network, Proposition proposition) {
-    return _operations.privateKeyFromString(network, proposition, privateKey);
+      String privateKey, Network network, PropositionType propositionType) {
+    return _operations.privateKeyFromString(
+        network, propositionType, privateKey);
   }
 
   /// Returns the information of the node that we're sending requests to.
