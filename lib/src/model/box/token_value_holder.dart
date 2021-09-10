@@ -8,7 +8,7 @@ import 'package:mubrambl/src/model/box/security_root.dart';
 /// the star denotes the source file name.
 part 'token_value_holder.g.dart';
 
-abstract class TokenValueHolder {
+class TokenValueHolder {
   final int quantity;
   TokenValueHolder(this.quantity);
 
