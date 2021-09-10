@@ -1,9 +1,7 @@
-import 'package:bip_topl/bip_topl.dart';
-import 'package:mubrambl/src/core/transaction.dart';
-import 'package:mubrambl/src/model/box/arbit_box.dart';
-import 'package:mubrambl/src/modifier/modifier_id.dart';
-import 'package:mubrambl/src/modifier/node_view_modifier.dart';
-import 'package:pinenacl/ed25519.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:mubrambl/src/modifier/block/block_body.dart';
+
+import 'block_header.dart';
 
 ///
 ///A block is an atomic piece of data network participates are agreed on.
@@ -20,31 +18,24 @@ import 'package:pinenacl/ed25519.dart';
 ///
 ///- additional data: block structure version no, timestamp etc
 ///
-class Block extends NodeViewModifier {
-  final ModifierId parentId;
-  @override
-  final ModifierId id;
-  final DateTime timeStamp;
-  final ArbitBox generatorBox;
-  final Bip32VerifyKey publicKey;
-  final SignatureBase signature;
-  final int height;
-  final int difficulty;
-  final Uint8List value;
-  final List<Transaction> txs;
-  final int version;
+///
+part 'block.g.dart';
 
-  Block(
-      this.parentId,
-      this.id,
-      this.timeStamp,
-      this.generatorBox,
-      this.publicKey,
-      this.signature,
-      this.height,
-      this.difficulty,
-      this.value,
-      this.txs,
-      this.version)
-      : super(3, id);
+@JsonSerializable(checked: true, explicitToJson: true)
+class Block {
+  final BlockHeader header;
+  final BlockBody body;
+  final int blockSize;
+
+  Block(this.header, this.body, this.blockSize);
+
+  /// A necessary factory constructor for creating a new Block instance
+  /// from a map. Pass the map to the generated `_$BlockFromJson()` constructor.
+  /// The constructor is named after the source class, in this case, Block.
+  factory Block.fromJson(Map<String, dynamic> json) => _$BlockFromJson(json);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$BlockToJson`.
+  Map<String, dynamic> toJson() => _$BlockToJson(this);
 }

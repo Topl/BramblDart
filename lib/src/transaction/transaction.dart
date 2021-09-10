@@ -13,8 +13,8 @@ import 'package:tuple/tuple.dart';
 
 typedef TxType = int;
 
-/// Fee amount should be in nanopolys
-abstract class Transaction {
+class Transaction {
+  @ModifierIdConverter()
   final ModifierId id;
   final List<Tuple2<ToplAddress, int>> from;
   final List<Tuple2<ToplAddress, TokenValueHolder>> to;
@@ -25,9 +25,7 @@ abstract class Transaction {
   final Uint8List? messageToSign;
   final List<BoxId> boxesToRemove;
 
-  String get typeString;
-
-  Map<String, dynamic> toJson();
+  String get typeString => '';
 
   Transaction(this.id, this.newBoxes, this.signatures, this.fee, this.timestamp,
       this.messageToSign, this.boxesToRemove, this.to, this.from);
@@ -45,6 +43,25 @@ abstract class Transaction {
   String encodeTo() {
     return json.encode(to.map((x) => [x.item1.toBase58(), x.item2.toJson()]));
   }
+
+  /// A necessary factory constructor for creating a new Transaction instance
+  /// from a map. Pass the map to the generated `_$TransactionFromJson()` constructor.
+  /// The constructor is named after the source class, in this case, Transaction.
+  factory Transaction.fromJson(Map<String, dynamic> json) => Transaction(
+      ModifierId(Uint8List(0)),
+      [],
+      {},
+      BigInt.zero,
+      0,
+      Uint8List(0),
+      [],
+      [],
+      []);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$TransactionToJson`.
+  Map<String, dynamic> toJson() => {};
 }
 
 /// Class that establishes the inputs and output boxes for a poly transaction. Note that in the current iteration this supports data requests from the chain only
