@@ -23,9 +23,7 @@ BlockHeader _$BlockHeaderFromJson(Map<String, dynamic> json) => $checkedCreate(
           $checkedConvert('height', (v) => v as int),
           $checkedConvert('difficulty', (v) => v as int),
           $checkedConvert(
-              'txRoot',
-              (v) =>
-                  const CredentialHash32Converter().fromJson(v as List<int>)),
+              'txRoot', (v) => Digest.fromJson(v as Map<String, dynamic>)),
           $checkedConvert('version', (v) => v as int),
         );
         return val;
@@ -41,6 +39,6 @@ Map<String, dynamic> _$BlockHeaderToJson(BlockHeader instance) =>
       'signature': const ByteListConverter().toJson(instance.signature),
       'height': instance.height,
       'difficulty': instance.difficulty,
-      'txRoot': const CredentialHash32Converter().toJson(instance.txRoot),
+      'txRoot': instance.txRoot.toJson(),
       'version': instance.version,
     };
