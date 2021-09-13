@@ -32,7 +32,7 @@ class HdWallet {
   HdWallet({required this.rootSigningKey, this.password = ''});
 
   HdWallet.fromEntropy({required this.entropy, this.password = ''})
-      : rootSigningKey = _bip32signingKey(entropy);
+      : rootSigningKey = _bip32signingKey(entropy, password: password);
 
   factory HdWallet.fromHexEntropy(String hexEntropy, {String password = ''}) =>
       HdWallet.fromEntropy(
@@ -41,13 +41,14 @@ class HdWallet {
 
   factory HdWallet.fromMnemonic(String mnemonic,
           {String language = 'english', String password = ''}) =>
-      HdWallet.fromHexEntropy(mnemonicToEntropy(mnemonic, language));
+      HdWallet.fromHexEntropy(mnemonicToEntropy(mnemonic, language),
+          password: password);
 
   Bip32VerifyKey get rootVerifyKey => rootSigningKey.verifyKey;
 
   static Bip32SigningKey _bip32signingKey(Uint8List entropy,
       {String password = ''}) {
-    final salt = Uint8List.fromList(utf8.encode(SALT_PREFIX + password));
+    final salt = Uint8List.fromList(utf8.encode(password));
     final rawMaster = PBKDF2.hmac_sha512(salt, entropy, 4096, xprv_size);
     final root_xsk = Bip32SigningKey.normalizeBytes(rawMaster);
     return root_xsk;
