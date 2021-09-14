@@ -1,15 +1,13 @@
 import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:bip_topl/bip_topl.dart';
+import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/addresses.dart';
-import 'package:mubrambl/src/utils/network.dart';
 import 'package:mubrambl/src/utils/util.dart';
 
 /// Class that will be used by the Credential Manager to generate addresses
 class AddressGenerator {
   final String? publicKeyBase58;
-  final Network network;
+  final NetworkId network;
   final String propositionType;
 
   Bip32VerifyKey? _masterPubKeyPtr;
@@ -20,14 +18,14 @@ class AddressGenerator {
   String? get rootKey => publicKeyBase58;
 
   /// Uses the cached root public key to generate new addresses
-  List<String> generate(List<int> idxs) {
+  List<ToplAddress> generate(List<int> idxs) {
     // cache credential manager public key
     _masterPubKeyPtr ??= Bip32VerifyKey.decode(publicKeyBase58!);
     var chainKey = Bip32Ed25519KeyDerivation().ckdPub(_masterPubKeyPtr!, 0);
     return idxs.map((idx) {
       final addrKey = chainKey.derive(idx);
-      return generatePubKeyHashAddress(Uint8List.fromList(addrKey.rawKey),
-          network.networkPrefixString, propositionType)['address'] as String;
+      return generatePubKeyHashAddress(
+          (addrKey as Bip32SigningKey).publicKey, network, propositionType);
     }).toList();
   }
 
@@ -37,11 +35,10 @@ class AddressGenerator {
   }
 
   /// Note: We could potentially instantiate the AddressGenerator from a json directly
-  factory AddressGenerator.fromJson(data, String networkPrefix) {
+  factory AddressGenerator.fromJson(data, int networkId) {
     // note that this should be a public key generated with Brambl
     final a = data;
     var publicKeyBase58 = '';
-    var networkPrefix = Network.Toplnet();
     var propositionType = '';
     if (a['root_cached_key'] != null) {
       publicKeyBase58 = a['root_cached_key'] as String;
@@ -51,10 +48,7 @@ class AddressGenerator {
 
     if (a['network'] != null) {
       if (a['network'] == 'valhalla') {
-        networkPrefix = Network.Valhalla();
-      } else if (a['network'] == 'private') {
-        networkPrefix = Network.Private();
-      }
+      } else if (a['network'] == 'private') {}
     } else {
       throw Exception('cannot retrieve address network.');
     }
@@ -64,7 +58,7 @@ class AddressGenerator {
     } else {
       throw Exception('cannot retrieve address proposition type.');
     }
-    return AddressGenerator(publicKeyBase58, networkPrefix, propositionType);
+    return AddressGenerator(publicKeyBase58, networkId, propositionType);
   }
 }
 
@@ -75,10 +69,9 @@ class AddressChain {
   AddressChain(this._addressGenerator, String index)
       : _addresses = AddressesImpl([], index, _addressGenerator.addressBase58);
 
-  factory AddressChain.fromJson(data, String index, String networkPrefix) {
+  factory AddressChain.fromJson(data, String index, int networkId) {
     final chain = AddressChain(
-        AddressGenerator.fromJson(data['addressGenerator'], networkPrefix),
-        index);
+        AddressGenerator.fromJson(data['addressGenerator'], networkId), index);
     chain._isInitialized = true;
     chain._selfCheck();
     return chain;
