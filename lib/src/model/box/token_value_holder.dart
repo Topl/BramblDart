@@ -11,6 +11,8 @@ part 'token_value_holder.g.dart';
 abstract class TokenValueHolder {
   final int quantity;
   TokenValueHolder(this.quantity);
+
+  Map<String, dynamic> toJson();
 }
 
 @JsonSerializable(checked: true, explicitToJson: true)
@@ -28,6 +30,7 @@ class SimpleValue extends TokenValueHolder {
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$SimpleValueToJson`.
+  @override
   Map<String, dynamic> toJson() => _$SimpleValueToJson(this);
 }
 
@@ -58,5 +61,6 @@ class AssetValue extends TokenValueHolder {
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$AssetValueToJson`.
+  @override
   Map<String, dynamic> toJson() => _$AssetValueToJson(this);
 }

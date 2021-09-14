@@ -1,197 +1,524 @@
-import 'package:mubrambl/src/tokens/token.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
-enum TransactionType { minting, transfer }
-enum TokenType { asset, poly, arbit }
-enum TransactionStatus { pending, confirmed }
-enum TemperalSortOrder { ascending, descending }
+import 'package:mubrambl/src/attestation/proposition.dart';
+import 'package:mubrambl/src/credentials/address.dart';
+import 'package:mubrambl/src/model/box/box_id.dart';
+import 'package:mubrambl/src/model/box/token_value_holder.dart';
+import 'package:mubrambl/src/modifier/modifier_id.dart';
+import 'package:mubrambl/src/utils/proposition_type.dart';
+import 'package:mubrambl/src/utils/string_data_types.dart';
+import 'package:pinenacl/x25519.dart';
+import 'package:tuple/tuple.dart';
 
-/// Fee amount should be in nanopolys
-abstract class Transaction {
-  String get txId;
-  TransactionStatus get status;
-  int get fee;
-  DateTime get time;
-  List<TransactionIO> get inputs;
-  List<TransactionIO> get outputs;
-}
+typedef TxType = int;
 
-/// Transaction Amount: Note that unit is assetCode for asset transactions, and a denomination for poly and arbit.
-class TransactionAmount {
-  final String unit;
-  final int quantity;
-  final TokenType type;
-  TransactionAmount(
-      {required this.unit, required this.quantity, required this.type});
-  @override
-  String toString() =>
-      'TransactionAmount(unit: $unit quantity: $quantity type: $type)';
-}
+class Transaction {
+  @ModifierIdConverter()
+  final ModifierId id;
+  final List<Tuple2<ToplAddress, int>> from;
+  final List<Tuple2<ToplAddress, TokenValueHolder>> to;
+  final List<BoxId> newBoxes;
+  final Map<Proposition, ByteList> signatures;
+  final BigInt fee;
+  final int timestamp;
+  final Uint8List? messageToSign;
+  final List<BoxId> boxesToRemove;
 
-class TransactionIO {
-  final String address;
-  final List<TransactionAmount> amounts;
-  TransactionIO({required this.address, required this.amounts});
-  @override
-  String toString() =>
-      'TransactionIO( address: $address count: ${amounts.length})';
-}
+  String get typeString => '';
 
-///
-/// Transaction from owning wallet perspective (i.e. deposit or withdrawal specific to owned addresses).
-///
-abstract class WalletTransaction extends Transaction {
-  TransactionType get type;
-  int get amount;
-  Set<String> get ownedAddresses;
-  bool containsCryptoCurrency({required TokenType tokenType});
-  int cryptoCurrencyAmount({required TokenType tokenType});
-}
-
-class WalletTransactionImpl implements WalletTransaction {
-  final Transaction baseTransaction;
-  @override
-  final TransactionType type;
-  final Map<TokenType, int> tokens;
-  @override
-  final Set<String> ownedAddresses;
-  WalletTransactionImpl(
-      {required this.baseTransaction,
-      required this.ownedAddresses,
-      required this.type})
-      : tokens = baseTransaction.sumTokens(addressSet: ownedAddresses);
+  Transaction(this.id, this.newBoxes, this.signatures, this.fee, this.timestamp,
+      this.messageToSign, this.boxesToRemove, this.to, this.from);
 
   @override
-  String get txId => baseTransaction.txId;
-
-  @override
-  TransactionStatus get status => baseTransaction.status;
-
-  @override
-  int get fee => baseTransaction.fee;
-
-  @override
-  DateTime get time => baseTransaction.time;
-
-  @override
-  List<TransactionIO> get inputs => baseTransaction.inputs;
-
-  @override
-  List<TransactionIO> get outputs => baseTransaction.outputs;
-
-  String tokenBalancesByTokenType(
-          {required Map<String, Token> tokenByType, TokenType? type}) =>
-      tokens.entries
-          .where((e) =>
-              type == null || e.key != type || tokenByType[e.key] != null)
-          .map((e) => MapEntry(tokenByType[e.key]!, e.value))
-          .map((e) => '${e.key.name}:${e.value}')
-          .join(', ');
-
-  @override
-  int get amount => tokens[TokenType.poly] ?? 0;
-
-  @override
-  String toString() =>
-      'Transaction(amount: $amount fee: $fee status: $status type: $type coins: ${tokens.length} id: $txId)';
-
-  @override
-  bool containsCryptoCurrency({required TokenType tokenType}) =>
-      tokens[tokenType] != null;
-
-  @override
-  int cryptoCurrencyAmount({required TokenType tokenType}) =>
-      tokens[tokenType] ?? 0;
-
-  bool get isMinting => type == TransactionType.minting;
-}
-
-class TransactionImpl implements Transaction {
-  @override
-  final String txId;
-  @override
-  final TransactionStatus status;
-  @override
-  final int fee;
-  @override
-  final List<TransactionIO> inputs;
-  @override
-  final List<TransactionIO> outputs;
-  @override
-  final DateTime time;
-  TransactionImpl({
-    required this.txId,
-    required this.status,
-    required this.fee,
-    required this.inputs,
-    required this.outputs,
-    required this.time,
-  });
-
-  @override
-  String toString() => 'Transaction(fee: $fee status: $status id: $txId)';
-}
-
-///
-/// Transaction extension -  wallet attribute collection methods
-///
-extension TransactionCollector on Transaction {
-  /// assetCodes found in transactions.
-  Set<String> get assetCodes {
-    var result = <String>{};
-    inputs.forEach((tranIO) => tranIO.amounts.forEach((amount) {
-          if (amount.unit.isNotEmpty) result.add(amount.unit);
-        }));
-    outputs.forEach((tranIO) => tranIO.amounts.forEach((amount) {
-          if (amount.unit.isNotEmpty) result.add(amount.unit);
-        }));
-    return result;
+  String toString() {
+    return typeString + json.encode(toJson());
   }
 
-  ///
-  ///return a map of all assets with their net quantity change for a given set of
-  ///addresses (i.e. a specific wallet).
-  ///
+  String encodeFrom() {
+    return json
+        .encode(from.map((x) => [x.item1.toBase58(), x.item2.toString()]));
+  }
 
-  Map<TokenType, int> sumTokens({required Set<String> addressSet}) {
-    var result = <TokenType, int>{TokenType.poly: 0};
-    for (var tranIO in inputs) {
-      final myToken = addressSet.contains(tranIO.address);
-      if (myToken) {
-        for (var amount in tranIO.amounts) {
-          final beginning = result[amount.type] ?? 0;
-          result[amount.type] = beginning - amount.quantity;
-          print(
-              '$time tx: $txId.. sender: ${tranIO.address}.. $beginning - ${amount.quantity} = ${result[amount.type]}');
-        }
-      }
+  String encodeTo() {
+    return json.encode(to.map((x) => [x.item1.toBase58(), x.item2.toJson()]));
+  }
+
+  /// A necessary factory constructor for creating a new Transaction instance
+  /// from a map. Pass the map to the generated `_$TransactionFromJson()` constructor.
+  /// The constructor is named after the source class, in this case, Transaction.
+  factory Transaction.fromJson(Map<String, dynamic> json) => Transaction(
+      ModifierId(Uint8List(0)),
+      [],
+      {},
+      BigInt.zero,
+      0,
+      Uint8List(0),
+      [],
+      [],
+      []);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$TransactionToJson`.
+  Map<String, dynamic> toJson() => {};
+}
+
+/// Class that establishes the inputs and output boxes for a poly transaction. Note that in the current iteration this supports data requests from the chain only
+class PolyTransaction extends Transaction {
+  @override
+  final ModifierId id;
+  @override
+  final List<Tuple2<ToplAddress, int>> from;
+  @override
+  final List<Tuple2<ToplAddress, TokenValueHolder>> to;
+
+  @override
+  final List<BoxId> newBoxes;
+
+  @override
+  final List<BoxId> boxesToRemove;
+
+  @override
+  final Map<Proposition, ByteList> signatures;
+
+  @override
+  final BigInt fee;
+
+  @override
+  final int timestamp;
+  final Latin1Data? data;
+  @override
+  final Uint8List? messageToSign;
+
+  final TxType typePrefix = 2;
+  @override
+  final String typeString = 'PolyTransfer';
+
+  final PropositionType propositionType;
+
+  PolyTransaction(
+      this.from,
+      this.to,
+      this.signatures,
+      this.fee,
+      this.timestamp,
+      this.id,
+      this.messageToSign,
+      this.data,
+      this.propositionType,
+      this.newBoxes,
+      this.boxesToRemove)
+      : super(id, newBoxes, signatures, fee, timestamp, messageToSign,
+            boxesToRemove, to, from);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'txId': id,
+      'txType': 'PolyTransfer',
+      'propositionType': typeString,
+      'newBoxes': json.encode(newBoxes),
+      'boxesToRemove': json.encode(boxesToRemove),
+      'from': encodeFrom(),
+      'to': encodeTo(),
+      'signatures': json.encode(signatures),
+      'fee': fee.toString(),
+      'timestamp': timestamp.toString(),
+      'data': data?.show
+    };
+  }
+
+  factory PolyTransaction.fromJson(Map<String, dynamic> c) {
+    final from = PolyTransaction.decodeFrom(c);
+    final to = PolyTransaction.decodeTo(c);
+    final fee = BigInt.tryParse(c['fee']);
+    final timestamp = c['timestamp'] as int;
+    final propositionType = c['propositionType'] as String;
+    final txId = ModifierId.create(Uint8List.fromList(c['txId'] as List<int>));
+
+    final messageToSign =
+        Uint8List.fromList(c['messageToSign'] as List<int>? ?? []);
+
+    final data = Latin1Converter().fromJson(c['data'] as String);
+    final rawNewBoxes = c['newBoxes'] as List<String>;
+    final newBoxes =
+        rawNewBoxes.map((boxId) => BoxIdConverter().fromJson(boxId)).toList();
+    final boxesToRemove = (c['boxesToRemove'] as List<String>)
+        .map((boxId) => BoxIdConverter().fromJson(boxId))
+        .toList();
+
+    switch (propositionType) {
+      case ('PublicKeyEd25519'):
+        final signatures = c['signatures'] as Map<Proposition, ByteList>;
+        return PolyTransaction(
+            from,
+            to,
+            signatures,
+            fee!,
+            timestamp,
+            txId,
+            messageToSign,
+            data,
+            PropositionType.Ed25519(),
+            newBoxes,
+            boxesToRemove);
+      case ('PublicKeyCurveEd25519'):
+        final signatures = c['signatures'] as Map<Proposition, ByteList>;
+        return PolyTransaction(
+            from,
+            to,
+            signatures,
+            fee!,
+            timestamp,
+            txId,
+            messageToSign,
+            data,
+            PropositionType.Curve25519(),
+            newBoxes,
+            boxesToRemove);
+      case ('ThresholdCurve25519'):
+        final signatures = c['signatures'] as Map<Proposition, ByteList>;
+        return PolyTransaction(
+            from,
+            to,
+            signatures,
+            fee!,
+            timestamp,
+            txId,
+            messageToSign,
+            data,
+            PropositionType.ThresholdCurve25519(),
+            newBoxes,
+            boxesToRemove);
+      default:
+        throw Exception;
     }
-    for (var tranIO in outputs) {
-      final myAsset = addressSet.contains(tranIO.address);
-      if (myAsset) {
-        for (var amount in tranIO.amounts) {
-          final beginning = result[amount.unit] ?? 0;
-          result[amount.type] = beginning + amount.quantity;
-          print(
-              '$time tx: $txId.. recipient: ${tranIO.address}.. $beginning + ${amount.quantity} = ${result[amount.type]}');
-        }
-      }
-    }
-    return result;
+  }
+
+  static List<Tuple2<ToplAddress, int>> decodeFrom(Map<String, dynamic> json) {
+    final raw = json['from'] as List<List<String>>;
+    return raw
+        .map((x) => Tuple2<ToplAddress, int>.fromList(
+            [ToplAddress.fromBase58(x[0]), int.parse(x[1])]))
+        .toList();
+  }
+
+  static List<Tuple2<ToplAddress, TokenValueHolder>> decodeTo(
+      Map<String, dynamic> json) {
+    final raw = json['from'] as List<List<String>>;
+    return raw
+        .map((x) => Tuple2<ToplAddress, TokenValueHolder>.fromList(
+            [ToplAddress.fromBase58(x[0]), SimpleValue(int.parse(x[1]))]))
+        .toList();
   }
 }
 
-/// Block Record
-class Block {
-  /// Block creation in UTC
-  final DateTime time;
-
-  /// BlockNumber
-  final int? height;
-
-  /// txRoot
-  final String txRoot;
-
-  Block({required this.time, this.height, required this.txRoot});
+/// Class that establishes the inputs and output boxes for an asset transaction. Note that in the current iteration this supports data requests from the chain only
+class AssetTransaction extends Transaction {
   @override
-  String toString() => 'Block(#$height $time txRoot: $txRoot)';
+  final ModifierId id;
+  @override
+  final List<Tuple2<ToplAddress, int>> from;
+  @override
+  final List<Tuple2<ToplAddress, TokenValueHolder>> to;
+
+  @override
+  final List<BoxId> newBoxes;
+
+  @override
+  final List<BoxId> boxesToRemove;
+
+  @override
+  final Map<Proposition, ByteList> signatures;
+
+  @override
+  final BigInt fee;
+
+  @override
+  final int timestamp;
+  final Latin1Data? data;
+  @override
+  final Uint8List? messageToSign;
+  final bool minting;
+
+  final TxType typePrefix = 2;
+  @override
+  final String typeString = 'PolyTransfer';
+
+  final PropositionType propositionType;
+
+  AssetTransaction(
+      this.from,
+      this.to,
+      this.signatures,
+      this.fee,
+      this.timestamp,
+      this.minting,
+      this.id,
+      this.messageToSign,
+      this.data,
+      this.propositionType,
+      this.newBoxes,
+      this.boxesToRemove)
+      : super(id, newBoxes, signatures, fee, timestamp, messageToSign,
+            boxesToRemove, to, from);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'txId': id,
+      'txType': 'PolyTransfer',
+      'propositionType': typeString,
+      'newBoxes': json.encode(newBoxes),
+      'boxesToRemove': json.encode(boxesToRemove),
+      'from': encodeFrom(),
+      'to': encodeTo(),
+      'signatures': json.encode(signatures),
+      'fee': fee.toString(),
+      'timestamp': timestamp.toString(),
+      'minting': minting.toString(),
+      'data': data?.show
+    };
+  }
+
+  factory AssetTransaction.fromJson(Map<String, dynamic> c) {
+    final from = PolyTransaction.decodeFrom(c);
+    final to = PolyTransaction.decodeTo(c);
+    final fee = BigInt.tryParse(c['fee']);
+    final timestamp = c['timestamp'] as int;
+    final propositionType = c['propositionType'] as String;
+    final minting = c['minting'] as bool;
+    final txId = ModifierId.create(Uint8List.fromList(c['txId'] as List<int>));
+
+    final messageToSign =
+        Uint8List.fromList(c['messageToSign'] as List<int>? ?? []);
+
+    final data = Latin1Converter().fromJson(c['data'] as String);
+    final rawNewBoxes = c['newBoxes'] as List<String>;
+    final newBoxes =
+        rawNewBoxes.map((boxId) => BoxIdConverter().fromJson(boxId)).toList();
+    final boxesToRemove = (c['boxesToRemove'] as List<String>)
+        .map((boxId) => BoxIdConverter().fromJson(boxId))
+        .toList();
+
+    switch (propositionType) {
+      case ('PublicKeyEd25519'):
+        final signatures = c['signatures'] as Map<Proposition, ByteList>;
+        return AssetTransaction(
+            from,
+            to,
+            signatures,
+            fee!,
+            timestamp,
+            minting,
+            txId,
+            messageToSign,
+            data,
+            PropositionType.Ed25519(),
+            newBoxes,
+            boxesToRemove);
+      case ('PublicKeyCurveEd25519'):
+        final signatures = c['signatures'] as Map<Proposition, ByteList>;
+        return AssetTransaction(
+            from,
+            to,
+            signatures,
+            fee!,
+            timestamp,
+            minting,
+            txId,
+            messageToSign,
+            data,
+            PropositionType.Curve25519(),
+            newBoxes,
+            boxesToRemove);
+      case ('ThresholdCurve25519'):
+        final signatures = c['signatures'] as Map<Proposition, ByteList>;
+        return AssetTransaction(
+            from,
+            to,
+            signatures,
+            fee!,
+            timestamp,
+            minting,
+            txId,
+            messageToSign,
+            data,
+            PropositionType.ThresholdCurve25519(),
+            newBoxes,
+            boxesToRemove);
+      default:
+        throw Exception;
+    }
+  }
+
+  static List<Tuple2<ToplAddress, int>> decodeFrom(Map<String, dynamic> json) {
+    final raw = json['from'] as List<List<String>>;
+    return raw
+        .map((x) => Tuple2<ToplAddress, int>.fromList(
+            [ToplAddress.fromBase58(x[0]), int.parse(x[1])]))
+        .toList();
+  }
+
+  static List<Tuple2<ToplAddress, TokenValueHolder>> decodeTo(
+      Map<String, dynamic> json) {
+    final raw = json['from'] as List<List<String>>;
+    return raw
+        .map((x) => Tuple2<ToplAddress, TokenValueHolder>.fromList([
+              ToplAddress.fromBase58(x[0]),
+              AssetValue.fromJson(x[1] as Map<String, dynamic>)
+            ]))
+        .toList();
+  }
+}
+
+/// Class that establishes the inputs and output boxes for an arbit transaction. Note that in the current iteration this supports data requests from the chain only
+class ArbitTransaction extends Transaction {
+  @override
+  final ModifierId id;
+  @override
+  final List<Tuple2<ToplAddress, int>> from;
+  @override
+  final List<Tuple2<ToplAddress, TokenValueHolder>> to;
+
+  @override
+  final List<BoxId> newBoxes;
+
+  @override
+  final List<BoxId> boxesToRemove;
+
+  @override
+  final Map<Proposition, ByteList> signatures;
+
+  @override
+  final BigInt fee;
+
+  @override
+  final int timestamp;
+  final Latin1Data? data;
+  @override
+  final Uint8List? messageToSign;
+
+  final TxType typePrefix = 2;
+  @override
+  final String typeString = 'PolyTransfer';
+
+  final PropositionType propositionType;
+
+  ArbitTransaction(
+      this.from,
+      this.to,
+      this.signatures,
+      this.fee,
+      this.timestamp,
+      this.id,
+      this.messageToSign,
+      this.data,
+      this.propositionType,
+      this.newBoxes,
+      this.boxesToRemove)
+      : super(id, newBoxes, signatures, fee, timestamp, messageToSign,
+            boxesToRemove, to, from);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'txId': id,
+      'txType': 'PolyTransfer',
+      'propositionType': typeString,
+      'newBoxes': json.encode(newBoxes),
+      'boxesToRemove': json.encode(boxesToRemove),
+      'from': encodeFrom(),
+      'to': encodeTo(),
+      'signatures': json.encode(signatures),
+      'fee': fee.toString(),
+      'timestamp': timestamp.toString(),
+      'data': data?.show
+    };
+  }
+
+  factory ArbitTransaction.fromJson(Map<String, dynamic> c) {
+    final from = PolyTransaction.decodeFrom(c);
+    final to = PolyTransaction.decodeTo(c);
+    final fee = BigInt.tryParse(c['fee']);
+    final timestamp = c['timestamp'] as int;
+    final propositionType = c['propositionType'] as String;
+    final txId = ModifierId.create(Uint8List.fromList(c['txId'] as List<int>));
+
+    final messageToSign =
+        Uint8List.fromList(c['messageToSign'] as List<int>? ?? []);
+
+    final data = Latin1Converter().fromJson(c['data'] as String);
+    final rawNewBoxes = c['newBoxes'] as List<String>;
+    final newBoxes =
+        rawNewBoxes.map((boxId) => BoxIdConverter().fromJson(boxId)).toList();
+    final boxesToRemove = (c['boxesToRemove'] as List<String>)
+        .map((boxId) => BoxIdConverter().fromJson(boxId))
+        .toList();
+
+    switch (propositionType) {
+      case ('PublicKeyEd25519'):
+        final signatures = c['signatures'] as Map<Proposition, ByteList>;
+        return ArbitTransaction(
+            from,
+            to,
+            signatures,
+            fee!,
+            timestamp,
+            txId,
+            messageToSign,
+            data,
+            PropositionType.Ed25519(),
+            newBoxes,
+            boxesToRemove);
+      case ('PublicKeyCurveEd25519'):
+        final signatures = c['signatures'] as Map<Proposition, ByteList>;
+        return ArbitTransaction(
+            from,
+            to,
+            signatures,
+            fee!,
+            timestamp,
+            txId,
+            messageToSign,
+            data,
+            PropositionType.Curve25519(),
+            newBoxes,
+            boxesToRemove);
+      case ('ThresholdCurve25519'):
+        final signatures = c['signatures'] as Map<Proposition, ByteList>;
+        return ArbitTransaction(
+            from,
+            to,
+            signatures,
+            fee!,
+            timestamp,
+            txId,
+            messageToSign,
+            data,
+            PropositionType.ThresholdCurve25519(),
+            newBoxes,
+            boxesToRemove);
+      default:
+        throw Exception;
+    }
+  }
+
+  static List<Tuple2<ToplAddress, int>> decodeFrom(Map<String, dynamic> json) {
+    final raw = json['from'] as List<List<String>>;
+    return raw
+        .map((x) => Tuple2<ToplAddress, int>.fromList(
+            [ToplAddress.fromBase58(x[0]), int.parse(x[1])]))
+        .toList();
+  }
+
+  static List<Tuple2<ToplAddress, TokenValueHolder>> decodeTo(
+      Map<String, dynamic> json) {
+    final raw = json['from'] as List<List<String>>;
+    return raw
+        .map((x) => Tuple2<ToplAddress, TokenValueHolder>.fromList(
+            [ToplAddress.fromBase58(x[0]), SimpleValue(int.parse(x[1]))]))
+        .toList();
+  }
 }
