@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:json_annotation/json_annotation.dart';
+
 enum PolyUnit {
   /// nanopoly, the smallest atomic unit of a poly
   nanopoly,
@@ -168,4 +170,62 @@ class ArbitAmount {
   @override
   bool operator ==(dynamic other) =>
       other is ArbitAmount && other.getInNanoarbit == getInNanoarbit;
+}
+
+class PolyAmountNullableConverter
+    implements JsonConverter<PolyAmount?, String> {
+  const PolyAmountNullableConverter();
+
+  @override
+  PolyAmount? fromJson(String json) {
+    return PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, json);
+  }
+
+  @override
+  String toJson(PolyAmount? object) {
+    return object?.getInNanopoly.toString() ?? '';
+  }
+}
+
+class PolyAmountConverter implements JsonConverter<PolyAmount, String> {
+  const PolyAmountConverter();
+
+  @override
+  PolyAmount fromJson(String json) {
+    return PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, json);
+  }
+
+  @override
+  String toJson(PolyAmount object) {
+    return object.getInNanopoly.toString();
+  }
+}
+
+class ArbitAmountNullableConverter
+    implements JsonConverter<ArbitAmount, String> {
+  const ArbitAmountNullableConverter();
+
+  @override
+  ArbitAmount fromJson(String json) {
+    return ArbitAmount.fromUnitAndValue(ArbitUnit.nanoarbit, json);
+  }
+
+  @override
+  String toJson(ArbitAmount object) {
+    return object.getInNanoarbit.toString();
+  }
+}
+
+class ArbitAmountConverter implements JsonConverter<ArbitAmount, String> {
+  const ArbitAmountConverter();
+
+  @override
+  ArbitAmount fromJson(String json) {
+    return ArbitAmount.fromUnitAndValue(ArbitUnit.nanoarbit, json);
+  }
+
+  @override
+  String toJson(ArbitAmount object) {
+    return object.getInNanoarbit.toString();
+  }
 }

@@ -8,8 +8,7 @@ import 'package:mubrambl/src/core/expensive_operations.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
-import 'package:mubrambl/src/transaction/transaction.dart';
-import 'package:mubrambl/src/utils/network.dart';
+import 'package:mubrambl/src/transaction/transactionReceipt.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:pinenacl/encoding.dart';
 
@@ -92,7 +91,7 @@ class BramblClient {
   /// Constructs a new [Credentials] with the provided [privateKey] by using
   /// a [ToplSigningKey].
   Future<ToplSigningKey> credentialsFromPrivateKey(
-      String privateKey, Network network, PropositionType propositionType) {
+      String privateKey, NetworkId network, PropositionType propositionType) {
     return _operations.privateKeyFromString(
         network, propositionType, privateKey);
   }
@@ -139,28 +138,15 @@ class BramblClient {
   ///
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
   ///
-  Future<Transaction> sendRawAssetTransfer(
+  Future<TransactionReceipt> sendRawAssetTransfer(
       {ToplAddress? sender,
       ToplAddress? changeAddress,
       ToplAddress? consolidationAddress,
       Uint8List? data,
       required AssetCode assetCode,
       required ToplAddress issuer,
-      required AssetTransaction transaction}) {
-    final request = {
-      'propositionType': issuer.propositionType,
-      'recipients': transaction.to,
-      'fee': transaction.fee,
-      'sender': [issuer.toBase58(), sender?.toBase58()]
-          .removeWhere((value) => value == null),
-      'changeAddress': changeAddress ?? issuer.toBase58(),
-      'consolidationAddress': consolidationAddress ?? issuer.toBase58(),
-      'data': HexCoder.instance.encode(data ?? Uint8List(0)),
-      'minting': transaction.minting,
-      'assetCode': assetCode
-    };
-
-    return _makeRPCCall('topl_rawAssetTransfer', params: [request])
-        .then((value) => AssetTransaction.fromJson(value));
+      required AssetTransactionReceipt transaction}) {
+    return _makeRPCCall('topl_rawAssetTransfer', params: [Transaction()])
+        .then((value) => AssetTransactionReceipt.fromJson(value));
   }
 }

@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/converters/converters.dart';
-import 'package:mubrambl/src/credentials/address.dart';
+import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:mubrambl/src/model/box/arbit_box.dart';
 import 'package:pinenacl/x25519.dart';
 
@@ -20,8 +20,7 @@ class BlockHeader {
   final ByteList signature;
   final int height;
   final int difficulty;
-  @CredentialHash32Converter()
-  final CredentialHash32 txRoot;
+  final Digest txRoot;
   final int version;
 
   ModifierTypeId get modifierTypeId => 4;

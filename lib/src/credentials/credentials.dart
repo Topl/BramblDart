@@ -3,10 +3,10 @@ import 'dart:typed_data';
 
 import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
-import 'package:mubrambl/src/core/transaction.dart';
 import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/utils/network.dart';
+import 'package:mubrambl/src/transaction/transaction.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
+import 'package:mubrambl/src/utils/util.dart';
 import 'package:pinenacl/ed25519.dart';
 
 /// Anything that can sign payloads with a private key.
@@ -44,15 +44,23 @@ abstract class CustomTransactionSender extends Credentials {
 
 /// Credentials that can sign payloads with a Topl private key.
 class ToplSigningKey extends CredentialsWithKnownAddress {
-  final ByteList privateKey;
-  final Network network;
+  final Bip32SigningKey privateKey;
+  final NetworkId network;
   final PropositionType propositionType;
+
   ToplAddress? _cachedAddress;
 
+  /// Creates a Topl Signing Key from a Bip32SigningKey
   ToplSigningKey(this.privateKey, this.network, this.propositionType);
 
+  /// Parses a private key from the a hexadecimal representation
+  ToplSigningKey.fromHex(String hex, this.network, this.propositionType)
+      : privateKey =
+            Bip32SigningKey.fromValidBytes(HexCoder.instance.decode(hex));
+
   ToplSigningKey.fromString(String base58, this.network, this.propositionType)
-      : privateKey = ByteList.fromList(Base58Encoder.instance.decode(base58));
+      : privateKey = Bip32SigningKey.fromValidBytes(
+            Base58Encoder.instance.decode(base58));
 
   /// Creates a new, random private key from the [random] number generator.
   ///
@@ -61,9 +69,9 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
   /// someone else otherwise. Just using [Random()] is a very bad idea! At least
   /// use [Random.secure()].
   factory ToplSigningKey.createRandom(
-      Random random, Type t, Network n, PropositionType p) {
-    final key = generateNewPrivateKey(random, t);
-    return ToplSigningKey(key.rawKey, n, p);
+      Random random, Type t, NetworkId n, PropositionType p) {
+    final key = Bip32SigningKey.generate();
+    return ToplSigningKey(key, n, p);
   }
 
   @override
@@ -71,24 +79,12 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
 
   @override
   ToplAddress get address {
-    if (_cachedAddress != null) {
-      return _cachedAddress!;
-    } else {
-      switch (propositionType) {
-        case (PropositionType('PublicKeyCurve25519', 0x01)):
-          return Dion_Type_1_Address.fromKeys(
-              network.networkPrefix,
-              Bip32SigningKey.fromValidBytes(Uint8List.fromList(privateKey))
-                  .publicKey);
-        case (PropositionType('PublicKeyEd25519', 0x03)):
-          return Dion_Type_3_Address.fromKeys(
-              network.networkPrefix,
-              Bip32SigningKey.fromValidBytes(Uint8List.fromList(privateKey))
-                  .publicKey);
-        default:
-          throw ArgumentError('Invalid Proposition Type found for Signing Key');
-      }
-    }
+    return _cachedAddress ??
+        ToplAddress(
+            generatePubKeyHashAddress(
+                privateKey.publicKey, network, propositionType.propositionName),
+            networkId: network,
+            proposition: propositionType);
   }
 
   @override
@@ -108,12 +104,4 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
 
   @override
   int get hashCode => privateKey.hashCode;
-}
-
-/// Generates a new private key using the random instance provided. Please make
-/// sure you're using a cryptographically secure generator.
-Bip32Key generateNewPrivateKey(Random random, Type t) {
-  final mnemonic = generateMnemonic(random);
-  final keyTree = Cip1852KeyTree().master(mnemonicToSeed(mnemonic));
-  return keyTree;
 }
