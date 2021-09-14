@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 import 'package:mubrambl/src/auth/api_key_auth.dart';
@@ -5,8 +7,11 @@ import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/expensive_operations.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
+import 'package:mubrambl/src/model/box/asset_code.dart';
+import 'package:mubrambl/src/transaction/transaction.dart';
 import 'package:mubrambl/src/utils/network.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
+import 'package:pinenacl/encoding.dart';
 
 import '../json_rpc.dart';
 
@@ -128,5 +133,34 @@ class BramblClient {
             value[address.toBase58()]['Balances']['Arbits'] as String)
       };
     });
+  }
+
+  /// Sends a raw transfer call to a node
+  ///
+  /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
+  ///
+  Future<Transaction> sendRawAssetTransfer(
+      {ToplAddress? sender,
+      ToplAddress? changeAddress,
+      ToplAddress? consolidationAddress,
+      Uint8List? data,
+      required AssetCode assetCode,
+      required ToplAddress issuer,
+      required AssetTransaction transaction}) {
+    final request = {
+      'propositionType': issuer.propositionType,
+      'recipients': transaction.to,
+      'fee': transaction.fee,
+      'sender': [issuer.toBase58(), sender?.toBase58()]
+          .removeWhere((value) => value == null),
+      'changeAddress': changeAddress ?? issuer.toBase58(),
+      'consolidationAddress': consolidationAddress ?? issuer.toBase58(),
+      'data': HexCoder.instance.encode(data ?? Uint8List(0)),
+      'minting': transaction.minting,
+      'assetCode': assetCode
+    };
+
+    return _makeRPCCall('topl_rawAssetTransfer', params: [request])
+        .then((value) => AssetTransaction.fromJson(value));
   }
 }
