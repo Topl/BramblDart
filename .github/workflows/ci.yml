@@ -79,10 +79,21 @@ jobs:
           key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
       - uses: dart-lang/setup-dart@v1
       - run: dart test -x expensive --platform chrome,firefox
+      
+      
+  setup-docker:
+    name: "Setting up docker for integration testing"
+    needs: get_dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: docker-practice/actions-setup-docker@master
+      - run: |
+          docker pull toplprotocol/bifrost:1.7.1
+          docker run -it --rm -p 9084:9084 -p 9085:9085 toplprotcol/bifrost:1.7.1
   
   integration_tests:
     name: "Integration Tests"
-    needs: get_dependencies
+    needs: [get_dependencies, setup-docker]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
