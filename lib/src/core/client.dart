@@ -8,8 +8,13 @@ import 'package:mubrambl/src/core/expensive_operations.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
+import 'package:mubrambl/src/model/box/recipient.dart';
+import 'package:mubrambl/src/model/box/token_value_holder.dart';
+import 'package:mubrambl/src/transaction/transaction.dart';
 import 'package:mubrambl/src/transaction/transactionReceipt.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
+import 'package:mubrambl/src/utils/string_data_types.dart';
+import 'package:mubrambl/src/utils/util.dart';
 import 'package:pinenacl/encoding.dart';
 
 import '../json_rpc.dart';
@@ -40,6 +45,7 @@ class BramblClient {
           dio: httpClient ??
               Dio(BaseOptions(
                   baseUrl: basePathOverride ?? basePath,
+                  contentType: 'application/json',
                   connectTimeout: 5000,
                   receiveTimeout: 3000)),
           serializers: serializers,
@@ -140,13 +146,31 @@ class BramblClient {
   ///
   Future<TransactionReceipt> sendRawAssetTransfer(
       {ToplAddress? sender,
+      required Map<String, AssetValue> recipients,
+      PolyAmount? fee,
+      required bool minting,
       ToplAddress? changeAddress,
       ToplAddress? consolidationAddress,
       Uint8List? data,
       required AssetCode assetCode,
-      required ToplAddress issuer,
-      required AssetTransactionReceipt transaction}) {
-    return _makeRPCCall('topl_rawAssetTransfer', params: [Transaction()])
-        .then((value) => AssetTransactionReceipt.fromJson(value));
+      required ToplAddress issuer}) {
+    // ignore: prefer_collection_literals
+    final senders = [sender, issuer].toSet().toList();
+    senders.removeWhere((value) => value == null);
+    return _makeRPCCall('topl_rawAssetTransfer', params: [
+      AssetTransaction(
+              recipients: recipients.entries
+                  .map((entry) => Recipient(entry.key, entry.value))
+                  .toList(),
+              sender: senders,
+              propositionType: issuer.proposition.propositionName,
+              changeAddress: changeAddress,
+              fee: fee,
+              data: Latin1Data(data),
+              minting: minting,
+              consolidationAddress: consolidationAddress,
+              assetCode: assetCode)
+          .toJson()
+    ]).then((value) => AssetTransactionReceipt.fromJson(value));
   }
 }

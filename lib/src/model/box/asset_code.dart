@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bip_topl/bip_topl.dart';
@@ -18,14 +17,17 @@ class AssetCode {
   AssetCode(
       this.assetCodeVersion, this.issuer, this.shortName, this.networkPrefix);
 
+  /// This method creates a new assetCode with correct [version] [networkPrefix] (which is the network on which the asset will be stored). The short name of the asset [name] is only allowed to be up to 8 bytes long with a latin-1 encoding. Returns a new assetCode
   factory AssetCode.initialize(
-      int version, ToplAddress issuer, Latin1Data name, String networkPrefix) {
+      int version, ToplAddress issuer, String name, String networkPrefix) {
     if (!isValidNetwork(networkPrefix)) {
       throw ArgumentError('Invalid network provided');
     }
     assert(version == 1, 'AssetCode version required to be 1');
-    assert(name.value!.length <= SHORT_NAME_LIMIT,
+    assert(name.length <= SHORT_NAME_LIMIT,
         'Asset short names must be less than 8 Latin-1 encoded characters');
+    final latin1Name =
+        Latin1Data.validated(name.padRight(SHORT_NAME_LIMIT, '0'));
     final validationResult =
         validateAddressByNetwork(networkPrefix, issuer.toBase58());
     if (!validationResult['success']) {
@@ -36,7 +38,7 @@ class AssetCode {
           issuer.toBase58() +
           '>');
     }
-    return AssetCode(version, issuer, name, networkPrefix);
+    return AssetCode(version, issuer, latin1Name, networkPrefix);
   }
 
   factory AssetCode.deserialize(String from) {
@@ -44,7 +46,7 @@ class AssetCode {
     return AssetCode.initialize(
         decoded.first,
         ToplAddress(decoded.sublist(1, 35)),
-        Latin1Data(decoded.sublist(35)),
+        Latin1Data(decoded.sublist(35)).show,
         Network.fromNetworkPrefix(decoded[1]).networkPrefixString);
   }
 
@@ -55,6 +57,7 @@ class AssetCode {
 
     // concat 01 [version] + 34 bytes [address] + ^8bytes [asset name]
     final version = Uint8List.fromList([0x01]);
+    final shortNameBytes = shortName.value!;
     final concatValues = version +
         slicedAddress +
         shortName.value!; // add trailing zeros, shortname must be 8 bytes long
@@ -63,7 +66,7 @@ class AssetCode {
 
   @override
   String toString() {
-    return 'assetCode: ${serialize()}';
+    return serialize();
   }
 
   /// A necessary factory constructor for creating a new AssetCode instance
@@ -74,5 +77,5 @@ class AssetCode {
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON.
-  Map<String, dynamic> toJson() => json.decode(toString());
+  String toJson() => toString();
 }

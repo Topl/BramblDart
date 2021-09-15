@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
@@ -49,7 +48,7 @@ class SecurityRoot {
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$AssetCodeToJson`.
-  Map<String, dynamic> toJson() => json.decode(toString());
+  String toJson() => toString();
 
   Uint8List get getRoot => root;
 }

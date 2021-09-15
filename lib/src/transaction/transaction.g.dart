@@ -12,13 +12,12 @@ PolyTransaction _$PolyTransactionFromJson(Map<String, dynamic> json) =>
       json,
       ($checkedConvert) {
         final val = PolyTransaction(
-          to: $checkedConvert(
-              'to',
-              (v) => (v as Map<String, dynamic>).map(
-                    (k, e) => MapEntry(
-                        k, SimpleValue.fromJson(e as Map<String, dynamic>)),
-                  )),
-          senders: $checkedConvert('senders', (v) => v),
+          recipients: $checkedConvert(
+              'recipients',
+              (v) => (v as List<dynamic>)
+                  .map((e) => Recipient.fromJson(e as Map<String, dynamic>))
+                  .toList()),
+          sender: $checkedConvert('sender', (v) => v),
           propositionType: $checkedConvert('propositionType', (v) => v),
           changeAddress: $checkedConvert('changeAddress', (v) => v),
           fee: $checkedConvert('fee',
@@ -32,10 +31,13 @@ PolyTransaction _$PolyTransactionFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$PolyTransactionToJson(PolyTransaction instance) =>
     <String, dynamic>{
       'propositionType': instance.propositionType,
-      'senders': instance.senders,
-      'changeAddress': instance.changeAddress,
-      'data': instance.data,
-      'to': instance.to.map((k, e) => MapEntry(k, e.toJson())),
+      'sender': instance.sender
+          ?.map(const ToplAddressNullableConverter().toJson)
+          .toList(),
+      'changeAddress':
+          const ToplAddressNullableConverter().toJson(instance.changeAddress),
+      'data': const Latin1NullableConverter().toJson(instance.data),
+      'recipients': instance.recipients.map((e) => e.toJson()).toList(),
       'fee': const PolyAmountNullableConverter().toJson(instance.fee),
     };
 
@@ -45,13 +47,12 @@ AssetTransaction _$AssetTransactionFromJson(Map<String, dynamic> json) =>
       json,
       ($checkedConvert) {
         final val = AssetTransaction(
-          to: $checkedConvert(
-              'to',
-              (v) => (v as Map<String, dynamic>).map(
-                    (k, e) => MapEntry(
-                        k, AssetValue.fromJson(e as Map<String, dynamic>)),
-                  )),
-          senders: $checkedConvert('senders', (v) => v),
+          recipients: $checkedConvert(
+              'recipients',
+              (v) => (v as List<dynamic>)
+                  .map((e) => Recipient.fromJson(e as Map<String, dynamic>))
+                  .toList()),
+          sender: $checkedConvert('sender', (v) => v),
           propositionType: $checkedConvert('propositionType', (v) => v),
           changeAddress: $checkedConvert('changeAddress', (v) => v),
           fee: $checkedConvert('fee',
@@ -72,10 +73,13 @@ AssetTransaction _$AssetTransactionFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$AssetTransactionToJson(AssetTransaction instance) =>
     <String, dynamic>{
       'propositionType': instance.propositionType,
-      'senders': instance.senders,
-      'changeAddress': instance.changeAddress,
-      'data': instance.data,
-      'to': instance.to.map((k, e) => MapEntry(k, e.toJson())),
+      'sender': instance.sender
+          ?.map(const ToplAddressNullableConverter().toJson)
+          .toList(),
+      'changeAddress':
+          const ToplAddressNullableConverter().toJson(instance.changeAddress),
+      'data': const Latin1NullableConverter().toJson(instance.data),
+      'recipients': instance.recipients.map((e) => e.toJson()).toList(),
       'consolidationAddress': const ToplAddressNullableConverter()
           .toJson(instance.consolidationAddress),
       'minting': instance.minting,
@@ -89,17 +93,16 @@ ArbitTransaction _$ArbitTransactionFromJson(Map<String, dynamic> json) =>
       json,
       ($checkedConvert) {
         final val = ArbitTransaction(
-          to: $checkedConvert(
-              'to',
-              (v) => (v as Map<String, dynamic>).map(
-                    (k, e) => MapEntry(
-                        k, SimpleValue.fromJson(e as Map<String, dynamic>)),
-                  )),
-          senders: $checkedConvert('senders', (v) => v),
+          recipients: $checkedConvert(
+              'recipients',
+              (v) => (v as List<dynamic>)
+                  .map((e) => Recipient.fromJson(e as Map<String, dynamic>))
+                  .toList()),
+          sender: $checkedConvert('sender', (v) => v),
           propositionType: $checkedConvert('propositionType', (v) => v),
           changeAddress: $checkedConvert('changeAddress', (v) => v),
-          fee: $checkedConvert(
-              'fee', (v) => const PolyAmountConverter().fromJson(v as String)),
+          fee: $checkedConvert('fee',
+              (v) => const PolyAmountNullableConverter().fromJson(v as String)),
           data: $checkedConvert('data', (v) => v),
           consolidationAddress: $checkedConvert(
               'consolidationAddress',
@@ -113,11 +116,14 @@ ArbitTransaction _$ArbitTransactionFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ArbitTransactionToJson(ArbitTransaction instance) =>
     <String, dynamic>{
       'propositionType': instance.propositionType,
-      'senders': instance.senders,
-      'changeAddress': instance.changeAddress,
-      'data': instance.data,
-      'to': instance.to.map((k, e) => MapEntry(k, e.toJson())),
+      'sender': instance.sender
+          ?.map(const ToplAddressNullableConverter().toJson)
+          .toList(),
+      'changeAddress':
+          const ToplAddressNullableConverter().toJson(instance.changeAddress),
+      'data': const Latin1NullableConverter().toJson(instance.data),
+      'recipients': instance.recipients.map((e) => e.toJson()).toList(),
       'consolidationAddress': const ToplAddressNullableConverter()
           .toJson(instance.consolidationAddress),
-      'fee': const PolyAmountConverter().toJson(instance.fee),
+      'fee': const PolyAmountNullableConverter().toJson(instance.fee),
     };

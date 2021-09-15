@@ -228,7 +228,7 @@ class PolyTransactionReceipt extends TransactionReceipt {
     final raw = json['from'] as List<List<String>>;
     return raw
         .map((x) => Tuple2<ToplAddress, TokenValueHolder>.fromList(
-            [ToplAddress.fromBase58(x[0]), SimpleValue(int.parse(x[1]))]))
+            [ToplAddress.fromBase58(x[0]), SimpleValue(x[1])]))
         .toList();
   }
 }
@@ -537,7 +537,7 @@ class ArbitTransactionReceipt extends TransactionReceipt {
     final raw = json['from'] as List<List<String>>;
     return raw
         .map((x) => Tuple2<ToplAddress, TokenValueHolder>.fromList(
-            [ToplAddress.fromBase58(x[0]), SimpleValue(int.parse(x[1]))]))
+            [ToplAddress.fromBase58(x[0]), SimpleValue(x[1])]))
         .toList();
   }
 }

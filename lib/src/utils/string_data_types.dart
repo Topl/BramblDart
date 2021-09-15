@@ -137,3 +137,17 @@ class Latin1Converter implements JsonConverter<Latin1Data, String> {
     return object.show;
   }
 }
+
+class Latin1NullableConverter implements JsonConverter<Latin1Data?, String> {
+  const Latin1NullableConverter();
+
+  @override
+  Latin1Data? fromJson(String json) {
+    return Latin1Data.validated(json);
+  }
+
+  @override
+  String toJson(Latin1Data? object) {
+    return object?.show ?? '';
+  }
+}

@@ -9,7 +9,7 @@ import 'package:mubrambl/src/model/box/security_root.dart';
 part 'token_value_holder.g.dart';
 
 abstract class TokenValueHolder {
-  final int quantity;
+  final String quantity;
   TokenValueHolder(this.quantity);
 
   Map<String, dynamic> toJson();
@@ -19,7 +19,7 @@ abstract class TokenValueHolder {
 class SimpleValue extends TokenValueHolder {
   final int valueTypePrefix = 1;
   final String valueTypeString = 'Simple';
-  SimpleValue(int quantity) : super(quantity);
+  SimpleValue(String quantity) : super(quantity);
 
   /// A necessary factory constructor for creating a new SimpleValue instance
   /// from a map. Pass the map to the generated `_$SimpleValueFromJson()` constructor.
@@ -37,7 +37,7 @@ class SimpleValue extends TokenValueHolder {
 @JsonSerializable(checked: true, explicitToJson: true)
 class AssetValue extends TokenValueHolder {
   @override
-  final int quantity;
+  final String quantity;
   final AssetCode assetCode;
   final SecurityRoot? securityRoot;
   final String? metadata;

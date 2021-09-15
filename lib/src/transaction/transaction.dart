@@ -2,7 +2,9 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
+import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
+import 'package:mubrambl/src/utils/string_data_types.dart';
 
 part 'transaction.g.dart';
 
@@ -14,13 +16,15 @@ class Transaction {
   ///
   /// This can be set to null, in which case the client will use the address
   /// belonging to the credentials used to this transaction.
-  final List<ToplAddress>? senders;
+  @ToplAddressNullableConverter()
+  final List<ToplAddress?>? sender;
 
   /// The recipient of the returned UTXOs from poly transactions including
   /// left-over network fees
   ///
   /// If [changeAddress] is `null`, this library will refer to the address
   /// belonging to the credentials used to sign this transaction
+  @ToplAddressNullableConverter()
   final ToplAddress? changeAddress;
 
   /// The maximum amount of polys to spend on the network fee.
@@ -30,27 +34,28 @@ class Transaction {
   ///
   /// Polys that are not used but included in [fee] will be returned to the
   /// changeAddress.
+  @PolyAmountNullableConverter()
   final PolyAmount? fee;
 
   /// Data string which can be associated with this transaction (may be empty)
-  final String? data;
+  @Latin1NullableConverter()
+  final Latin1Data? data;
 
   Transaction(
       {required this.propositionType,
-      this.senders,
+      this.sender,
       this.fee,
       this.changeAddress,
       this.data});
 
   Transaction copyWith(
-      {List<ToplAddress>? senders,
-      List<ToplAddress>? recipients,
+      {List<ToplAddress>? sender,
       String? propositionType,
       ToplAddress? changeAddress,
       PolyAmount? fee,
-      String? data}) {
+      Latin1Data? data}) {
     return Transaction(
-        senders: senders ?? this.senders,
+        sender: sender ?? this.sender,
         changeAddress: changeAddress ?? changeAddress,
         propositionType: propositionType ?? this.propositionType,
         fee: fee ?? this.fee,
@@ -63,37 +68,37 @@ class PolyTransaction extends Transaction {
   /// The recipient of this transaction
   ///
   /// This is a required field. Each recipient must have an associated PolyAmount that will be transferred to the recipient
-  final Map<String, SimpleValue> to;
+  final List<Recipient> recipients;
 
   @override
   @PolyAmountNullableConverter()
   final PolyAmount? fee;
 
   PolyTransaction(
-      {required this.to,
-      senders,
+      {required this.recipients,
+      sender,
       required propositionType,
       changeAddress,
       this.fee,
       data})
       : super(
-            senders: senders,
+            sender: sender,
             propositionType: propositionType,
             changeAddress: changeAddress,
             fee: fee,
             data: data);
 
   PolyTransaction copy(
-      {required Map<String, SimpleValue> to,
-      List<ToplAddress>? from,
+      {required List<Recipient> recipients,
+      List<ToplAddress?>? from,
       String? propositionType,
       ToplAddress? changeAddress,
       PolyAmount? fee,
-      String? data}) {
+      Latin1Data? data}) {
     return PolyTransaction(
         propositionType: propositionType,
-        senders: senders,
-        to: to,
+        sender: sender,
+        recipients: recipients,
         changeAddress: changeAddress,
         fee: fee,
         data: data);
@@ -116,7 +121,7 @@ class AssetTransaction extends Transaction {
   /// The recipient of this transaction
   ///
   /// This is a required field. Each recipient must have an associated AssetValue that will be transferred to the recipient
-  final Map<String, AssetValue> to;
+  final List<Recipient> recipients;
 
   /// The recipient of the change from the assetTransaction
   ///
@@ -135,8 +140,8 @@ class AssetTransaction extends Transaction {
   final PolyAmount? fee;
 
   AssetTransaction(
-      {required this.to,
-      senders,
+      {required this.recipients,
+      sender,
       required propositionType,
       changeAddress,
       this.fee,
@@ -145,26 +150,26 @@ class AssetTransaction extends Transaction {
       this.consolidationAddress,
       required this.assetCode})
       : super(
-            senders: senders,
+            sender: sender,
             propositionType: propositionType,
             changeAddress: changeAddress,
             fee: fee,
             data: data);
 
   AssetTransaction copy(
-      {required Map<String, AssetValue> to,
-      List<ToplAddress>? from,
+      {required List<Recipient> recipients,
+      List<ToplAddress?>? from,
       String? propositionType,
       ToplAddress? changeAddress,
       PolyAmount? fee,
-      String? data,
+      Latin1Data? data,
       required bool minting,
       ToplAddress? consolidationAddress,
       required AssetCode assetCode}) {
     return AssetTransaction(
         propositionType: propositionType,
-        senders: senders,
-        to: to,
+        sender: from,
+        recipients: recipients,
         changeAddress: changeAddress,
         fee: fee,
         data: data,
@@ -190,7 +195,7 @@ class ArbitTransaction extends Transaction {
   /// The recipient of this transaction
   ///
   /// This is a required field. Each recipient must have an associated SimpleValue that will be transferred to the recipient
-  final Map<String, SimpleValue> to;
+  final List<Recipient> recipients;
 
   /// The recipient of the change from the arbitTransaction
   ///
@@ -199,38 +204,38 @@ class ArbitTransaction extends Transaction {
   final ToplAddress? consolidationAddress;
 
   @override
-  @PolyAmountConverter()
-  final PolyAmount fee;
+  @PolyAmountNullableConverter()
+  final PolyAmount? fee;
 
   ArbitTransaction(
-      {required this.to,
-      senders,
+      {required this.recipients,
+      sender,
       required propositionType,
       changeAddress,
       required this.fee,
       data,
       this.consolidationAddress})
       : super(
-            senders: senders,
+            sender: sender,
             propositionType: propositionType,
             changeAddress: changeAddress,
             fee: fee,
             data: data);
 
   ArbitTransaction copy(
-      {required Map<String, SimpleValue> to,
-      @ToplAddressNullableConverter() List<ToplAddress>? from,
+      {required List<Recipient> recipients,
+      List<ToplAddress?>? from,
       String? propositionType,
-      @ToplAddressNullableConverter() ToplAddress? changeAddress,
+      ToplAddress? changeAddress,
       PolyAmount? fee,
       String? data,
       required bool minting,
-      @ToplAddressNullableConverter() ToplAddress? consolidationAddress,
+      ToplAddress? consolidationAddress,
       required AssetCode assetCode}) {
     return ArbitTransaction(
         propositionType: propositionType,
-        senders: senders,
-        to: to,
+        sender: from,
+        recipients: recipients,
         changeAddress: changeAddress,
         fee: fee,
         data: data,
