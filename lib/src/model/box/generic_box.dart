@@ -17,4 +17,7 @@ abstract class GenericBox<T> {
       other.boxId == boxId &&
       other.value == value &&
       other.evidence == evidence;
+
+  @override
+  int get hashCode => evidence.hashCode ^ boxId.hashCode;
 }

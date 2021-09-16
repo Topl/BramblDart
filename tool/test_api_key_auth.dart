@@ -28,5 +28,12 @@ class TestApiKeyAuthInterceptor extends AuthInterceptor {
     return file.readAsStringSync();
   }
 
-  static final apiKeyFilePath = 'local_api_key.txt';
+  static final apiKeyFilePath = 'baas_api_key.txt';
 }
+
+final projectIdFilePath = 'baas_project_id.txt';
+
+final baasProjectId = File(projectIdFilePath).readAsStringSync();
+
+final mainnet = 'https://staging.vertx.topl.services/mainnet/$baasProjectId';
+final testnet = 'https://staging.vertx.topl.services/valhalla/$baasProjectId';

@@ -1,8 +1,9 @@
 import 'dart:typed_data';
+
 import 'package:bip_topl/bip_topl.dart';
+import 'package:collection/collection.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
-import 'package:collection/collection.dart';
 
 final validNetworks = ['private', 'toplnet', 'valhalla'];
 final validPropositionTypes = [
@@ -25,7 +26,7 @@ final propositionMap = <String, int>{
   'PublicKeyEd25519': 0x03
 };
 
-final ADDRESS_LENGTH = 38;
+const ADDRESS_LENGTH = 38;
 
 ///Generate Hash Address using the Public Key and Network Prefix
 /// First parameter is the Base-58 encoded byte list of the public key
@@ -61,7 +62,7 @@ ToplAddress generatePubKeyHashAddress(
 
 /// Returns the networkPrefix for a valid address
 /// Returns {success: boolean, networkPrefix: <prefix if found>, error: "<message>"}
-Map<String, dynamic> getAddressNetwork(address) {
+Map<String, dynamic> getAddressNetwork(String address) {
   final decodedAddress = Base58Encoder.instance.decode(address);
   final result = <String, dynamic>{};
   result['success'] = false;
@@ -75,7 +76,7 @@ Map<String, dynamic> getAddressNetwork(address) {
       }
     });
     if (result['networkPrefix'] == null ||
-        !isValidNetwork(result['networkPrefixString'])) {
+        !isValidNetwork(result['networkPrefixString'] as String)) {
       result['error'] = 'invalid network prefix found';
     } else {
       result['success'] = true;
@@ -94,7 +95,7 @@ Map<String, dynamic> getAddressNetwork(address) {
 Map<String, dynamic> validateAddressByNetwork(
     String networkPrefix, String address) {
 // response on completion of the validation
-  var result = <String, dynamic>{};
+  final result = <String, dynamic>{};
   result['success'] = false;
   if (!isValidNetwork(networkPrefix)) {
     result['errorMsg'] = 'Invalid network provided';
@@ -107,17 +108,18 @@ Map<String, dynamic> validateAddressByNetwork(
   }
 
 // get the decimal of the network prefix. It should always be a valid network prefix due to the first conditional, but the language constraint requires us to check if it is null first.
-  var networkDecimal = (networksDefault[networkPrefix] ?? const {})['decimal'];
+  final networkDecimal =
+      (networksDefault[networkPrefix] ?? const {})['decimal'];
 
 // run validation on the address
 
-  var decodedAddress = Base58Encoder.instance.decode(address);
+  final decodedAddress = Base58Encoder.instance.decode(address);
 
 // validation: base58 38 byte obj that matches the networkPrefix hex value
 
   if (decodedAddress.length != ADDRESS_LENGTH ||
       decodedAddress.first != networkDecimal) {
-    result['errorMsg'] = 'Invalid address for network: ' + networkPrefix;
+    result['errorMsg'] = 'Invalid address for network: $networkPrefix';
     return result;
   } else {
     //address has correct length and matches the network, now validate the checksum
@@ -157,15 +159,15 @@ bool isValidPropositionType(String propositionType) {
 final hexRegex = RegExp('^(0x)?[0-9a-fA-F]{1,}\$');
 
 String toHex(Uint8List bArr) {
-  var length = bArr.length;
+  final length = bArr.length;
   if (length <= 0) {
     return '';
   }
-  var cArr = Uint8List(length << 1);
+  final cArr = Uint8List(length << 1);
   var i = 0;
   for (var i2 = 0; i2 < length; i2++) {
-    var i3 = i + 1;
-    var cArr2 = [
+    final i3 = i + 1;
+    final cArr2 = [
       '0',
       '1',
       '2',
@@ -184,7 +186,7 @@ String toHex(Uint8List bArr) {
       'f'
     ];
 
-    var index = (bArr[i2] >> 4) & 15;
+    final index = (bArr[i2] >> 4) & 15;
     cArr[i] = cArr2[index].codeUnitAt(0);
     i = i3 + 1;
     cArr[i3] = cArr2[bArr[i2] & 15].codeUnitAt(0);
@@ -209,11 +211,11 @@ int hex(int c) {
 Uint8List toUnitList(String str) {
   var length = str.length;
   if (length % 2 != 0) {
-    str = '0' + str;
+    str = '0$str';
     length++;
   }
-  var s = str.toUpperCase().codeUnits;
-  var bArr = Uint8List(length >> 1);
+  final s = str.toUpperCase().codeUnits;
+  final bArr = Uint8List(length >> 1);
   for (var i = 0; i < length; i += 2) {
     bArr[i >> 1] = ((hex(s[i]) << 4) | hex(s[i + 1]));
   }

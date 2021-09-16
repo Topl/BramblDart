@@ -30,23 +30,19 @@ class AssetCode {
         Latin1Data.validated(name.padRight(SHORT_NAME_LIMIT, '0'));
     final validationResult =
         validateAddressByNetwork(networkPrefix, issuer.toBase58());
-    if (!validationResult['success']) {
-      throw ArgumentError('Invalid Issuer Address:: Network Type: <' +
-          networkPrefix +
-          '>' +
-          ' Invalid Address: <' +
-          issuer.toBase58() +
-          '>');
+    if (!(validationResult['success'] as bool)) {
+      throw ArgumentError(
+          'Invalid Issuer Address:: Network Type: <$networkPrefix> Invalid Address: <${issuer.toBase58()}>');
     }
     return AssetCode(version, issuer, latin1Name, networkPrefix);
   }
 
   factory AssetCode.deserialize(String from) {
     final decoded = Base58Encoder.instance.decode(from);
-    return AssetCode.initialize(
+    return AssetCode(
         decoded.first,
         ToplAddress(decoded.sublist(1, 35)),
-        Latin1Data(decoded.sublist(35)).show,
+        Latin1Data(decoded.sublist(35)),
         Network.fromNetworkPrefix(decoded[1]).networkPrefixString);
   }
 
@@ -57,7 +53,6 @@ class AssetCode {
 
     // concat 01 [version] + 34 bytes [address] + ^8bytes [asset name]
     final version = Uint8List.fromList([0x01]);
-    final shortNameBytes = shortName.value!;
     final concatValues = version +
         slicedAddress +
         shortName.value!; // add trailing zeros, shortname must be 8 bytes long
@@ -72,8 +67,8 @@ class AssetCode {
   /// A necessary factory constructor for creating a new AssetCode instance
   /// from a map.
   /// The constructor is named after the source class, in this case, AssetCode.
-  factory AssetCode.fromJson(Map<String, dynamic> json) =>
-      AssetCode.deserialize(json['assetCode']);
+  factory AssetCode.fromJson(String assetCode) =>
+      AssetCode.deserialize(assetCode);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON.

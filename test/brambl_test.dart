@@ -182,7 +182,6 @@ void main() {
               0x10,
               'PublicKeyCurve25519'),
           throwsA(isA<Exception>()));
-      ;
     });
   });
 }

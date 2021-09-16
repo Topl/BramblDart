@@ -45,37 +45,37 @@ void main() {
       final rawMaster = PBKDF2.hmac_sha512(salt, entropy, 4096, XPRV_SIZE);
       expect(rawMaster[0], 117, reason: 'byte 0 before normalization');
       expect(rawMaster[31], 140, reason: 'byte 31 before normalization');
-      final root_xsk = Bip32SigningKey.normalizeBytes(rawMaster);
-      expect(root_xsk.keyBytes[0], 112, reason: 'byte 0 after normalization');
-      expect(root_xsk.keyBytes[31], 76, reason: 'byte 31 after normalization');
-      expect(root_xsk.keyBytes,
+      final rootXsk = Bip32SigningKey.normalizeBytes(rawMaster);
+      expect(rootXsk.keyBytes[0], 112, reason: 'byte 0 after normalization');
+      expect(rootXsk.keyBytes[31], 76, reason: 'byte 31 after normalization');
+      expect(rootXsk.keyBytes,
           excpectedXskBip32Bytes.sublist(0, ExtendedSigningKey.keyLength),
           reason: 'first 64 bytes are private key');
-      expect(root_xsk.chainCode,
+      expect(rootXsk.chainCode,
           excpectedXskBip32Bytes.sublist(ExtendedSigningKey.keyLength),
           reason: 'second 32 bytes are chain code');
-      var root_xvk = root_xsk.verifyKey; //get public key
+      final rootXvk = rootXsk.verifyKey; //get public key
       expect(
-          root_xvk.keyBytes, expectedXvkBip32Bytes.sublist(0, public_key_size),
+          rootXvk.keyBytes, expectedXvkBip32Bytes.sublist(0, public_key_size),
           reason: 'first 32 bytes are public key');
-      expect(root_xvk.chainCode, expectedXvkBip32Bytes.sublist(public_key_size),
+      expect(rootXvk.chainCode, expectedXvkBip32Bytes.sublist(public_key_size),
           reason: 'second 32 bytes are chain code');
-      expect(root_xsk.chainCode, root_xvk.chainCode,
+      expect(rootXsk.chainCode, rootXvk.chainCode,
           reason: 'chain code is identical in both private and public keys');
       //generate chain and addresses - m/1852'/7091'/0'/0/0
       final derivator = Bip32Ed25519KeyDerivation.instance;
-      final pvt_purpose_1852 = derivator.ckdPriv(root_xsk, harden(1852));
-      expect(pvt_purpose_1852, expectedPurposeXsk);
-      final pvt_coin_7091 = derivator.ckdPriv(pvt_purpose_1852, harden(7091));
-      expect(pvt_coin_7091, expectedCoinTypeXsk);
-      final pvt_account_0 = derivator.ckdPriv(pvt_coin_7091, harden(0));
-      expect(pvt_account_0, expectedAccount0Xsk);
-      final pvt_change_0 = derivator.ckdPriv(pvt_account_0, 0);
-      expect(pvt_change_0, expectedChange0Xsk);
-      final pvt_address_0 = derivator.ckdPriv(pvt_change_0, 0);
-      expect(pvt_address_0, expectedSpend0Xsk);
-      final pub_address_0 = pvt_address_0.publicKey;
-      expect(pub_address_0, expectedSpend0Xvk);
+      final pvtPurpose1852 = derivator.ckdPriv(rootXsk, harden(1852));
+      expect(pvtPurpose1852, expectedPurposeXsk);
+      final pvtCoin7091 = derivator.ckdPriv(pvtPurpose1852, harden(7091));
+      expect(pvtCoin7091, expectedCoinTypeXsk);
+      final pvtAccount0 = derivator.ckdPriv(pvtCoin7091, harden(0));
+      expect(pvtAccount0, expectedAccount0Xsk);
+      final pvtChange0 = derivator.ckdPriv(pvtAccount0, 0);
+      expect(pvtChange0, expectedChange0Xsk);
+      final pvtAddress0 = derivator.ckdPriv(pvtChange0, 0);
+      expect(pvtAddress0, expectedSpend0Xsk);
+      final pubAddress0 = pvtAddress0.publicKey;
+      expect(pubAddress0, expectedSpend0Xvk);
     });
   });
 
@@ -92,9 +92,9 @@ void main() {
       final addr0 = hdWallet.toBaseAddress(
           networkId: 0x01, spend: spendAddress0Pair.publicKey!);
       expect(addr0.toBase58(), expectedSpend0Base58);
-      final addr_test0 =
+      final addrTest0 =
           hdWallet.toBaseAddress(spend: spendAddress0Pair.publicKey!);
-      expect(addr_test0.toBase58(), expectedTestnetSpend0Base58);
+      expect(addrTest0.toBase58(), expectedTestnetSpend0Base58);
     });
   });
 
@@ -102,9 +102,9 @@ void main() {
     test('HdWallet -', () {
       final hdWallet = HdWallet.fromMnemonic(testMnemonic1);
       final spendAddress0Pair = hdWallet.deriveAddress();
-      final addr_test =
+      final addrTest =
           hdWallet.toBaseAddress(spend: spendAddress0Pair.publicKey!);
-      expect(addr_test.toBase58(), expectedTestnetSpend0Base58);
+      expect(addrTest.toBase58(), expectedTestnetSpend0Base58);
     });
   });
 

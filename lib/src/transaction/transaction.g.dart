@@ -15,14 +15,24 @@ PolyTransaction _$PolyTransactionFromJson(Map<String, dynamic> json) =>
           recipients: $checkedConvert(
               'recipients',
               (v) => (v as List<dynamic>)
-                  .map((e) => Recipient.fromJson(e as Map<String, dynamic>))
+                  .map((e) => SimpleRecipient.fromJson(e as List<dynamic>))
                   .toList()),
-          sender: $checkedConvert('sender', (v) => v),
-          propositionType: $checkedConvert('propositionType', (v) => v),
-          changeAddress: $checkedConvert('changeAddress', (v) => v),
+          sender: $checkedConvert(
+              'sender',
+              (v) => (v as List<dynamic>)
+                  .map(
+                      (e) => const ToplAddressConverter().fromJson(e as String))
+                  .toList()),
+          propositionType:
+              $checkedConvert('propositionType', (v) => v as String),
+          changeAddress: $checkedConvert(
+              'changeAddress',
+              (v) =>
+                  const ToplAddressNullableConverter().fromJson(v as String)),
           fee: $checkedConvert('fee',
               (v) => const PolyAmountNullableConverter().fromJson(v as String)),
-          data: $checkedConvert('data', (v) => v),
+          data: $checkedConvert('data',
+              (v) => const Latin1NullableConverter().fromJson(v as String)),
         );
         return val;
       },
@@ -31,9 +41,8 @@ PolyTransaction _$PolyTransactionFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$PolyTransactionToJson(PolyTransaction instance) =>
     <String, dynamic>{
       'propositionType': instance.propositionType,
-      'sender': instance.sender
-          ?.map(const ToplAddressNullableConverter().toJson)
-          .toList(),
+      'sender':
+          instance.sender.map(const ToplAddressConverter().toJson).toList(),
       'changeAddress':
           const ToplAddressNullableConverter().toJson(instance.changeAddress),
       'data': const Latin1NullableConverter().toJson(instance.data),
@@ -50,21 +59,31 @@ AssetTransaction _$AssetTransactionFromJson(Map<String, dynamic> json) =>
           recipients: $checkedConvert(
               'recipients',
               (v) => (v as List<dynamic>)
-                  .map((e) => Recipient.fromJson(e as Map<String, dynamic>))
+                  .map((e) => AssetRecipient.fromJson(e as List<dynamic>))
                   .toList()),
-          sender: $checkedConvert('sender', (v) => v),
-          propositionType: $checkedConvert('propositionType', (v) => v),
-          changeAddress: $checkedConvert('changeAddress', (v) => v),
+          sender: $checkedConvert(
+              'sender',
+              (v) => (v as List<dynamic>)
+                  .map(
+                      (e) => const ToplAddressConverter().fromJson(e as String))
+                  .toList()),
+          propositionType:
+              $checkedConvert('propositionType', (v) => v as String),
+          changeAddress: $checkedConvert(
+              'changeAddress',
+              (v) =>
+                  const ToplAddressNullableConverter().fromJson(v as String)),
           fee: $checkedConvert('fee',
               (v) => const PolyAmountNullableConverter().fromJson(v as String)),
-          data: $checkedConvert('data', (v) => v),
+          data: $checkedConvert('data',
+              (v) => const Latin1NullableConverter().fromJson(v as String)),
           minting: $checkedConvert('minting', (v) => v as bool),
           consolidationAddress: $checkedConvert(
               'consolidationAddress',
               (v) =>
                   const ToplAddressNullableConverter().fromJson(v as String)),
-          assetCode: $checkedConvert('assetCode',
-              (v) => AssetCode.fromJson(v as Map<String, dynamic>)),
+          assetCode: $checkedConvert(
+              'assetCode', (v) => AssetCode.fromJson(v as String)),
         );
         return val;
       },
@@ -73,9 +92,8 @@ AssetTransaction _$AssetTransactionFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$AssetTransactionToJson(AssetTransaction instance) =>
     <String, dynamic>{
       'propositionType': instance.propositionType,
-      'sender': instance.sender
-          ?.map(const ToplAddressNullableConverter().toJson)
-          .toList(),
+      'sender':
+          instance.sender.map(const ToplAddressConverter().toJson).toList(),
       'changeAddress':
           const ToplAddressNullableConverter().toJson(instance.changeAddress),
       'data': const Latin1NullableConverter().toJson(instance.data),
@@ -96,14 +114,24 @@ ArbitTransaction _$ArbitTransactionFromJson(Map<String, dynamic> json) =>
           recipients: $checkedConvert(
               'recipients',
               (v) => (v as List<dynamic>)
-                  .map((e) => Recipient.fromJson(e as Map<String, dynamic>))
+                  .map((e) => SimpleRecipient.fromJson(e as List<dynamic>))
                   .toList()),
-          sender: $checkedConvert('sender', (v) => v),
-          propositionType: $checkedConvert('propositionType', (v) => v),
-          changeAddress: $checkedConvert('changeAddress', (v) => v),
+          sender: $checkedConvert(
+              'sender',
+              (v) => (v as List<dynamic>)
+                  .map(
+                      (e) => const ToplAddressConverter().fromJson(e as String))
+                  .toList()),
+          propositionType:
+              $checkedConvert('propositionType', (v) => v as String),
+          changeAddress: $checkedConvert(
+              'changeAddress',
+              (v) =>
+                  const ToplAddressNullableConverter().fromJson(v as String)),
           fee: $checkedConvert('fee',
               (v) => const PolyAmountNullableConverter().fromJson(v as String)),
-          data: $checkedConvert('data', (v) => v),
+          data: $checkedConvert('data',
+              (v) => const Latin1NullableConverter().fromJson(v as String)),
           consolidationAddress: $checkedConvert(
               'consolidationAddress',
               (v) =>
@@ -116,9 +144,8 @@ ArbitTransaction _$ArbitTransactionFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ArbitTransactionToJson(ArbitTransaction instance) =>
     <String, dynamic>{
       'propositionType': instance.propositionType,
-      'sender': instance.sender
-          ?.map(const ToplAddressNullableConverter().toJson)
-          .toList(),
+      'sender':
+          instance.sender.map(const ToplAddressConverter().toJson).toList(),
       'changeAddress':
           const ToplAddressNullableConverter().toJson(instance.changeAddress),
       'data': const Latin1NullableConverter().toJson(instance.data),

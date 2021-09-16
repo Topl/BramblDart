@@ -36,8 +36,6 @@ class SimpleValue extends TokenValueHolder {
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class AssetValue extends TokenValueHolder {
-  @override
-  final String quantity;
   final AssetCode assetCode;
   final SecurityRoot? securityRoot;
   final String? metadata;
@@ -49,7 +47,7 @@ class AssetValue extends TokenValueHolder {
   final int assetCodeSize = ToplAddress.addressSize + 9;
   final int metadataLimit = 127; // bytes of Latin-1 encoded string
 
-  AssetValue(this.quantity, this.assetCode, this.securityRoot, this.metadata)
+  AssetValue(String quantity, this.assetCode, this.securityRoot, this.metadata)
       : super(quantity);
 
   /// A necessary factory constructor for creating a new AssetValue instance

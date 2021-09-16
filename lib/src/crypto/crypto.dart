@@ -12,7 +12,7 @@ part 'crypto.g.dart';
 
 /// The cryptographic hash functions (https://en.wikipedia.org/wiki/Cryptographic_hash_function) are a specific family of hash function
 
-final DIGEST_LENGTH = 32;
+const DIGEST_LENGTH = 32;
 
 /// Returns the Blake2b (https://en.wikipedia.org/wiki/BLAKE_(hash_function)) digest of the [buffer]
 Uint8List createHash(Uint8List buffer) {

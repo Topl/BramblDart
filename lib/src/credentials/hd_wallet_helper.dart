@@ -50,8 +50,8 @@ class HdWallet {
       {String password = ''}) {
     final salt = Uint8List.fromList(utf8.encode(password));
     final rawMaster = PBKDF2.hmac_sha512(salt, entropy, 4096, xprv_size);
-    final root_xsk = Bip32SigningKey.normalizeBytes(rawMaster);
-    return root_xsk;
+    final rootXsk = Bip32SigningKey.normalizeBytes(rawMaster);
+    return rootXsk;
   }
 
   ///
@@ -109,10 +109,10 @@ class HdWallet {
   ///
   Bip32KeyPair derive({required Bip32KeyPair keys, required int index}) {
     // computes a child extended private key from the parent extended private key.
-    var privateKey = keys.privateKey != null
+    final privateKey = keys.privateKey != null
         ? _derivator.ckdPriv(keys.privateKey!, index)
         : null;
-    var publicKey = isHardened(index)
+    final publicKey = isHardened(index)
         ? null
         : keys.publicKey != null
             ? _derivator.ckdPub(keys.publicKey!, index)

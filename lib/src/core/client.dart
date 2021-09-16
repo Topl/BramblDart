@@ -14,7 +14,6 @@ import 'package:mubrambl/src/transaction/transaction.dart';
 import 'package:mubrambl/src/transaction/transactionReceipt.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
-import 'package:mubrambl/src/utils/util.dart';
 import 'package:pinenacl/encoding.dart';
 
 import '../json_rpc.dart';
@@ -145,7 +144,7 @@ class BramblClient {
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
   ///
   Future<TransactionReceipt> sendRawAssetTransfer(
-      {ToplAddress? sender,
+      {required ToplAddress sender,
       required Map<String, AssetValue> recipients,
       PolyAmount? fee,
       required bool minting,
@@ -156,11 +155,11 @@ class BramblClient {
       required ToplAddress issuer}) {
     // ignore: prefer_collection_literals
     final senders = [sender, issuer].toSet().toList();
-    senders.removeWhere((value) => value == null);
     return _makeRPCCall('topl_rawAssetTransfer', params: [
       AssetTransaction(
               recipients: recipients.entries
-                  .map((entry) => Recipient(entry.key, entry.value))
+                  .map((entry) => AssetRecipient(
+                      ToplAddress.fromBase58(entry.key), entry.value))
                   .toList(),
               sender: senders,
               propositionType: issuer.proposition.propositionName,
@@ -171,6 +170,7 @@ class BramblClient {
               consolidationAddress: consolidationAddress,
               assetCode: assetCode)
           .toJson()
-    ]).then((value) => AssetTransactionReceipt.fromJson(value));
+    ]).then((value) => AssetTransactionReceipt.fromJson(
+        value['rawTx'] as Map<String, dynamic>));
   }
 }

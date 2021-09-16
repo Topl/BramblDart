@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
-import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 
 class SecurityRoot {
@@ -42,8 +42,9 @@ class SecurityRoot {
   /// A necessary factory constructor for creating a new AssetCode instance
   /// from a map.
   /// The constructor is named after the source class, in this case, AssetCode.
-  factory SecurityRoot.fromJson(Map<String, dynamic> json) =>
-      SecurityRoot.fromBase58(json['securityRoot']);
+  factory SecurityRoot.fromJson(String json) {
+    return SecurityRoot.fromBase58(Base58Data.validated(json));
+  }
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated

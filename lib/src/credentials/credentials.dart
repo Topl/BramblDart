@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:bip_topl/bip_topl.dart';
@@ -68,8 +67,7 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
   /// is cryptographically secure. The private key could be reconstructed by
   /// someone else otherwise. Just using [Random()] is a very bad idea! At least
   /// use [Random.secure()].
-  factory ToplSigningKey.createRandom(
-      Random random, Type t, NetworkId n, PropositionType p) {
+  factory ToplSigningKey.createRandom(NetworkId n, PropositionType p) {
     final key = Bip32SigningKey.generate();
     return ToplSigningKey(key, n, p);
   }

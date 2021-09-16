@@ -21,7 +21,7 @@ class AddressGenerator {
   List<ToplAddress> generate(List<int> idxs) {
     // cache credential manager public key
     _masterPubKeyPtr ??= Bip32VerifyKey.decode(publicKeyBase58!);
-    var chainKey = Bip32Ed25519KeyDerivation().ckdPub(_masterPubKeyPtr!, 0);
+    final chainKey = Bip32Ed25519KeyDerivation().ckdPub(_masterPubKeyPtr!, 0);
     return idxs.map((idx) {
       final addrKey = chainKey.derive(idx);
       return generatePubKeyHashAddress(

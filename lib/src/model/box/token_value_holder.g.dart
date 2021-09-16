@@ -28,13 +28,9 @@ AssetValue _$AssetValueFromJson(Map<String, dynamic> json) => $checkedCreate(
       ($checkedConvert) {
         final val = AssetValue(
           $checkedConvert('quantity', (v) => v as String),
-          $checkedConvert('assetCode',
-              (v) => AssetCode.fromJson(v as Map<String, dynamic>)),
-          $checkedConvert(
-              'securityRoot',
-              (v) => v == null
-                  ? null
-                  : SecurityRoot.fromJson(v as Map<String, dynamic>)),
+          $checkedConvert('assetCode', (v) => AssetCode.fromJson(v as String)),
+          $checkedConvert('securityRoot',
+              (v) => v == null ? null : SecurityRoot.fromJson(v as String)),
           $checkedConvert('metadata', (v) => v as String?),
         );
         return val;

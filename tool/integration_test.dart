@@ -17,7 +17,7 @@ import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/encoding.dart';
 import 'package:test/test.dart';
 
-import 'containers/bifrost.dart';
+// import 'containers/bifrost.dart';
 import 'test_api_key_auth.dart';
 
 const _privateKey1 =
@@ -34,21 +34,23 @@ void main() async {
   late ToplSigningKey second;
 
   setUpAll(() async {
-    print('Starting Bifrost on port 9085');
+    // print('Starting Bifrost on port 9085');
 
-    bifrost = await startBifrost(
-        name: 'integrationTesting',
-        version: '1.7.1',
-        cleanup: true,
-        imageName: 'toplprotocol/bifrost');
-    print('Waiting for Bifrost to start up');
+    // bifrost = await startBifrost(
+    //     name: 'integrationTesting',
+    //     version: '1.7.1',
+    //     cleanup: true,
+    //     imageName: 'toplprotocol/bifrost');
+    // print('Waiting for Bifrost to start up');
 
     var connectionAttempts = 0;
     var successful = false;
     do {
       connectionAttempts++;
       try {
-        await get(Uri.parse('http://localhost:9085'));
+        await get(Uri.parse(
+            'https://staging.vertx.topl.services/valhalla/$baasProjectId'));
+        //await get(Uri.parse('http://localhost:9085'));
         successful = true;
       } on SocketException {
         await Future.delayed(const Duration(seconds: 2));
@@ -61,56 +63,57 @@ void main() async {
   });
 
   tearDownAll(() async {
-    await bifrost.stop();
-    await bifrost.kill();
+    // await bifrost.stop();
+    // await bifrost.kill();
   });
 
   setUp(() {
     client = BramblClient(
-      basePathOverride: 'http://localhost:9085',
+      basePathOverride:
+          'https://staging.vertx.topl.services/valhalla/$baasProjectId',
       interceptors: [TestApiKeyAuthInterceptor()],
     );
 
     first = ToplSigningKey(
         Bip32SigningKey.decode(_privateKey1, coder: HexCoder.instance),
-        0x40,
-        PropositionType.Ed25519());
+        0x10,
+        PropositionType.ed25519());
     second = ToplSigningKey(
         Bip32SigningKey.decode(_privateKey2, coder: HexCoder.instance),
-        0x40,
-        PropositionType.Ed25519());
+        0x10,
+        PropositionType.ed25519());
   });
 
   group(BramblClient, () {
-    // test('test node info on private node', () async {
-    //   try {
-    //     var response = await client.getClientVersion();
-    //     print(response);
-    //   } catch (e) {
-    //     print(e);
-    //     fail('exception: $e');
-    //   }
-    // });
+    test('test node info on private node', () async {
+      try {
+        final response = await client.getClientVersion();
+        print(response);
+      } catch (e) {
+        print(e);
+        fail('exception: $e');
+      }
+    });
 
-    // test('test node info on private node', () async {
-    //   try {
-    //     var response = await client.getNetwork();
-    //     print(response);
-    //   } catch (e) {
-    //     print(e);
-    //     fail('exception: $e');
-    //   }
-    // });
+    test('test node info on private node', () async {
+      try {
+        final response = await client.getNetwork();
+        print(response);
+      } catch (e) {
+        print(e);
+        fail('exception: $e');
+      }
+    });
 
-    // test('test block head info on private node', () async {
-    //   try {
-    //     var response = await client.getBlockNumber();
-    //     print(response);
-    //   } catch (e) {
-    //     print(e);
-    //     fail('exception: $e');
-    //   }
-    // });
+    test('test block head info on private node', () async {
+      try {
+        final response = await client.getBlockNumber();
+        print(response);
+      } catch (e) {
+        print(e);
+        fail('exception: $e');
+      }
+    });
 
     test('Simple raw transaction', () async {
       final senderAddress = await first.extractAddress();
@@ -118,10 +121,10 @@ void main() async {
 
       final balanceOfSender = await client.getBalance(senderAddress);
       final balanceOfRecipient = await client.getBalance(recipientAddress);
-      final value = 0;
+      final value = 1;
 
       final assetCode =
-          AssetCode.initialize(1, senderAddress, 'testy', 'private');
+          AssetCode.initialize(1, senderAddress, 'testy', 'valhalla');
 
       final securityRoot = SecurityRoot.fromBase58(
           Base58Data.validated('11111111111111111111111111111111'));
@@ -146,11 +149,12 @@ void main() async {
           consolidationAddress: senderAddress,
           data: Uint8List(0));
 
-      expect(
-          rawTransaction,
-          isA<TransactionReceipt>()
-              .having((e) => e.to, 'to', recipientAddress)
-              .having((e) => e.from, 'from', senderAddress));
+      expect(rawTransaction, isA<AssetTransactionReceipt>());
+
+      print(rawTransaction);
     });
-  });
+  },
+      skip: baasProjectId == '' || baasProjectId.length != 24
+          ? 'Tests require a valid BaaS projectId'
+          : null);
 }

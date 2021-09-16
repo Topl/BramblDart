@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/ed25519.dart';
-import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
 
 typedef ModifierTypeId = int;
 

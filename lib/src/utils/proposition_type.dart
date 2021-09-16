@@ -12,11 +12,11 @@ class PropositionType {
 
   const PropositionType(this.propositionName, this.propositionPrefix);
 
-  factory PropositionType.Curve25519() =>
+  factory PropositionType.curve25519() =>
       const PropositionType('PublicKeyCurve25519', 0x01);
-  factory PropositionType.Ed25519() =>
+  factory PropositionType.ed25519() =>
       const PropositionType('PublicKeyEd25519', 0x03);
-  factory PropositionType.ThresholdCurve25519() =>
+  factory PropositionType.thresholdCurve25519() =>
       const PropositionType('ThresholdCurve255129', 0x02);
 
   /// A necessary factory constructor for creating a new PropositionType instance
