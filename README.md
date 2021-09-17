@@ -1,19 +1,3 @@
-A library for Dart developers.
+# Setup
 
-## Usage
-
-A simple usage example:
-
-```dart
-import 'package:mubrambl/mubrambl.dart';
-
-main() {
-  var awesome = new Awesome();
-}
-```
-
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: http://example.com/issues/replaceme
+Please reach out to s.wells@topl.me for credentials for the git-crypt to unlock the baas_api_key.txt so that the integration tests will pass for you in your local environment. Thanks!
