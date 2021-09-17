@@ -81,18 +81,19 @@ jobs:
       - run: dart test -x expensive --platform chrome,firefox
       
       
-  setup-docker:
-    name: "Setting up docker for integration testing"
-    needs: get_dependencies
+  setup-integration-tests:
+    name: Test git-crypt-unlock
     runs-on: ubuntu-latest
     steps:
-      - uses: docker-practice/actions-setup-docker@master
-      - run: |
-          docker pull toplprotocol/bifrost:1.7.1
+      - uses: actions/checkout@master
+      - name: Unlock secrets
+        uses: sliteteam/github-action-git-crypt-unlock@1.2.0
+        env:
+          GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
   
   integration_tests:
     name: "Integration Tests"
-    needs: [get_dependencies, setup-docker]
+    needs: [get_dependencies, setup-integration-tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
