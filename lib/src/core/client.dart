@@ -1,7 +1,9 @@
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 import 'package:mubrambl/src/auth/api_key_auth.dart';
+import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/expensive_operations.dart';
+import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
@@ -90,8 +92,41 @@ class BramblClient {
         network, propositionType, privateKey);
   }
 
-  /// Returns the information of the node that we're sending requests to.
-  Future<Map<String, dynamic>> getNodeInfo() {
-    return _makeRPCCall('topl_info', params: [{}]);
+  /// Returns the version of the client we're sending requests to.
+  Future<String> getClientVersion() {
+    return _makeRPCCall('topl_info', params: [{}])
+        .then((value) => value['version'] as String);
+  }
+
+  /// Returns the network that the client is currently connected to.
+  ///
+  /// In a non-private network, the networks usually will respond to
+  /// 1.) Mainnet
+  /// 2.) Valhalla
+  Future<String> getNetwork() {
+    return _makeRPCCall('topl_info', params: [{}])
+        .then((value) => value['network'] as String);
+  }
+
+  /// Returns the number of the most recent block on the chain
+  Future<String> getBlockNumber() {
+    return _makeRPCCall('topl_head', params: [{}])
+        .then((s) => s['height'].toString());
+  }
+
+  /// Returns the balance object of the address
+  Future<Map<String, dynamic>> getBalance(ToplAddress address) {
+    return _makeRPCCall('topl_balances', params: [
+      {
+        'addresses': [address.toBase58()]
+      }
+    ]).then((value) {
+      return {
+        'Polys': PolyAmount.fromUnitAndValue(PolyUnit.nanopoly,
+            value[address.toBase58()]['Balances']['Polys'] as String),
+        'Arbits': ArbitAmount.fromUnitAndValue(ArbitUnit.nanoarbit,
+            value[address.toBase58()]['Balances']['Arbits'] as String)
+      };
+    });
   }
 }
