@@ -5,7 +5,6 @@ import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/expensive_operations.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
-import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 
 import '../json_rpc.dart';
