@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/attestation/evidence.dart';
 import 'package:mubrambl/src/model/box/box.dart';
+import 'package:mubrambl/src/model/box/box_id.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
 
 part 'arbit_box.g.dart';
@@ -26,5 +27,6 @@ class ArbitBox extends TokenBox {
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$ArbitBoxToJson`.
+  // ignore: annotate_overrides
   Map<String, dynamic> toJson() => _$ArbitBoxToJson(this);
 }

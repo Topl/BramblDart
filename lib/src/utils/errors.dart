@@ -52,3 +52,9 @@ class IncorrectEncoding implements Exception {
   String cause;
   IncorrectEncoding(this.cause);
 }
+
+class IncorrectSize extends IncorrectEncoding {
+  @override
+  String cause;
+  IncorrectSize(this.cause) : super(cause);
+}

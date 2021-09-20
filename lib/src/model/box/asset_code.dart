@@ -43,7 +43,7 @@ class AssetCode {
     final decoded = Base58Encoder.instance.decode(from);
     return AssetCode.initialize(
         decoded.first,
-        Dion_Type_3_Address.fromAddressBytes(decoded.sublist(1, 35)),
+        ToplAddress(decoded.sublist(1, 35)),
         Latin1Data(decoded.sublist(35)),
         Network.fromNetworkPrefix(decoded[1]).networkPrefixString);
   }

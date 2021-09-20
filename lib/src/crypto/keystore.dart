@@ -29,7 +29,7 @@ const defaultOptions = <String, dynamic>{
 
   //network
   // ignore: unnecessary_const
-  'network': const Network(false, 0x01, 'toplnet')
+  'network': Network(false, 0x01, 'toplnet')
 };
 
 abstract class _KeyDerivator {
