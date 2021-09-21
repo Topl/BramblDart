@@ -80,6 +80,7 @@ jobs:
           path: .dart_tool
           key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
       - uses: dart-lang/setup-dart@v1
+      - uses: browser-actions/setup-firefox@latest
       - run: dart test -x expensive --platform chrome,firefox
   
   integration_tests:
