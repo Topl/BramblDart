@@ -43,5 +43,5 @@ class SimpleRecipient {
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$RecipientToJson`.
-  List toJson() => [key, value.toJson()];
+  List toJson() => [key.toBase58(), value.toJson()];
 }

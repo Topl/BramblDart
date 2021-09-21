@@ -27,6 +27,12 @@ class BoxId<T> {
         createHash(Uint8List.fromList(evidence.evBytes + [nonce])), 32));
   }
 
+  factory BoxId.fromJson(String json) {
+    return BoxId.applyByteArray(Base58Data.validated(json).value);
+  }
+
+  String toJson() => toString();
+
   @override
   int get hashCode => hash.hashCode;
 
@@ -42,7 +48,7 @@ class BoxIdConverter implements JsonConverter<BoxId, String> {
 
   @override
   BoxId fromJson(String json) {
-    return BoxId.applyByteArray(Base58Data.validated(json).value);
+    return BoxId.fromJson(json);
   }
 
   @override

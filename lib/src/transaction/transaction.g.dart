@@ -45,9 +45,9 @@ Map<String, dynamic> _$PolyTransactionToJson(PolyTransaction instance) =>
           instance.sender.map(const ToplAddressConverter().toJson).toList(),
       'changeAddress':
           const ToplAddressNullableConverter().toJson(instance.changeAddress),
+      'fee': const PolyAmountNullableConverter().toJson(instance.fee),
       'data': const Latin1NullableConverter().toJson(instance.data),
       'recipients': instance.recipients.map((e) => e.toJson()).toList(),
-      'fee': const PolyAmountNullableConverter().toJson(instance.fee),
     };
 
 AssetTransaction _$AssetTransactionFromJson(Map<String, dynamic> json) =>
@@ -96,13 +96,13 @@ Map<String, dynamic> _$AssetTransactionToJson(AssetTransaction instance) =>
           instance.sender.map(const ToplAddressConverter().toJson).toList(),
       'changeAddress':
           const ToplAddressNullableConverter().toJson(instance.changeAddress),
+      'fee': const PolyAmountNullableConverter().toJson(instance.fee),
       'data': const Latin1NullableConverter().toJson(instance.data),
       'recipients': instance.recipients.map((e) => e.toJson()).toList(),
       'consolidationAddress': const ToplAddressNullableConverter()
           .toJson(instance.consolidationAddress),
       'minting': instance.minting,
       'assetCode': instance.assetCode.toJson(),
-      'fee': const PolyAmountNullableConverter().toJson(instance.fee),
     };
 
 ArbitTransaction _$ArbitTransactionFromJson(Map<String, dynamic> json) =>
@@ -148,9 +148,9 @@ Map<String, dynamic> _$ArbitTransactionToJson(ArbitTransaction instance) =>
           instance.sender.map(const ToplAddressConverter().toJson).toList(),
       'changeAddress':
           const ToplAddressNullableConverter().toJson(instance.changeAddress),
+      'fee': const PolyAmountNullableConverter().toJson(instance.fee),
       'data': const Latin1NullableConverter().toJson(instance.data),
       'recipients': instance.recipients.map((e) => e.toJson()).toList(),
       'consolidationAddress': const ToplAddressNullableConverter()
           .toJson(instance.consolidationAddress),
-      'fee': const PolyAmountNullableConverter().toJson(instance.fee),
     };

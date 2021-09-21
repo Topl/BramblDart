@@ -14,6 +14,8 @@ class Sender {
       ToplAddress.fromBase58(jsonList[0] as String),
       int.parse(jsonList[1] as String));
 
+  String toJson() => toString();
+
   @override
   int get hashCode => senderAddress.hashCode ^ nonce.hashCode;
 

@@ -51,11 +51,10 @@ class PolyAmount {
       throw ArgumentError('Invalid type, must be string or a numerical value');
     }
 
-    if (parsedAmount > pow(2, 53) - 1) {
+    if (parsedAmount > pow(2, 53) - 1 || parsedAmount < 0) {
       throw ArgumentError(
           'Invalid value, value is outside of valid range for transactions with this library');
     }
-
     return PolyAmount.inNanopoly(parsedAmount * _factors[unit]!);
   }
 
@@ -130,7 +129,7 @@ class ArbitAmount {
       throw ArgumentError('Invalid type, must be string or a numerical value');
     }
 
-    if (parsedAmount > pow(2, 53) - 1) {
+    if (parsedAmount > pow(2, 53) - 1 || parsedAmount < 0) {
       throw ArgumentError(
           'Invalid value, value is outside of valid range for transactions with this library');
     }

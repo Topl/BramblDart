@@ -9,6 +9,7 @@ import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/client.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
+import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/security_root.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
 import 'package:mubrambl/src/transaction/transactionReceipt.dart';
@@ -115,7 +116,7 @@ void main() async {
       }
     });
 
-    test('Simple raw transaction', () async {
+    test('Simple raw asset transaction', () async {
       final senderAddress = await first.extractAddress();
       final recipientAddress = await second.extractAddress();
 
@@ -149,10 +150,44 @@ void main() async {
           consolidationAddress: senderAddress,
           data: Uint8List(0));
 
-      expect(rawTransaction, isA<AssetTransactionReceipt>());
+      final to = AssetRecipient(recipientAddress, assetValue);
+
+      expect(rawTransaction, isA<TransactionReceipt>());
 
       print(rawTransaction);
     });
+
+    // test('Simple raw poly transaction', () async {
+    //   final senderAddress = await first.extractAddress();
+    //   final recipientAddress = await second.extractAddress();
+
+    //   final balanceOfSender = await client.getBalance(senderAddress);
+    //   final balanceOfRecipient = await client.getBalance(recipientAddress);
+    //   final value = 1;
+
+    //   final polyValue = SimpleValue(value.toString());
+
+    //   final recipients = <String, SimpleValue>{
+    //     recipientAddress.toBase58(): polyValue
+    //   };
+
+    //   final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, '100');
+
+    //   final rawTransaction = await client.sendRawPolyTransfer(
+    //       issuer: senderAddress,
+    //       sender: senderAddress,
+    //       recipients: recipients,
+    //       fee: fee,
+    //       changeAddress: senderAddress,
+    //       data: Uint8List(0));
+
+    //   final to = SimpleRecipient(recipientAddress, polyValue);
+
+    //   expect(rawTransaction,
+    //       isA<TransactionReceipt>().having((e) => e.to, 'to', to));
+
+    //   print(rawTransaction);
+    // });
   },
       skip: baasProjectId == '' || baasProjectId.length != 24
           ? 'Tests require a valid BaaS projectId'

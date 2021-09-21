@@ -2,16 +2,22 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:bip_topl/bip_topl.dart';
+import 'package:collection/collection.dart';
+import 'package:intl/intl.dart';
 import 'package:mubrambl/src/attestation/proposition.dart';
+import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/model/box/box_id.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/sender.dart';
 import 'package:mubrambl/src/modifier/modifier_id.dart';
-import 'package:mubrambl/src/utils/proposition_type.dart';
+import 'package:mubrambl/src/utils/block_time.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
+import 'package:mubrambl/src/utils/util.dart';
 import 'package:pinenacl/x25519.dart';
 
 typedef TxType = int;
+
+final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
 class TransactionReceipt {
   @ModifierIdConverter()
@@ -20,13 +26,14 @@ class TransactionReceipt {
   final ModifierId id;
 
   /// The number of boxes that were generated with this transaction.
+  @BoxIdConverter()
   final List<BoxId> newBoxes;
 
   /// Proposition Type signature(s)
   final Map<Proposition, Uint8List> signatures;
 
   /// The amount of polys that was used to pay for this transaction to the network
-  final BigInt fee;
+  final PolyAmount fee;
 
   /// The time at which this transaction was received by the network
   final int timestamp;
@@ -35,224 +42,111 @@ class TransactionReceipt {
   final Uint8List? messageToSign;
 
   /// The boxes that will be deleted as a result of this transaction
+  @BoxIdConverter()
   final List<BoxId> boxesToRemove;
+
+  // The sender/s of this transaction. This is a required field
+  final List<Sender> from;
+
+  // The address(es) of the receiver. This is a required field
+  final List to;
+
+  /// The propositionType that has or will be used by the sender to generate the proposition. This proposition will be used to verify the authenticity of this transaction together with the provided proof
+  final String propositionType;
+
+  /// Data string which can be associated with this transaction (may be empty). Data has a maximum value of 127 Latin-1 encoded characters
+  final Latin1Data? data;
+
+  /// Whether this transfer will be a minting transfer. This field is not strictly necessary for poly or arbit transfers but since it exists in the JSON-RPC output, it is included here for completeness
+  final bool? minting;
+
+  /// Whether or not this transfer has been successfully confirmed into a block
+  final bool status;
 
   String get typeString => '';
 
-  TransactionReceipt(this.id, this.newBoxes, this.signatures, this.fee,
-      this.timestamp, this.messageToSign, this.boxesToRemove);
+  TransactionReceipt(
+      {required this.id,
+      required this.newBoxes,
+      this.signatures = const {},
+      this.status = false,
+      required this.fee,
+      required this.timestamp,
+      this.messageToSign,
+      required this.boxesToRemove,
+      required this.from,
+      required this.to,
+      required this.propositionType,
+      this.data,
+      this.minting});
+
+  String toJson() => toString();
 
   @override
   String toString() {
-    return typeString + json.encode(toJson());
+    return 'TransactionReceipt{id: ${id.toString()}, from: ${json.encode(from)}, to: ${json.encode(to)}, fee: ${fee.toString()}, timestamp: ${formatter.format(BifrostDateTime().encode(timestamp))}, propositionType: $propositionType, messageToSign: ${Base58Data(messageToSign ?? Uint8List(0)).show}, data: ${data?.show}, newBoxes: ${json.encode(newBoxes)}, boxesToRemove: ${json.encode(boxesToRemove)}, signatures: ${json.encode(signatures)}';
   }
 
-  /// A necessary factory constructor for creating a new TransactionReceipt instance
-  /// from a map. Pass the map to the generated `_$TransactionReceiptFromJson()` constructor.
-  /// The constructor is named after the source class, in this case, Transaction.
-  // ignore: avoid_unused_constructor_parameters
-  factory TransactionReceipt.fromJson(Map<String, dynamic> json) =>
-      TransactionReceipt(
-          ModifierId(Uint8List(0)), [], {}, BigInt.zero, 0, Uint8List(0), []);
+  static void _validateFields(Map<String, dynamic> map) {
+    if (map['propositionType'] == null ||
+        !validPropositionTypes.contains(map['propositionType'])) {
+      throw ArgumentError(
+          'A valid propositionType must be provided: <PublicKeyCurve25519, ThresholdCurve25519, PublicKeyED25519');
+    }
 
-  /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON.
-  Map<String, dynamic> toJson() => {};
-}
+    if (map['from'] == null) {
+      throw ArgumentError('A sender must be specified');
+    }
 
-/// Class that establishes the inputs and output boxes for a poly transaction. Note that in the current iteration this supports data requests from the chain only
-class PolyTransactionReceipt extends TransactionReceipt {
-  final List<Sender> from;
-  final List<SimpleRecipient> to;
-  final Latin1Data? data;
-
-  final TxType typePrefix = 2;
-  @override
-  final String typeString = 'PolyTransfer';
-
-  final PropositionType propositionType;
-
-  PolyTransactionReceipt(
-      {required this.from,
-      required this.to,
-      required Map<Proposition, Uint8List> signatures,
-      required BigInt fee,
-      required int timestamp,
-      required ModifierId id,
-      Uint8List? messageToSign,
-      this.data,
-      required this.propositionType,
-      required List<BoxId> newBoxes,
-      required List<BoxId> boxesToRemove})
-      : super(id, newBoxes, signatures, fee, timestamp, messageToSign,
-            boxesToRemove);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'txId': id,
-      'txType': 'PolyTransfer',
-      'propositionType': typeString,
-      'newBoxes': json.encode(newBoxes),
-      'boxesToRemove': json.encode(boxesToRemove),
-      'from': json.encode(from),
-      'to': json.encode(to),
-      'signatures': json.encode(signatures),
-      'fee': fee.toString(),
-      'timestamp': timestamp.toString(),
-      'data': data?.show
-    };
-  }
-
-  factory PolyTransactionReceipt.fromJson(Map<String, dynamic> c) {
-    final from =
-        (c['from'] as List).map((i) => Sender.fromJson((i as List))).toList();
-    final to = (c['to'] as List)
-        .map((i) => SimpleRecipient.fromJson((i as List)))
-        .toList();
-    final fee = BigInt.tryParse(c['fee'] as String);
-    final timestamp = c['timestamp'] as int;
-    final propositionType = c['propositionType'] as String;
-    final txId = ModifierId.create(Uint8List.fromList(c['txId'] as List<int>));
-
-    final messageToSign =
-        Uint8List.fromList(c['messageToSign'] as List<int>? ?? []);
-
-    final data = Latin1Converter().fromJson(c['data'] as String);
-    final rawNewBoxes = c['newBoxes'] as List<String>;
-    final newBoxes =
-        rawNewBoxes.map((boxId) => BoxIdConverter().fromJson(boxId)).toList();
-    final boxesToRemove = (c['boxesToRemove'] as List<String>)
-        .map((boxId) => BoxIdConverter().fromJson(boxId))
-        .toList();
-
-    switch (propositionType) {
-      case ('PublicKeyEd25519'):
-        final rawSignatures = c['signatures'] as Map<String, dynamic>;
-        final signatures = <Proposition, Uint8List>{};
-        rawSignatures.forEach((k, v) {
-          final newKey = Proposition.fromBase58(Base58Data.validated(k));
-          final newValue = Base58Encoder.instance.decode(v as String);
-          signatures[newKey] = newValue;
-        });
-        return PolyTransactionReceipt(
-            from: from,
-            to: to,
-            signatures: signatures,
-            fee: fee!,
-            timestamp: timestamp,
-            id: txId,
-            messageToSign: messageToSign,
-            data: data,
-            propositionType: PropositionType.ed25519(),
-            newBoxes: newBoxes,
-            boxesToRemove: boxesToRemove);
-      case ('PublicKeyCurveEd25519'):
-        final rawSignatures = c['signatures'] as Map<String, dynamic>;
-        final signatures = <Proposition, Uint8List>{};
-        rawSignatures.forEach((k, v) {
-          final newKey = Proposition.fromBase58(Base58Data.validated(k));
-          final newValue = Base58Encoder.instance.decode(v as String);
-          signatures[newKey] = newValue;
-        });
-        return PolyTransactionReceipt(
-            from: from,
-            to: to,
-            signatures: signatures,
-            fee: fee!,
-            timestamp: timestamp,
-            id: txId,
-            messageToSign: messageToSign,
-            data: data,
-            propositionType: PropositionType.curve25519(),
-            newBoxes: newBoxes,
-            boxesToRemove: boxesToRemove);
-      case ('ThresholdCurve25519'):
-        final rawSignatures = c['signatures'] as Map<String, dynamic>;
-        final signatures = <Proposition, Uint8List>{};
-        rawSignatures.forEach((k, v) {
-          final newKey = Proposition.fromBase58(Base58Data.validated(k));
-          final newValue = Base58Encoder.instance.decode(v as String);
-          signatures[newKey] = newValue;
-        });
-        return PolyTransactionReceipt(
-            from: from,
-            to: to,
-            signatures: signatures,
-            fee: fee!,
-            timestamp: timestamp,
-            id: txId,
-            messageToSign: messageToSign,
-            data: data,
-            propositionType: PropositionType.thresholdCurve25519(),
-            newBoxes: newBoxes,
-            boxesToRemove: boxesToRemove);
-      default:
-        throw ArgumentError('Invalid Proposition Type for Transaction');
+    if (map['to'] == null || (map['to'] as List).isEmpty) {
+      throw ArgumentError('At least one recipient must be specified');
     }
   }
-}
 
-/// Class that establishes the inputs and output boxes for an asset transaction. Note that in the current iteration this supports data requests from the chain only
-class AssetTransactionReceipt extends TransactionReceipt {
-  final List<Sender> from;
-  final List<dynamic> to;
-  final Latin1Data? data;
-  final bool minting;
+  factory TransactionReceipt.fromJson(Map<String, dynamic> map) {
+    _validateFields(map);
 
-  final TxType typePrefix = 2;
-  @override
-  final String typeString = 'PolyTransfer';
+    final data = Latin1Converter().fromJson(map['data'] as String);
 
-  final PropositionType propositionType;
+    // ignore: unnecessary_null_comparison
+    if (!isValidMetadata(data)) {
+      throw ArgumentError('Invalid data: ${data.show}');
+    }
 
-  AssetTransactionReceipt(
-      {required this.from,
-      required this.to,
-      required Map<Proposition, Uint8List> signatures,
-      required BigInt fee,
-      required int timestamp,
-      required ModifierId id,
-      Uint8List? messageToSign,
-      this.data,
-      required this.propositionType,
-      required List<BoxId> newBoxes,
-      required List<BoxId> boxesToRemove,
-      required this.minting})
-      : super(id, newBoxes, signatures, fee, timestamp, messageToSign,
-            boxesToRemove);
+    final signatures = map['signatures'] as Map<String, dynamic>;
+    final formattedSignatures = <Proposition, Uint8List>{};
+    signatures.forEach((k, v) {
+      final newKey = Proposition.fromBase58(Base58Data.validated(k));
+      final newValue = Base58Encoder.instance.decode(v as String);
+      formattedSignatures[newKey] = newValue;
+    });
 
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'txId': id.toString(),
-      'txType': 'PolyTransfer',
-      'propositionType': typeString,
-      'newBoxes':
-          json.encode(newBoxes.map((newBox) => newBox.toString()).toList()),
-      'boxesToRemove':
-          json.encode(newBoxes.map((newBox) => newBox.toString()).toList()),
-      'from': json.encode(from.map((sender) => sender.toString()).toList()),
-      'to': json.encode(to.map((recipient) {
-        switch (recipient is AssetRecipient) {
-          case (true):
-            return (recipient as AssetRecipient).toJson();
-          case (false):
-            return (recipient as SimpleRecipient).toJson();
-        }
-      }).toList()),
-      'signatures': json.encode(signatures),
-      'fee': fee.toString(),
-      'timestamp': timestamp.toString(),
-      'minting': minting.toString(),
-      'data': data?.show
-    };
+    return TransactionReceipt(
+        from: (map['from'] as List)
+            .map((i) => Sender.fromJson((i as List)))
+            .toList(),
+        to: decodeTo(map['to'] as List),
+        fee: PolyAmount.fromUnitAndValue(
+            PolyUnit.nanopoly, map['fee'] as String),
+        timestamp: map['timestamp'] as int,
+        propositionType: map['propositionType'] as String,
+        id: ModifierId.create(
+            Base58Data.validated(map['txId'] as String).value),
+        messageToSign:
+            Uint8List.fromList(map['messageToSign'] as List<int>? ?? []),
+        data: data,
+        newBoxes: (map['newBoxes'] as List)
+            .map((box) => BoxIdConverter()
+                .fromJson((box as Map<String, dynamic>)['id'] as String))
+            .toList(),
+        boxesToRemove: (map['boxesToRemove'] as List)
+            .map((boxId) => BoxIdConverter().fromJson(boxId as String))
+            .toList(),
+        signatures: formattedSignatures);
   }
 
-  factory AssetTransactionReceipt.fromJson(Map<String, dynamic> c) {
-    final from =
-        (c['from'] as List).map((i) => Sender.fromJson((i as List))).toList();
-    final to = (c['to'] as List).map((i) {
+  static List<Object> decodeTo(List to) {
+    return to.map((i) {
       switch (i[1]['type']) {
         case ('Simple'):
           return SimpleRecipient.fromJson((i as List));
@@ -262,227 +156,28 @@ class AssetTransactionReceipt extends TransactionReceipt {
           throw ArgumentError('Transaction type currently not supported');
       }
     }).toList();
-    final fee = BigInt.tryParse(c['fee'] as String);
-    final timestamp = c['timestamp'] as int;
-    final propositionType = c['propositionType'] as String;
-    final minting = c['minting'] as bool;
-    final txId =
-        ModifierId.fromBase58(Base58Data.validated(c['txId'] as String));
-
-    final messageToSign =
-        Uint8List.fromList(c['messageToSign'] as List<int>? ?? []);
-
-    final data = Latin1Converter().fromJson(c['data'] as String);
-    final rawNewBoxes = (c['newBoxes'] as List)
-        .map((newBox) => newBox['id'] as String)
-        .toList();
-    final newBoxes =
-        rawNewBoxes.map((boxId) => BoxIdConverter().fromJson(boxId)).toList();
-    final boxesToRemove = (c['boxesToRemove'] as List)
-        .map((box) => box as String)
-        .map((boxId) => BoxIdConverter().fromJson(boxId))
-        .toList();
-
-    switch (propositionType) {
-      case ('PublicKeyEd25519'):
-        final rawSignatures = c['signatures'] as Map<String, dynamic>;
-        final signatures = <Proposition, Uint8List>{};
-        rawSignatures.forEach((k, v) {
-          final newKey = Proposition.fromBase58(Base58Data.validated(k));
-          final newValue = Base58Encoder.instance.decode(v as String);
-          signatures[newKey] = newValue;
-        });
-        return AssetTransactionReceipt(
-            from: from,
-            to: to,
-            signatures: signatures,
-            fee: fee!,
-            timestamp: timestamp,
-            id: txId,
-            messageToSign: messageToSign,
-            data: data,
-            propositionType: PropositionType.ed25519(),
-            newBoxes: newBoxes,
-            boxesToRemove: boxesToRemove,
-            minting: minting);
-      case ('PublicKeyCurveEd25519'):
-        final rawSignatures = c['signatures'] as Map<String, dynamic>;
-        final signatures = <Proposition, Uint8List>{};
-        rawSignatures.forEach((k, v) {
-          final newKey = Proposition.fromBase58(Base58Data.validated(k));
-          final newValue = Base58Encoder.instance.decode(v as String);
-          signatures[newKey] = newValue;
-        });
-        return AssetTransactionReceipt(
-            from: from,
-            to: to,
-            signatures: signatures,
-            fee: fee!,
-            timestamp: timestamp,
-            id: txId,
-            messageToSign: messageToSign,
-            data: data,
-            propositionType: PropositionType.curve25519(),
-            newBoxes: newBoxes,
-            boxesToRemove: boxesToRemove,
-            minting: minting);
-      case ('ThresholdCurve25519'):
-        final rawSignatures = c['signatures'] as Map<String, dynamic>;
-        final signatures = <Proposition, Uint8List>{};
-        rawSignatures.forEach((k, v) {
-          final newKey = Proposition.fromBase58(Base58Data.validated(k));
-          final newValue = Base58Encoder.instance.decode(v as String);
-          signatures[newKey] = newValue;
-        });
-        return AssetTransactionReceipt(
-            from: from,
-            to: to,
-            signatures: signatures,
-            fee: fee!,
-            timestamp: timestamp,
-            id: txId,
-            messageToSign: messageToSign,
-            data: data,
-            propositionType: PropositionType.thresholdCurve25519(),
-            newBoxes: newBoxes,
-            boxesToRemove: boxesToRemove,
-            minting: minting);
-      default:
-        throw ArgumentError('Invalid Proposition');
-    }
   }
-}
-
-/// Class that establishes the inputs and output boxes for an arbit transaction. Note that in the current iteration this supports data requests from the chain only
-class ArbitTransactionReceipt extends TransactionReceipt {
-  final List<Sender> from;
-
-  final List<SimpleRecipient> to;
-  final Latin1Data? data;
-
-  final TxType typePrefix = 2;
-  @override
-  final String typeString = 'PolyTransfer';
-
-  final PropositionType propositionType;
-
-  ArbitTransactionReceipt(
-      {required this.from,
-      required this.to,
-      required Map<Proposition, Uint8List> signatures,
-      required BigInt fee,
-      required int timestamp,
-      required ModifierId id,
-      Uint8List? messageToSign,
-      this.data,
-      required this.propositionType,
-      required List<BoxId> newBoxes,
-      required List<BoxId> boxesToRemove})
-      : super(id, newBoxes, signatures, fee, timestamp, messageToSign,
-            boxesToRemove);
 
   @override
-  Map<String, dynamic> toJson() {
-    return {
-      'txId': id,
-      'txType': 'PolyTransfer',
-      'propositionType': typeString,
-      'newBoxes': json.encode(newBoxes),
-      'boxesToRemove': json.encode(boxesToRemove),
-      'from': json.encode(from),
-      'to': json.encode(to),
-      'signatures': json.encode(signatures),
-      'fee': fee.toString(),
-      'timestamp': timestamp.toString(),
-      'data': data?.show
-    };
-  }
-
-  factory ArbitTransactionReceipt.fromJson(Map<String, dynamic> c) {
-    final from =
-        (c['from'] as List).map((i) => Sender.fromJson((i as List))).toList();
-    final to = (c['to'] as List)
-        .map((i) => SimpleRecipient.fromJson((i as List)))
-        .toList();
-    final fee = BigInt.tryParse(c['fee'] as String);
-    final timestamp = c['timestamp'] as int;
-    final propositionType = c['propositionType'] as String;
-    final txId = ModifierId.create(Uint8List.fromList(c['txId'] as List<int>));
-
-    final messageToSign =
-        Uint8List.fromList(c['messageToSign'] as List<int>? ?? []);
-
-    final data = Latin1Converter().fromJson(c['data'] as String);
-    final rawNewBoxes = c['newBoxes'] as List<String>;
-    final newBoxes =
-        rawNewBoxes.map((boxId) => BoxIdConverter().fromJson(boxId)).toList();
-    final boxesToRemove = (c['boxesToRemove'] as List<String>)
-        .map((boxId) => BoxIdConverter().fromJson(boxId))
-        .toList();
-
-    switch (propositionType) {
-      case ('PublicKeyEd25519'):
-        final rawSignatures = c['signatures'] as Map<String, dynamic>;
-        final signatures = <Proposition, Uint8List>{};
-        rawSignatures.forEach((k, v) {
-          final newKey = Proposition.fromBase58(Base58Data.validated(k));
-          final newValue = Base58Encoder.instance.decode(v as String);
-          signatures[newKey] = newValue;
-        });
-        return ArbitTransactionReceipt(
-            from: from,
-            to: to,
-            signatures: signatures,
-            fee: fee!,
-            timestamp: timestamp,
-            id: txId,
-            messageToSign: messageToSign,
-            data: data,
-            propositionType: PropositionType.ed25519(),
-            newBoxes: newBoxes,
-            boxesToRemove: boxesToRemove);
-      case ('PublicKeyCurveEd25519'):
-        final rawSignatures = c['signatures'] as Map<String, dynamic>;
-        final signatures = <Proposition, Uint8List>{};
-        rawSignatures.forEach((k, v) {
-          final newKey = Proposition.fromBase58(Base58Data.validated(k));
-          final newValue = Base58Encoder.instance.decode(v as String);
-          signatures[newKey] = newValue;
-        });
-        return ArbitTransactionReceipt(
-            from: from,
-            to: to,
-            signatures: signatures,
-            fee: fee!,
-            timestamp: timestamp,
-            id: txId,
-            messageToSign: messageToSign,
-            data: data,
-            propositionType: PropositionType.curve25519(),
-            newBoxes: newBoxes,
-            boxesToRemove: boxesToRemove);
-      case ('ThresholdCurve25519'):
-        final rawSignatures = c['signatures'] as Map<String, dynamic>;
-        final signatures = <Proposition, Uint8List>{};
-        rawSignatures.forEach((k, v) {
-          final newKey = Proposition.fromBase58(Base58Data.validated(k));
-          final newValue = Base58Encoder.instance.decode(v as String);
-          signatures[newKey] = newValue;
-        });
-        return ArbitTransactionReceipt(
-            from: from,
-            to: to,
-            signatures: signatures,
-            fee: fee!,
-            timestamp: timestamp,
-            id: txId,
-            messageToSign: messageToSign,
-            data: data,
-            propositionType: PropositionType.thresholdCurve25519(),
-            newBoxes: newBoxes,
-            boxesToRemove: boxesToRemove);
-      default:
-        throw ArgumentError('Proposition Type currently not supported');
-    }
-  }
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TransactionReceipt &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          const ListEquality().equals(newBoxes, other.newBoxes) &&
+          const MapEquality().equals(signatures, other.signatures) &&
+          fee == other.fee &&
+          timestamp == other.timestamp &&
+          const ListEquality()
+              .equals(messageToSign ?? [], other.messageToSign ?? []) &&
+          const ListEquality().equals(boxesToRemove, other.boxesToRemove);
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      newBoxes.hashCode ^
+      signatures.hashCode ^
+      fee.hashCode ^
+      timestamp.hashCode ^
+      messageToSign.hashCode ^
+      boxesToRemove.hashCode;
 }

@@ -4,6 +4,7 @@ import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
+import 'package:mubrambl/src/utils/string_data_types.dart';
 
 final validNetworks = ['private', 'toplnet', 'valhalla'];
 final validPropositionTypes = [
@@ -149,6 +150,15 @@ bool _validChecksum(List<int> payload) {
 /// Validates whether the network passed in is valid
 bool isValidNetwork(String networkPrefix) {
   return validNetworks.contains(networkPrefix);
+}
+
+/// Takes in a [Latin1Data] and returns whether or not it is a valid data/metadata value
+/// Returns a [boolean] about whether or not the argument is valid
+bool isValidMetadata(Latin1Data metadata) {
+  if (metadata.show.length > 127) {
+    return false;
+  }
+  return true;
 }
 
 /// Validates whether the proposition passed in is valid
