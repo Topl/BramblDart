@@ -8,6 +8,8 @@ on:
     branches: [ main, dev ]
   pull_request:
     branches: [ main, dev ]
+    
+  workflow_dispatch:
 
 jobs:
   get_dependencies:
@@ -78,11 +80,12 @@ jobs:
           path: .dart_tool
           key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
       - uses: dart-lang/setup-dart@v1
+      - uses: browser-actions/setup-firefox@latest
       - run: dart test -x expensive --platform chrome,firefox
   
   integration_tests:
     name: "Integration Tests"
-    needs: get_dependencies
+    needs: [get_dependencies]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -90,6 +93,9 @@ jobs:
         with:
           path: .dart_tool
           key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
+      - uses: sliteteam/github-action-git-crypt-unlock@1.2.0
+        env:
+          GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
       - uses: dart-lang/setup-dart@v1
       - run: dart run tool/integration_test.dart
   
