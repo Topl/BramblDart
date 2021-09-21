@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mubrambl/src/model/box/asset_code.dart';
 
 enum PolyUnit {
   /// nanopoly, the smallest atomic unit of a poly
@@ -14,23 +15,47 @@ enum ArbitUnit {
   arbit
 }
 
+abstract class Amount {
+  final num quantity;
+  final dynamic unit;
+  Amount({required this.quantity, required this.unit});
+  @override
+  String toString() => 'Amount(unit: $unit quantity: $quantity';
+
+  String toJson() => toString();
+}
+
+/// Utility class to deserialize asset quantities. This may be updated as we understand more about the use cases for assets
+class AssetAmount extends Amount {
+  final AssetCode assetCode;
+  AssetAmount(
+      {required num quantity, required this.assetCode, unit = 'nanoasset'})
+      : super(quantity: quantity, unit: unit);
+
+  @override
+  String toString() =>
+      'AssetAmount(assetCode: ${assetCode.toString()}, count: $quantity';
+}
+
 /// Utility class to easily convert amounts of Poly into different units of
 /// quantities.
-class PolyAmount {
+class PolyAmount extends Amount {
+  PolyAmount({required num quantity, required unit})
+      : super(quantity: quantity, unit: unit);
+
   static final Map<PolyUnit, num> _factors = {
     PolyUnit.nanopoly: 1,
     PolyUnit.poly: pow(10, 9)
   };
 
-  final num _value;
-
-  num get getInNanopoly => _value;
+  num get getInNanopoly => quantity;
 
   num get getInPoly => getValueInUnitBI(PolyUnit.poly);
 
-  const PolyAmount.inNanopoly(this._value);
+  PolyAmount.inNanopoly({required num quantity})
+      : super(quantity: quantity, unit: PolyUnit.nanopoly);
 
-  PolyAmount.zero() : this.inNanopoly(0);
+  PolyAmount.zero() : this.inNanopoly(quantity: 0);
 
   /// Constructs an amount of Poly by a unit and its amount. [amount] can
   /// either be a base10 string, an int, or any numerical value.
@@ -55,7 +80,7 @@ class PolyAmount {
       throw ArgumentError(
           'Invalid value, value is outside of valid range for transactions with this library');
     }
-    return PolyAmount.inNanopoly(parsedAmount * _factors[unit]!);
+    return PolyAmount.inNanopoly(quantity: parsedAmount * _factors[unit]!);
   }
 
   /// Gets the value of this amount in the specified unit as a whole number.
@@ -63,7 +88,7 @@ class PolyAmount {
   /// discard the remainder occurring in the division, making it unsuitable for
   /// calculations or storage. You should store and process amounts of poly by
   /// using a BigInt storing the amount in nanopoly.
-  num getValueInUnitBI(PolyUnit unit) => _value ~/ _factors[unit]!;
+  num getValueInUnitBI(PolyUnit unit) => quantity ~/ _factors[unit]!;
 
   /// Gets the value of this amount in the specified unit. **WARNING**: Due to
   /// rounding errors, the return value of this function is not reliable,
@@ -73,8 +98,8 @@ class PolyAmount {
 
   num getValueInUnit(PolyUnit unit) {
     final factor = _factors[unit]!;
-    final value = _value ~/ factor;
-    final remainder = _value.remainder(factor);
+    final value = quantity ~/ factor;
+    final remainder = quantity.remainder(factor);
 
     return value.toInt() + (remainder.toInt() / factor.toInt());
   }
@@ -94,21 +119,23 @@ class PolyAmount {
 
 /// Utility class to easily convert amounts of Arbit into different units of
 /// quantities.
-class ArbitAmount {
+class ArbitAmount extends Amount {
+  ArbitAmount({required num quantity, required unit})
+      : super(quantity: quantity, unit: unit);
+
   static final Map<ArbitUnit, num> _factors = {
     ArbitUnit.nanoarbit: 1,
     ArbitUnit.arbit: pow(10, 9)
   };
 
-  final num _value;
-
-  num get getInNanoarbit => _value;
+  num get getInNanoarbit => quantity;
 
   num get getInArbit => getValueInUnitBI(ArbitUnit.arbit);
 
-  const ArbitAmount.inNanoarbit(this._value);
+  ArbitAmount.inNanoarbit({required num quantity})
+      : super(quantity: quantity, unit: ArbitUnit.nanoarbit);
 
-  ArbitAmount.zero() : this.inNanoarbit(0);
+  ArbitAmount.zero() : this.inNanoarbit(quantity: 0);
 
   /// Constructs an amount of Arbit by a unit and its amount. [amount] can
   /// either be a base10 string, an int, or any numerical value.
@@ -134,7 +161,7 @@ class ArbitAmount {
           'Invalid value, value is outside of valid range for transactions with this library');
     }
 
-    return ArbitAmount.inNanoarbit(parsedAmount * _factors[unit]!);
+    return ArbitAmount.inNanoarbit(quantity: parsedAmount * _factors[unit]!);
   }
 
   /// Gets the value of this amount in the specified unit as a whole number.
@@ -142,7 +169,7 @@ class ArbitAmount {
   /// discard the remainder occurring in the division, making it unsuitable for
   /// calculations or storage. You should store and process amounts of poly by
   /// using a BigInt storing the amount in nanopoly.
-  num getValueInUnitBI(ArbitUnit unit) => _value ~/ _factors[unit]!;
+  num getValueInUnitBI(ArbitUnit unit) => quantity ~/ _factors[unit]!;
 
   /// Gets the value of this amount in the specified unit. **WARNING**: Due to
   /// rounding errors, the return value of this function is not reliable,
@@ -152,8 +179,8 @@ class ArbitAmount {
 
   num getValueInUnit(ArbitUnit unit) {
     final factor = _factors[unit]!;
-    final value = _value ~/ factor;
-    final remainder = _value.remainder(factor);
+    final value = quantity ~/ factor;
+    final remainder = quantity.remainder(factor);
 
     return value.toInt() + (remainder.toInt() / factor.toInt());
   }
