@@ -82,8 +82,6 @@ void main() {
   group('HdWallet -', () {
     test('private/public key and address generation', () {
       final hdWallet = HdWallet.fromHexEntropy(testEntropy1);
-      expect(hdWallet.rootSigningKey, excpectedXskBip32Bytes,
-          reason: 'root private/signing key');
       expect(hdWallet.rootVerifyKey, expectedXvkBip32Bytes,
           reason: 'root public/verify key');
       final spendAddress0Pair = hdWallet.deriveAddress(address: 0);

@@ -25,6 +25,10 @@ class Balance {
 
   factory Balance.fromJson(Map<String, dynamic> map, String address) {
     final data = map[address] as Map<String, dynamic>;
+    return Balance.fromData(data, address);
+  }
+
+  factory Balance.fromData(Map<String, dynamic> data, String address) {
     return Balance(
         address: address,
         polys:

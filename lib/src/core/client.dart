@@ -1,7 +1,9 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
+import 'package:logging/logging.dart';
 import 'package:mubrambl/src/auth/api_key_auth.dart';
 import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/expensive_operations.dart';
@@ -18,6 +20,10 @@ import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/encoding.dart';
 
 import '../json_rpc.dart';
+
+final log = Logger('BramblClient');
+
+const RETRY_VALUE = 5;
 
 /// Class for sending requests over an HTTP JSON-RPC API endpoint to Bifrost
 /// nodes. You will instead have to obtain private keys of
@@ -135,46 +141,56 @@ class BramblClient {
     });
   }
 
-  // Future<Map<String, dynamic>> _getBalances(List<ToplAddress> addresses) {
-  //   return _makeRPCCall('topl_balances', params: [
-  //     {
-  //       'addresses': addresses.map((element) => element.toBase58()).toList()
-  //     }
-  //   ]).then((value) {
-  //     return {
-  //       'Polys': PolyAmount.fromUnitAndValue(PolyUnit.nanopoly,
-  //           value[address.toBase58()]['Balances']['Polys'] as String),
-  //       'Arbits': ArbitAmount.fromUnitAndValue(ArbitUnit.nanoarbit,
-  //           value[address.toBase58()]['Balances']['Arbits'] as String)
-  //     };
-  //   });
-  // }
+  Future<List<Balance>> _getBalances(List<ToplAddress> addresses) {
+    return _makeRPCCall<Map<String, dynamic>>('topl_balances', params: [
+      {'addresses': addresses.map((element) => element.toBase58()).toList()}
+    ]).then((value) {
+      final result = <Balance>[];
+      value.forEach((key, value) {
+        result.add(Balance.fromData(value as Map<String, dynamic>, key));
+      });
+      return result;
+    });
+  }
 
-  // List<List<ToplAddress>> _splitArray(List<ToplAddress> array, int len) {
-  //   final arr = <List<ToplAddress>>[];
-  //   for (var i = 0; i < array.length; i += len) {
-  //     arr.add(array.sublist(i, min(i + len, array.length)));
-  //   }
-  //   return arr;
-  // }
+  List<List<ToplAddress>> _splitArray(List<ToplAddress> array, int len) {
+    final arr = <List<ToplAddress>>[];
+    for (var i = 0; i < array.length; i += len) {
+      arr.add(array.sublist(i, min(i + len, array.length)));
+    }
+    return arr;
+  }
 
-  // ///Retrieves balances for multiple addresses. If there are more than [batch] addresses to process
-  // /// this method will process via chunks of [batch] addresses
-  // Future<Map<String, dynamic>> getAllAddressBalances(
-  //     List<ToplAddress> addresses,
-  //     {int batch = 50}) async{
-  //   final map = {};
-  //   final processed = 0;
-  //   await Future.forEach(_splitArray(addresses, batch), (List<ToplAddress>) async {
-  //     final retry = true
-  //     final pss = processed;
-  //     while (retry) {
-  //       try {
-  //         await
-  //       }
-  //     }
-  //   });
-  // }
+  ///Retrieves balances for multiple addresses. If there are more than [batch] addresses to process
+  /// this method will process via chunks of [batchSize] addresses
+  Future<List<Balance>> getAllAddressBalances(List<ToplAddress> addresses,
+      {int batchSize = 50}) async {
+    final result = <Balance>[];
+    var processed = 0;
+    await Future.forEach(_splitArray(addresses, batchSize),
+        (List<ToplAddress> batch) async {
+      var retry = true;
+      final pss = processed;
+      while (retry) {
+        try {
+          final balances = await _getBalances(batch);
+          if (balances.isEmpty) return;
+          result.addAll(balances);
+        } catch (e) {
+          // Sometimes rate limit may apply, this retries for a period of time to get around the rate limiting for users
+          log.info(
+              'Exceptions caught (possible node rate limit), retrying in $RETRY_VALUE seconds');
+          print(e);
+          retry = true;
+          await Future.delayed(Duration(seconds: RETRY_VALUE));
+          processed = pss;
+          continue;
+        }
+        retry = false;
+      }
+    });
+    return result;
+  }
 
   /// Sends a raw asset transfer call to a node
   ///
