@@ -109,9 +109,16 @@ class HdWallet {
   ///
   ///              BIP-44 Wallets Key Hierarchy
   ///
-  Bip32KeyPair derive({required Bip32KeyPair keys, required int index}) {
+  Bip32KeyPair derive({Bip32KeyPair? keys, required int index}) {
     // computes a child extended private key from the parent extended private key.
-    final privateKey = keys.privateKey != null
+    if (keys == null) {
+      keys = keys;
+    } else {
+      keys =
+          Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
+    }
+
+    final privateKey = keys!.privateKey != null
         ? _derivator.ckdPriv(keys.privateKey!, index)
         : null;
     final publicKey = isHardened(index)
@@ -136,6 +143,14 @@ class HdWallet {
     final pair3 = derive(keys: pair2, index: change);
     final pair4 = derive(keys: pair3, index: address);
     return pair4;
+  }
+
+  Bip32KeyPair deriveBaseAddress(
+      {int purpose = DEFAULT_PURPOSE, int coinType = DEFAULT_COIN_TYPE}) {
+    final rootKeys =
+        Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
+    final pair0 = derive(keys: rootKeys, index: purpose);
+    return derive(keys: pair0, index: coinType);
   }
 
   Bip32KeyPair deriveLastThreeLayers(
