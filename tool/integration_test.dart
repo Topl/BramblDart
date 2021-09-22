@@ -149,8 +149,7 @@ void main() async {
           fee: fee,
           minting: true,
           changeAddress: senderAddress,
-          consolidationAddress: senderAddress,
-          data: Uint8List(0));
+          consolidationAddress: senderAddress);
 
       final to = AssetRecipient(recipientAddress, assetValue);
 

@@ -218,7 +218,7 @@ class BramblClient {
               propositionType: issuer.proposition.propositionName,
               changeAddress: changeAddress,
               fee: fee,
-              data: Latin1Data(data),
+              data: data != null ? Latin1Data(data) : null,
               minting: minting,
               consolidationAddress: consolidationAddress,
               assetCode: assetCode)
@@ -250,7 +250,7 @@ class BramblClient {
               propositionType: issuer.proposition.propositionName,
               changeAddress: changeAddress,
               fee: fee,
-              data: Latin1Data(data))
+              data: data != null ? Latin1Data(data) : null)
           .toJson()
     ]).then((value) =>
         TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
@@ -281,7 +281,7 @@ class BramblClient {
               changeAddress: changeAddress,
               consolidationAddress: consolidationAddress,
               fee: fee,
-              data: Latin1Data(data))
+              data: data != null ? Latin1Data(data) : null)
           .toJson()
     ]).then((value) =>
         TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
