@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
+import 'package:mubrambl/src/utils/util.dart';
 
 enum PolyUnit {
   /// nanopoly, the smallest atomic unit of a poly
@@ -35,6 +36,10 @@ class AssetAmount extends Amount {
   @override
   String toString() =>
       'AssetAmount(assetCode: ${assetCode.toString()}, count: $quantity';
+
+  factory AssetAmount.fromQuantity(AssetCode assetCode, quantity) {
+    return AssetAmount(quantity: parseValue(quantity), assetCode: assetCode);
+  }
 }
 
 /// Utility class to easily convert amounts of Poly into different units of
@@ -61,26 +66,8 @@ class PolyAmount extends Amount {
   /// either be a base10 string, an int, or any numerical value.
 
   factory PolyAmount.fromUnitAndValue(PolyUnit unit, dynamic amount) {
-    num parsedAmount;
-
-    if (amount is num) {
-      parsedAmount = amount;
-    } else if (amount is String) {
-      try {
-        parsedAmount = num.parse(amount);
-      } on FormatException {
-        throw ArgumentError(
-            'Invalid poly value, unable to parse value into a numerical type');
-      }
-    } else {
-      throw ArgumentError('Invalid type, must be string or a numerical value');
-    }
-
-    if (parsedAmount > pow(2, 53) - 1 || parsedAmount < 0) {
-      throw ArgumentError(
-          'Invalid value, value is outside of valid range for transactions with this library');
-    }
-    return PolyAmount.inNanopoly(quantity: parsedAmount * _factors[unit]!);
+    return PolyAmount.inNanopoly(
+        quantity: parseValue(amount) * _factors[unit]!);
   }
 
   /// Gets the value of this amount in the specified unit as a whole number.
@@ -141,27 +128,8 @@ class ArbitAmount extends Amount {
   /// either be a base10 string, an int, or any numerical value.
 
   factory ArbitAmount.fromUnitAndValue(ArbitUnit unit, dynamic amount) {
-    num parsedAmount;
-
-    if (amount is num) {
-      parsedAmount = amount;
-    } else if (amount is String) {
-      try {
-        parsedAmount = num.parse(amount);
-      } on FormatException {
-        throw ArgumentError(
-            'Invalid arbit value, unable to parse value into a numerical type');
-      }
-    } else {
-      throw ArgumentError('Invalid type, must be string or a numerical value');
-    }
-
-    if (parsedAmount > pow(2, 53) - 1 || parsedAmount < 0) {
-      throw ArgumentError(
-          'Invalid value, value is outside of valid range for transactions with this library');
-    }
-
-    return ArbitAmount.inNanoarbit(quantity: parsedAmount * _factors[unit]!);
+    return ArbitAmount.inNanoarbit(
+        quantity: parseValue(amount) * _factors[unit]!);
   }
 
   /// Gets the value of this amount in the specified unit as a whole number.
@@ -262,9 +230,9 @@ class AssetAmountConverter
 
   @override
   AssetAmount fromJson(Map<String, dynamic> json) {
-    return AssetAmount(
-        quantity: json['quantity'] as num,
-        assetCode: AssetCode.fromJson(json['assetCode'] as String));
+    return AssetAmount.fromQuantity(
+        AssetCode.fromJson(json['value']['assetCode'] as String),
+        json['value']['quantity'] as String);
   }
 
   @override

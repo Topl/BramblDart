@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:bip_topl/bip_topl.dart';
@@ -236,4 +237,27 @@ Uint8List toUnitList(String str) {
 abstract class FileSystem {
   Future<bool> exists(String filename);
   Future<void> remove(String filename);
+}
+
+num parseValue(amount) {
+  num parsedAmount;
+
+  if (amount is num) {
+    parsedAmount = amount;
+  } else if (amount is String) {
+    try {
+      parsedAmount = num.parse(amount);
+    } on FormatException {
+      throw ArgumentError(
+          'Invalid poly value, unable to parse value into a numerical type');
+    }
+  } else {
+    throw ArgumentError('Invalid type, must be string or a numerical value');
+  }
+
+  if (parsedAmount > pow(2, 53) - 1 || parsedAmount < 0) {
+    throw ArgumentError(
+        'Invalid value, value is outside of valid range for transactions with this library');
+  }
+  return parsedAmount;
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:mubrambl/src/core/client.dart';
+import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/address_chain.dart';
 import 'package:mubrambl/src/credentials/hd_wallet_helper.dart';
 import 'package:test/test.dart';
@@ -55,8 +56,8 @@ void main() async {
 
   test('it correctly checks a single Topl address balance', () async {
     try {
-      final balance =
-          await client.getBalance(addressGenerator.generate([0])[0]);
+      final balance = await client.getBalance(ToplAddress.fromBase58(
+          '3NLPFnbA7i1UjkFn1yvgPCpYvN3MNtLSQrdd7QKgNGL1YPgVaY4t'));
       print(balance);
     } catch (e) {
       print(e);
