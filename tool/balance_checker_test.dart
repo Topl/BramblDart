@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart';
 import 'package:mubrambl/src/core/client.dart';
+import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/address_chain.dart';
 import 'package:mubrambl/src/credentials/hd_wallet_helper.dart';
@@ -45,7 +47,17 @@ void main() async {
     client = BramblClient(
       basePathOverride:
           'https://staging.vertx.topl.services/valhalla/$baasProjectId',
-      interceptors: [TestApiKeyAuthInterceptor()],
+      interceptors: [
+        TestApiKeyAuthInterceptor(),
+        RetryInterceptor(
+            dio: Dio(BaseOptions(
+                baseUrl:
+                    'https://staging.vertx.topl.services/valhalla/$baasProjectId',
+                contentType: 'application/json',
+                connectTimeout: 5000,
+                receiveTimeout: 3000)),
+            logger: log)
+      ],
     );
     hdWallet = HdWallet.fromHexEntropy(testEntropy);
     addressGenerator = AddressGenerator(derivator: hdWallet);

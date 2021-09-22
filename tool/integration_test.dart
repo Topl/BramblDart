@@ -3,10 +3,12 @@
 import 'dart:io';
 
 import 'package:bip_topl/bip_topl.dart';
+import 'package:dio/dio.dart';
 import 'package:docker_process/containers/cockroachdb.dart';
 import 'package:http/http.dart';
 import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/client.dart';
+import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
@@ -72,7 +74,17 @@ void main() async {
     client = BramblClient(
       basePathOverride:
           'https://staging.vertx.topl.services/valhalla/$baasProjectId',
-      interceptors: [TestApiKeyAuthInterceptor()],
+      interceptors: [
+        TestApiKeyAuthInterceptor(),
+        RetryInterceptor(
+            dio: Dio(BaseOptions(
+                baseUrl:
+                    'https://staging.vertx.topl.services/valhalla/$baasProjectId',
+                contentType: 'application/json',
+                connectTimeout: 5000,
+                receiveTimeout: 3000)),
+            logger: log)
+      ],
     );
 
     first = ToplSigningKey(
@@ -164,7 +176,7 @@ void main() async {
 
       final balanceOfSender = await client.getBalance(senderAddress);
       final balanceOfRecipient = await client.getBalance(recipientAddress);
-      final value = 1;
+      final value = 2;
 
       final polyValue = SimpleValue(value.toString());
 
@@ -179,8 +191,7 @@ void main() async {
           sender: senderAddress,
           recipients: recipients,
           fee: fee,
-          changeAddress: senderAddress,
-          data: Uint8List(0));
+          changeAddress: senderAddress);
 
       final to = SimpleRecipient(recipientAddress, polyValue);
 

@@ -4,9 +4,9 @@ import 'dart:typed_data';
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
-import 'package:mubrambl/src/auth/api_key_auth.dart';
 import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/expensive_operations.dart';
+import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
 import 'package:mubrambl/src/model/balances.dart';
@@ -20,6 +20,7 @@ import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/encoding.dart';
 
 import '../json_rpc.dart';
+import 'interceptors/auth/api_key_auth.dart';
 
 final log = Logger('BramblClient');
 
@@ -58,6 +59,8 @@ class BramblClient {
         ) {
     if (interceptors == null) {
       jsonRpc.dio.interceptors.add(ApiKeyAuthInterceptor());
+      jsonRpc.dio.interceptors
+          .add(RetryInterceptor(dio: jsonRpc.dio, logger: log));
     } else {
       jsonRpc.dio.interceptors.addAll(interceptors);
     }
