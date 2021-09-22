@@ -138,6 +138,14 @@ class HdWallet {
     return pair4;
   }
 
+  Bip32KeyPair deriveBaseAddress(
+      {int purpose = DEFAULT_PURPOSE, int coinType = DEFAULT_COIN_TYPE}) {
+    final rootKeys =
+        Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
+    final pair0 = derive(keys: rootKeys, index: purpose);
+    return derive(keys: pair0, index: coinType);
+  }
+
   Bip32KeyPair deriveLastThreeLayers(
       {int account = DEFAULT_ACCOUNT_INDEX,
       int change = DEFAULT_CHANGE,
