@@ -159,7 +159,38 @@ void main() async {
       print(rawTransaction);
     });
 
-    // test('Simple raw poly transaction', () async {
+    test('Simple raw poly transaction', () async {
+      final senderAddress = await first.extractAddress();
+      final recipientAddress = await second.extractAddress();
+
+      final balanceOfSender = await client.getBalance(senderAddress);
+      final balanceOfRecipient = await client.getBalance(recipientAddress);
+      final value = 1;
+
+      final polyValue = SimpleValue(value.toString());
+
+      final recipients = <String, SimpleValue>{
+        recipientAddress.toBase58(): polyValue
+      };
+
+      final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, '100');
+
+      final rawTransaction = await client.sendRawPolyTransfer(
+          issuer: senderAddress,
+          sender: senderAddress,
+          recipients: recipients,
+          fee: fee,
+          changeAddress: senderAddress,
+          data: Uint8List(0));
+
+      final to = SimpleRecipient(recipientAddress, polyValue);
+
+      expect(rawTransaction, isA<TransactionReceipt>());
+
+      print(rawTransaction);
+    });
+
+    // test('Simple raw arbit transaction', () async {
     //   final senderAddress = await first.extractAddress();
     //   final recipientAddress = await second.extractAddress();
 
@@ -167,26 +198,26 @@ void main() async {
     //   final balanceOfRecipient = await client.getBalance(recipientAddress);
     //   final value = 1;
 
-    //   final polyValue = SimpleValue(value.toString());
+    //   final arbitValue = SimpleValue(value.toString());
 
     //   final recipients = <String, SimpleValue>{
-    //     recipientAddress.toBase58(): polyValue
+    //     recipientAddress.toBase58(): arbitValue
     //   };
 
     //   final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, '100');
 
-    //   final rawTransaction = await client.sendRawPolyTransfer(
+    //   final rawTransaction = await client.sendRawArbitTransfer(
     //       issuer: senderAddress,
     //       sender: senderAddress,
     //       recipients: recipients,
     //       fee: fee,
     //       changeAddress: senderAddress,
+    //       consolidationAddress: senderAddress,
     //       data: Uint8List(0));
 
-    //   final to = SimpleRecipient(recipientAddress, polyValue);
+    //   final to = SimpleRecipient(recipientAddress, arbitValue);
 
-    //   expect(rawTransaction,
-    //       isA<TransactionReceipt>().having((e) => e.to, 'to', to));
+    //   expect(rawTransaction, isA<TransactionReceipt>());
 
     //   print(rawTransaction);
     // });

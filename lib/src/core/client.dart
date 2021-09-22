@@ -227,32 +227,63 @@ class BramblClient {
         TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
   }
 
-  // /// Sends a raw poly transfer call to a node
-  // ///
-  // /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
-  // ///
-  // Future<TransactionReceipt> sendRawPolyTransfer(
-  //     {required ToplAddress sender,
-  //     required Map<String, SimpleValue> recipients,
-  //     PolyAmount? fee,
-  //     ToplAddress? changeAddress,
-  //     Uint8List? data,
-  //     required ToplAddress issuer}) {
-  //   // ignore: prefer_collection_literals
-  //   final senders = [sender, issuer].toSet().toList();
-  //   return _makeRPCCall('topl_rawPolyTransfer', params: [
-  //     PolyTransaction(
-  //             recipients: recipients.entries
-  //                 .map((entry) => SimpleRecipient(
-  //                     ToplAddress.fromBase58(entry.key), entry.value))
-  //                 .toList(),
-  //             sender: senders,
-  //             propositionType: issuer.proposition.propositionName,
-  //             changeAddress: changeAddress,
-  //             fee: fee,
-  //             data: Latin1Data(data))
-  //         .toJson()
-  //   ]).then((value) =>
-  //       TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
-  // }
+  /// Sends a raw poly transfer call to a node
+  ///
+  /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
+  ///
+  Future<TransactionReceipt> sendRawPolyTransfer(
+      {required ToplAddress sender,
+      required Map<String, SimpleValue> recipients,
+      PolyAmount? fee,
+      ToplAddress? changeAddress,
+      Uint8List? data,
+      required ToplAddress issuer}) {
+    // ignore: prefer_collection_literals
+    final senders = [sender, issuer].toSet().toList();
+    return _makeRPCCall('topl_rawPolyTransfer', params: [
+      PolyTransaction(
+              recipients: recipients.entries
+                  .map((entry) => SimpleRecipient(
+                      ToplAddress.fromBase58(entry.key), entry.value))
+                  .toList(),
+              sender: senders,
+              propositionType: issuer.proposition.propositionName,
+              changeAddress: changeAddress,
+              fee: fee,
+              data: Latin1Data(data))
+          .toJson()
+    ]).then((value) =>
+        TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
+  }
+
+  /// Sends a raw arbit transfer call to a node
+  ///
+  /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
+  ///
+  Future<TransactionReceipt> sendRawArbitTransfer(
+      {required ToplAddress sender,
+      required Map<String, SimpleValue> recipients,
+      PolyAmount? fee,
+      ToplAddress? changeAddress,
+      ToplAddress? consolidationAddress,
+      Uint8List? data,
+      required ToplAddress issuer}) {
+    // ignore: prefer_collection_literals
+    final senders = [sender, issuer].toSet().toList();
+    return _makeRPCCall('topl_rawArbitTransfer', params: [
+      ArbitTransaction(
+              recipients: recipients.entries
+                  .map((entry) => SimpleRecipient(
+                      ToplAddress.fromBase58(entry.key), entry.value))
+                  .toList(),
+              sender: senders,
+              propositionType: issuer.proposition.propositionName,
+              changeAddress: changeAddress,
+              consolidationAddress: consolidationAddress,
+              fee: fee,
+              data: Latin1Data(data))
+          .toJson()
+    ]).then((value) =>
+        TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
+  }
 }

@@ -91,7 +91,7 @@ class TransactionReceipt {
     if (map['propositionType'] == null ||
         !validPropositionTypes.contains(map['propositionType'])) {
       throw ArgumentError(
-          'A valid propositionType must be provided: <PublicKeyCurve25519, ThresholdCurve25519, PublicKeyED25519');
+          'A valid propositionType must be provided: <PublicKeyCurve25519, ThresholdCurve25519, PublicKeyEd25519');
     }
 
     if (map['from'] == null) {
