@@ -111,14 +111,14 @@ class HdWallet {
   ///
   Bip32KeyPair derive({Bip32KeyPair? keys, required int index}) {
     // computes a child extended private key from the parent extended private key.
-    if (keys == null) {
+    if (keys != null) {
       keys = keys;
     } else {
       keys =
           Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
     }
 
-    final privateKey = keys!.privateKey != null
+    final privateKey = keys.privateKey != null
         ? _derivator.ckdPriv(keys.privateKey!, index)
         : null;
     final publicKey = isHardened(index)

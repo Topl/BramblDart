@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:bip_topl/bip_topl.dart';
 import 'package:mubrambl/src/credentials/hd_wallet_helper.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:pinenacl/key_derivation.dart';
 import 'package:pinenacl/x25519.dart';
 import 'package:test/test.dart';
@@ -64,15 +65,15 @@ void main() {
           reason: 'chain code is identical in both private and public keys');
       //generate chain and addresses - m/1852'/7091'/0'/0/0
       final derivator = Bip32Ed25519KeyDerivation.instance;
-      final pvtPurpose1852 = derivator.ckdPriv(rootXsk, harden(1852));
+      final pvtPurpose1852 = derivator.ckdPriv(rootXsk, DEFAULT_PURPOSE);
       expect(pvtPurpose1852, expectedPurposeXsk);
-      final pvtCoin7091 = derivator.ckdPriv(pvtPurpose1852, harden(7091));
+      final pvtCoin7091 = derivator.ckdPriv(pvtPurpose1852, DEFAULT_COIN_TYPE);
       expect(pvtCoin7091, expectedCoinTypeXsk);
-      final pvtAccount0 = derivator.ckdPriv(pvtCoin7091, harden(0));
+      final pvtAccount0 = derivator.ckdPriv(pvtCoin7091, DEFAULT_ACCOUNT_INDEX);
       expect(pvtAccount0, expectedAccount0Xsk);
-      final pvtChange0 = derivator.ckdPriv(pvtAccount0, 0);
+      final pvtChange0 = derivator.ckdPriv(pvtAccount0, DEFAULT_CHANGE);
       expect(pvtChange0, expectedChange0Xsk);
-      final pvtAddress0 = derivator.ckdPriv(pvtChange0, 0);
+      final pvtAddress0 = derivator.ckdPriv(pvtChange0, DEFAULT_ADDRESS_INDEX);
       expect(pvtAddress0, expectedSpend0Xsk);
       final pubAddress0 = pvtAddress0.publicKey;
       expect(pubAddress0, expectedSpend0Xvk);
@@ -84,7 +85,7 @@ void main() {
       final hdWallet = HdWallet.fromHexEntropy(testEntropy1);
       expect(hdWallet.rootVerifyKey, expectedXvkBip32Bytes,
           reason: 'root public/verify key');
-      final spendAddress0Pair = hdWallet.deriveAddress(address: 0);
+      final spendAddress0Pair = hdWallet.deriveAddress();
       expect(spendAddress0Pair.privateKey, expectedSpend0Xsk);
       expect(spendAddress0Pair.publicKey, expectedSpend0Xvk);
       final addr0 = hdWallet.toBaseAddress(
