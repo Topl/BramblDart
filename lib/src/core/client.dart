@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:built_value/serializer.dart';
@@ -8,6 +7,7 @@ import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/expensive_operations.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
+import 'package:mubrambl/src/model/balances.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
@@ -125,61 +125,56 @@ class BramblClient {
   }
 
   /// Returns the balance object of the address
-  Future<Map<String, dynamic>> getBalance(ToplAddress address) {
-    return _makeRPCCall('topl_balances', params: [
+  Future<Balance> getBalance(ToplAddress address) {
+    return _makeRPCCall<Map<String, dynamic>>('topl_balances', params: [
       {
         'addresses': [address.toBase58()]
       }
     ]).then((value) {
-      return {
-        'Polys': PolyAmount.fromUnitAndValue(PolyUnit.nanopoly,
-            value[address.toBase58()]['Balances']['Polys'] as String),
-        'Arbits': ArbitAmount.fromUnitAndValue(ArbitUnit.nanoarbit,
-            value[address.toBase58()]['Balances']['Arbits'] as String)
-      };
+      return Balance.fromJson(value, address.toBase58());
     });
   }
 
-  Future<Map<String, dynamic>> _getBalances(List<ToplAddress> addresses) {
-    return _makeRPCCall('topl_balances', params: [
-      {
-        'addresses': addresses.map((element) => element.toBase58()).toList()
-      }
-    ]).then((value) {
-      return {
-        'Polys': PolyAmount.fromUnitAndValue(PolyUnit.nanopoly,
-            value[address.toBase58()]['Balances']['Polys'] as String),
-        'Arbits': ArbitAmount.fromUnitAndValue(ArbitUnit.nanoarbit,
-            value[address.toBase58()]['Balances']['Arbits'] as String)
-      };
-    });
-  }
+  // Future<Map<String, dynamic>> _getBalances(List<ToplAddress> addresses) {
+  //   return _makeRPCCall('topl_balances', params: [
+  //     {
+  //       'addresses': addresses.map((element) => element.toBase58()).toList()
+  //     }
+  //   ]).then((value) {
+  //     return {
+  //       'Polys': PolyAmount.fromUnitAndValue(PolyUnit.nanopoly,
+  //           value[address.toBase58()]['Balances']['Polys'] as String),
+  //       'Arbits': ArbitAmount.fromUnitAndValue(ArbitUnit.nanoarbit,
+  //           value[address.toBase58()]['Balances']['Arbits'] as String)
+  //     };
+  //   });
+  // }
 
-  List<List<ToplAddress>> _splitArray(List<ToplAddress> array, int len) {
-    final arr = <List<ToplAddress>>[];
-    for (var i = 0; i < array.length; i += len) {
-      arr.add(array.sublist(i, min(i + len, array.length)));
-    }
-    return arr;
-  }
+  // List<List<ToplAddress>> _splitArray(List<ToplAddress> array, int len) {
+  //   final arr = <List<ToplAddress>>[];
+  //   for (var i = 0; i < array.length; i += len) {
+  //     arr.add(array.sublist(i, min(i + len, array.length)));
+  //   }
+  //   return arr;
+  // }
 
-  ///Retrieves balances for multiple addresses. If there are more than [batch] addresses to process
-  /// this method will process via chunks of [batch] addresses
-  Future<Map<String, dynamic>> getAllAddressBalances(
-      List<ToplAddress> addresses,
-      {int batch = 50}) async{
-    final map = {};
-    final processed = 0;
-    await Future.forEach(_splitArray(addresses, batch), (List<ToplAddress>) async {
-      final retry = true
-      final pss = processed;
-      while (retry) {
-        try {
-          await 
-        }
-      }
-    });
-  }
+  // ///Retrieves balances for multiple addresses. If there are more than [batch] addresses to process
+  // /// this method will process via chunks of [batch] addresses
+  // Future<Map<String, dynamic>> getAllAddressBalances(
+  //     List<ToplAddress> addresses,
+  //     {int batch = 50}) async{
+  //   final map = {};
+  //   final processed = 0;
+  //   await Future.forEach(_splitArray(addresses, batch), (List<ToplAddress>) async {
+  //     final retry = true
+  //     final pss = processed;
+  //     while (retry) {
+  //       try {
+  //         await
+  //       }
+  //     }
+  //   });
+  // }
 
   /// Sends a raw asset transfer call to a node
   ///

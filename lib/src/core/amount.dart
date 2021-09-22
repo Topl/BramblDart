@@ -150,7 +150,7 @@ class ArbitAmount extends Amount {
         parsedAmount = num.parse(amount);
       } on FormatException {
         throw ArgumentError(
-            'Invalid poly value, unable to parse value into a numerical type');
+            'Invalid arbit value, unable to parse value into a numerical type');
       }
     } else {
       throw ArgumentError('Invalid type, must be string or a numerical value');
@@ -168,13 +168,13 @@ class ArbitAmount extends Amount {
   /// **WARNING**: For all units except, this method will
   /// discard the remainder occurring in the division, making it unsuitable for
   /// calculations or storage. You should store and process amounts of poly by
-  /// using a BigInt storing the amount in nanopoly.
+  /// using a BigInt storing the amount in nanoarbit.
   num getValueInUnitBI(ArbitUnit unit) => quantity ~/ _factors[unit]!;
 
   /// Gets the value of this amount in the specified unit. **WARNING**: Due to
   /// rounding errors, the return value of this function is not reliable,
   /// especially for larger amounts or smaller units. While it can be used to
-  /// display the amount of poly in a human-readable format, it should not be
+  /// display the amount of arbit in a human-readable format, it should not be
   /// used for anything else.
 
   num getValueInUnit(ArbitUnit unit) {
@@ -187,7 +187,7 @@ class ArbitAmount extends Amount {
 
   @override
   String toString() {
-    return 'ArbitAmount: $getInNanoarbit nanopoly';
+    return 'ArbitAmount: $getInNanoarbit nanoarbit';
   }
 
   @override
@@ -253,5 +253,22 @@ class ArbitAmountConverter implements JsonConverter<ArbitAmount, String> {
   @override
   String toJson(ArbitAmount object) {
     return object.getInNanoarbit.toString();
+  }
+}
+
+class AssetAmountConverter
+    implements JsonConverter<AssetAmount, Map<String, dynamic>> {
+  const AssetAmountConverter();
+
+  @override
+  AssetAmount fromJson(Map<String, dynamic> json) {
+    return AssetAmount(
+        quantity: json['quantity'] as num,
+        assetCode: AssetCode.fromJson(json['assetCode'] as String));
+  }
+
+  @override
+  Map<String, dynamic> toJson(AssetAmount object) {
+    return {'quantity': object.quantity, 'assetCode': object.assetCode};
   }
 }

@@ -121,7 +121,9 @@ void main() async {
       final recipientAddress = await second.extractAddress();
 
       final balanceOfSender = await client.getBalance(senderAddress);
+      print(balanceOfSender);
       final balanceOfRecipient = await client.getBalance(recipientAddress);
+      print(balanceOfRecipient);
       final value = 1;
 
       final assetCode =
