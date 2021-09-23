@@ -19,15 +19,13 @@ class BifrostDateTimeEncoder extends Converter<int, DateTime> {
   const BifrostDateTimeEncoder();
   @override
   DateTime convert(int secondsSinceEpoch) =>
-      DateTime.fromMillisecondsSinceEpoch(secondsSinceEpoch * 1000,
-          isUtc: true);
+      DateTime.fromMillisecondsSinceEpoch(secondsSinceEpoch, isUtc: true);
 }
 
 class BifrostDateTimeDecoder extends Converter<DateTime, int> {
   const BifrostDateTimeDecoder();
   @override
-  int convert(DateTime dateTime) =>
-      (dateTime.millisecondsSinceEpoch / 1000).round();
+  int convert(DateTime dateTime) => (dateTime.millisecondsSinceEpoch).round();
 }
 
 final adaDateTime = BifrostDateTime();

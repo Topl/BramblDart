@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
+
 import 'package:bip_topl/bip_topl.dart';
 import 'package:meta/meta.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
@@ -11,7 +13,6 @@ import 'package:pointycastle/block/aes_fast.dart';
 import 'package:pointycastle/key_derivators/api.dart';
 import 'package:pointycastle/key_derivators/scrypt.dart' as scrypt;
 import 'package:pointycastle/stream/ctr.dart';
-import 'dart:typed_data';
 
 /// Default options for key generation as of 8.3.2021
 const defaultOptions = <String, dynamic>{
@@ -106,8 +107,12 @@ class KeyStore {
         Uint8List.fromList(str2ByteArray(password, enc: 'latin1'));
     final dartRandom = RandomBridge(random);
     final salt = dartRandom.nextBytes(32);
-    final derivator = _ScryptKeyDerivator(defaultOptions['kdfParams']['dkLen'],
-        scryptN, defaultOptions['kdfParams']['r'], p, salt);
+    final derivator = _ScryptKeyDerivator(
+        defaultOptions['kdfParams']['dkLen'] as int,
+        scryptN,
+        defaultOptions['kdfParams']['r'] as int,
+        p,
+        salt);
     final uuid = generateUuidV4();
     final iv = dartRandom.nextBytes(128 ~/ 8);
     return KeyStore._(credentials, derivator, passwordBytes, iv, uuid);

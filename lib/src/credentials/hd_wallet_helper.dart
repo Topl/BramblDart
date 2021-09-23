@@ -5,6 +5,7 @@ import 'package:bip_topl/src/bip32.dart';
 import 'package:bip_topl/src/bip32_ed25519.dart';
 import 'package:bip_topl/src/bip39_base.dart';
 import 'package:mubrambl/src/credentials/address.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:pinenacl/key_derivation.dart';
 import 'package:pinenacl/x25519.dart';
 
@@ -26,13 +27,14 @@ import 'package:pinenacl/x25519.dart';
 class HdWallet {
   late final Uint8List entropy;
   final String password;
-  final Bip32SigningKey rootSigningKey;
+  final Bip32SigningKey _rootSigningKey;
   final _derivator = Bip32Ed25519KeyDerivation.instance;
 
-  HdWallet({required this.rootSigningKey, this.password = ''});
+  HdWallet({required Bip32SigningKey rootSigningKey, this.password = ''})
+      : _rootSigningKey = rootSigningKey;
 
   HdWallet.fromEntropy({required this.entropy, this.password = ''})
-      : rootSigningKey = _bip32signingKey(entropy, password: password);
+      : _rootSigningKey = _bip32signingKey(entropy, password: password);
 
   factory HdWallet.fromHexEntropy(String hexEntropy, {String password = ''}) =>
       HdWallet.fromEntropy(
@@ -44,14 +46,14 @@ class HdWallet {
       HdWallet.fromHexEntropy(mnemonicToEntropy(mnemonic, language),
           password: password);
 
-  Bip32VerifyKey get rootVerifyKey => rootSigningKey.verifyKey;
+  Bip32VerifyKey get rootVerifyKey => _rootSigningKey.verifyKey;
 
   static Bip32SigningKey _bip32signingKey(Uint8List entropy,
       {String password = ''}) {
     final salt = Uint8List.fromList(utf8.encode(password));
     final rawMaster = PBKDF2.hmac_sha512(salt, entropy, 4096, xprv_size);
-    final root_xsk = Bip32SigningKey.normalizeBytes(rawMaster);
-    return root_xsk;
+    final rootXsk = Bip32SigningKey.normalizeBytes(rawMaster);
+    return rootXsk;
   }
 
   ///
@@ -107,12 +109,19 @@ class HdWallet {
   ///
   ///              BIP-44 Wallets Key Hierarchy
   ///
-  Bip32KeyPair derive({required Bip32KeyPair keys, required int index}) {
+  Bip32KeyPair derive({Bip32KeyPair? keys, required int index}) {
     // computes a child extended private key from the parent extended private key.
-    var privateKey = keys.privateKey != null
+    if (keys != null) {
+      keys = keys;
+    } else {
+      keys =
+          Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
+    }
+
+    final privateKey = keys.privateKey != null
         ? _derivator.ckdPriv(keys.privateKey!, index)
         : null;
-    var publicKey = isHardened(index)
+    final publicKey = isHardened(index)
         ? null
         : keys.publicKey != null
             ? _derivator.ckdPub(keys.publicKey!, index)
@@ -121,13 +130,13 @@ class HdWallet {
   }
 
   Bip32KeyPair deriveAddress(
-      {int purpose = defaultPurpose,
-      int coinType = defaultCoinType,
-      int account = defaultAccountIndex,
-      int change = defaultChange,
-      int address = defaultAddressIndex}) {
+      {int purpose = DEFAULT_PURPOSE,
+      int coinType = DEFAULT_COIN_TYPE,
+      int account = DEFAULT_ACCOUNT_INDEX,
+      int change = DEFAULT_CHANGE,
+      int address = DEFAULT_ADDRESS_INDEX}) {
     final rootKeys =
-        Bip32KeyPair(privateKey: rootSigningKey, publicKey: rootVerifyKey);
+        Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
     final pair0 = derive(keys: rootKeys, index: purpose);
     final pair1 = derive(keys: pair0, index: coinType);
     final pair2 = derive(keys: pair1, index: account);
@@ -136,12 +145,20 @@ class HdWallet {
     return pair4;
   }
 
-  Bip32KeyPair deriveLastThreeLayers(
-      {int account = defaultAccountIndex,
-      int change = defaultChange,
-      int address = defaultAddressIndex}) {
+  Bip32KeyPair deriveBaseAddress(
+      {int purpose = DEFAULT_PURPOSE, int coinType = DEFAULT_COIN_TYPE}) {
     final rootKeys =
-        Bip32KeyPair(privateKey: rootSigningKey, publicKey: rootVerifyKey);
+        Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
+    final pair0 = derive(keys: rootKeys, index: purpose);
+    return derive(keys: pair0, index: coinType);
+  }
+
+  Bip32KeyPair deriveLastThreeLayers(
+      {int account = DEFAULT_ACCOUNT_INDEX,
+      int change = DEFAULT_CHANGE,
+      int address = DEFAULT_ADDRESS_INDEX}) {
+    final rootKeys =
+        Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
     final pair0 = derive(keys: rootKeys, index: account);
     final pair1 = derive(keys: pair0, index: change);
     return derive(keys: pair1, index: address);
@@ -158,22 +175,11 @@ class Bip32KeyPair {
   const Bip32KeyPair({this.privateKey, this.publicKey});
 }
 
-///
-const int hardened_offset =
-    0x80000000; //denoted by a single quote in chain values
-
 /// default purpose. Reference: [CIP-1852](https://github.com/cardano-foundation/CIPs/blob/master/CIP-1852/CIP-1852.md)
-const int defaultPurpose = 1852 | hardened_offset;
-const int defaultCoinType = 7091 | hardened_offset;
-const int defaultAccountIndex = 0 | hardened_offset;
-
-/// 0=external/payments, 1=internal/change, 2=staking
-const int defaultChange = 0;
-const int defaultAddressIndex = 0;
 
 /// Extended Private key size in bytes
 const xprv_size = 96;
 const extended_secret_key_size = 64;
 
-int harden(int index) => index | hardened_offset;
-bool isHardened(int index) => index & hardened_offset != 0;
+int harden(int index) => index | HARDENED_OFFSET;
+bool isHardened(int index) => index & HARDENED_OFFSET != 0;

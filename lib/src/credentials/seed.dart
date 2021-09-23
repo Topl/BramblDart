@@ -9,7 +9,7 @@ class Seed {
   Seed(this.bytes);
 
   /// create a Seed by taking ownership of the given array
-  factory Seed.from_bytes(Uint8List buffer) {
+  factory Seed.fromBytes(Uint8List buffer) {
     if (buffer.length != SEED_SIZE) {
       throw InvalidSeedSize(
           'Invalid Seed Size, expected $SEED_SIZE bytes, but received ${buffer.length} bytes.');
@@ -18,8 +18,8 @@ class Seed {
   }
 
   Seed clone() {
-    return Seed.from_bytes(bytes);
+    return Seed.fromBytes(bytes);
   }
 
-  Uint8List get as_ref => bytes;
+  Uint8List get asRef => bytes;
 }

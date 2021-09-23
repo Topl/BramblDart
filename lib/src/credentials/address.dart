@@ -1,4 +1,5 @@
 import 'package:bip_topl/bip_topl.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:pinenacl/api.dart';
@@ -93,4 +94,33 @@ class InvalidAddressTypeError extends Error {
   InvalidAddressTypeError(this.message);
   @override
   String toString() => message;
+}
+
+class ToplAddressNullableConverter
+    implements JsonConverter<ToplAddress?, String> {
+  const ToplAddressNullableConverter();
+
+  @override
+  ToplAddress? fromJson(String json) {
+    return ToplAddress.fromBase58(json);
+  }
+
+  @override
+  String toJson(ToplAddress? object) {
+    return object?.toBase58() ?? '';
+  }
+}
+
+class ToplAddressConverter implements JsonConverter<ToplAddress, String> {
+  const ToplAddressConverter();
+
+  @override
+  ToplAddress fromJson(String json) {
+    return ToplAddress.fromBase58(json);
+  }
+
+  @override
+  String toJson(ToplAddress object) {
+    return object.toBase58();
+  }
 }

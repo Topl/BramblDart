@@ -3,7 +3,7 @@
 /// This could be used also for other than Torus networks when this library gets extended
 /// A **Network** represents a Topl network
 ///
-final NETWORK_REGISTRY = <String, int>{
+const NETWORK_REGISTRY = <String, int>{
   'toplnet': 0x01,
   'valhalla': 0x10,
   'private': 0x40
@@ -34,10 +34,10 @@ class Network {
     }
   }
 
-  factory Network.Toplnet() =>
+  factory Network.toplnet() =>
       Network(false, NETWORK_REGISTRY['toplnet']!, 'toplnet');
-  factory Network.Valhalla() =>
+  factory Network.valhalla() =>
       Network(true, NETWORK_REGISTRY['valhalla']!, 'valhalla');
-  factory Network.Private() =>
+  factory Network.private() =>
       Network(true, NETWORK_REGISTRY['private']!, 'private');
 }

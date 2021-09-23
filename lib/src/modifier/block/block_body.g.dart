@@ -18,7 +18,8 @@ BlockBody _$BlockBodyFromJson(Map<String, dynamic> json) => $checkedCreate(
           $checkedConvert(
               'transactions',
               (v) => (v as List<dynamic>)
-                  .map((e) => Transaction.fromJson(e as Map<String, dynamic>))
+                  .map((e) =>
+                      TransactionReceipt.fromJson(e as Map<String, dynamic>))
                   .toList()),
           $checkedConvert('version', (v) => v as int),
         );

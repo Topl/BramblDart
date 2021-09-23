@@ -4,8 +4,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/attestation/evidence.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:mubrambl/src/model/box/box.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
+import 'package:mubrambl/src/utils/string_data_types.dart';
 
 typedef Nonce = int;
 
@@ -27,6 +27,12 @@ class BoxId<T> {
         createHash(Uint8List.fromList(evidence.evBytes + [nonce])), 32));
   }
 
+  factory BoxId.fromJson(String json) {
+    return BoxId.applyByteArray(Base58Data.validated(json).value);
+  }
+
+  String toJson() => toString();
+
   @override
   int get hashCode => hash.hashCode;
 
@@ -42,7 +48,7 @@ class BoxIdConverter implements JsonConverter<BoxId, String> {
 
   @override
   BoxId fromJson(String json) {
-    return BoxId.applyByteArray(Base58Data.validated(json).value);
+    return BoxId.fromJson(json);
   }
 
   @override

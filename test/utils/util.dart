@@ -1,2 +1,1 @@
-List<int> tolist(String csv) =>
-    csv.split(',').map((n) => int.parse(n)).toList();
+List<int> tolist(String csv) => csv.split(',').map(int.parse).toList();
