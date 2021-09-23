@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:pinenacl/api.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
+import 'package:pinenacl/api.dart';
 
 part 'evidence.g.dart';
 

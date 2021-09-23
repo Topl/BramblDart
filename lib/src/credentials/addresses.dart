@@ -1,3 +1,5 @@
+import 'address.dart';
+
 ///
 /// BIP-0044 Multi-Account Hierarchy for Deterministic Wallets is a Bitcoin standard defining a structure
 /// and algorithm to build a hierarchy tree of keys from a single root private key. Note that this is the
@@ -18,16 +20,15 @@ abstract class Addresses {
   static final int defaultAddressIdx = 0;
   String get purpose;
   String get coinType;
-  String get addressIdx;
-  List<String> get addresses;
+  List<ToplAddress> get addresses;
   List<String> get boxes;
 }
 
 class AddressesImpl implements Addresses {
-  final List<String> a;
-  final String addressIndex;
+  final List<ToplAddress> a;
+  final List<int> indexes;
   final String mPK;
-  AddressesImpl(this.a, this.addressIndex, this.mPK);
+  AddressesImpl(this.a, this.indexes, this.mPK);
 
   @override
   String get purpose => Addresses.defaultPurpose;
@@ -36,10 +37,7 @@ class AddressesImpl implements Addresses {
   String get coinType => Addresses.defaultCoin;
 
   @override
-  String get addressIdx => addressIndex;
-
-  @override
-  List<String> get addresses => a;
+  List<ToplAddress> get addresses => a;
 
   @override
   List<String> get boxes => [];

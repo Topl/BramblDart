@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -89,7 +91,6 @@ abstract class TokenBox extends Box {
   @override
   final Nonce nonce;
 
-  TokenBox(
-      this.evidence, this.nonce, this.tokenValueHolder, typeString, boxType)
+  TokenBox(this.evidence, this.nonce, this.tokenValueHolder, String typeString)
       : super(evidence, nonce, typeString, tokenValueHolder);
 }

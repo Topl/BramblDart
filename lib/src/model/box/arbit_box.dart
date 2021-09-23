@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/attestation/evidence.dart';
 import 'package:mubrambl/src/model/box/box.dart';
@@ -16,7 +18,7 @@ class ArbitBox extends TokenBox {
   final SimpleValue simpleValue;
 
   ArbitBox(this.evidence, this.nonce, this.simpleValue)
-      : super(evidence, nonce, simpleValue, 'Simple', 1);
+      : super(evidence, nonce, simpleValue, 'Arbit');
 
   /// A necessary factory constructor for creating a new ArbitBox instance
   /// from a map. Pass the map to the generated `_$ArbitBoxFromJson()` constructor.

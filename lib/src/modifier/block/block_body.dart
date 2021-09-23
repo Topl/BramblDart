@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/transaction/transaction.dart';
+import 'package:mubrambl/src/transaction/transactionReceipt.dart';
 
 import '../modifier_id.dart';
 
@@ -11,7 +11,7 @@ class BlockBody {
   final ModifierId id;
   @ModifierIdConverter()
   final ModifierId parentId;
-  final List<Transaction> transactions;
+  final List<TransactionReceipt> transactions;
   final int version;
 
   BlockBody(this.id, this.parentId, this.transactions, this.version);

@@ -74,9 +74,9 @@ class JsonRPC extends RpcService {
         onReceiveProgress: onReceiveProgress);
 
     final data = response.data!;
-    final id = int.parse(data['id']);
+    final id = int.parse(data['id'] as String);
 
-    if (data.containsKey('error')) {
+    if (data.containsKey('error') as bool) {
       final error = data['error'];
 
       final code = error['code'] as int;
