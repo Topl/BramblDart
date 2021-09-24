@@ -289,4 +289,11 @@ class BramblClient {
     ]).then((value) =>
         TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
   }
+
+  /// Returns the information about a transaction requested by a transactionId [transactionId]
+  Future<TransactionReceipt> getTransactionById(String transactionId) {
+    return _makeRPCCall<Map<String, dynamic>>('topl_transactionById', params: [
+      {'transactionId': transactionId}
+    ]).then((s) => TransactionReceipt.fromJson(s));
+  }
 }
