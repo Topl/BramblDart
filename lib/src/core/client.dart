@@ -289,4 +289,16 @@ class BramblClient {
     ]).then((value) =>
         TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
   }
+
+  /// Signs the [transaction] with the credentials [cred]. The transaction will
+  /// not be sent.
+  ///
+  /// See also:
+  ///  - [bytesToHex], which can be used to get the more common hexadecimal
+  /// representation of the transaction.
+  Future<Uint8List> signTransaction(
+      Credentials cred, Uint8List messageToSign) async {
+    final signature = await cred.signToSignature(messageToSign);
+    return Uint8List.fromList(signature);
+  }
 }

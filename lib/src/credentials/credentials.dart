@@ -21,7 +21,7 @@ abstract class Credentials {
 
   /// Signs the [payload] with a private key and returns the obtained
   /// signature.
-  Future<SignedMessage> signToSignature(Uint8List payload);
+  Future<List<int>> signToSignature(Uint8List payload);
 }
 
 /// Credentials where the [address] is known synchronously.
@@ -86,9 +86,10 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
   }
 
   @override
-  Future<SignedMessage> signToSignature(List<int> payload) async {
-    final signature =
-        Bip32SigningKey(Uint8List.fromList(privateKey)).sign(payload);
+  Future<List<int>> signToSignature(List<int> payload) async {
+    const publicKeyHashByte = 0x01;
+    final signature = [publicKeyHashByte] +
+        Bip32SigningKey(Uint8List.fromList(privateKey)).sign(payload).signature;
 
     return signature;
   }
