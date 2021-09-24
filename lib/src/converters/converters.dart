@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pinenacl/api.dart';
+import 'package:pinenacl/ed25519.dart';
 
 class Uint8ListConverter implements JsonConverter<Uint8List, List<int>> {
   const Uint8ListConverter();
@@ -26,6 +27,20 @@ class ByteListConverter implements JsonConverter<ByteList, List<int>> {
 
   @override
   List<int> toJson(ByteList object) {
+    return object;
+  }
+}
+
+class SignatureConverter implements JsonConverter<SignatureBase, List<int>> {
+  const SignatureConverter();
+
+  @override
+  SignatureBase fromJson(List<int> json) {
+    return Signature(Uint8List.fromList(json));
+  }
+
+  @override
+  List<int> toJson(SignatureBase object) {
     return object;
   }
 }

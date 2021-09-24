@@ -6,6 +6,7 @@ import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/transaction/transaction.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/util.dart';
+import 'package:pinenacl/ed25519.dart' hide Signature;
 import 'package:pinenacl/ed25519.dart';
 
 /// Anything that can sign payloads with a private key.
@@ -21,7 +22,7 @@ abstract class Credentials {
 
   /// Signs the [payload] with a private key and returns the obtained
   /// signature.
-  Future<List<int>> signToSignature(Uint8List payload);
+  Future<SignatureBase> signToSignature(Uint8List payload);
 }
 
 /// Credentials where the [address] is known synchronously.
@@ -86,12 +87,10 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
   }
 
   @override
-  Future<List<int>> signToSignature(List<int> payload) async {
-    const publicKeyHashByte = 0x01;
-    final signature = [publicKeyHashByte] +
-        Bip32SigningKey(Uint8List.fromList(privateKey)).sign(payload).signature;
-
-    return signature;
+  Future<SignatureBase> signToSignature(List<int> payload) async {
+    return Bip32SigningKey(Uint8List.fromList(privateKey))
+        .sign(payload)
+        .signature;
   }
 
   @override

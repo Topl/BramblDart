@@ -29,6 +29,9 @@ const _privateKey1 =
 const _privateKey2 =
     '70753be769a365f28d3ed8c4e573d43708a42970d90806fb9e8b2b502ce9a94c0e434fc8e9f88e31fc8b0bdd80223ac8fe37269597495ff0647d25659b90050d1c32ec2f4b5ae82493bcd9c63216c4fe8e69cdc339a0ab4ab80c3a8d8f9de6e3';
 
+const transactionId = 'crQaUf54SQyPyW4FqvecapgmJiC6HwfbJpbSSDhokA2E';
+const transactionId2 = 'hJhLzSQVnnvz9Gnx8eUtzt1dcR7iH6oro3vLVgWAU6Bh';
+const transactionId3 = 'DSWNdaTz3H4oy6Kj1rcATfS5ar4pxZ4jvWZqMthTVhdt';
 void main() async {
   late DockerProcess bifrost;
   late BramblClient client;
@@ -198,6 +201,16 @@ void main() async {
       expect(rawTransaction, isA<TransactionReceipt>());
 
       print(rawTransaction);
+    });
+
+    test('get Transaction receipt', () async {
+      final receipt = await client.getTransactionById(transactionId);
+      print(receipt.toJson());
+      final receipt2 = await client.getTransactionById(transactionId2);
+      print(receipt2.toJson());
+      final receipt3 = await client.getTransactionById(transactionId);
+      print(receipt3.toJson());
+      expect(receipt, isA<TransactionReceipt>());
     });
 
     // test('Simple raw arbit transaction', () async {

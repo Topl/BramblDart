@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
+import 'package:mubrambl/src/attestation/signature_container.dart';
 import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/expensive_operations.dart';
 import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
@@ -15,6 +16,7 @@ import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
 import 'package:mubrambl/src/transaction/transaction.dart';
 import 'package:mubrambl/src/transaction/transactionReceipt.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/encoding.dart';
@@ -296,9 +298,40 @@ class BramblClient {
   /// See also:
   ///  - [bytesToHex], which can be used to get the more common hexadecimal
   /// representation of the transaction.
-  Future<Uint8List> signTransaction(
-      Credentials cred, Uint8List messageToSign) async {
-    final signature = await cred.signToSignature(messageToSign);
-    return Uint8List.fromList(signature);
+  // Future<TransactionReceipt> signTransaction(
+  //     Credentials cred, TransactionReceipt transactionReceipt, Uint8List messageToSign) async {
+  //   final signature = await cred.signToSignature(messageToSign);
+  //   return _fillMissingData(credentials: cred, transactionReceipt: transactionReceipt, proposition: cred., signature: signature)
+  // }
+
+  /// Returns the information about a transaction requested by a transactionId [transactionId]
+  Future<TransactionReceipt> getTransactionById(String transactionId) {
+    return _makeRPCCall<Map<String, dynamic>>('topl_transactionById', params: [
+      {'transactionId': transactionId}
+    ]).then((s) => TransactionReceipt.fromJson(s));
+  }
+
+//   Future<TransactionReceipt> _fillMissingData(
+//       {required Credentials credentials,
+//       required TransactionReceipt transactionReceipt,
+//       required Signature signature}) async {
+//     var fee = transactionReceipt.fee ?? await getFee();
+//     /// apply default values to null fields
+//     final modifiedTransaction = transactionReceipt.copyWith(
+//       fee: fee,
+//       data: transactionReceipt.data ?? Latin1Data(Uint8List(0)),
+//       signatures:
+// ,    )
+//   }
+
+  Future<PolyAmount> getFee() async {
+    final network = await getNetwork();
+    if (network == TOPLNET) {
+      return PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, TOPLNET_FEE);
+    } else if (network == VALHALLA) {
+      return PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, VALHALLA_FEE);
+    } else {
+      return PolyAmount.zero();
+    }
   }
 }

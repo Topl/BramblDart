@@ -1,12 +1,10 @@
-import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
+import 'package:mubrambl/src/utils/string_data_types.dart';
+import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:pinenacl/api.dart';
 
 part 'evidence.g.dart';
-
-final contentLength =
-    32; //bytes (this is generally the output of a Blake2b-256 bit hash)
 
 /// Evidence content serves as a fingerprint (or commitment) of a particular proposition that is used to lock a box. Boxes
 /// are locked with 'Evidence' which is the concatentation of a typePrefix ++ content. The type prefix denotes what type
@@ -19,9 +17,11 @@ typedef EvidenceTypePrefix = int;
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class Evidence {
+  static const contentLength = 32;
+
   final EvidenceTypePrefix prefix;
   final int size = 1 + contentLength; //length of typePrefix + contentLength
-  final List<int> evBytes;
+  final Digest evBytes;
 
   Evidence(this.prefix, this.evBytes);
 
@@ -36,20 +36,26 @@ class Evidence {
   /// helper method `_$EvidenceToJson`.
   Map<String, dynamic> toJson() => _$EvidenceToJson(this);
 
-  factory Evidence.apply(EvidenceTypePrefix prefix, Uint8List content) {
-    assert(content.length == contentLength,
+  factory Evidence.apply(EvidenceTypePrefix prefix, Digest content) {
+    assert(content.bytes.length == contentLength,
         'Invalid evidence: incorrect EvidenceContent length');
     return Evidence(prefix, content);
   }
 
+  factory Evidence.fromBase58(String evidence) {
+    final decodedEvidence = Base58Data.validated(evidence).value;
+    return Evidence.apply(decodedEvidence[0],
+        Digest.from(decodedEvidence.sublist(1), Evidence.contentLength));
+  }
+
   @override
   String toString() {
-    return Uint8List.fromList(evBytes).encodeAsBase58().show;
+    return Uint8List.fromList([prefix] + evBytes.bytes).encodeAsBase58().show;
   }
 
   @override
   bool operator ==(Object other) =>
-      other is Evidence && ListEquality().equals(evBytes, other.evBytes);
+      other is Evidence && evBytes == other.evBytes;
 
   @override
   int get hashCode => evBytes.hashCode;

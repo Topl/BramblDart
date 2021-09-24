@@ -14,3 +14,9 @@ const DEFAULT_CHANGE = 0;
 const DEFAULT_ADDRESS_INDEX = 0;
 
 const HARDENED_OFFSET = 0x80000000; //denoted by a single quote in chain values
+
+const TOPLNET = 'Mainnet';
+const TOPLNET_FEE = 1000000000;
+const VALHALLA = 'ValhallaTestnet';
+const VALHALLA_FEE = 100;
+const PRIVATE = 'PrivateTestnet';
