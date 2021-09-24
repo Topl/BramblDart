@@ -14,7 +14,7 @@ class ArbitBox extends TokenBox {
   @override
   final Evidence evidence;
   @override
-  final int nonce;
+  final String nonce;
   final SimpleValue simpleValue;
 
   ArbitBox(this.evidence, this.nonce, this.simpleValue)

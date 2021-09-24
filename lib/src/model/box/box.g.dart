@@ -13,7 +13,7 @@ Box<T> _$BoxFromJson<T>(Map<String, dynamic> json) => $checkedCreate(
         final val = Box<T>(
           $checkedConvert(
               'evidence', (v) => Evidence.fromJson(v as Map<String, dynamic>)),
-          $checkedConvert('nonce', (v) => v as int),
+          $checkedConvert('nonce', (v) => v as String),
           $checkedConvert('typeString', (v) => v as String),
           $checkedConvert(
               'value', (v) => _Converter<T>().fromJson(v as Object)),

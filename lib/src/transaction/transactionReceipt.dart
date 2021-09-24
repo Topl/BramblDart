@@ -12,6 +12,7 @@ import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/sender.dart';
 import 'package:mubrambl/src/modifier/modifier_id.dart';
 import 'package:mubrambl/src/utils/block_time.dart';
+import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:pinenacl/ed25519.dart';
@@ -54,7 +55,7 @@ class TransactionReceipt {
   final List to;
 
   /// The propositionType that has or will be used by the sender to generate the proposition. This proposition will be used to verify the authenticity of this transaction together with the provided proof
-  final String propositionType;
+  final PropositionType propositionType;
 
   /// Data string which can be associated with this transaction (may be empty). Data has a maximum value of 127 Latin-1 encoded characters
   final Latin1Data? data;
@@ -99,9 +100,9 @@ class TransactionReceipt {
     return 'TransactionReceipt{id: ${id.toString()}, txType: $txType, '
         'from: ${json.encode(from)}, to: ${json.encode(to)}, fee: ${fee.toString()},'
         'timestamp: ${formatter.format(BifrostDateTime().encode(timestamp))}, '
-        'propositionType: $propositionType, messageToSign: ${Base58Data(messageToSign ?? Uint8List(0)).show},  '
+        'propositionType: ${propositionType.propositionName}, messageToSign: ${Base58Data(messageToSign ?? Uint8List(0)).show},  '
         'data: ${data?.show}, newBoxes: ${json.encode(newBoxes)}, '
-        'boxesToRemove: ${json.encode(boxesToRemove)}, signatures: ${encodeSignatures(signatures)}, blockNumber: $blockNumber, blockId: ${blockId.toString()}';
+        'boxesToRemove: ${json.encode(boxesToRemove)}, signatures: ${encodeSignatures(signatures, propositionType)}, blockNumber: $blockNumber, blockId: ${blockId.toString()}';
   }
 
   static void _validateFields(Map<String, dynamic> map) {
@@ -140,7 +141,10 @@ class TransactionReceipt {
         fee: PolyAmount.fromUnitAndValue(
             PolyUnit.nanopoly, map['fee'] as String),
         timestamp: map['timestamp'] as int,
-        propositionType: map['propositionType'] as String,
+        propositionType: PropositionType(
+            map['propositionType'] as String,
+            propositionMap[map['propositionType'] as String] ??
+                PropositionType.curve25519().propositionPrefix),
         id: ModifierId.create(
             Base58Data.validated(map['txId'] as String).value),
         txType: map['txType'] as String,
@@ -174,7 +178,7 @@ class TransactionReceipt {
       List<BoxId>? boxesToRemove,
       List<Sender>? from,
       List? to,
-      String? propositionType,
+      PropositionType? propositionType,
       Latin1Data? data,
       bool? minting,
       bool? status,
@@ -227,11 +231,14 @@ class TransactionReceipt {
   }
 
   static Map<String, String> encodeSignatures(
-      List<SignatureContainer> signatures) {
+      List<SignatureContainer> signatures, PropositionType proposition) {
     final encodedSignatures = <String, String>{};
     signatures.forEach((value) {
-      final newKey = value.proposition.toString();
-      final newValue = Base58Data(value.proof.buffer.asUint8List()).show;
+      final newKey = Base58Data(Uint8List.fromList(
+          [0, ...value.proposition.buffer.asUint8List()])).show;
+      final outputValue =
+          Uint8List.fromList([0, ...value.proof.buffer.asUint8List()]);
+      final newValue = Base58Data(outputValue).show;
       encodedSignatures[newKey] = newValue;
     });
     return encodedSignatures;
