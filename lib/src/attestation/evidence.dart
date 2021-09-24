@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
-import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:pinenacl/api.dart';
 
 part 'evidence.g.dart';
