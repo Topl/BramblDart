@@ -5,9 +5,8 @@ import 'package:mubrambl/src/attestation/evidence.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:mubrambl/src/model/box/box.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
-
-typedef Nonce = int;
 
 class BoxId<T> {
   final Digest hash;
@@ -15,14 +14,14 @@ class BoxId<T> {
   BoxId(this.hash);
 
   factory BoxId.applyByteArray(Uint8List bytes) {
-    return BoxId(Digest.from(bytes, 32));
+    return BoxId(Digest.from(bytes, BLAKE2B_256_DIGEST_SIZE));
   }
 
   factory BoxId.apply(Box<T> box) {
-    return BoxId.fromEviNonce(box.evidence);
+    return BoxId.fromEvidence(box.evidence);
   }
 
-  factory BoxId.fromEviNonce(Evidence evidence) {
+  factory BoxId.fromEvidence(Evidence evidence) {
     return BoxId(evidence.evBytes);
   }
 

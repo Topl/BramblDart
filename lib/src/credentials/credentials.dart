@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
+import 'package:mubrambl/src/attestation/proposition.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/transaction/transaction.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
@@ -23,6 +24,9 @@ abstract class Credentials {
   /// Signs the [payload] with a private key and returns the obtained
   /// signature.
   Future<SignatureBase> signToSignature(Uint8List payload);
+
+  /// The proposition that matches the evidence which is contained in the given credential
+  Proposition get proposition;
 }
 
 /// Credentials where the [address] is known synchronously.
@@ -61,6 +65,9 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
   ToplSigningKey.fromString(String base58, this.network, this.propositionType)
       : privateKey = Bip32SigningKey.fromValidBytes(
             Base58Encoder.instance.decode(base58));
+
+  @override
+  Proposition get proposition => Proposition(privateKey.verifyKey.asTypedList);
 
   /// Creates a new, random private key from the [random] number generator.
   ///

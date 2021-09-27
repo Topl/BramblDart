@@ -13,7 +13,7 @@ ArbitBox _$ArbitBoxFromJson(Map<String, dynamic> json) => $checkedCreate(
         final val = ArbitBox(
           $checkedConvert(
               'evidence', (v) => Evidence.fromJson(v as Map<String, dynamic>)),
-          $checkedConvert('nonce', (v) => v as int),
+          $checkedConvert('nonce', (v) => v as String),
           $checkedConvert('simpleValue',
               (v) => SimpleValue.fromJson(v as Map<String, dynamic>)),
         );

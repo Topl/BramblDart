@@ -10,7 +10,7 @@ import 'package:mubrambl/src/model/box/token_value_holder.dart';
 
 part 'box.g.dart';
 
-typedef Nonce = int;
+typedef Nonce = String;
 typedef BoxType = int;
 
 @JsonSerializable(checked: true, explicitToJson: true)
@@ -30,7 +30,7 @@ class Box<T> extends GenericBox {
       : super(evidence, value);
 
   @override
-  int get hashCode => nonce;
+  int get hashCode => nonce.hashCode;
 
   @override
   String toString() {
