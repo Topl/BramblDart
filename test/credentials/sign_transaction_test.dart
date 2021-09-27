@@ -27,7 +27,7 @@ void main() {
         id: ModifierId.create(Uint8List(MODIFIER_ID_SIZE)),
         txType: 'AssetTransfer',
         newBoxes: [
-          Box.fromJson({
+          TokenBox.fromJson({
             'nonce': '-586686527903758527',
             'id': '58e5WCs5DvgYPQUsyzEVLkoAHRJBL5LgsPX8vxRcBDig',
             'evidence': 'YbEfzvNJ9YeaejXvhV1G4TdBrdYg1mBgzZNAwQ5TYssm',
@@ -50,7 +50,7 @@ void main() {
           SimpleRecipient(
               ToplAddress.fromBase58(
                   '3NKBoNgMRpKahSi8tC8XPetDom9bdh3NXxSpfZ8fkvDMYwFcgnK1'),
-              SimpleValue('0'))
+              SimpleValue('0', 'Simple'))
         ],
         propositionType: PropositionType.ed25519());
     final messageToSign =

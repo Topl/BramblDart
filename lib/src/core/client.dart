@@ -378,8 +378,8 @@ class BramblClient {
   /// included in a forged block, can be used to obtain detailed information
   /// about the transaction.
   Future<String> sendSignedTransaction(TransactionReceipt transaction) async {
-    return _makeRPCCall('topl_broadcastTx',
-            params: [transaction.toMempoolJson()])
-        .then((value) => value['txId'] as String);
+    return _makeRPCCall('topl_broadcastTx', params: [
+      {'tx': transaction.toBroadcastJson()}
+    ]).then((value) => value['txId'] as String);
   }
 }

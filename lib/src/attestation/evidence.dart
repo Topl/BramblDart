@@ -37,7 +37,7 @@ class Evidence {
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$EvidenceToJson`.
-  Map<String, dynamic> toJson() => _$EvidenceToJson(this);
+  String toJson() => toString();
 
   factory Evidence.apply(EvidenceTypePrefix prefix, Digest content) {
     assert(content.bytes.length == contentLength,

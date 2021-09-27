@@ -7,7 +7,11 @@ import 'package:mubrambl/src/attestation/proposition.dart';
 import 'package:mubrambl/src/attestation/signature_container.dart';
 import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/block_number.dart';
+import 'package:mubrambl/src/model/box/arbit_box.dart';
+import 'package:mubrambl/src/model/box/asset_box.dart';
+import 'package:mubrambl/src/model/box/box.dart';
 import 'package:mubrambl/src/model/box/box_id.dart';
+import 'package:mubrambl/src/model/box/poly_box.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/sender.dart';
 import 'package:mubrambl/src/modifier/modifier_id.dart';
@@ -15,7 +19,6 @@ import 'package:mubrambl/src/utils/block_time.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:mubrambl/src/utils/util.dart';
-import 'package:mubrambl/src/model/box/box.dart';
 import 'package:pinenacl/ed25519.dart';
 
 typedef TxType = int;
@@ -29,7 +32,7 @@ class TransactionReceipt {
   final ModifierId id;
 
   /// The number of boxes that were generated with this transaction.
-  final List<Box> newBoxes;
+  final List<TokenBox> newBoxes;
 
   /// Proposition Type signature(s)
   final List<SignatureContainer> signatures;
@@ -95,20 +98,28 @@ class TransactionReceipt {
   Map<String, dynamic> toMempoolJson() => {
         'id': id.toString(),
         'txType': txType,
-        'fee': fee.toString(),
-        'timestamp': formatter.format(BifrostDateTime().encode(timestamp)),
+        'fee': fee?.getInNanopoly.toString(),
+        'timestamp': timestamp,
         'propositionType': propositionType.propositionName,
         'messageToSign': Base58Data(messageToSign ?? Uint8List(0)).show,
         'data': data?.show,
         'newBoxes': encodeBoxes(newBoxes),
-        'boxesToRemove': json.encode(boxesToRemove),
-        'signatures': encodeSignatures(signatures, propositionType)
+        'boxesToRemove': boxesToRemove.map((e) => e.toString()).toList()
       };
 
   Map<String, dynamic> toJson() {
     final result = toMempoolJson();
     result['blockId'] = blockId.toString();
-    result['blockNubmer'] = blockNumber;
+    result['blockNumber'] = blockNumber.toString();
+    return result;
+  }
+
+  Map<String, dynamic> toBroadcastJson() {
+    final result = toMempoolJson();
+    result.remove('messageToSign');
+    result['signatures'] = encodeSignatures(signatures, propositionType);
+    result['from'] = from?.map((e) => e.toJson()).toList();
+    result['to'] = to;
     return result;
   }
 
@@ -168,9 +179,7 @@ class TransactionReceipt {
         messageToSign:
             Uint8List.fromList(map['messageToSign'] as List<int>? ?? []),
         data: data,
-        newBoxes: (map['newBoxes'] as List)
-            .map((box) => Box.fromJson(box as Map<String, dynamic>))
-            .toList(),
+        newBoxes: decodeBoxes(map['newBoxes'] as List<dynamic>),
         boxesToRemove: (map['boxesToRemove'] as List)
             .map((boxId) => BoxIdConverter().fromJson(boxId as String))
             .toList(),
@@ -186,7 +195,7 @@ class TransactionReceipt {
 
   TransactionReceipt copyWith(
       {ModifierId? id,
-      List<Box>? newBoxes,
+      List<TokenBox>? newBoxes,
       List<SignatureContainer>? signatures,
       PolyAmount? fee,
       int? timestamp,
@@ -233,8 +242,23 @@ class TransactionReceipt {
     }).toList();
   }
 
-  List<Map<String, dynamic>> encodeBoxes(List<Box> boxes) {
+  List<Map<String, dynamic>> encodeBoxes(List<TokenBox> boxes) {
     return boxes.map((box) => box.toJson()).toList();
+  }
+
+  static List<TokenBox> decodeBoxes(List<dynamic> boxes) {
+    return boxes.map((box) {
+      switch (box['type']) {
+        case ('PolyBox'):
+          return PolyBox.fromJson(box as Map<String, dynamic>);
+        case ('AssetBox'):
+          return AssetBox.fromJson(box as Map<String, dynamic>);
+        case ('ArbitBox'):
+          return ArbitBox.fromJson(box as Map<String, dynamic>);
+        default:
+          return TokenBox.fromJson(box as Map<String, dynamic>);
+      }
+    }).toList();
   }
 
   static List<SignatureContainer> decodeSignatures(

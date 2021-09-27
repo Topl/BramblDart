@@ -93,11 +93,11 @@ void main() async {
 
     first = ToplSigningKey(
         Bip32SigningKey.decode(_privateKey1, coder: HexCoder.instance),
-        0x10,
+        0x40,
         PropositionType.ed25519());
     second = ToplSigningKey(
         Bip32SigningKey.decode(_privateKey2, coder: HexCoder.instance),
-        0x10,
+        0x40,
         PropositionType.ed25519());
   });
 
@@ -148,8 +148,8 @@ void main() async {
       final securityRoot = SecurityRoot.fromBase58(
           Base58Data.validated('11111111111111111111111111111111'));
 
-      final assetValue =
-          AssetValue(value.toString(), assetCode, securityRoot, 'metadata');
+      final assetValue = AssetValue(
+          value.toString(), assetCode, securityRoot, 'metadata', 'Asset');
 
       final recipients = <String, AssetValue>{
         recipientAddress.toBase58(): assetValue
@@ -165,11 +165,12 @@ void main() async {
           fee: fee,
           minting: true,
           changeAddress: senderAddress,
-          consolidationAddress: senderAddress);
+          consolidationAddress: senderAddress,
+          data: Latin1Data.validated('data').value);
 
       final to = AssetRecipient(recipientAddress, assetValue);
 
-      expect(rawTransaction, isA<TransactionReceipt>());
+      expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
 
       final txId = await client.sendTransaction(
           first,
