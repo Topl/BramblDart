@@ -15,6 +15,7 @@ import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/security_root.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
 import 'package:mubrambl/src/transaction/transactionReceipt.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/encoding.dart';
@@ -101,35 +102,35 @@ void main() async {
   });
 
   group(BramblClient, () {
-    test('test node info on private node', () async {
-      try {
-        final response = await client.getClientVersion();
-        print(response);
-      } catch (e) {
-        print(e);
-        fail('exception: $e');
-      }
-    });
+    // test('test node info on private node', () async {
+    //   try {
+    //     final response = await client.getClientVersion();
+    //     print(response);
+    //   } catch (e) {
+    //     print(e);
+    //     fail('exception: $e');
+    //   }
+    // });
 
-    test('test node info on private node', () async {
-      try {
-        final response = await client.getNetwork();
-        print(response);
-      } catch (e) {
-        print(e);
-        fail('exception: $e');
-      }
-    });
+    // test('test node info on private node', () async {
+    //   try {
+    //     final response = await client.getNetwork();
+    //     print(response);
+    //   } catch (e) {
+    //     print(e);
+    //     fail('exception: $e');
+    //   }
+    // });
 
-    test('test block head info on private node', () async {
-      try {
-        final response = await client.getBlockNumber();
-        print(response);
-      } catch (e) {
-        print(e);
-        fail('exception: $e');
-      }
-    });
+    // test('test block head info on private node', () async {
+    //   try {
+    //     final response = await client.getBlockNumber();
+    //     print(response);
+    //   } catch (e) {
+    //     print(e);
+    //     fail('exception: $e');
+    //   }
+    // });
 
     test('Simple raw asset transaction', () async {
       final senderAddress = await first.extractAddress();
@@ -170,48 +171,58 @@ void main() async {
 
       expect(rawTransaction, isA<TransactionReceipt>());
 
-      print(rawTransaction);
-    });
+      final txId = await client.sendTransaction(
+          first,
+          rawTransaction['rawTx'] as TransactionReceipt,
+          rawTransaction['messageToSign'] as Uint8List);
 
-    test('Simple raw poly transaction', () async {
-      final senderAddress = await first.extractAddress();
-      final recipientAddress = await second.extractAddress();
+      final senderBalance = await client.getBalance(senderAddress);
 
-      final balanceOfSender = await client.getBalance(senderAddress);
-      final balanceOfRecipient = await client.getBalance(recipientAddress);
-      final value = 2;
-
-      final polyValue = SimpleValue(value.toString());
-
-      final recipients = <String, SimpleValue>{
-        recipientAddress.toBase58(): polyValue
-      };
-
-      final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, '100');
-
-      final rawTransaction = await client.sendRawPolyTransfer(
-          issuer: senderAddress,
-          sender: senderAddress,
-          recipients: recipients,
-          fee: fee,
-          changeAddress: senderAddress);
-
-      final to = SimpleRecipient(recipientAddress, polyValue);
-
-      expect(rawTransaction, isA<TransactionReceipt>());
+      expect(senderBalance.polys.getInNanopoly,
+          balanceOfSender.polys.getInNanopoly - VALHALLA_FEE);
 
       print(rawTransaction);
     });
 
-    test('get Transaction receipt', () async {
-      final receipt = await client.getTransactionById(transactionId);
-      print(receipt.toJson());
-      final receipt2 = await client.getTransactionById(transactionId2);
-      print(receipt2.toJson());
-      final receipt3 = await client.getTransactionById(transactionId);
-      print(receipt3.toJson());
-      expect(receipt, isA<TransactionReceipt>());
-    });
+    // test('Simple raw poly transaction', () async {
+    //   final senderAddress = await first.extractAddress();
+    //   final recipientAddress = await second.extractAddress();
+
+    //   final balanceOfSender = await client.getBalance(senderAddress);
+    //   final balanceOfRecipient = await client.getBalance(recipientAddress);
+    //   final value = 2;
+
+    //   final polyValue = SimpleValue(value.toString());
+
+    //   final recipients = <String, SimpleValue>{
+    //     recipientAddress.toBase58(): polyValue
+    //   };
+
+    //   final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, '100');
+
+    //   final rawTransaction = await client.sendRawPolyTransfer(
+    //       issuer: senderAddress,
+    //       sender: senderAddress,
+    //       recipients: recipients,
+    //       fee: fee,
+    //       changeAddress: senderAddress);
+
+    //   final to = SimpleRecipient(recipientAddress, polyValue);
+
+    //   expect(rawTransaction, isA<TransactionReceipt>());
+
+    //   print(rawTransaction);
+    // });
+
+    // test('get Transaction receipt', () async {
+    //   final receipt = await client.getTransactionById(transactionId);
+    //   print(receipt.toJson());
+    //   final receipt2 = await client.getTransactionById(transactionId2);
+    //   print(receipt2.toJson());
+    //   final receipt3 = await client.getTransactionById(transactionId);
+    //   print(receipt3.toJson());
+    //   expect(receipt, isA<TransactionReceipt>());
+    // });
 
     // test('Simple raw arbit transaction', () async {
     //   final senderAddress = await first.extractAddress();

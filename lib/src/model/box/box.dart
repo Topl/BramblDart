@@ -21,12 +21,13 @@ class Box<T> extends GenericBox {
   @_Converter()
   final T value;
   final Nonce nonce;
-  final String typeString;
+  final String type;
   @override
   @BoxIdConverter()
+  @JsonKey(name: 'id')
   late BoxId boxId = BoxId.apply(this);
 
-  Box(this.evidence, this.nonce, this.typeString, this.value)
+  Box(this.evidence, this.nonce, this.type, this.value)
       : super(evidence, value);
 
   @override
@@ -34,7 +35,7 @@ class Box<T> extends GenericBox {
 
   @override
   String toString() {
-    return typeString + json.encode(toJson());
+    return type + json.encode(toJson());
   }
 
   @override

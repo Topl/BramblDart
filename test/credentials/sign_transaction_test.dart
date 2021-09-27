@@ -3,6 +3,7 @@ import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/client.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
+import 'package:mubrambl/src/model/box/box.dart';
 import 'package:mubrambl/src/model/box/box_id.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/sender.dart';
@@ -25,7 +26,15 @@ void main() {
     final transactionReceipt = TransactionReceipt(
         id: ModifierId.create(Uint8List(MODIFIER_ID_SIZE)),
         txType: 'AssetTransfer',
-        newBoxes: [BoxId.applyByteArray(Uint8List(BLAKE2B_256_DIGEST_SIZE))],
+        newBoxes: [
+          Box.fromJson({
+            'nonce': '-586686527903758527',
+            'id': '58e5WCs5DvgYPQUsyzEVLkoAHRJBL5LgsPX8vxRcBDig',
+            'evidence': 'YbEfzvNJ9YeaejXvhV1G4TdBrdYg1mBgzZNAwQ5TYssm',
+            'type': 'PolyBox',
+            'value': {'type': 'Simple', 'quantity': '999999'}
+          })
+        ],
         fee: PolyAmount.zero(),
         timestamp: 0,
         boxesToRemove: [

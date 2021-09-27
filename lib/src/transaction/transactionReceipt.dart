@@ -15,8 +15,8 @@ import 'package:mubrambl/src/utils/block_time.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:mubrambl/src/utils/util.dart';
+import 'package:mubrambl/src/model/box/box.dart';
 import 'package:pinenacl/ed25519.dart';
-import 'package:pinenacl/x25519.dart';
 
 typedef TxType = int;
 
@@ -29,8 +29,7 @@ class TransactionReceipt {
   final ModifierId id;
 
   /// The number of boxes that were generated with this transaction.
-  @BoxIdConverter()
-  final List<BoxId> newBoxes;
+  final List<Box> newBoxes;
 
   /// Proposition Type signature(s)
   final List<SignatureContainer> signatures;
@@ -93,7 +92,25 @@ class TransactionReceipt {
       this.blockId,
       this.blockNumber});
 
-  String toJson() => toString();
+  Map<String, dynamic> toMempoolJson() => {
+        'id': id.toString(),
+        'txType': txType,
+        'fee': fee.toString(),
+        'timestamp': formatter.format(BifrostDateTime().encode(timestamp)),
+        'propositionType': propositionType.propositionName,
+        'messageToSign': Base58Data(messageToSign ?? Uint8List(0)).show,
+        'data': data?.show,
+        'newBoxes': encodeBoxes(newBoxes),
+        'boxesToRemove': json.encode(boxesToRemove),
+        'signatures': encodeSignatures(signatures, propositionType)
+      };
+
+  Map<String, dynamic> toJson() {
+    final result = toMempoolJson();
+    result['blockId'] = blockId.toString();
+    result['blockNubmer'] = blockNumber;
+    return result;
+  }
 
   @override
   String toString() {
@@ -101,7 +118,7 @@ class TransactionReceipt {
         'from: ${json.encode(from)}, to: ${json.encode(to)}, fee: ${fee.toString()},'
         'timestamp: ${formatter.format(BifrostDateTime().encode(timestamp))}, '
         'propositionType: ${propositionType.propositionName}, messageToSign: ${Base58Data(messageToSign ?? Uint8List(0)).show},  '
-        'data: ${data?.show}, newBoxes: ${json.encode(newBoxes)}, '
+        'data: ${data?.show}, newBoxes: ${encodeBoxes(newBoxes)}, '
         'boxesToRemove: ${json.encode(boxesToRemove)}, signatures: ${encodeSignatures(signatures, propositionType)}, blockNumber: $blockNumber, blockId: ${blockId.toString()}';
   }
 
@@ -152,8 +169,7 @@ class TransactionReceipt {
             Uint8List.fromList(map['messageToSign'] as List<int>? ?? []),
         data: data,
         newBoxes: (map['newBoxes'] as List)
-            .map((box) => BoxIdConverter()
-                .fromJson((box as Map<String, dynamic>)['id'] as String))
+            .map((box) => Box.fromJson(box as Map<String, dynamic>))
             .toList(),
         boxesToRemove: (map['boxesToRemove'] as List)
             .map((boxId) => BoxIdConverter().fromJson(boxId as String))
@@ -170,7 +186,7 @@ class TransactionReceipt {
 
   TransactionReceipt copyWith(
       {ModifierId? id,
-      List<BoxId>? newBoxes,
+      List<Box>? newBoxes,
       List<SignatureContainer>? signatures,
       PolyAmount? fee,
       int? timestamp,
@@ -215,6 +231,10 @@ class TransactionReceipt {
           throw ArgumentError('Transaction type currently not supported');
       }
     }).toList();
+  }
+
+  List<Map<String, dynamic>> encodeBoxes(List<Box> boxes) {
+    return boxes.map((box) => box.toJson()).toList();
   }
 
   static List<SignatureContainer> decodeSignatures(

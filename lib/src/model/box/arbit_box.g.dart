@@ -11,20 +11,20 @@ ArbitBox _$ArbitBoxFromJson(Map<String, dynamic> json) => $checkedCreate(
       json,
       ($checkedConvert) {
         final val = ArbitBox(
-          $checkedConvert(
-              'evidence', (v) => Evidence.fromJson(v as Map<String, dynamic>)),
+          $checkedConvert('evidence', (v) => Evidence.fromJson(v as String)),
           $checkedConvert('nonce', (v) => v as String),
           $checkedConvert('simpleValue',
               (v) => SimpleValue.fromJson(v as Map<String, dynamic>)),
         );
-        $checkedConvert('boxId',
+        $checkedConvert('id',
             (v) => val.boxId = const BoxIdConverter().fromJson(v as String));
         return val;
       },
+      fieldKeyMap: const {'boxId': 'id'},
     );
 
 Map<String, dynamic> _$ArbitBoxToJson(ArbitBox instance) => <String, dynamic>{
-      'boxId': const BoxIdConverter().toJson(instance.boxId),
+      'id': const BoxIdConverter().toJson(instance.boxId),
       'evidence': instance.evidence.toJson(),
       'nonce': instance.nonce,
       'simpleValue': instance.simpleValue.toJson(),
