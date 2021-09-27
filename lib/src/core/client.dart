@@ -15,6 +15,7 @@ import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
 import 'package:mubrambl/src/transaction/transaction.dart';
 import 'package:mubrambl/src/transaction/transactionReceipt.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/encoding.dart';
@@ -288,5 +289,23 @@ class BramblClient {
           .toJson()
     ]).then((value) =>
         TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
+  }
+
+  /// Returns the information about a transaction requested by a transactionId [transactionId]
+  Future<TransactionReceipt> getTransactionById(String transactionId) {
+    return _makeRPCCall<Map<String, dynamic>>('topl_transactionById', params: [
+      {'transactionId': transactionId}
+    ]).then((s) => TransactionReceipt.fromJson(s));
+  }
+
+  Future<PolyAmount> getFee() async {
+    final network = await getNetwork();
+    if (network == TOPLNET) {
+      return PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, TOPLNET_FEE);
+    } else if (network == VALHALLA) {
+      return PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, VALHALLA_FEE);
+    } else {
+      return PolyAmount.zero();
+    }
   }
 }

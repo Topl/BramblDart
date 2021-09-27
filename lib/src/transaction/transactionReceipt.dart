@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
 import 'package:mubrambl/src/attestation/proposition.dart';
+import 'package:mubrambl/src/attestation/signature_container.dart';
 import 'package:mubrambl/src/core/amount.dart';
+import 'package:mubrambl/src/core/block_number.dart';
 import 'package:mubrambl/src/model/box/box_id.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/sender.dart';
@@ -13,6 +14,7 @@ import 'package:mubrambl/src/modifier/modifier_id.dart';
 import 'package:mubrambl/src/utils/block_time.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:mubrambl/src/utils/util.dart';
+import 'package:pinenacl/ed25519.dart';
 import 'package:pinenacl/x25519.dart';
 
 typedef TxType = int;
@@ -30,10 +32,10 @@ class TransactionReceipt {
   final List<BoxId> newBoxes;
 
   /// Proposition Type signature(s)
-  final Map<Proposition, Uint8List> signatures;
+  final List<SignatureContainer> signatures;
 
   /// The amount of polys that was used to pay for this transaction to the network
-  final PolyAmount fee;
+  final PolyAmount? fee;
 
   /// The time at which this transaction was received by the network
   final int timestamp;
@@ -46,7 +48,7 @@ class TransactionReceipt {
   final List<BoxId> boxesToRemove;
 
   // The sender/s of this transaction. This is a required field
-  final List<Sender> from;
+  final List<Sender>? from;
 
   // The address(es) of the receiver. This is a required field
   final List to;
@@ -63,12 +65,20 @@ class TransactionReceipt {
   /// Whether or not this transfer has been successfully confirmed into a block
   final bool status;
 
-  String get typeString => '';
+  /// The type of transaction
+  final String txType;
+
+  /// Hash of the messageToSign of this block where this transaction is in (32 bytes).
+  final ModifierId? blockId;
+
+  /// The number of the block into which this transaction was forged
+  final BlockNum? blockNumber;
 
   TransactionReceipt(
       {required this.id,
+      required this.txType,
       required this.newBoxes,
-      this.signatures = const {},
+      this.signatures = const [],
       this.status = false,
       required this.fee,
       required this.timestamp,
@@ -78,13 +88,20 @@ class TransactionReceipt {
       required this.to,
       required this.propositionType,
       this.data,
-      this.minting});
+      this.minting,
+      this.blockId,
+      this.blockNumber});
 
   String toJson() => toString();
 
   @override
   String toString() {
-    return 'TransactionReceipt{id: ${id.toString()}, from: ${json.encode(from)}, to: ${json.encode(to)}, fee: ${fee.toString()}, timestamp: ${formatter.format(BifrostDateTime().encode(timestamp))}, propositionType: $propositionType, messageToSign: ${Base58Data(messageToSign ?? Uint8List(0)).show}, data: ${data?.show}, newBoxes: ${json.encode(newBoxes)}, boxesToRemove: ${json.encode(boxesToRemove)}, signatures: ${json.encode(signatures)}';
+    return 'TransactionReceipt{id: ${id.toString()}, txType: $txType, '
+        'from: ${json.encode(from)}, to: ${json.encode(to)}, fee: ${fee.toString()},'
+        'timestamp: ${formatter.format(BifrostDateTime().encode(timestamp))}, '
+        'propositionType: $propositionType, messageToSign: ${Base58Data(messageToSign ?? Uint8List(0)).show},  '
+        'data: ${data?.show}, newBoxes: ${json.encode(newBoxes)}, '
+        'boxesToRemove: ${json.encode(boxesToRemove)}, signatures: ${encodeSignatures(signatures)}, blockNumber: $blockNumber, blockId: ${blockId.toString()}';
   }
 
   static void _validateFields(Map<String, dynamic> map) {
@@ -106,20 +123,14 @@ class TransactionReceipt {
   factory TransactionReceipt.fromJson(Map<String, dynamic> map) {
     _validateFields(map);
 
-    final data = Latin1Converter().fromJson(map['data'] as String);
+    final data = map['data'] != null
+        ? Latin1Converter().fromJson(map['data'] as String)
+        : null;
 
     // ignore: unnecessary_null_comparison
     if (!isValidMetadata(data)) {
-      throw ArgumentError('Invalid data: ${data.show}');
+      throw ArgumentError('Invalid data: ${data?.show}');
     }
-
-    final signatures = map['signatures'] as Map<String, dynamic>;
-    final formattedSignatures = <Proposition, Uint8List>{};
-    signatures.forEach((k, v) {
-      final newKey = Proposition.fromBase58(Base58Data.validated(k));
-      final newValue = Base58Encoder.instance.decode(v as String);
-      formattedSignatures[newKey] = newValue;
-    });
 
     return TransactionReceipt(
         from: (map['from'] as List)
@@ -132,6 +143,7 @@ class TransactionReceipt {
         propositionType: map['propositionType'] as String,
         id: ModifierId.create(
             Base58Data.validated(map['txId'] as String).value),
+        txType: map['txType'] as String,
         messageToSign:
             Uint8List.fromList(map['messageToSign'] as List<int>? ?? []),
         data: data,
@@ -142,7 +154,50 @@ class TransactionReceipt {
         boxesToRemove: (map['boxesToRemove'] as List)
             .map((boxId) => BoxIdConverter().fromJson(boxId as String))
             .toList(),
-        signatures: formattedSignatures);
+        signatures: decodeSignatures(map['signatures'] as Map<String, dynamic>),
+        blockId: map.containsKey('blockId')
+            ? ModifierId.create(
+                Base58Data.validated(map['blockId'] as String).value)
+            : null,
+        blockNumber: map['blockNumber'] != null
+            ? BlockNum.exact(map['blockNumber'] as int)
+            : const BlockNum.pending());
+  }
+
+  TransactionReceipt copyWith(
+      {ModifierId? id,
+      List<BoxId>? newBoxes,
+      List<SignatureContainer>? signatures,
+      PolyAmount? fee,
+      int? timestamp,
+      Uint8List? messageToSign,
+      List<BoxId>? boxesToRemove,
+      List<Sender>? from,
+      List? to,
+      String? propositionType,
+      Latin1Data? data,
+      bool? minting,
+      bool? status,
+      String? txType,
+      ModifierId? blockId,
+      BlockNum? blockNumber}) {
+    return TransactionReceipt(
+        id: id ?? this.id,
+        newBoxes: newBoxes ?? this.newBoxes,
+        signatures: signatures ?? this.signatures,
+        fee: fee ?? this.fee,
+        timestamp: timestamp ?? this.timestamp,
+        messageToSign: messageToSign ?? this.messageToSign,
+        boxesToRemove: boxesToRemove ?? this.boxesToRemove,
+        from: from ?? this.from,
+        to: to ?? this.to,
+        propositionType: propositionType ?? this.propositionType,
+        data: data ?? this.data,
+        minting: minting ?? this.minting,
+        status: status ?? this.status,
+        txType: txType ?? this.txType,
+        blockId: blockId ?? this.blockId,
+        blockNumber: blockNumber ?? this.blockNumber);
   }
 
   static List<Object> decodeTo(List to) {
@@ -158,14 +213,41 @@ class TransactionReceipt {
     }).toList();
   }
 
+  static List<SignatureContainer> decodeSignatures(
+      Map<String, dynamic> signatures) {
+    final formattedSignatures = <SignatureContainer>[];
+    signatures.forEach((k, v) {
+      final proposition = Proposition.fromString(k);
+      final value =
+          Signature(Base58Data.validated(v as String).value.sublist(1));
+      final signatureContainer = SignatureContainer(proposition, value);
+      formattedSignatures.add(signatureContainer);
+    });
+    return formattedSignatures;
+  }
+
+  static Map<String, String> encodeSignatures(
+      List<SignatureContainer> signatures) {
+    final encodedSignatures = <String, String>{};
+    signatures.forEach((value) {
+      final newKey = value.proposition.toString();
+      final newValue = Base58Data(value.proof.buffer.asUint8List()).show;
+      encodedSignatures[newKey] = newValue;
+    });
+    return encodedSignatures;
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is TransactionReceipt &&
           runtimeType == other.runtimeType &&
           id == other.id &&
+          blockId == other.blockId &&
+          blockNumber == other.blockNumber &&
+          txType == other.txType &&
           const ListEquality().equals(newBoxes, other.newBoxes) &&
-          const MapEquality().equals(signatures, other.signatures) &&
+          const ListEquality().equals(signatures, other.signatures) &&
           fee == other.fee &&
           timestamp == other.timestamp &&
           const ListEquality()
@@ -174,6 +256,9 @@ class TransactionReceipt {
   @override
   int get hashCode =>
       id.hashCode ^
+      blockId.hashCode ^
+      blockNumber.hashCode ^
+      txType.hashCode ^
       newBoxes.hashCode ^
       signatures.hashCode ^
       fee.hashCode ^

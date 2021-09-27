@@ -12,8 +12,8 @@ Evidence _$EvidenceFromJson(Map<String, dynamic> json) => $checkedCreate(
       ($checkedConvert) {
         final val = Evidence(
           $checkedConvert('prefix', (v) => v as int),
-          $checkedConvert('evBytes',
-              (v) => (v as List<dynamic>).map((e) => e as int).toList()),
+          $checkedConvert(
+              'evBytes', (v) => Digest.fromJson(v as Map<String, dynamic>)),
         );
         return val;
       },
@@ -21,5 +21,5 @@ Evidence _$EvidenceFromJson(Map<String, dynamic> json) => $checkedCreate(
 
 Map<String, dynamic> _$EvidenceToJson(Evidence instance) => <String, dynamic>{
       'prefix': instance.prefix,
-      'evBytes': instance.evBytes,
+      'evBytes': instance.evBytes.toJson(),
     };

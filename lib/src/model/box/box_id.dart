@@ -19,12 +19,11 @@ class BoxId<T> {
   }
 
   factory BoxId.apply(Box<T> box) {
-    return BoxId.fromEviNonce(box.evidence, box.nonce);
+    return BoxId.fromEviNonce(box.evidence);
   }
 
-  factory BoxId.fromEviNonce(Evidence evidence, Nonce nonce) {
-    return BoxId(Digest.from(
-        createHash(Uint8List.fromList(evidence.evBytes + [nonce])), 32));
+  factory BoxId.fromEviNonce(Evidence evidence) {
+    return BoxId(evidence.evBytes);
   }
 
   factory BoxId.fromJson(String json) {

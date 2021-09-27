@@ -155,7 +155,10 @@ bool isValidNetwork(String networkPrefix) {
 
 /// Takes in a [Latin1Data] and returns whether or not it is a valid data/metadata value
 /// Returns a [boolean] about whether or not the argument is valid
-bool isValidMetadata(Latin1Data metadata) {
+bool isValidMetadata(Latin1Data? metadata) {
+  if (metadata == null) {
+    return true;
+  }
   if (metadata.show.length > 127) {
     return false;
   }
