@@ -11,8 +11,7 @@ class Sender {
   /// from a map. Pass the map to the generated `_$SenderFromJson()` constructor.
   /// The constructor is named after the source class, in this case, Sender.
   factory Sender.fromJson(List<dynamic> jsonList) => Sender(
-      ToplAddress.fromBase58(jsonList[0] as String),
-      int.parse(jsonList[1] as String));
+      ToplAddress.fromBase58(jsonList[0] as String), jsonList[1] as String);
 
   String toJson() => toString();
 

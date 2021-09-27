@@ -1,7 +1,15 @@
-import 'dart:convert';
-
 import 'package:bip_topl/bip_topl.dart';
+import 'package:mubrambl/src/core/amount.dart';
+import 'package:mubrambl/src/core/client.dart';
+import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
+import 'package:mubrambl/src/model/box/box_id.dart';
+import 'package:mubrambl/src/model/box/recipient.dart';
+import 'package:mubrambl/src/model/box/sender.dart';
+import 'package:mubrambl/src/model/box/token_value_holder.dart';
+import 'package:mubrambl/src/modifier/modifier_id.dart';
+import 'package:mubrambl/src/transaction/transactionReceipt.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/encoding.dart';
@@ -14,10 +22,46 @@ void main() {
             '60d399da83ef80d8d4f8d223239efdc2b8fef387e1b5219137ffb4e8fbdea15adc9366b7d003af37c11396de9a83734e30e05e851efa32745c9cd7b42712c890608763770eddf77248ab652984b21b849760d1da74a6f5bd633ce41adceef07a')),
         0x01,
         PropositionType.ed25519());
-    final signature = (await key.signToSignature(ascii.encode('Hello World')));
+    final transactionReceipt = TransactionReceipt(
+        id: ModifierId.create(Uint8List(MODIFIER_ID_SIZE)),
+        txType: 'AssetTransfer',
+        newBoxes: [BoxId.applyByteArray(Uint8List(BLAKE2B_256_DIGEST_SIZE))],
+        fee: PolyAmount.zero(),
+        timestamp: 0,
+        boxesToRemove: [
+          BoxId.applyByteArray(Uint8List(BLAKE2B_256_DIGEST_SIZE))
+        ],
+        from: [
+          Sender(
+              ToplAddress.fromBase58(
+                  '3NKBoNgMRpKahSi8tC8XPetDom9bdh3NXxSpfZ8fkvDMYwFcgnK1'),
+              '3945781279437276569')
+        ],
+        to: [
+          SimpleRecipient(
+              ToplAddress.fromBase58(
+                  '3NKBoNgMRpKahSi8tC8XPetDom9bdh3NXxSpfZ8fkvDMYwFcgnK1'),
+              SimpleValue('0'))
+        ],
+        propositionType: PropositionType.ed25519());
+    final messageToSign =
+        'R1JphThT5KxykWcoHGm8coPkeETw6NR4uixCFX68UNWHNnKrRVi8pAkoknUCXvmvrmtDxyuXrQxdv2AyUr5iam7mqzVmSMXnA1m988ReAnQCAZPuVcTdhVCQrhFLUTNGQ85Emb3kLRaC4ymgunMt2rC6EdV9ExtGtcBz4AcCMgP9GjaussQUtxmYJeVsRJqDAAWb9YxUMmaKTXeTuSZis1RCXTKahtnkWD1rs2DS8bKeq6iJLNTj8ZS3augDgcu3K5Rk2B6gUMMrNd9g65WfguJqZjkeoPcs2QzsMSFdYgsNEcAwtkYcCHdZtqr6iNts75U7CpoQCUr8irGUM9rSXY2mFE';
 
-    expect(HexCoder.instance.encode(signature),
-        '90194d57cde4fdadd01eb7cf161780c277e129fc7135b97779a3268837e4cd2e9444b9bb91c0e84d23bba870df3c4bda91a110ef735638fa7a34ea2046d4be04');
+    final client = BramblClient();
+
+    final signature = await client.signTransaction(
+      key,
+      transactionReceipt,
+      Base58Encoder.instance.decode(messageToSign),
+    );
+
+    expect(
+        TransactionReceipt.encodeSignatures(
+            signature.signatures, signature.propositionType),
+        {
+          '148bSqf8YKaziQjefWnLVFzpw5RX1p2ren2VKY7zaXqR4zdNpacB6qcGDCFaDMMAXDiDXrRiVKp1rnwF1DxjYpKHB':
+              '15VEJFr8MTj2nHHydRUdDyn743MmeCFrSh3rWzLe6SP7Mb1m52KUCaYLWM9dC4dZ9x1vbDVCBUAXyYrox6gKRx4TZ'
+        });
   });
 
   test('extract address', () async {
