@@ -317,6 +317,15 @@ class BramblClient {
     ]).then((s) => TransactionReceipt.fromJson(s));
   }
 
+  /// Returns a receipt of a transaction that has not yet been forged into a block
+  /// and is still present in the mempool
+  Future<TransactionReceipt?> getTransactionFromMempool(String id) {
+    return _makeRPCCall<Map<String, dynamic>>('topl_transactionFromMempool',
+        params: [
+          {'transactionId': id}
+        ]).then((value) => TransactionReceipt.fromJson(value));
+  }
+
   Future<TransactionReceipt> _fillMissingData(
       {required Credentials credentials,
       required TransactionReceipt transactionReceipt,

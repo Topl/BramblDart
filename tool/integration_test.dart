@@ -10,6 +10,7 @@ import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/client.dart';
 import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
+import 'package:mubrambl/src/json_rpc.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/security_root.dart';
@@ -211,6 +212,11 @@ void main() async {
       final receipt3 = await client.getTransactionById(transactionId);
       print(receipt3.toJson());
       expect(receipt, isA<TransactionReceipt>());
+    });
+
+    test('get transaction from Mempool throws exception', () {
+      expect(client.getTransactionFromMempool('0123'),
+          throwsA(TypeMatcher<RPCError>()));
     });
 
     // test('Simple raw arbit transaction', () async {
