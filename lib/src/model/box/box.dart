@@ -150,4 +150,10 @@ class TokenBox extends Box {
   /// The constructor is named after the source class, in this case, TokenBox.
   factory TokenBox.fromJson(Map<String, dynamic> json) =>
       _$TokenBoxFromJson(json);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$TokenBoxToJson`.
+  @override
+  Map<String, dynamic> toJson() => _$TokenBoxToJson(this);
 }
