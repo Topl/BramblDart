@@ -53,7 +53,8 @@ class TokenValueHolder {
 class SimpleValue extends TokenValueHolder {
   final int valueTypePrefix = 1;
   final String type;
-  SimpleValue(this.type, String quantity) : super(quantity);
+  SimpleValue({this.type = 'Simple', required String quantity})
+      : super(quantity);
 
   /// A necessary factory constructor for creating a new SimpleValue instance
   /// from a map. Pass the map to the generated `_$SimpleValueFromJson()` constructor.
@@ -72,7 +73,7 @@ class SimpleValue extends TokenValueHolder {
     String? type,
     String? quantity,
   }) {
-    return SimpleValue(type ?? this.type, quantity ?? this.quantity);
+    return SimpleValue(quantity: quantity ?? this.quantity);
   }
 
   @override

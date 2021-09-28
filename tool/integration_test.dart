@@ -191,7 +191,7 @@ void main() async {
       final balanceOfRecipient = await client.getBalance(recipientAddress);
       final value = 2;
 
-      final polyValue = SimpleValue('Simple', value.toString());
+      final polyValue = SimpleValue(quantity: value.toString());
 
       final recipients = <String, SimpleValue>{
         recipientAddress.toBase58(): polyValue
