@@ -3,6 +3,7 @@ import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/client.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
+import 'package:mubrambl/src/model/box/box.dart';
 import 'package:mubrambl/src/model/box/box_id.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/sender.dart';
@@ -25,7 +26,15 @@ void main() {
     final transactionReceipt = TransactionReceipt(
         id: ModifierId.create(Uint8List(MODIFIER_ID_SIZE)),
         txType: 'AssetTransfer',
-        newBoxes: [BoxId.applyByteArray(Uint8List(BLAKE2B_256_DIGEST_SIZE))],
+        newBoxes: [
+          TokenBox.fromJson({
+            'nonce': '-586686527903758527',
+            'id': '58e5WCs5DvgYPQUsyzEVLkoAHRJBL5LgsPX8vxRcBDig',
+            'evidence': 'YbEfzvNJ9YeaejXvhV1G4TdBrdYg1mBgzZNAwQ5TYssm',
+            'type': 'PolyBox',
+            'value': {'type': 'Simple', 'quantity': '999999'}
+          })
+        ],
         fee: PolyAmount.zero(),
         timestamp: 0,
         boxesToRemove: [
@@ -41,7 +50,7 @@ void main() {
           SimpleRecipient(
               ToplAddress.fromBase58(
                   '3NKBoNgMRpKahSi8tC8XPetDom9bdh3NXxSpfZ8fkvDMYwFcgnK1'),
-              SimpleValue('0'))
+              SimpleValue('Simple', '0'))
         ],
         propositionType: PropositionType.ed25519());
     final messageToSign =
@@ -59,8 +68,8 @@ void main() {
         TransactionReceipt.encodeSignatures(
             signature.signatures, signature.propositionType),
         {
-          '148bSqf8YKaziQjefWnLVFzpw5RX1p2ren2VKY7zaXqR4zdNpacB6qcGDCFaDMMAXDiDXrRiVKp1rnwF1DxjYpKHB':
-              '15VEJFr8MTj2nHHydRUdDyn743MmeCFrSh3rWzLe6SP7Mb1m52KUCaYLWM9dC4dZ9x1vbDVCBUAXyYrox6gKRx4TZ'
+          'KVAveekFcodVt7bUCMK6jCAqRbHTsS7gAzVMLu1ZkrrcPdorhDVRWhTZCHaAdV1vgAZ37VR1oS1RByQvtzu5DtgR':
+              'Lqon4qk4kwfZkfvS73bqSySxPXY6Ff7U61rYo7f5fQYtz2C78vnXFdXrMBd9LmQZQUG6UYthwnXXwtysmiUxMdro'
         });
   });
 

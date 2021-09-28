@@ -1,16 +1,16 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'arbit_box.dart';
+part of 'poly_box.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ArbitBox _$ArbitBoxFromJson(Map<String, dynamic> json) => $checkedCreate(
-      'ArbitBox',
+PolyBox _$PolyBoxFromJson(Map<String, dynamic> json) => $checkedCreate(
+      'PolyBox',
       json,
       ($checkedConvert) {
-        final val = ArbitBox(
+        final val = PolyBox(
           $checkedConvert('evidence', (v) => Evidence.fromJson(v as String)),
           $checkedConvert(
               'value', (v) => SimpleValue.fromJson(v as Map<String, dynamic>)),
@@ -23,7 +23,7 @@ ArbitBox _$ArbitBoxFromJson(Map<String, dynamic> json) => $checkedCreate(
       fieldKeyMap: const {'boxId': 'id'},
     );
 
-Map<String, dynamic> _$ArbitBoxToJson(ArbitBox instance) => <String, dynamic>{
+Map<String, dynamic> _$PolyBoxToJson(PolyBox instance) => <String, dynamic>{
       'id': const BoxIdConverter().toJson(instance.boxId),
       'value': instance.value.toJson(),
       'evidence': instance.evidence?.toJson(),

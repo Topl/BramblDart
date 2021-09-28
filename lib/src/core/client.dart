@@ -173,28 +173,11 @@ class BramblClient {
   Future<List<Balance>> getAllAddressBalances(List<ToplAddress> addresses,
       {int batchSize = 50}) async {
     final result = <Balance>[];
-    var processed = 0;
     await Future.forEach(_splitArray(addresses, batchSize),
         (List<ToplAddress> batch) async {
-      var retry = true;
-      final pss = processed;
-      while (retry) {
-        try {
-          final balances = await _getBalances(batch);
-          if (balances.isEmpty) return;
-          result.addAll(balances);
-        } catch (e) {
-          // Sometimes rate limit may apply, this retries for a period of time to get around the rate limiting for users
-          log.info(
-              'Exceptions caught (possible node rate limit), retrying in $RETRY_VALUE seconds');
-          print(e);
-          retry = true;
-          await Future.delayed(Duration(seconds: RETRY_VALUE));
-          processed = pss;
-          continue;
-        }
-        retry = false;
-      }
+      final balances = await _getBalances(batch);
+      if (balances.isEmpty) return;
+      result.addAll(balances);
     });
     return result;
   }
@@ -203,7 +186,7 @@ class BramblClient {
   ///
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
   ///
-  Future<TransactionReceipt> sendRawAssetTransfer(
+  Future<Map<String, dynamic>> sendRawAssetTransfer(
       {required ToplAddress sender,
       required Map<String, AssetValue> recipients,
       PolyAmount? fee,
@@ -230,15 +213,19 @@ class BramblClient {
               consolidationAddress: consolidationAddress,
               assetCode: assetCode)
           .toJson()
-    ]).then((value) =>
-        TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
+    ]).then((value) => {
+          'rawTx': TransactionReceipt.fromJson(
+              value['rawTx'] as Map<String, dynamic>),
+          'messageToSign':
+              Base58Data.validated(value['messageToSign'] as String).value
+        });
   }
 
   /// Sends a raw poly transfer call to a node
   ///
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
   ///
-  Future<TransactionReceipt> sendRawPolyTransfer(
+  Future<Map<String, dynamic>> sendRawPolyTransfer(
       {required ToplAddress sender,
       required Map<String, SimpleValue> recipients,
       PolyAmount? fee,
@@ -259,15 +246,19 @@ class BramblClient {
               fee: fee,
               data: data != null ? Latin1Data(data) : null)
           .toJson()
-    ]).then((value) =>
-        TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
+    ]).then((value) => {
+          'rawTx': TransactionReceipt.fromJson(
+              value['rawTx'] as Map<String, dynamic>),
+          'messageToSign':
+              Base58Data.validated(value['messageToSign'] as String).value
+        });
   }
 
   /// Sends a raw arbit transfer call to a node
   ///
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
   ///
-  Future<TransactionReceipt> sendRawArbitTransfer(
+  Future<Map<String, dynamic>> sendRawArbitTransfer(
       {required ToplAddress sender,
       required Map<String, SimpleValue> recipients,
       PolyAmount? fee,
@@ -290,8 +281,12 @@ class BramblClient {
               fee: fee,
               data: data != null ? Latin1Data(data) : null)
           .toJson()
-    ]).then((value) =>
-        TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
+    ]).then((value) => {
+          'rawTx': TransactionReceipt.fromJson(
+              value['rawTx'] as Map<String, dynamic>),
+          'messageToSign':
+              Base58Data.validated(value['messageToSign'] as String).value
+        });
   }
 
   /// Signs the [transaction] with the credentials [cred]. The transaction will
@@ -358,5 +353,33 @@ class BramblClient {
     } else {
       return PolyAmount.zero();
     }
+  }
+
+  /// Signs the given transaction using the keys supplied in the [cred]
+  /// object to upload it to the client so that it can be forged into a block.
+  ///
+  /// Returns a hash of the messageToSign of the transaction which, after the transaction has been
+  /// included in a mined block, can be used to obtain detailed information
+  /// about the transaction.
+  Future<String> sendTransaction(Credentials cred,
+      TransactionReceipt transaction, Uint8List messageToSign) async {
+    if (cred is CustomTransactionSender) {
+      return cred.sendTransaction(transaction);
+    }
+    final signed = await signTransaction(cred, transaction, messageToSign);
+    return sendSignedTransaction(signed);
+  }
+
+  /// Sends a signed transaction.
+  ///
+  /// To obtain a transaction in a signed form, use [signTransaction].
+  ///
+  /// Returns a hash of the messageToSign of the transaction which, after the transaction has been
+  /// included in a forged block, can be used to obtain detailed information
+  /// about the transaction.
+  Future<String> sendSignedTransaction(TransactionReceipt transaction) async {
+    return _makeRPCCall('topl_broadcastTx', params: [
+      {'tx': transaction.toBroadcastJson()}
+    ]).then((value) => value['txId'] as String);
   }
 }

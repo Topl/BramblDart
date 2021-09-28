@@ -16,6 +16,7 @@ import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/security_root.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
 import 'package:mubrambl/src/transaction/transactionReceipt.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/encoding.dart';
@@ -36,9 +37,9 @@ const transactionId3 = 'DSWNdaTz3H4oy6Kj1rcATfS5ar4pxZ4jvWZqMthTVhdt';
 void main() async {
   late DockerProcess bifrost;
   late BramblClient client;
-
   late ToplSigningKey first;
   late ToplSigningKey second;
+  late ToplSigningKey genesisAddress;
 
   setUpAll(() async {
     // print('Starting Bifrost on port 9085');
@@ -57,7 +58,7 @@ void main() async {
       try {
         await get(Uri.parse(
             'https://staging.vertx.topl.services/valhalla/$baasProjectId'));
-        //await get(Uri.parse('http://localhost:9085'));
+        // await get(Uri.parse('http://localhost:9085'));
         successful = true;
       } on SocketException {
         await Future.delayed(const Duration(seconds: 2));
@@ -132,7 +133,7 @@ void main() async {
       }
     });
 
-    test('Simple raw asset transaction', () async {
+    test('Simple asset transaction', () async {
       final senderAddress = await first.extractAddress();
       final recipientAddress = await second.extractAddress();
 
@@ -148,14 +149,14 @@ void main() async {
       final securityRoot = SecurityRoot.fromBase58(
           Base58Data.validated('11111111111111111111111111111111'));
 
-      final assetValue =
-          AssetValue(value.toString(), assetCode, securityRoot, 'metadata');
+      final assetValue = AssetValue(
+          value.toString(), assetCode, securityRoot, 'metadata', 'Asset');
 
       final recipients = <String, AssetValue>{
         recipientAddress.toBase58(): assetValue
       };
 
-      final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, '100');
+      final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, VALHALLA_FEE);
 
       final rawTransaction = await client.sendRawAssetTransfer(
           assetCode: assetCode,
@@ -165,16 +166,25 @@ void main() async {
           fee: fee,
           minting: true,
           changeAddress: senderAddress,
-          consolidationAddress: senderAddress);
+          consolidationAddress: senderAddress,
+          data: Latin1Data.validated('data').value);
 
       final to = AssetRecipient(recipientAddress, assetValue);
 
-      expect(rawTransaction, isA<TransactionReceipt>());
+      expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
 
       print(rawTransaction);
+
+      final txId = await client.sendTransaction(
+          first,
+          rawTransaction['rawTx'] as TransactionReceipt,
+          rawTransaction['messageToSign'] as Uint8List);
+
+      final senderBalance = await client.getBalance(senderAddress);
+      print(txId);
     });
 
-    test('Simple raw poly transaction', () async {
+    test('Simple poly transaction', () async {
       final senderAddress = await first.extractAddress();
       final recipientAddress = await second.extractAddress();
 
@@ -182,26 +192,35 @@ void main() async {
       final balanceOfRecipient = await client.getBalance(recipientAddress);
       final value = 2;
 
-      final polyValue = SimpleValue(value.toString());
+      final polyValue = SimpleValue('Simple', value.toString());
 
       final recipients = <String, SimpleValue>{
         recipientAddress.toBase58(): polyValue
       };
 
-      final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, '100');
+      final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, VALHALLA_FEE);
 
       final rawTransaction = await client.sendRawPolyTransfer(
           issuer: senderAddress,
           sender: senderAddress,
           recipients: recipients,
           fee: fee,
-          changeAddress: senderAddress);
+          changeAddress: senderAddress,
+          data: Latin1Data.validated('data').value);
 
       final to = SimpleRecipient(recipientAddress, polyValue);
 
-      expect(rawTransaction, isA<TransactionReceipt>());
+      expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
 
-      print(rawTransaction);
+      final txId = await client.sendTransaction(
+          first,
+          rawTransaction['rawTx'] as TransactionReceipt,
+          rawTransaction['messageToSign'] as Uint8List);
+
+      final senderBalance = await client.getBalance(senderAddress);
+      print(txId);
+
+      print(rawTransaction['rawTx']);
     });
 
     test('get Transaction receipt', () async {

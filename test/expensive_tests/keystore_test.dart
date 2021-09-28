@@ -43,5 +43,25 @@ void main() {
           KeyStore.fromV1Json(json.encode(encodedWallet), password);
       expect(decryptedKeystore.privateKey, privateKey);
     }, tags: 'expensive');
+
+    test('create new keystore $testName', () {
+      final password = content['password'] as String;
+      final privateKey = content['priv'] as String;
+      final keystoreData = content['json'] as Map;
+
+      final keyStore = KeyStore.createNew(privateKey, password, Random.secure(),
+          scryptN: 8192);
+      expect(keyStore.privateKey, privateKey);
+
+      final encodedWallet = json.decode(keyStore.toJson()) as Map;
+
+      expect(
+          encodedWallet['crypto']['cipher'], keystoreData['crypto']['cipher']);
+      expect(encodedWallet['crypto']['kdf'], keystoreData['crypto']['kdf']);
+
+      final decryptedKeystore =
+          KeyStore.fromV1Json(json.encode(encodedWallet), password);
+      expect(decryptedKeystore.privateKey, privateKey);
+    }, tags: 'expensive');
   });
 }

@@ -27,7 +27,7 @@ class Proposition extends ByteList {
   }
 
   factory Proposition.fromBase58(Base58Data data) {
-    return Proposition(data.value);
+    return Proposition(data.value.sublist(1));
   }
 
   Evidence produceEvidence() => Evidence.apply(
