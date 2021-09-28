@@ -173,28 +173,11 @@ class BramblClient {
   Future<List<Balance>> getAllAddressBalances(List<ToplAddress> addresses,
       {int batchSize = 50}) async {
     final result = <Balance>[];
-    var processed = 0;
     await Future.forEach(_splitArray(addresses, batchSize),
         (List<ToplAddress> batch) async {
-      var retry = true;
-      final pss = processed;
-      while (retry) {
-        try {
-          final balances = await _getBalances(batch);
-          if (balances.isEmpty) return;
-          result.addAll(balances);
-        } catch (e) {
-          // Sometimes rate limit may apply, this retries for a period of time to get around the rate limiting for users
-          log.info(
-              'Exceptions caught (possible node rate limit), retrying in $RETRY_VALUE seconds');
-          print(e);
-          retry = true;
-          await Future.delayed(Duration(seconds: RETRY_VALUE));
-          processed = pss;
-          continue;
-        }
-        retry = false;
-      }
+      final balances = await _getBalances(batch);
+      if (balances.isEmpty) return;
+      result.addAll(balances);
     });
     return result;
   }
