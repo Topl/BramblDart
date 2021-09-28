@@ -200,7 +200,6 @@ void main() async {
       final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, VALHALLA_FEE);
 
       final rawTransaction = await client.sendRawPolyTransfer(
-          issuer: senderAddress,
           sender: senderAddress,
           recipients: recipients,
           fee: fee,

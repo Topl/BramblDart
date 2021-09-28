@@ -50,7 +50,7 @@ void main() {
           SimpleRecipient(
               ToplAddress.fromBase58(
                   '3NKBoNgMRpKahSi8tC8XPetDom9bdh3NXxSpfZ8fkvDMYwFcgnK1'),
-              SimpleValue('Simple', '0'))
+              SimpleValue(quantity: '0'))
         ],
         propositionType: PropositionType.ed25519());
     final messageToSign =

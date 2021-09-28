@@ -230,18 +230,16 @@ class BramblClient {
       required Map<String, SimpleValue> recipients,
       PolyAmount? fee,
       ToplAddress? changeAddress,
-      Uint8List? data,
-      required ToplAddress issuer}) {
+      Uint8List? data}) {
     // ignore: prefer_collection_literals
-    final senders = [sender, issuer].toSet().toList();
     return _makeRPCCall('topl_rawPolyTransfer', params: [
       PolyTransaction(
               recipients: recipients.entries
                   .map((entry) => SimpleRecipient(
                       ToplAddress.fromBase58(entry.key), entry.value))
                   .toList(),
-              sender: senders,
-              propositionType: issuer.proposition.propositionName,
+              sender: [sender],
+              propositionType: sender.proposition.propositionName,
               changeAddress: changeAddress,
               fee: fee,
               data: data != null ? Latin1Data(data) : null)
