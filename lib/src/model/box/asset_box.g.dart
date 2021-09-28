@@ -13,8 +13,8 @@ AssetBox _$AssetBoxFromJson(Map<String, dynamic> json) => AssetBox(
     )..boxId = const BoxIdConverter().fromJson(json['id'] as String);
 
 Map<String, dynamic> _$AssetBoxToJson(AssetBox instance) => <String, dynamic>{
+      'evidence': instance.evidence,
       'id': const BoxIdConverter().toJson(instance.boxId),
       'value': instance.value,
-      'evidence': instance.evidence,
       'nonce': instance.nonce,
     };

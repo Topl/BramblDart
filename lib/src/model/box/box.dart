@@ -15,12 +15,12 @@ typedef BoxType = int;
 @JsonSerializable(checked: true, explicitToJson: true)
 class Box<T> extends GenericBox {
   @override
-  final Evidence? evidence;
+  final Evidence evidence;
   @override
   @_Converter()
-  final T? value;
+  final T value;
   final Nonce nonce;
-  final String? type;
+  final String type;
   @override
   @BoxIdConverter()
   @JsonKey(name: 'id')
@@ -116,14 +116,11 @@ class TokenBox extends Box {
   final TokenValueHolder value;
 
   @override
-  final Evidence? evidence;
-
-  @override
   final Nonce nonce;
 
   TokenBox(
     this.value,
-    this.evidence,
+    Evidence evidence,
     this.nonce,
     String type,
   ) : super(evidence, value, nonce, type);

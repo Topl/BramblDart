@@ -6,7 +6,7 @@ import 'package:mubrambl/src/model/box/token_value_holder.dart';
 
 part 'poly_box.g.dart';
 
-/// Box that contains arbits as well as the PolyBox that it is owned by a particular address
+/// Box that contains polys which is owned by a particular address
 @JsonSerializable(checked: true, explicitToJson: true)
 class PolyBox extends TokenBox {
   static final typePrefix = 2;
