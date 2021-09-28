@@ -7,10 +7,10 @@ import 'package:dio/dio.dart';
 import 'package:docker_process/containers/cockroachdb.dart';
 import 'package:http/http.dart';
 import 'package:mubrambl/src/core/amount.dart';
+import 'package:mubrambl/src/core/block_number.dart';
 import 'package:mubrambl/src/core/client.dart';
 import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
-import 'package:mubrambl/src/json_rpc.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/security_root.dart';
@@ -30,6 +30,10 @@ const _privateKey1 =
 
 const _privateKey2 =
     '70753be769a365f28d3ed8c4e573d43708a42970d90806fb9e8b2b502ce9a94c0e434fc8e9f88e31fc8b0bdd80223ac8fe37269597495ff0647d25659b90050d1c32ec2f4b5ae82493bcd9c63216c4fe8e69cdc339a0ab4ab80c3a8d8f9de6e3';
+
+const bId = '24Vj9xpaRA37a74P5GsFcCZvgMaHtgfyTaWZrP4x71s4a';
+
+const blockNum = 1000;
 
 const transactionId = 'crQaUf54SQyPyW4FqvecapgmJiC6HwfbJpbSSDhokA2E';
 const transactionId2 = 'hJhLzSQVnnvz9Gnx8eUtzt1dcR7iH6oro3vLVgWAU6Bh';
@@ -133,6 +137,36 @@ void main() async {
       }
     });
 
+    test('get block information from head of the chain', () async {
+      try {
+        final response = await client.getBlockFromHead();
+        print(response);
+      } catch (e) {
+        print(e);
+        fail('exception: $e');
+      }
+    });
+
+    test('get block information by id', () async {
+      try {
+        final response = await client.getBlockFromId(bId);
+        print(response);
+      } catch (e) {
+        print(e);
+        fail('exception: $e');
+      }
+    });
+
+    test('get block information from height', () async {
+      try {
+        final response = await client.getBlockFromHeight(BlockNum.current());
+        print(response);
+      } catch (e) {
+        print(e);
+        fail('exception: $e');
+      }
+    });
+
     test('Simple asset transaction', () async {
       final senderAddress = await first.extractAddress();
       final recipientAddress = await second.extractAddress();
@@ -223,25 +257,25 @@ void main() async {
       print(rawTransaction['rawTx']);
     });
 
-    test('get Transaction receipt', () async {
-      final receipt = await client.getTransactionById(transactionId);
-      print(receipt.toJson());
-      final receipt2 = await client.getTransactionById(transactionId2);
-      print(receipt2.toJson());
-      final receipt3 = await client.getTransactionById(transactionId);
-      print(receipt3.toJson());
-      expect(receipt, isA<TransactionReceipt>());
-    });
+    // test('get Transaction receipt', () async {
+    //   final receipt = await client.getTransactionById(transactionId);
+    //   print(receipt.toJson());
+    //   final receipt2 = await client.getTransactionById(transactionId2);
+    //   print(receipt2.toJson());
+    //   final receipt3 = await client.getTransactionById(transactionId);
+    //   print(receipt3.toJson());
+    //   expect(receipt, isA<TransactionReceipt>());
+    // });
 
-    test('get transaction from Mempool throws exception', () {
-      expect(client.getTransactionFromMempool('0123'),
-          throwsA(TypeMatcher<RPCError>()));
-    });
+    // test('get transaction from Mempool throws exception', () {
+    //   expect(client.getTransactionFromMempool('0123'),
+    //       throwsA(TypeMatcher<RPCError>()));
+    // });
 
-    test('getMempool test', () async {
-      final memPool = await client.getMempool();
-      print(memPool);
-    });
+    // test('getMempool test', () async {
+    //   final memPool = await client.getMempool();
+    //   print(memPool);
+    // });
 
     // test('Simple raw arbit transaction', () async {
     //   final senderAddress = await first.extractAddress();

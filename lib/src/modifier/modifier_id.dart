@@ -41,16 +41,16 @@ class ModifierId extends ByteList {
   }
 }
 
-class ModifierIdConverter implements JsonConverter<ModifierId, List<int>> {
+class ModifierIdConverter implements JsonConverter<ModifierId, String> {
   const ModifierIdConverter();
 
   @override
-  ModifierId fromJson(List<int> json) {
-    return ModifierId.create(Uint8List.fromList(json));
+  ModifierId fromJson(String json) {
+    return ModifierId.fromBase58(Base58Data.validated(json));
   }
 
   @override
-  List<int> toJson(ModifierId object) {
-    return object;
+  String toJson(ModifierId object) {
+    return object.toString();
   }
 }

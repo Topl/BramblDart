@@ -7,6 +7,7 @@ import 'package:logging/logging.dart';
 import 'package:mubrambl/src/attestation/proposition.dart';
 import 'package:mubrambl/src/attestation/signature_container.dart';
 import 'package:mubrambl/src/core/amount.dart';
+import 'package:mubrambl/src/core/block_number.dart';
 import 'package:mubrambl/src/core/expensive_operations.dart';
 import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
 import 'package:mubrambl/src/credentials/address.dart';
@@ -15,6 +16,8 @@ import 'package:mubrambl/src/model/balances.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
+import 'package:mubrambl/src/modifier/block/block.dart';
+import 'package:mubrambl/src/modifier/block/block_response.dart';
 import 'package:mubrambl/src/transaction/transaction.dart';
 import 'package:mubrambl/src/transaction/transactionReceipt.dart';
 import 'package:mubrambl/src/utils/constants.dart';
@@ -146,6 +149,26 @@ class BramblClient {
     ]).then((value) {
       return Balance.fromJson(value, address.toBase58());
     });
+  }
+
+  // Returns the block information of the most recent block on the chain
+  Future<BlockResponse> getBlockFromHead() {
+    return _makeRPCCall<Map<String, dynamic>>('topl_head', params: [{}])
+        .then((value) => BlockResponse.fromJson(value));
+  }
+
+  // Returns the block information of the most recent block on the chain
+  Future<Block> getBlockFromHeight(BlockNum block) {
+    return _makeRPCCall<Map<String, dynamic>>('topl_blockByHeight', params: [
+      {'height': block.blockNum}
+    ]).then((value) => Block.fromJson(value));
+  }
+
+  // Returns the block information of the most recent block on the chain
+  Future<Block> getBlockFromId(String id) {
+    return _makeRPCCall<Map<String, dynamic>>('topl_blockById', params: [
+      {'blockId': id}
+    ]).then((value) => Block.fromJson(value));
   }
 
   Future<List<Balance>> _getBalances(List<ToplAddress> addresses) {
