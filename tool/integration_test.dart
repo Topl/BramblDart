@@ -219,6 +219,11 @@ void main() async {
           throwsA(TypeMatcher<RPCError>()));
     });
 
+    test('getMempool test', () async {
+      final memPool = await client.getMempool();
+      print(memPool);
+    });
+
     // test('Simple raw arbit transaction', () async {
     //   final senderAddress = await first.extractAddress();
     //   final recipientAddress = await second.extractAddress();

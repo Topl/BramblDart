@@ -326,6 +326,14 @@ class BramblClient {
         ]).then((value) => TransactionReceipt.fromJson(value));
   }
 
+  /// Returns a list of pending transactions.
+  Future<List<TransactionReceipt>> getMempool() {
+    return _makeRPCCall<List<dynamic>>('topl_mempool', params: [{}]).then(
+        (mempool) => mempool
+            .map((e) => TransactionReceipt.fromJson(e as Map<String, dynamic>))
+            .toList());
+  }
+
   Future<TransactionReceipt> _fillMissingData(
       {required Credentials credentials,
       required TransactionReceipt transactionReceipt,
