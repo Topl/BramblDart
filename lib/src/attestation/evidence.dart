@@ -1,10 +1,7 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/api.dart';
-
-part 'evidence.g.dart';
 
 /// Evidence content serves as a fingerprint (or commitment) of a particular proposition that is used to lock a box. Boxes
 /// are locked with 'Evidence' which is the concatentation of a typePrefix ++ content. The type prefix denotes what type
@@ -15,7 +12,6 @@ part 'evidence.g.dart';
 ///
 typedef EvidenceTypePrefix = int;
 
-@JsonSerializable(checked: true, explicitToJson: true)
 class Evidence {
   static const contentLength = 32;
 

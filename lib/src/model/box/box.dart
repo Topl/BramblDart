@@ -112,7 +112,8 @@ class _Converter<T> implements JsonConverter<T, Object> {
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class TokenBox extends Box {
-  final TokenValueHolder tokenValueHolder;
+  @override
+  final TokenValueHolder value;
 
   @override
   final Evidence? evidence;
@@ -121,29 +122,28 @@ class TokenBox extends Box {
   final Nonce nonce;
 
   TokenBox(
-    this.tokenValueHolder,
+    this.value,
     this.evidence,
     this.nonce,
     String type,
-  ) : super(evidence, tokenValueHolder, nonce, type);
+  ) : super(evidence, value, nonce, type);
 
   @override
   String toString() =>
-      'TokenBox(tokenValueHolder: $tokenValueHolder, evidence: $evidence, nonce: $nonce)';
+      'TokenBox(tokenValueHolder: $value, evidence: $evidence, nonce: $nonce)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
     return other is TokenBox &&
-        other.tokenValueHolder == tokenValueHolder &&
+        other.value == value &&
         other.evidence == evidence &&
         other.nonce == nonce;
   }
 
   @override
-  int get hashCode =>
-      tokenValueHolder.hashCode ^ evidence.hashCode ^ nonce.hashCode;
+  int get hashCode => value.hashCode ^ evidence.hashCode ^ nonce.hashCode;
 
   /// A necessary factory constructor for creating a new TokenBox instance
   /// from a map. Pass the map to the generated `_$TokenBoxFromJson()` constructor.

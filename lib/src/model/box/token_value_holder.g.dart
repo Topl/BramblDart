@@ -28,8 +28,8 @@ SimpleValue _$SimpleValueFromJson(Map<String, dynamic> json) => $checkedCreate(
       json,
       ($checkedConvert) {
         final val = SimpleValue(
-          $checkedConvert('quantity', (v) => v as String),
           $checkedConvert('type', (v) => v as String),
+          $checkedConvert('quantity', (v) => v as String),
         );
         return val;
       },

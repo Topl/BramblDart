@@ -38,7 +38,7 @@ TokenBox _$TokenBoxFromJson(Map<String, dynamic> json) => $checkedCreate(
       json,
       ($checkedConvert) {
         final val = TokenBox(
-          $checkedConvert('tokenValueHolder',
+          $checkedConvert('value',
               (v) => TokenValueHolder.fromJson(v as Map<String, dynamic>)),
           $checkedConvert('evidence',
               (v) => v == null ? null : Evidence.fromJson(v as String)),
@@ -55,7 +55,7 @@ TokenBox _$TokenBoxFromJson(Map<String, dynamic> json) => $checkedCreate(
 Map<String, dynamic> _$TokenBoxToJson(TokenBox instance) => <String, dynamic>{
       'type': instance.type,
       'id': const BoxIdConverter().toJson(instance.boxId),
-      'tokenValueHolder': instance.tokenValueHolder.toJson(),
+      'value': instance.value.toJson(),
       'evidence': instance.evidence?.toJson(),
       'nonce': instance.nonce,
     };

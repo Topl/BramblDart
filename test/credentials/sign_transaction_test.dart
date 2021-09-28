@@ -50,7 +50,7 @@ void main() {
           SimpleRecipient(
               ToplAddress.fromBase58(
                   '3NKBoNgMRpKahSi8tC8XPetDom9bdh3NXxSpfZ8fkvDMYwFcgnK1'),
-              SimpleValue('0', 'Simple'))
+              SimpleValue('Simple', '0'))
         ],
         propositionType: PropositionType.ed25519());
     final messageToSign =
@@ -68,8 +68,8 @@ void main() {
         TransactionReceipt.encodeSignatures(
             signature.signatures, signature.propositionType),
         {
-          '148bSqf8YKaziQjefWnLVFzpw5RX1p2ren2VKY7zaXqR4zdNpacB6qcGDCFaDMMAXDiDXrRiVKp1rnwF1DxjYpKHB':
-              '15VEJFr8MTj2nHHydRUdDyn743MmeCFrSh3rWzLe6SP7Mb1m52KUCaYLWM9dC4dZ9x1vbDVCBUAXyYrox6gKRx4TZ'
+          'KVAveekFcodVt7bUCMK6jCAqRbHTsS7gAzVMLu1ZkrrcPdorhDVRWhTZCHaAdV1vgAZ37VR1oS1RByQvtzu5DtgR':
+              'Lqon4qk4kwfZkfvS73bqSySxPXY6Ff7U61rYo7f5fQYtz2C78vnXFdXrMBd9LmQZQUG6UYthwnXXwtysmiUxMdro'
         });
   });
 

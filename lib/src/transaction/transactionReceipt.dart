@@ -16,6 +16,7 @@ import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/sender.dart';
 import 'package:mubrambl/src/modifier/modifier_id.dart';
 import 'package:mubrambl/src/utils/block_time.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:mubrambl/src/utils/util.dart';
@@ -119,7 +120,10 @@ class TransactionReceipt {
     result.remove('messageToSign');
     result['signatures'] = encodeSignatures(signatures, propositionType);
     result['from'] = from?.map((e) => e.toJson()).toList();
-    result['to'] = to;
+    result['to'] = encodeTo(to);
+    if (minting != null) {
+      result['minting'] = minting;
+    }
     return result;
   }
 
@@ -190,7 +194,8 @@ class TransactionReceipt {
             : null,
         blockNumber: map['blockNumber'] != null
             ? BlockNum.exact(map['blockNumber'] as int)
-            : const BlockNum.pending());
+            : const BlockNum.pending(),
+        minting: map['minting'] != null ? map['minting'] as bool : null);
   }
 
   TransactionReceipt copyWith(
@@ -242,6 +247,19 @@ class TransactionReceipt {
     }).toList();
   }
 
+  static List<Object> encodeTo(List to) {
+    return to.map((i) {
+      switch (i.runtimeType) {
+        case (SimpleRecipient):
+          return (i as SimpleRecipient).toBroadcastJson();
+        case (AssetRecipient):
+          return (i as AssetRecipient).toJson();
+        default:
+          throw ArgumentError('Transaction type currently not supported');
+      }
+    }).toList();
+  }
+
   List<Map<String, dynamic>> encodeBoxes(List<TokenBox> boxes) {
     return boxes.map((box) => box.toJson()).toList();
   }
@@ -279,9 +297,9 @@ class TransactionReceipt {
     final encodedSignatures = <String, String>{};
     signatures.forEach((value) {
       final newKey = Base58Data(Uint8List.fromList(
-          [0, ...value.proposition.buffer.asUint8List()])).show;
-      final outputValue =
-          Uint8List.fromList([0, ...value.proof.buffer.asUint8List()]);
+          [PUBKEY_HASH_BYTE, ...value.proposition.buffer.asUint8List()])).show;
+      final outputValue = Uint8List.fromList(
+          [PUBKEY_HASH_BYTE, ...value.proof.buffer.asUint8List()]);
       final newValue = Base58Data(outputValue).show;
       encodedSignatures[newKey] = newValue;
     });

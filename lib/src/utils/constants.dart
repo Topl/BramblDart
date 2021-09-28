@@ -20,3 +20,5 @@ const TOPLNET_FEE = 1000000000;
 const VALHALLA = 'ValhallaTestnet';
 const VALHALLA_FEE = 100;
 const PRIVATE = 'PrivateTestnet';
+
+const PUBKEY_HASH_BYTE = 0x03;
