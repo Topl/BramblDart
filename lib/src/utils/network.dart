@@ -1,3 +1,5 @@
+import 'package:mubrambl/src/credentials/address.dart';
+
 /// Container for information about topl networks
 ///
 /// This could be used also for other than Torus networks when this library gets extended
@@ -14,12 +16,12 @@ class Network {
   final bool testnet;
 
   /// the networkPrefix of the network in hex ([int])
-  final int networkPrefix;
+  final NetworkId networkPrefix;
 
   // the string of the networkPrefix
-  final String networkPrefixString;
+  final String name;
 
-  const Network(this.testnet, this.networkPrefix, this.networkPrefixString);
+  const Network(this.testnet, this.networkPrefix, this.name);
 
   factory Network.fromNetworkPrefix(int networkPrefix) {
     switch (networkPrefix) {
@@ -40,4 +42,13 @@ class Network {
       Network(true, NETWORK_REGISTRY['valhalla']!, 'valhalla');
   factory Network.private() =>
       Network(true, NETWORK_REGISTRY['private']!, 'private');
+}
+
+class NetworkType {
+  static final all = [Network.toplnet(), Network.valhalla(), Network.private()];
+
+  static Network pickNetworkTypeByPrefix(NetworkId networkPrefix) =>
+      NetworkType.all.where((_) => _.networkPrefix == networkPrefix).first;
+  static Network pickNetworkTypeByName(String name) =>
+      NetworkType.all.where((_) => _.name == name).first;
 }

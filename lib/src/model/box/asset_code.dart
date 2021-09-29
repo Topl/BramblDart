@@ -4,6 +4,7 @@ import 'package:bip_topl/bip_topl.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/network.dart';
+import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:mubrambl/src/utils/util.dart';
 
@@ -23,7 +24,8 @@ class AssetCode {
     if (!isValidNetwork(networkPrefix)) {
       throw ArgumentError('Invalid network provided');
     }
-    assert(version == 1, 'AssetCode version required to be 1');
+    assert(version == SUPPORTED_ASSET_CODE_VERSION,
+        'AssetCode version required to be 1');
     assert(name.length <= SHORT_NAME_LIMIT,
         'Asset short names must be less than 8 Latin-1 encoded characters');
     final latin1Name =
@@ -41,9 +43,11 @@ class AssetCode {
     final decoded = Base58Encoder.instance.decode(from);
     return AssetCode(
         decoded.first,
-        ToplAddress(decoded.sublist(1, 35)),
+        ToplAddress(decoded.sublist(1, 1 + ToplAddress.addressSize),
+            networkId: decoded.first,
+            proposition: PropositionType.fromPrefix(decoded[2])),
         Latin1Data(decoded.sublist(35)),
-        Network.fromNetworkPrefix(decoded[1]).networkPrefixString);
+        Network.fromNetworkPrefix(decoded[1]).name);
   }
 
   /// @returns {string} return asset code

@@ -13,6 +13,14 @@ const DEFAULT_ACCOUNT_INDEX = 0 | HARDENED_OFFSET;
 const DEFAULT_CHANGE = 0;
 const DEFAULT_ADDRESS_INDEX = 0;
 
+const CURVE_PREFIX = 0x01;
+const CURVE_THRESHOLD_PREFIX = 0x02;
+const DEFAULT_PROPOSITION_PREFIX = 0x03;
+
+const CURVE_25519 = 'PublicKeyCurve25519';
+const ED25519 = 'PublicKeyEd25519';
+const THRESHOLD_CURVE_25519 = 'ThresholdCurve25519';
+
 const HARDENED_OFFSET = 0x80000000; //denoted by a single quote in chain values
 
 const TOPLNET = 'Mainnet';
@@ -20,3 +28,9 @@ const TOPLNET_FEE = 1000000000;
 const VALHALLA = 'ValhallaTestnet';
 const VALHALLA_FEE = 100;
 const PRIVATE = 'PrivateTestnet';
+
+const VALHALLA_PREFIX = 0x10;
+const PRIVATE_PREFIX = 0x40;
+const MAINNET_PREFIX = 0x01;
+
+const SUPPORTED_ASSET_CODE_VERSION = 1;

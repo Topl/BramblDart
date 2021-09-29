@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mubrambl/src/credentials/address.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 
 part 'proposition_type.g.dart';
 
@@ -13,11 +15,37 @@ class PropositionType {
   const PropositionType(this.propositionName, this.propositionPrefix);
 
   factory PropositionType.curve25519() =>
-      const PropositionType('PublicKeyCurve25519', 0x01);
+      const PropositionType('PublicKeyCurve25519', CURVE_PREFIX);
   factory PropositionType.ed25519() =>
-      const PropositionType('PublicKeyEd25519', 0x03);
+      const PropositionType('PublicKeyEd25519', DEFAULT_PROPOSITION_PREFIX);
   factory PropositionType.thresholdCurve25519() =>
-      const PropositionType('ThresholdCurve255129', 0x02);
+      const PropositionType('ThresholdCurve255129', CURVE_THRESHOLD_PREFIX);
+
+  factory PropositionType.fromPrefix(NetworkId prefix) {
+    switch (prefix) {
+      case (CURVE_PREFIX):
+        return PropositionType.curve25519();
+      case (CURVE_THRESHOLD_PREFIX):
+        return PropositionType.thresholdCurve25519();
+      case (DEFAULT_PROPOSITION_PREFIX):
+        return PropositionType.ed25519();
+      default:
+        throw ArgumentError('Proposition Type Prefix not currently supported');
+    }
+  }
+
+  factory PropositionType.fromName(String name) {
+    switch (name) {
+      case (CURVE_25519):
+        return PropositionType.curve25519();
+      case (THRESHOLD_CURVE_25519):
+        return PropositionType.thresholdCurve25519();
+      case (ED25519):
+        return PropositionType.ed25519();
+      default:
+        throw ArgumentError('Proposition Type name is not currently supported');
+    }
+  }
 
   /// A necessary factory constructor for creating a new PropositionType instance
   /// from a map. Pass the map to the generated `_$PropositionTypeFromJson()` constructor.

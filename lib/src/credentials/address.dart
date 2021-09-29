@@ -1,5 +1,9 @@
 import 'package:bip_topl/bip_topl.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mubrambl/src/attestation/address_codec.dart';
+import 'package:mubrambl/src/attestation/evidence.dart';
+import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:pinenacl/api.dart';
@@ -35,20 +39,23 @@ String networkIdString(NetworkId id) {
 /// [see](https://topl.readme.io/docs/how-topl-addresses-are-generated)
 class ToplAddress extends ByteList {
   /// The length of a Topl Address in bytes
-  static const addressSize = 38;
+  static const addressSize = 2 + Evidence.contentLength;
 
   final NetworkId networkId;
   late PropositionType proposition;
 
   /// A Topl address from the raw address bytes
   ToplAddress(List<int> bytes,
-      {this.networkId = 0x10,
-      this.proposition = const PropositionType('PublicKeyEd25519', 0x03)})
+      {this.networkId = VALHALLA_PREFIX,
+      this.proposition = const PropositionType(
+          'PublicKeyEd25519', DEFAULT_PROPOSITION_PREFIX)})
       : super(bytes);
 
   /// Human readable address
   String toBase58() {
-    return encode(Base58Encoder.instance);
+    return Uint8List.fromList((asTypedList + asTypedList.checksum()))
+        .encodeAsBase58()
+        .show;
   }
 
   /// Note that this give much more detail than toBase58, designed for developers who want to inspect addresses in detail.
@@ -57,9 +64,11 @@ class ToplAddress extends ByteList {
     return '${addressTypeString(addressType)} ${networkIdString(networkId)} ${proposition.propositionName}${toBase58()}';
   }
 
-  factory ToplAddress.fromBase58(String address) {
+  factory ToplAddress.fromBase58(String address,
+      {NetworkId networkPrefix = VALHALLA_PREFIX}) {
     final decoded = str2ByteArray(address);
-    return ToplAddress(decoded, networkId: decoded[0]);
+    return AddressCodec.addressFromBytes(
+        bytes: decoded, networkPrefix: networkPrefix);
   }
 
   factory ToplAddress.toAddress({

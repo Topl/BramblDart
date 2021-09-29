@@ -5,14 +5,12 @@ import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
+import 'package:mubrambl/src/utils/constants.dart';
+import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 
 final validNetworks = ['private', 'toplnet', 'valhalla'];
-final validPropositionTypes = [
-  'PublicKeyCurve25519',
-  'ThresholdCurve25519',
-  'PublicKeyEd25519'
-];
+final validPropositionTypes = [CURVE_25519, ED25519, THRESHOLD_CURVE_25519];
 
 final privateMap = <String, int>{'hex': 0x40, 'decimal': 64};
 final toplNetMap = <String, int>{'hex': 0x01, 'decimal': 1};
@@ -54,12 +52,12 @@ ToplAddress generatePubKeyHashAddress(
   b.add([networkPrefix, propositionMap[propositionType] ?? 0x01]);
   b.add(createHash(Uint8List.fromList(publicKey.rawKey)));
   final concatEvidence = b.toBytes().sublist(0, 34);
-  final hashChecksumBuffer = createHash(concatEvidence).sublist(0, 4);
   b.clear();
   b.add(concatEvidence);
-  b.add(hashChecksumBuffer);
-  final address = b.toBytes().sublist(0, 38);
-  return ToplAddress(address, networkId: networkPrefix);
+  final address = b.toBytes().sublist(0, ToplAddress.addressSize);
+  return ToplAddress(address,
+      networkId: networkPrefix,
+      proposition: PropositionType.fromName(propositionType));
 }
 
 /// Returns the networkPrefix for a valid address
@@ -125,7 +123,7 @@ Map<String, dynamic> validateAddressByNetwork(
     return result;
   } else {
     //address has correct length and matches the network, now validate the checksum
-    if (!_validChecksum(decodedAddress)) {
+    if (!validChecksum(decodedAddress)) {
       result['errorMsg'] = 'Addresses with invalid checksums found';
       return result;
     }
@@ -137,7 +135,7 @@ Map<String, dynamic> validateAddressByNetwork(
 }
 
 /// Verify that the payload has not been corrupted by checking that the checksum is valid
-bool _validChecksum(List<int> payload) {
+bool validChecksum(List<int> payload) {
   final msgBuffer = Uint8List.fromList(payload).sublist(0, 34);
   final checksumBuffer =
       Uint8List.fromList(payload).sublist(34, payload.length);
