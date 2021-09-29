@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import 'package:mubrambl/src/modifier/block/block_body.dart';
 
 import 'block_header.dart';
@@ -27,7 +28,11 @@ class Block {
   final BlockBody body;
   final int blockSize;
 
-  Block(this.header, this.body, this.blockSize);
+  Block(
+    this.header,
+    this.body,
+    this.blockSize,
+  );
 
   /// A necessary factory constructor for creating a new Block instance
   /// from a map. Pass the map to the generated `_$BlockFromJson()` constructor.
@@ -38,4 +43,33 @@ class Block {
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$BlockToJson`.
   Map<String, dynamic> toJson() => _$BlockToJson(this);
+
+  Block copyWith({
+    BlockHeader? header,
+    BlockBody? body,
+    int? blockSize,
+  }) {
+    return Block(
+      header ?? this.header,
+      body ?? this.body,
+      blockSize ?? this.blockSize,
+    );
+  }
+
+  @override
+  String toString() =>
+      'Block(header: $header, body: $body, blockSize: $blockSize)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Block &&
+        other.header == header &&
+        other.body == body &&
+        other.blockSize == blockSize;
+  }
+
+  @override
+  int get hashCode => header.hashCode ^ body.hashCode ^ blockSize.hashCode;
 }

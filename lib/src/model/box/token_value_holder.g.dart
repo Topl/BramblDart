@@ -6,12 +6,30 @@ part of 'token_value_holder.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+TokenValueHolder _$TokenValueHolderFromJson(Map<String, dynamic> json) =>
+    $checkedCreate(
+      'TokenValueHolder',
+      json,
+      ($checkedConvert) {
+        final val = TokenValueHolder(
+          $checkedConvert('quantity', (v) => v as String),
+        );
+        return val;
+      },
+    );
+
+Map<String, dynamic> _$TokenValueHolderToJson(TokenValueHolder instance) =>
+    <String, dynamic>{
+      'quantity': instance.quantity,
+    };
+
 SimpleValue _$SimpleValueFromJson(Map<String, dynamic> json) => $checkedCreate(
       'SimpleValue',
       json,
       ($checkedConvert) {
         final val = SimpleValue(
-          $checkedConvert('quantity', (v) => v as String),
+          type: $checkedConvert('type', (v) => v as String? ?? 'Simple'),
+          quantity: $checkedConvert('quantity', (v) => v as String),
         );
         return val;
       },
@@ -20,6 +38,7 @@ SimpleValue _$SimpleValueFromJson(Map<String, dynamic> json) => $checkedCreate(
 Map<String, dynamic> _$SimpleValueToJson(SimpleValue instance) =>
     <String, dynamic>{
       'quantity': instance.quantity,
+      'type': instance.type,
     };
 
 AssetValue _$AssetValueFromJson(Map<String, dynamic> json) => $checkedCreate(
@@ -32,6 +51,7 @@ AssetValue _$AssetValueFromJson(Map<String, dynamic> json) => $checkedCreate(
           $checkedConvert('securityRoot',
               (v) => v == null ? null : SecurityRoot.fromJson(v as String)),
           $checkedConvert('metadata', (v) => v as String?),
+          $checkedConvert('type', (v) => v as String),
         );
         return val;
       },
@@ -43,4 +63,5 @@ Map<String, dynamic> _$AssetValueToJson(AssetValue instance) =>
       'assetCode': instance.assetCode.toJson(),
       'securityRoot': instance.securityRoot?.toJson(),
       'metadata': instance.metadata,
+      'type': instance.type,
     };

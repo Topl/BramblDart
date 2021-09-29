@@ -4,7 +4,7 @@ import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
 import 'package:mubrambl/src/attestation/proposition.dart';
 import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/transaction/transaction.dart';
+import 'package:mubrambl/src/transaction/transactionReceipt.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:pinenacl/ed25519.dart' hide Signature;
@@ -43,7 +43,7 @@ abstract class CredentialsWithKnownAddress extends Credentials {
 /// Interface for [Credentials] that don't sign transactions locally, for
 /// instance because the private key is not known to this library.
 abstract class CustomTransactionSender extends Credentials {
-  Future<String> sendTransaction(Transaction transaction);
+  Future<String> sendTransaction(TransactionReceipt transaction);
 }
 
 /// Credentials that can sign payloads with a Topl private key.
