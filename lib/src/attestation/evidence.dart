@@ -24,11 +24,7 @@ class Evidence {
   /// A necessary factory constructor for creating a new Evidence instance
   /// from a map. Pass the map to the generated `_$EvidenceFromJson()` constructor.
   /// The constructor is named after the source class, in this case, Evidence.
-  factory Evidence.fromJson(String json) {
-    final decodedEvidence = Base58Data.validated(json);
-    return Evidence(decodedEvidence.value.first,
-        Digest(contentLength, decodedEvidence.value.sublist(1)));
-  }
+  factory Evidence.fromJson(String json) => Evidence.fromBase58(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated

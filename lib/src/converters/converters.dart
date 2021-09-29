@@ -1,5 +1,7 @@
 import 'dart:typed_data';
+import 'package:bip_topl/bip_topl.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mubrambl/src/utils/block_time.dart';
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/ed25519.dart';
 
@@ -17,17 +19,17 @@ class Uint8ListConverter implements JsonConverter<Uint8List, List<int>> {
   }
 }
 
-class ByteListConverter implements JsonConverter<ByteList, List<int>> {
+class ByteListConverter implements JsonConverter<ByteList, String> {
   const ByteListConverter();
 
   @override
-  ByteList fromJson(List<int> json) {
-    return ByteList(json);
+  ByteList fromJson(String json) {
+    return ByteList(Base58Encoder.instance.decode(json));
   }
 
   @override
-  List<int> toJson(ByteList object) {
-    return object;
+  String toJson(ByteList object) {
+    return Base58Encoder.instance.encode(object.asTypedList);
   }
 }
 
@@ -42,5 +44,19 @@ class SignatureConverter implements JsonConverter<SignatureBase, List<int>> {
   @override
   List<int> toJson(SignatureBase object) {
     return object;
+  }
+}
+
+class DateTimeConverter implements JsonConverter<DateTime, int> {
+  const DateTimeConverter();
+
+  @override
+  DateTime fromJson(int json) {
+    return BifrostDateTime().encode(json);
+  }
+
+  @override
+  int toJson(DateTime object) {
+    return BifrostDateTime().decode(object);
   }
 }
