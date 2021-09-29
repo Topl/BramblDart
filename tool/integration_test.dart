@@ -257,25 +257,25 @@ void main() async {
       print(rawTransaction['rawTx']);
     });
 
-    // test('get Transaction receipt', () async {
-    //   final receipt = await client.getTransactionById(transactionId);
-    //   print(receipt.toJson());
-    //   final receipt2 = await client.getTransactionById(transactionId2);
-    //   print(receipt2.toJson());
-    //   final receipt3 = await client.getTransactionById(transactionId);
-    //   print(receipt3.toJson());
-    //   expect(receipt, isA<TransactionReceipt>());
-    // });
+    test('get Transaction receipt', () async {
+      final receipt = await client.getTransactionById(transactionId);
+      print(receipt.toJson());
+      final receipt2 = await client.getTransactionById(transactionId2);
+      print(receipt2.toJson());
+      final receipt3 = await client.getTransactionById(transactionId);
+      print(receipt3.toJson());
+      expect(receipt, isA<TransactionReceipt>());
+    });
 
-    // test('get transaction from Mempool throws exception', () {
-    //   expect(client.getTransactionFromMempool('0123'),
-    //       throwsA(TypeMatcher<RPCError>()));
-    // });
+    test('get transaction from Mempool throws exception', () {
+      expect(client.getTransactionFromMempool('0123'),
+          throwsA(TypeMatcher<RPCError>()));
+    });
 
-    // test('getMempool test', () async {
-    //   final memPool = await client.getMempool();
-    //   print(memPool);
-    // });
+    test('getMempool test', () async {
+      final memPool = await client.getMempool();
+      print(memPool);
+    });
 
     // test('Simple raw arbit transaction', () async {
     //   final senderAddress = await first.extractAddress();
