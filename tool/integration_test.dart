@@ -11,6 +11,7 @@ import 'package:mubrambl/src/core/block_number.dart';
 import 'package:mubrambl/src/core/client.dart';
 import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
+import 'package:mubrambl/src/json_rpc.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/security_root.dart';
