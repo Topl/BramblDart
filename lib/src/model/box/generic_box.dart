@@ -3,7 +3,7 @@ import 'package:mubrambl/src/model/box/box_id.dart';
 
 abstract class GenericBox<T> {
   /// a commitment to the proposition locking this box
-  final Evidence evidence;
+  final Evidence? evidence;
   final T value;
 
   /// a one-time only, unique reference id (computed from the input transaction data)

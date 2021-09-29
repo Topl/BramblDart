@@ -7,14 +7,17 @@ import 'package:dio/dio.dart';
 import 'package:docker_process/containers/cockroachdb.dart';
 import 'package:http/http.dart';
 import 'package:mubrambl/src/core/amount.dart';
+import 'package:mubrambl/src/core/block_number.dart';
 import 'package:mubrambl/src/core/client.dart';
 import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
+import 'package:mubrambl/src/json_rpc.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/security_root.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
 import 'package:mubrambl/src/transaction/transactionReceipt.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/encoding.dart';
@@ -29,15 +32,19 @@ const _privateKey1 =
 const _privateKey2 =
     '70753be769a365f28d3ed8c4e573d43708a42970d90806fb9e8b2b502ce9a94c0e434fc8e9f88e31fc8b0bdd80223ac8fe37269597495ff0647d25659b90050d1c32ec2f4b5ae82493bcd9c63216c4fe8e69cdc339a0ab4ab80c3a8d8f9de6e3';
 
+const bId = '24Vj9xpaRA37a74P5GsFcCZvgMaHtgfyTaWZrP4x71s4a';
+
+const blockNum = 1000;
+
 const transactionId = 'crQaUf54SQyPyW4FqvecapgmJiC6HwfbJpbSSDhokA2E';
 const transactionId2 = 'hJhLzSQVnnvz9Gnx8eUtzt1dcR7iH6oro3vLVgWAU6Bh';
 const transactionId3 = 'DSWNdaTz3H4oy6Kj1rcATfS5ar4pxZ4jvWZqMthTVhdt';
 void main() async {
   late DockerProcess bifrost;
   late BramblClient client;
-
   late ToplSigningKey first;
   late ToplSigningKey second;
+  late ToplSigningKey genesisAddress;
 
   setUpAll(() async {
     // print('Starting Bifrost on port 9085');
@@ -56,7 +63,7 @@ void main() async {
       try {
         await get(Uri.parse(
             'https://staging.vertx.topl.services/valhalla/$baasProjectId'));
-        //await get(Uri.parse('http://localhost:9085'));
+        // await get(Uri.parse('http://localhost:9085'));
         successful = true;
       } on SocketException {
         await Future.delayed(const Duration(seconds: 2));
@@ -131,7 +138,37 @@ void main() async {
       }
     });
 
-    test('Simple raw asset transaction', () async {
+    test('get block information from head of the chain', () async {
+      try {
+        final response = await client.getBlockFromHead();
+        print(response);
+      } catch (e) {
+        print(e);
+        fail('exception: $e');
+      }
+    });
+
+    test('get block information by id', () async {
+      try {
+        final response = await client.getBlockFromId(bId);
+        print(response);
+      } catch (e) {
+        print(e);
+        fail('exception: $e');
+      }
+    });
+
+    test('get block information from height', () async {
+      try {
+        final response = await client.getBlockFromHeight(BlockNum.current());
+        print(response);
+      } catch (e) {
+        print(e);
+        fail('exception: $e');
+      }
+    });
+
+    test('Simple asset transaction', () async {
       final senderAddress = await first.extractAddress();
       final recipientAddress = await second.extractAddress();
 
@@ -147,14 +184,14 @@ void main() async {
       final securityRoot = SecurityRoot.fromBase58(
           Base58Data.validated('11111111111111111111111111111111'));
 
-      final assetValue =
-          AssetValue(value.toString(), assetCode, securityRoot, 'metadata');
+      final assetValue = AssetValue(
+          value.toString(), assetCode, securityRoot, 'metadata', 'Asset');
 
       final recipients = <String, AssetValue>{
         recipientAddress.toBase58(): assetValue
       };
 
-      final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, '100');
+      final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, VALHALLA_FEE);
 
       final rawTransaction = await client.sendRawAssetTransfer(
           assetCode: assetCode,
@@ -164,16 +201,25 @@ void main() async {
           fee: fee,
           minting: true,
           changeAddress: senderAddress,
-          consolidationAddress: senderAddress);
+          consolidationAddress: senderAddress,
+          data: Latin1Data.validated('data').value);
 
       final to = AssetRecipient(recipientAddress, assetValue);
 
-      expect(rawTransaction, isA<TransactionReceipt>());
+      expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
 
       print(rawTransaction);
+
+      final txId = await client.sendTransaction(
+          first,
+          rawTransaction['rawTx'] as TransactionReceipt,
+          rawTransaction['messageToSign'] as Uint8List);
+
+      final senderBalance = await client.getBalance(senderAddress);
+      print(txId);
     });
 
-    test('Simple raw poly transaction', () async {
+    test('Simple poly transaction', () async {
       final senderAddress = await first.extractAddress();
       final recipientAddress = await second.extractAddress();
 
@@ -181,26 +227,34 @@ void main() async {
       final balanceOfRecipient = await client.getBalance(recipientAddress);
       final value = 2;
 
-      final polyValue = SimpleValue(value.toString());
+      final polyValue = SimpleValue(quantity: value.toString());
 
       final recipients = <String, SimpleValue>{
         recipientAddress.toBase58(): polyValue
       };
 
-      final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, '100');
+      final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, VALHALLA_FEE);
 
       final rawTransaction = await client.sendRawPolyTransfer(
-          issuer: senderAddress,
           sender: senderAddress,
           recipients: recipients,
           fee: fee,
-          changeAddress: senderAddress);
+          changeAddress: senderAddress,
+          data: Latin1Data.validated('data').value);
 
       final to = SimpleRecipient(recipientAddress, polyValue);
 
-      expect(rawTransaction, isA<TransactionReceipt>());
+      expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
 
-      print(rawTransaction);
+      final txId = await client.sendTransaction(
+          first,
+          rawTransaction['rawTx'] as TransactionReceipt,
+          rawTransaction['messageToSign'] as Uint8List);
+
+      final senderBalance = await client.getBalance(senderAddress);
+      print(txId);
+
+      print(rawTransaction['rawTx']);
     });
 
     test('get Transaction receipt', () async {
@@ -211,6 +265,16 @@ void main() async {
       final receipt3 = await client.getTransactionById(transactionId);
       print(receipt3.toJson());
       expect(receipt, isA<TransactionReceipt>());
+    });
+
+    test('get transaction from Mempool throws exception', () {
+      expect(client.getTransactionFromMempool('0123'),
+          throwsA(TypeMatcher<RPCError>()));
+    });
+
+    test('getMempool test', () async {
+      final memPool = await client.getMempool();
+      print(memPool);
     });
 
     // test('Simple raw arbit transaction', () async {

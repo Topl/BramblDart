@@ -21,8 +21,9 @@ class BoxId<T> {
     return BoxId.fromEvidence(box.evidence);
   }
 
-  factory BoxId.fromEvidence(Evidence evidence) {
-    return BoxId(evidence.evBytes);
+  factory BoxId.fromEvidence(Evidence? evidence) {
+    return BoxId(evidence?.evBytes ??
+        Digest(BLAKE2B_256_DIGEST_SIZE, Uint8List(BLAKE2B_256_DIGEST_SIZE)));
   }
 
   factory BoxId.fromJson(String json) {

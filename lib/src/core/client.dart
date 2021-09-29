@@ -7,6 +7,7 @@ import 'package:logging/logging.dart';
 import 'package:mubrambl/src/attestation/proposition.dart';
 import 'package:mubrambl/src/attestation/signature_container.dart';
 import 'package:mubrambl/src/core/amount.dart';
+import 'package:mubrambl/src/core/block_number.dart';
 import 'package:mubrambl/src/core/expensive_operations.dart';
 import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
 import 'package:mubrambl/src/credentials/address.dart';
@@ -15,6 +16,8 @@ import 'package:mubrambl/src/model/balances.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
+import 'package:mubrambl/src/modifier/block/block.dart';
+import 'package:mubrambl/src/modifier/block/block_response.dart';
 import 'package:mubrambl/src/transaction/transaction.dart';
 import 'package:mubrambl/src/transaction/transactionReceipt.dart';
 import 'package:mubrambl/src/utils/constants.dart';
@@ -148,6 +151,26 @@ class BramblClient {
     });
   }
 
+  // Returns the block information of the most recent block on the chain
+  Future<BlockResponse> getBlockFromHead() {
+    return _makeRPCCall<Map<String, dynamic>>('topl_head', params: [{}])
+        .then((value) => BlockResponse.fromJson(value));
+  }
+
+  // Returns the block information of the most recent block on the chain
+  Future<Block> getBlockFromHeight(BlockNum block) {
+    return _makeRPCCall<Map<String, dynamic>>('topl_blockByHeight', params: [
+      {'height': block.blockNum}
+    ]).then((value) => Block.fromJson(value));
+  }
+
+  // Returns the block information of the most recent block on the chain
+  Future<Block> getBlockFromId(String id) {
+    return _makeRPCCall<Map<String, dynamic>>('topl_blockById', params: [
+      {'blockId': id}
+    ]).then((value) => Block.fromJson(value));
+  }
+
   Future<List<Balance>> _getBalances(List<ToplAddress> addresses) {
     return _makeRPCCall<Map<String, dynamic>>('topl_balances', params: [
       {'addresses': addresses.map((element) => element.toBase58()).toList()}
@@ -173,28 +196,11 @@ class BramblClient {
   Future<List<Balance>> getAllAddressBalances(List<ToplAddress> addresses,
       {int batchSize = 50}) async {
     final result = <Balance>[];
-    var processed = 0;
     await Future.forEach(_splitArray(addresses, batchSize),
         (List<ToplAddress> batch) async {
-      var retry = true;
-      final pss = processed;
-      while (retry) {
-        try {
-          final balances = await _getBalances(batch);
-          if (balances.isEmpty) return;
-          result.addAll(balances);
-        } catch (e) {
-          // Sometimes rate limit may apply, this retries for a period of time to get around the rate limiting for users
-          log.info(
-              'Exceptions caught (possible node rate limit), retrying in $RETRY_VALUE seconds');
-          print(e);
-          retry = true;
-          await Future.delayed(Duration(seconds: RETRY_VALUE));
-          processed = pss;
-          continue;
-        }
-        retry = false;
-      }
+      final balances = await _getBalances(batch);
+      if (balances.isEmpty) return;
+      result.addAll(balances);
     });
     return result;
   }
@@ -203,7 +209,7 @@ class BramblClient {
   ///
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
   ///
-  Future<TransactionReceipt> sendRawAssetTransfer(
+  Future<Map<String, dynamic>> sendRawAssetTransfer(
       {required ToplAddress sender,
       required Map<String, AssetValue> recipients,
       PolyAmount? fee,
@@ -230,44 +236,50 @@ class BramblClient {
               consolidationAddress: consolidationAddress,
               assetCode: assetCode)
           .toJson()
-    ]).then((value) =>
-        TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
+    ]).then((value) => {
+          'rawTx': TransactionReceipt.fromJson(
+              value['rawTx'] as Map<String, dynamic>),
+          'messageToSign':
+              Base58Data.validated(value['messageToSign'] as String).value
+        });
   }
 
   /// Sends a raw poly transfer call to a node
   ///
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
   ///
-  Future<TransactionReceipt> sendRawPolyTransfer(
+  Future<Map<String, dynamic>> sendRawPolyTransfer(
       {required ToplAddress sender,
       required Map<String, SimpleValue> recipients,
       PolyAmount? fee,
       ToplAddress? changeAddress,
-      Uint8List? data,
-      required ToplAddress issuer}) {
+      Uint8List? data}) {
     // ignore: prefer_collection_literals
-    final senders = [sender, issuer].toSet().toList();
     return _makeRPCCall('topl_rawPolyTransfer', params: [
       PolyTransaction(
               recipients: recipients.entries
                   .map((entry) => SimpleRecipient(
                       ToplAddress.fromBase58(entry.key), entry.value))
                   .toList(),
-              sender: senders,
-              propositionType: issuer.proposition.propositionName,
+              sender: [sender],
+              propositionType: sender.proposition.propositionName,
               changeAddress: changeAddress,
               fee: fee,
               data: data != null ? Latin1Data(data) : null)
           .toJson()
-    ]).then((value) =>
-        TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
+    ]).then((value) => {
+          'rawTx': TransactionReceipt.fromJson(
+              value['rawTx'] as Map<String, dynamic>),
+          'messageToSign':
+              Base58Data.validated(value['messageToSign'] as String).value
+        });
   }
 
   /// Sends a raw arbit transfer call to a node
   ///
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
   ///
-  Future<TransactionReceipt> sendRawArbitTransfer(
+  Future<Map<String, dynamic>> sendRawArbitTransfer(
       {required ToplAddress sender,
       required Map<String, SimpleValue> recipients,
       PolyAmount? fee,
@@ -290,8 +302,12 @@ class BramblClient {
               fee: fee,
               data: data != null ? Latin1Data(data) : null)
           .toJson()
-    ]).then((value) =>
-        TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>));
+    ]).then((value) => {
+          'rawTx': TransactionReceipt.fromJson(
+              value['rawTx'] as Map<String, dynamic>),
+          'messageToSign':
+              Base58Data.validated(value['messageToSign'] as String).value
+        });
   }
 
   /// Signs the [transaction] with the credentials [cred]. The transaction will
@@ -315,6 +331,23 @@ class BramblClient {
     return _makeRPCCall<Map<String, dynamic>>('topl_transactionById', params: [
       {'transactionId': transactionId}
     ]).then((s) => TransactionReceipt.fromJson(s));
+  }
+
+  /// Returns a receipt of a transaction that has not yet been forged into a block
+  /// and is still present in the mempool
+  Future<TransactionReceipt?> getTransactionFromMempool(String id) {
+    return _makeRPCCall<Map<String, dynamic>>('topl_transactionFromMempool',
+        params: [
+          {'transactionId': id}
+        ]).then((value) => TransactionReceipt.fromJson(value));
+  }
+
+  /// Returns a list of pending transactions.
+  Future<List<TransactionReceipt>> getMempool() {
+    return _makeRPCCall<List<dynamic>>('topl_mempool', params: [{}]).then(
+        (mempool) => mempool
+            .map((e) => TransactionReceipt.fromJson(e as Map<String, dynamic>))
+            .toList());
   }
 
   Future<TransactionReceipt> _fillMissingData(
@@ -341,5 +374,33 @@ class BramblClient {
     } else {
       return PolyAmount.zero();
     }
+  }
+
+  /// Signs the given transaction using the keys supplied in the [cred]
+  /// object to upload it to the client so that it can be forged into a block.
+  ///
+  /// Returns a hash of the messageToSign of the transaction which, after the transaction has been
+  /// included in a mined block, can be used to obtain detailed information
+  /// about the transaction.
+  Future<String> sendTransaction(Credentials cred,
+      TransactionReceipt transaction, Uint8List messageToSign) async {
+    if (cred is CustomTransactionSender) {
+      return cred.sendTransaction(transaction);
+    }
+    final signed = await signTransaction(cred, transaction, messageToSign);
+    return sendSignedTransaction(signed);
+  }
+
+  /// Sends a signed transaction.
+  ///
+  /// To obtain a transaction in a signed form, use [signTransaction].
+  ///
+  /// Returns a hash of the messageToSign of the transaction which, after the transaction has been
+  /// included in a forged block, can be used to obtain detailed information
+  /// about the transaction.
+  Future<String> sendSignedTransaction(TransactionReceipt transaction) async {
+    return _makeRPCCall('topl_broadcastTx', params: [
+      {'tx': transaction.toBroadcastJson()}
+    ]).then((value) => value['txId'] as String);
   }
 }

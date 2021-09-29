@@ -13,7 +13,10 @@ class Sender {
   factory Sender.fromJson(List<dynamic> jsonList) => Sender(
       ToplAddress.fromBase58(jsonList[0] as String), jsonList[1] as String);
 
-  String toJson() => toString();
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$SenderContainerToJson`.
+  List<String> toJson() => [senderAddress.toBase58(), nonce];
 
   @override
   int get hashCode => senderAddress.hashCode ^ nonce.hashCode;
@@ -25,5 +28,5 @@ class Sender {
       other.nonce == nonce;
 
   @override
-  String toString() => 'Address: ${senderAddress.toBase58()}, Nonce: $nonce';
+  String toString() => '${senderAddress.toBase58()}';
 }

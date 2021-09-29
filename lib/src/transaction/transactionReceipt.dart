@@ -7,16 +7,20 @@ import 'package:mubrambl/src/attestation/proposition.dart';
 import 'package:mubrambl/src/attestation/signature_container.dart';
 import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/block_number.dart';
+import 'package:mubrambl/src/model/box/arbit_box.dart';
+import 'package:mubrambl/src/model/box/asset_box.dart';
+import 'package:mubrambl/src/model/box/box.dart';
 import 'package:mubrambl/src/model/box/box_id.dart';
+import 'package:mubrambl/src/model/box/poly_box.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/sender.dart';
 import 'package:mubrambl/src/modifier/modifier_id.dart';
 import 'package:mubrambl/src/utils/block_time.dart';
+import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:mubrambl/src/utils/util.dart';
 import 'package:pinenacl/ed25519.dart';
-import 'package:pinenacl/x25519.dart';
 
 typedef TxType = int;
 
@@ -29,8 +33,7 @@ class TransactionReceipt {
   final ModifierId id;
 
   /// The number of boxes that were generated with this transaction.
-  @BoxIdConverter()
-  final List<BoxId> newBoxes;
+  final List<TokenBox> newBoxes;
 
   /// Proposition Type signature(s)
   final List<SignatureContainer> signatures;
@@ -93,7 +96,36 @@ class TransactionReceipt {
       this.blockId,
       this.blockNumber});
 
-  String toJson() => toString();
+  Map<String, dynamic> toMempoolJson() => {
+        'id': id.toString(),
+        'txType': txType,
+        'fee': fee?.getInNanopoly.toString(),
+        'timestamp': timestamp,
+        'propositionType': propositionType.propositionName,
+        'messageToSign': Base58Data(messageToSign ?? Uint8List(0)).show,
+        'data': data?.show,
+        'newBoxes': encodeBoxes(newBoxes),
+        'boxesToRemove': boxesToRemove.map((e) => e.toString()).toList()
+      };
+
+  Map<String, dynamic> toJson() {
+    final result = toMempoolJson();
+    result['blockId'] = blockId.toString();
+    result['blockNumber'] = blockNumber.toString();
+    return result;
+  }
+
+  Map<String, dynamic> toBroadcastJson() {
+    final result = toMempoolJson();
+    result.remove('messageToSign');
+    result['signatures'] = encodeSignatures(signatures, propositionType);
+    result['from'] = from?.map((e) => e.toJson()).toList();
+    result['to'] = encodeTo(to);
+    if (minting != null) {
+      result['minting'] = minting;
+    }
+    return result;
+  }
 
   @override
   String toString() {
@@ -101,7 +133,7 @@ class TransactionReceipt {
         'from: ${json.encode(from)}, to: ${json.encode(to)}, fee: ${fee.toString()},'
         'timestamp: ${formatter.format(BifrostDateTime().encode(timestamp))}, '
         'propositionType: ${propositionType.propositionName}, messageToSign: ${Base58Data(messageToSign ?? Uint8List(0)).show},  '
-        'data: ${data?.show}, newBoxes: ${json.encode(newBoxes)}, '
+        'data: ${data?.show}, newBoxes: ${encodeBoxes(newBoxes)}, '
         'boxesToRemove: ${json.encode(boxesToRemove)}, signatures: ${encodeSignatures(signatures, propositionType)}, blockNumber: $blockNumber, blockId: ${blockId.toString()}';
   }
 
@@ -151,10 +183,7 @@ class TransactionReceipt {
         messageToSign:
             Uint8List.fromList(map['messageToSign'] as List<int>? ?? []),
         data: data,
-        newBoxes: (map['newBoxes'] as List)
-            .map((box) => BoxIdConverter()
-                .fromJson((box as Map<String, dynamic>)['id'] as String))
-            .toList(),
+        newBoxes: decodeBoxes(map['newBoxes'] as List<dynamic>),
         boxesToRemove: (map['boxesToRemove'] as List)
             .map((boxId) => BoxIdConverter().fromJson(boxId as String))
             .toList(),
@@ -165,12 +194,13 @@ class TransactionReceipt {
             : null,
         blockNumber: map['blockNumber'] != null
             ? BlockNum.exact(map['blockNumber'] as int)
-            : const BlockNum.pending());
+            : const BlockNum.pending(),
+        minting: map['minting'] != null ? map['minting'] as bool : null);
   }
 
   TransactionReceipt copyWith(
       {ModifierId? id,
-      List<BoxId>? newBoxes,
+      List<TokenBox>? newBoxes,
       List<SignatureContainer>? signatures,
       PolyAmount? fee,
       int? timestamp,
@@ -217,6 +247,38 @@ class TransactionReceipt {
     }).toList();
   }
 
+  static List<Object> encodeTo(List to) {
+    return to.map((i) {
+      switch (i.runtimeType) {
+        case (SimpleRecipient):
+          return (i as SimpleRecipient).toBroadcastJson();
+        case (AssetRecipient):
+          return (i as AssetRecipient).toJson();
+        default:
+          throw ArgumentError('Transaction type currently not supported');
+      }
+    }).toList();
+  }
+
+  List<Map<String, dynamic>> encodeBoxes(List<TokenBox> boxes) {
+    return boxes.map((box) => box.toJson()).toList();
+  }
+
+  static List<TokenBox> decodeBoxes(List<dynamic> boxes) {
+    return boxes.map((box) {
+      switch (box['type']) {
+        case ('PolyBox'):
+          return PolyBox.fromJson(box as Map<String, dynamic>);
+        case ('AssetBox'):
+          return AssetBox.fromJson(box as Map<String, dynamic>);
+        case ('ArbitBox'):
+          return ArbitBox.fromJson(box as Map<String, dynamic>);
+        default:
+          return TokenBox.fromJson(box as Map<String, dynamic>);
+      }
+    }).toList();
+  }
+
   static List<SignatureContainer> decodeSignatures(
       Map<String, dynamic> signatures) {
     final formattedSignatures = <SignatureContainer>[];
@@ -235,9 +297,9 @@ class TransactionReceipt {
     final encodedSignatures = <String, String>{};
     signatures.forEach((value) {
       final newKey = Base58Data(Uint8List.fromList(
-          [0, ...value.proposition.buffer.asUint8List()])).show;
-      final outputValue =
-          Uint8List.fromList([0, ...value.proof.buffer.asUint8List()]);
+          [PUBKEY_HASH_BYTE, ...value.proposition.buffer.asUint8List()])).show;
+      final outputValue = Uint8List.fromList(
+          [PUBKEY_HASH_BYTE, ...value.proof.buffer.asUint8List()]);
       final newValue = Base58Data(outputValue).show;
       encodedSignatures[newKey] = newValue;
     });
