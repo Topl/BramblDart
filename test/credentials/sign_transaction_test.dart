@@ -58,7 +58,7 @@ void main() {
     final client = BramblClient();
 
     final signature = await client.signTransaction(
-      key,
+      [key],
       transactionReceipt,
       Base58Encoder.instance.decode(messageToSign),
     );

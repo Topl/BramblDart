@@ -227,14 +227,13 @@ class BramblClient {
   /// See also:
   ///  - [bytesToHex], which can be used to get the more common hexadecimal
   /// representation of the transaction.
-  Future<TransactionReceipt> signTransaction(Credentials cred,
+  Future<TransactionReceipt> signTransaction(List<Credentials> cred,
       TransactionReceipt transactionReceipt, Uint8List messageToSign) async {
-    final signature = await cred.signToSignature(messageToSign);
+    final signatures = await _genSig(cred, messageToSign);
     return _fillMissingData(
         credentials: cred,
         transactionReceipt: transactionReceipt,
-        signature: signature,
-        proposition: cred.proposition);
+        signatures: signatures);
   }
 
   /// Returns the information about a transaction requested by a transactionId [transactionId]
@@ -261,18 +260,26 @@ class BramblClient {
             .toList());
   }
 
+  Future<List<SignatureContainer>> _genSig(
+      List<Credentials> keys, Uint8List msgToSign) async {
+    return Future.wait(keys.map((key) async {
+      final proposition = key.proposition;
+      final signature = await key.signToSignature(msgToSign);
+      return SignatureContainer(proposition, signature);
+    }).toList());
+  }
+
   Future<TransactionReceipt> _fillMissingData(
-      {required Credentials credentials,
-      required TransactionReceipt transactionReceipt,
-      required SignatureBase signature,
-      required Proposition proposition}) async {
+      {required List<Credentials> credentials,
+      required List<SignatureContainer> signatures,
+      required TransactionReceipt transactionReceipt}) async {
     final fee = transactionReceipt.fee ?? await getFee();
 
     /// apply default values to null fields
     return transactionReceipt.copyWith(
       fee: fee,
       data: transactionReceipt.data ?? Latin1Data(Uint8List(0)),
-      signatures: [SignatureContainer(proposition, signature)],
+      signatures: signatures,
     );
   }
 
@@ -330,11 +337,8 @@ class BramblClient {
   /// Returns a hash of the messageToSign of the transaction which, after the transaction has been
   /// included in a mined block, can be used to obtain detailed information
   /// about the transaction.
-  Future<String> sendTransaction(Credentials cred,
+  Future<String> sendTransaction(List<Credentials> cred,
       TransactionReceipt transaction, Uint8List messageToSign) async {
-    if (cred is CustomTransactionSender) {
-      return cred.sendTransaction(transaction);
-    }
     final signed = await signTransaction(cred, transaction, messageToSign);
     return sendSignedTransaction(signed);
   }
