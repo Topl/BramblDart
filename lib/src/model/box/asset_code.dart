@@ -44,7 +44,7 @@ class AssetCode {
     return AssetCode(
         decoded.first,
         ToplAddress(decoded.sublist(1, 1 + ToplAddress.addressSize),
-            networkId: decoded.first,
+            networkId: decoded[1],
             proposition: PropositionType.fromPrefix(decoded[2])),
         Latin1Data(decoded.sublist(35)),
         Network.fromNetworkPrefix(decoded[1]).name);
