@@ -209,7 +209,7 @@ void main() async {
       print(rawTransaction);
 
       final txId = await client.sendTransaction(
-          first,
+          [first],
           rawTransaction['rawTx'] as TransactionReceipt,
           rawTransaction['messageToSign'] as Uint8List);
 
@@ -233,7 +233,7 @@ void main() async {
       print(rawTransaction);
 
       final nonMintingAssetTxId = await client.sendTransaction(
-          first,
+          [first],
           rawTransaction['rawTx'] as TransactionReceipt,
           rawTransaction['messageToSign'] as Uint8List);
 
@@ -269,7 +269,7 @@ void main() async {
       expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
 
       final txId = await client.sendTransaction(
-          first,
+          [first],
           rawTransaction['rawTx'] as TransactionReceipt,
           rawTransaction['messageToSign'] as Uint8List);
 
@@ -297,6 +297,80 @@ void main() async {
     test('getMempool test', () async {
       final memPool = await client.getMempool();
       print(memPool);
+    });
+
+    test('Complex asset transaction', () async {
+      final senderAddress = await first.extractAddress();
+      final recipientAddress = await second.extractAddress();
+
+      final balanceOfSender = await client.getBalance(senderAddress);
+      print(balanceOfSender);
+      final balanceOfRecipient = await client.getBalance(recipientAddress);
+      print(balanceOfRecipient);
+      final value = 1;
+
+      final assetCode =
+          AssetCode.initialize(1, senderAddress, 'testy', 'valhalla');
+
+      final securityRoot = SecurityRoot.fromBase58(
+          Base58Data.validated('11111111111111111111111111111111'));
+
+      final assetValue = AssetValue(
+          value.toString(), assetCode, securityRoot, 'metadata', 'Asset');
+
+      final recipient = AssetRecipient(recipientAddress, assetValue);
+
+      final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, VALHALLA_FEE);
+
+      final data = Latin1Data.validated('data');
+
+      final assetTransaction = AssetTransaction(
+          recipients: [recipient],
+          sender: [senderAddress, recipientAddress],
+          changeAddress: senderAddress,
+          consolidationAddress: senderAddress,
+          propositionType: PropositionType.ed25519().propositionName,
+          minting: true,
+          assetCode: assetCode,
+          data: data);
+
+      final rawTransaction =
+          await client.sendRawAssetTransfer(assetTransaction: assetTransaction);
+
+      expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
+
+      print(rawTransaction);
+
+      final txId = await client.sendTransaction(
+          [first],
+          rawTransaction['rawTx'] as TransactionReceipt,
+          rawTransaction['messageToSign'] as Uint8List);
+
+      print(txId);
+
+      final nonMintingAssetRecipient =
+          AssetRecipient(senderAddress, assetValue);
+
+      final nonMintingAssetTransaction = AssetTransaction(
+          recipients: [nonMintingAssetRecipient],
+          sender: [senderAddress, recipientAddress],
+          changeAddress: senderAddress,
+          consolidationAddress: senderAddress,
+          propositionType: PropositionType.ed25519().propositionName,
+          minting: false,
+          assetCode: assetCode,
+          data: data);
+
+      expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
+
+      print(rawTransaction);
+
+      final nonMintingAssetTxId = await client.sendTransaction(
+          [first],
+          rawTransaction['rawTx'] as TransactionReceipt,
+          rawTransaction['messageToSign'] as Uint8List);
+
+      print(txId);
     });
 
     // test('Simple raw arbit transaction', () async {
