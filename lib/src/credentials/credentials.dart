@@ -86,11 +86,8 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
   @override
   ToplAddress get address {
     return _cachedAddress ??
-        ToplAddress(
-            generatePubKeyHashAddress(
-                privateKey.publicKey, network, propositionType.propositionName),
-            networkId: network,
-            proposition: propositionType);
+        generatePubKeyHashAddress(
+            privateKey.publicKey, network, propositionType.propositionName);
   }
 
   @override
