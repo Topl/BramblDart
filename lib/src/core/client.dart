@@ -1,33 +1,4 @@
-import 'dart:math';
-import 'dart:typed_data';
-
-import 'package:built_value/serializer.dart';
-import 'package:dio/dio.dart';
-import 'package:logging/logging.dart';
-import 'package:mubrambl/src/attestation/proposition.dart';
-import 'package:mubrambl/src/attestation/signature_container.dart';
-import 'package:mubrambl/src/core/amount.dart';
-import 'package:mubrambl/src/core/block_number.dart';
-import 'package:mubrambl/src/core/expensive_operations.dart';
-import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/credentials/credentials.dart';
-import 'package:mubrambl/src/model/balances.dart';
-import 'package:mubrambl/src/model/box/asset_code.dart';
-import 'package:mubrambl/src/model/box/recipient.dart';
-import 'package:mubrambl/src/model/box/token_value_holder.dart';
-import 'package:mubrambl/src/modifier/block/block.dart';
-import 'package:mubrambl/src/modifier/block/block_response.dart';
-import 'package:mubrambl/src/transaction/transaction.dart';
-import 'package:mubrambl/src/transaction/transactionReceipt.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/proposition_type.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
-import 'package:pinenacl/ed25519.dart';
-import 'package:pinenacl/encoding.dart';
-
-import '../json_rpc.dart';
-import 'interceptors/auth/api_key_auth.dart';
+part of 'package:mubrambl/brambldart.dart';
 
 final log = Logger('BramblClient');
 
@@ -51,19 +22,16 @@ class BramblClient {
   /// transactions or computing private keys.
   BramblClient({
     Dio? httpClient,
-    Serializers? serializers,
     String? basePathOverride,
     List<Interceptor>? interceptors,
   })  : _operations = ExpensiveOperations(),
         jsonRpc = JsonRPC(
-          dio: httpClient ??
-              Dio(BaseOptions(
-                  baseUrl: basePathOverride ?? basePath,
-                  contentType: 'application/json',
-                  connectTimeout: 5000,
-                  receiveTimeout: 3000)),
-          serializers: serializers,
-        ) {
+            dio: httpClient ??
+                Dio(BaseOptions(
+                    baseUrl: basePathOverride ?? basePath,
+                    contentType: 'application/json',
+                    connectTimeout: 5000,
+                    receiveTimeout: 3000))) {
     if (interceptors == null) {
       jsonRpc.dio.interceptors.add(ApiKeyAuthInterceptor());
       jsonRpc.dio.interceptors
@@ -210,38 +178,15 @@ class BramblClient {
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
   ///
   Future<Map<String, dynamic>> sendRawAssetTransfer(
-      {required ToplAddress sender,
-      required Map<String, AssetValue> recipients,
-      PolyAmount? fee,
-      required bool minting,
-      ToplAddress? changeAddress,
-      ToplAddress? consolidationAddress,
-      Uint8List? data,
-      required AssetCode assetCode,
-      required ToplAddress issuer}) {
-    // ignore: prefer_collection_literals
-    final senders = [sender, issuer].toSet().toList();
-    return _makeRPCCall('topl_rawAssetTransfer', params: [
-      AssetTransaction(
-              recipients: recipients.entries
-                  .map((entry) => AssetRecipient(
-                      ToplAddress.fromBase58(entry.key), entry.value))
-                  .toList(),
-              sender: senders,
-              propositionType: issuer.proposition.propositionName,
-              changeAddress: changeAddress,
-              fee: fee,
-              data: data != null ? Latin1Data(data) : null,
-              minting: minting,
-              consolidationAddress: consolidationAddress,
-              assetCode: assetCode)
-          .toJson()
-    ]).then((value) => {
-          'rawTx': TransactionReceipt.fromJson(
-              value['rawTx'] as Map<String, dynamic>),
-          'messageToSign':
-              Base58Data.validated(value['messageToSign'] as String).value
-        });
+      {required AssetTransaction assetTransaction}) async {
+    final tx = await _fillMissingDataRawAsset(transaction: assetTransaction);
+    return _makeRPCCall('topl_rawAssetTransfer', params: [tx.toJson()])
+        .then((value) => {
+              'rawTx': TransactionReceipt.fromJson(
+                  value['rawTx'] as Map<String, dynamic>),
+              'messageToSign':
+                  Base58Data.validated(value['messageToSign'] as String).value
+            });
   }
 
   /// Sends a raw poly transfer call to a node
@@ -249,30 +194,15 @@ class BramblClient {
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
   ///
   Future<Map<String, dynamic>> sendRawPolyTransfer(
-      {required ToplAddress sender,
-      required Map<String, SimpleValue> recipients,
-      PolyAmount? fee,
-      ToplAddress? changeAddress,
-      Uint8List? data}) {
-    // ignore: prefer_collection_literals
-    return _makeRPCCall('topl_rawPolyTransfer', params: [
-      PolyTransaction(
-              recipients: recipients.entries
-                  .map((entry) => SimpleRecipient(
-                      ToplAddress.fromBase58(entry.key), entry.value))
-                  .toList(),
-              sender: [sender],
-              propositionType: sender.proposition.propositionName,
-              changeAddress: changeAddress,
-              fee: fee,
-              data: data != null ? Latin1Data(data) : null)
-          .toJson()
-    ]).then((value) => {
-          'rawTx': TransactionReceipt.fromJson(
-              value['rawTx'] as Map<String, dynamic>),
-          'messageToSign':
-              Base58Data.validated(value['messageToSign'] as String).value
-        });
+      {required PolyTransaction polyTransaction}) async {
+    final tx = await _fillMissingDataRawPoly(transaction: polyTransaction);
+    return _makeRPCCall('topl_rawPolyTransfer', params: [tx.toJson()])
+        .then((value) => {
+              'rawTx': TransactionReceipt.fromJson(
+                  value['rawTx'] as Map<String, dynamic>),
+              'messageToSign':
+                  Base58Data.validated(value['messageToSign'] as String).value
+            });
   }
 
   /// Sends a raw arbit transfer call to a node
@@ -280,34 +210,15 @@ class BramblClient {
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
   ///
   Future<Map<String, dynamic>> sendRawArbitTransfer(
-      {required ToplAddress sender,
-      required Map<String, SimpleValue> recipients,
-      PolyAmount? fee,
-      ToplAddress? changeAddress,
-      ToplAddress? consolidationAddress,
-      Uint8List? data,
-      required ToplAddress issuer}) {
-    // ignore: prefer_collection_literals
-    final senders = [sender, issuer].toSet().toList();
-    return _makeRPCCall('topl_rawArbitTransfer', params: [
-      ArbitTransaction(
-              recipients: recipients.entries
-                  .map((entry) => SimpleRecipient(
-                      ToplAddress.fromBase58(entry.key), entry.value))
-                  .toList(),
-              sender: senders,
-              propositionType: issuer.proposition.propositionName,
-              changeAddress: changeAddress,
-              consolidationAddress: consolidationAddress,
-              fee: fee,
-              data: data != null ? Latin1Data(data) : null)
-          .toJson()
-    ]).then((value) => {
-          'rawTx': TransactionReceipt.fromJson(
-              value['rawTx'] as Map<String, dynamic>),
-          'messageToSign':
-              Base58Data.validated(value['messageToSign'] as String).value
-        });
+      {required ArbitTransaction arbitTransaction}) async {
+    final tx = await _fillMissingDataRawArbit(transaction: arbitTransaction);
+    return _makeRPCCall('topl_rawArbitTransfer', params: [tx.toJson()])
+        .then((value) => {
+              'rawTx': TransactionReceipt.fromJson(
+                  value['rawTx'] as Map<String, dynamic>),
+              'messageToSign':
+                  Base58Data.validated(value['messageToSign'] as String).value
+            });
   }
 
   /// Signs the [transaction] with the credentials [cred]. The transaction will
@@ -365,6 +276,43 @@ class BramblClient {
     );
   }
 
+  Future<PolyTransaction> _fillMissingDataRawPoly(
+      {required PolyTransaction transaction}) async {
+    final changeAddress = transaction.changeAddress ?? transaction.sender.first;
+    final fee = transaction.fee ?? await getFee();
+
+    /// apply defaultb values to null fields
+    return transaction.copy(fee: fee, changeAddress: changeAddress);
+  }
+
+  Future<AssetTransaction> _fillMissingDataRawAsset(
+      {required AssetTransaction transaction}) async {
+    final changeAddress = transaction.changeAddress ?? transaction.sender.first;
+    final fee = transaction.fee ?? await getFee();
+    final consolidationAddress =
+        transaction.consolidationAddress ?? transaction.sender.first;
+
+    /// apply default values to null fields
+    return transaction.copy(
+        fee: fee,
+        changeAddress: changeAddress,
+        consolidationAddress: consolidationAddress);
+  }
+
+  Future<ArbitTransaction> _fillMissingDataRawArbit(
+      {required ArbitTransaction transaction}) async {
+    final changeAddress = transaction.changeAddress ?? transaction.sender.first;
+    final fee = transaction.fee ?? await getFee();
+    final consolidationAddress =
+        transaction.consolidationAddress ?? transaction.sender.first;
+
+    /// apply default values to null fields
+    return transaction.copy(
+        fee: fee,
+        changeAddress: changeAddress,
+        consolidationAddress: consolidationAddress);
+  }
+
   Future<PolyAmount> getFee() async {
     final network = await getNetwork();
     if (network == TOPLNET) {
@@ -403,4 +351,12 @@ class BramblClient {
       {'tx': transaction.toBroadcastJson()}
     ]).then((value) => value['txId'] as String);
   }
+
+  /// A function to initiate polling of the chain provider for a specified transaction.
+  /// This function begins by querying [getTransactionById] which looks for confirmed transactions only.
+  /// If the transaction is not confirmed, the mempool is checked using getTransactionFromMemPool to
+  /// ensure that the transaction is pending. The parameter [numFailedQueries] specifies the number of consecutive
+  /// failures (when resorting to querying the mempool) before ending the polling operation prematurely.
+  ///
+
 }

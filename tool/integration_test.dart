@@ -6,17 +6,15 @@ import 'package:bip_topl/bip_topl.dart';
 import 'package:dio/dio.dart';
 import 'package:docker_process/containers/cockroachdb.dart';
 import 'package:http/http.dart';
+import 'package:mubrambl/brambldart.dart';
 import 'package:mubrambl/src/core/amount.dart';
 import 'package:mubrambl/src/core/block_number.dart';
-import 'package:mubrambl/src/core/client.dart';
-import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
 import 'package:mubrambl/src/json_rpc.dart';
 import 'package:mubrambl/src/model/box/asset_code.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/security_root.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
-import 'package:mubrambl/src/transaction/transactionReceipt.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
@@ -187,24 +185,24 @@ void main() async {
       final assetValue = AssetValue(
           value.toString(), assetCode, securityRoot, 'metadata', 'Asset');
 
-      final recipients = <String, AssetValue>{
-        recipientAddress.toBase58(): assetValue
-      };
+      final recipient = AssetRecipient(senderAddress, assetValue);
 
       final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, VALHALLA_FEE);
 
-      final rawTransaction = await client.sendRawAssetTransfer(
-          assetCode: assetCode,
-          issuer: senderAddress,
-          sender: senderAddress,
-          recipients: recipients,
-          fee: fee,
-          minting: true,
+      final data = Latin1Data.validated('data');
+
+      final assetTransaction = AssetTransaction(
+          recipients: [recipient],
+          sender: [senderAddress],
           changeAddress: senderAddress,
           consolidationAddress: senderAddress,
-          data: Latin1Data.validated('data').value);
+          propositionType: PropositionType.ed25519().propositionName,
+          minting: true,
+          assetCode: assetCode,
+          data: data);
 
-      final to = AssetRecipient(recipientAddress, assetValue);
+      final rawTransaction =
+          await client.sendRawAssetTransfer(assetTransaction: assetTransaction);
 
       expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
 
@@ -215,7 +213,30 @@ void main() async {
           rawTransaction['rawTx'] as TransactionReceipt,
           rawTransaction['messageToSign'] as Uint8List);
 
-      final senderBalance = await client.getBalance(senderAddress);
+      print(txId);
+
+      final nonMintingAssetRecipient =
+          AssetRecipient(recipientAddress, assetValue);
+
+      final nonMintingAssetTransaction = AssetTransaction(
+          recipients: [nonMintingAssetRecipient],
+          sender: [senderAddress],
+          changeAddress: senderAddress,
+          consolidationAddress: senderAddress,
+          propositionType: PropositionType.ed25519().propositionName,
+          minting: false,
+          assetCode: assetCode,
+          data: data);
+
+      expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
+
+      print(rawTransaction);
+
+      final nonMintingAssetTxId = await client.sendTransaction(
+          first,
+          rawTransaction['rawTx'] as TransactionReceipt,
+          rawTransaction['messageToSign'] as Uint8List);
+
       print(txId);
     });
 
@@ -229,20 +250,21 @@ void main() async {
 
       final polyValue = SimpleValue(quantity: value.toString());
 
-      final recipients = <String, SimpleValue>{
-        recipientAddress.toBase58(): polyValue
-      };
+      final recipient = SimpleRecipient(senderAddress, polyValue);
 
       final fee = PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, VALHALLA_FEE);
 
-      final rawTransaction = await client.sendRawPolyTransfer(
-          sender: senderAddress,
-          recipients: recipients,
-          fee: fee,
-          changeAddress: senderAddress,
-          data: Latin1Data.validated('data').value);
+      final data = Latin1Data.validated('data');
 
-      final to = SimpleRecipient(recipientAddress, polyValue);
+      final polyTransaction = PolyTransaction(
+          recipients: [recipient],
+          sender: [senderAddress],
+          changeAddress: senderAddress,
+          propositionType: PropositionType.ed25519().propositionName,
+          data: data);
+
+      final rawTransaction =
+          await client.sendRawPolyTransfer(polyTransaction: polyTransaction);
 
       expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
 

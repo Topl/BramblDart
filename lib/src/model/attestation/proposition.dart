@@ -1,11 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/attestation/evidence.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
 import 'package:mubrambl/src/utils/errors.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 import 'package:pinenacl/x25519.dart';
+
+import 'evidence.dart';
 
 /// Propositions are challenges that must be satisfied by the prover.
 /// In most cases, propositions are used by transactions issuers (spenders) to prove the right

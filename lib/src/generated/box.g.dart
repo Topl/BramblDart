@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'box.dart';
+part of '../model/box/box.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

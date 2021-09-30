@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:mubrambl/src/converters/converters.dart';
+import 'package:mubrambl/src/core/converters/converters.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/errors.dart';

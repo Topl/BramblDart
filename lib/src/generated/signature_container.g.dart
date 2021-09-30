@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'signature_container.dart';
+part of '../model/attestation/signature_container.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

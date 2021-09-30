@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'token_value_holder.dart';
+part of '../model/box/token_value_holder.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

@@ -2,8 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart';
-import 'package:mubrambl/src/core/client.dart';
-import 'package:mubrambl/src/core/interceptors/retry_interceptor.dart';
+import 'package:mubrambl/brambldart.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/address_chain.dart';
 import 'package:mubrambl/src/credentials/hd_wallet_helper.dart';

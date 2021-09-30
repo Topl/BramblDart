@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/attestation/evidence.dart';
+import 'package:mubrambl/src/model/attestation/evidence.dart';
 import 'package:mubrambl/src/model/box/box.dart';
 import 'package:mubrambl/src/model/box/box_id.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
 
-part 'poly_box.g.dart';
+part '../../generated/poly_box.g.dart';
 
 /// Box that contains polys which is owned by a particular address
 @JsonSerializable(checked: true, explicitToJson: true)

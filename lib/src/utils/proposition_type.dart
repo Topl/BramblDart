@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 
-part 'proposition_type.g.dart';
+part '../generated/proposition_type.g.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class PropositionType {

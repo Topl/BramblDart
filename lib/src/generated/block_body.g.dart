@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'block_body.dart';
+part of '../model/modifier/block/block_body.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
