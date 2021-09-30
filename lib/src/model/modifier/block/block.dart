@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'package:mubrambl/src/modifier/block/block_body.dart';
-
+import 'block_body.dart';
 import 'block_header.dart';
 
 ///
@@ -20,7 +19,7 @@ import 'block_header.dart';
 ///- additional data: block structure version no, timestamp etc
 ///
 ///
-part 'block.g.dart';
+part '../../../generated/block.g.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class Block {

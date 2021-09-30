@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'proposition_type.dart';
+part of '../utils/proposition_type.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'bloom_filter.dart';
+part of '../model/modifier/block/bloom_filter.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

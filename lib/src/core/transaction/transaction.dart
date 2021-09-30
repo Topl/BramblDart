@@ -1,28 +1,23 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mubrambl/credentials.dart';
+import 'package:mubrambl/model.dart';
 import 'package:mubrambl/src/core/amount.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/model/box/asset_code.dart';
-import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 
-part 'transaction.g.dart';
+part '../../generated/transaction.g.dart';
 
 class Transaction {
   /// Type of proposition, eg., PublicKeyCurve25519, ThresholdCurve25519, PublicKeyEd25519
   final String propositionType;
 
   /// The address of the sender/s of this transaction.
-  ///
-  /// This can be set to null, in which case the client will use the address
-  /// belonging to the credentials used to this transaction.
   @ToplAddressConverter()
   final List<ToplAddress> sender;
 
   /// The recipient of the returned UTXOs from poly transactions including
   /// left-over network fees
   ///
-  /// If [changeAddress] is `null`, this library will refer to the address
-  /// belonging to the credentials used to sign this transaction
+  /// If [changeAddress] is `null`, this library will refer to the first sender included in the sender list
   @ToplAddressNullableConverter()
   final ToplAddress? changeAddress;
 
@@ -84,17 +79,17 @@ class PolyTransaction extends Transaction {
             data: data);
 
   PolyTransaction copy(
-      {required List<SimpleRecipient> recipients,
-      required List<ToplAddress> from,
-      required String propositionType,
+      {List<SimpleRecipient>? recipients,
+      List<ToplAddress>? from,
+      String? propositionType,
       ToplAddress? changeAddress,
       PolyAmount? fee,
       Latin1Data? data}) {
     return PolyTransaction(
-        propositionType: propositionType,
-        sender: from,
-        recipients: recipients,
-        changeAddress: changeAddress,
+        propositionType: propositionType ?? this.propositionType,
+        sender: from ?? sender,
+        recipients: recipients ?? this.recipients,
+        changeAddress: changeAddress ?? this.changeAddress,
         fee: fee,
         data: data);
   }
@@ -148,25 +143,25 @@ class AssetTransaction extends Transaction {
             data: data);
 
   AssetTransaction copy(
-      {required List<AssetRecipient> recipients,
-      required List<ToplAddress> from,
-      required String propositionType,
+      {List<AssetRecipient>? recipients,
+      List<ToplAddress>? from,
+      String? propositionType,
       ToplAddress? changeAddress,
       PolyAmount? fee,
       Latin1Data? data,
-      required bool minting,
+      bool? minting,
       ToplAddress? consolidationAddress,
-      required AssetCode assetCode}) {
+      AssetCode? assetCode}) {
     return AssetTransaction(
-        propositionType: propositionType,
-        sender: from,
-        recipients: recipients,
-        changeAddress: changeAddress,
-        fee: fee,
-        data: data,
-        minting: minting,
-        consolidationAddress: consolidationAddress,
-        assetCode: assetCode);
+        propositionType: propositionType ?? this.propositionType,
+        sender: from ?? sender,
+        recipients: recipients ?? this.recipients,
+        changeAddress: changeAddress ?? this.changeAddress,
+        fee: fee ?? this.fee,
+        data: data ?? this.data,
+        minting: minting ?? this.minting,
+        consolidationAddress: consolidationAddress ?? this.consolidationAddress,
+        assetCode: assetCode ?? this.assetCode);
   }
 
   /// A necessary factory constructor for creating a new AssetTransaction instance
@@ -210,23 +205,23 @@ class ArbitTransaction extends Transaction {
             data: data);
 
   ArbitTransaction copy(
-      {required List<SimpleRecipient> recipients,
-      required List<ToplAddress> from,
-      required String propositionType,
+      {List<SimpleRecipient>? recipients,
+      List<ToplAddress>? from,
+      String? propositionType,
       ToplAddress? changeAddress,
       PolyAmount? fee,
       Latin1Data? data,
-      required bool minting,
-      ToplAddress? consolidationAddress,
-      required AssetCode assetCode}) {
+      bool? minting,
+      ToplAddress? consolidationAddress}) {
     return ArbitTransaction(
-        propositionType: propositionType,
-        sender: from,
-        recipients: recipients,
-        changeAddress: changeAddress,
-        fee: fee,
-        data: data,
-        consolidationAddress: consolidationAddress);
+        propositionType: propositionType ?? this.propositionType,
+        sender: from ?? sender,
+        recipients: recipients ?? this.recipients,
+        changeAddress: changeAddress ?? this.changeAddress,
+        fee: fee ?? this.fee,
+        data: data ?? this.data,
+        consolidationAddress:
+            consolidationAddress ?? this.consolidationAddress);
   }
 
   /// A necessary factory constructor for creating a new ArbitTransaction instance

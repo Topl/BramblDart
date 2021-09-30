@@ -7,7 +7,7 @@ import 'package:mubrambl/src/model/box/security_root.dart';
 /// This allows the `SimpleValue` class to access private members in
 /// the generated file. The value for this is *.g.dart, where
 /// the star denotes the source file name.
-part 'token_value_holder.g.dart';
+part '../../generated/token_value_holder.g.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class TokenValueHolder {

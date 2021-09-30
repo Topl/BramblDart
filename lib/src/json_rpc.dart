@@ -1,7 +1,6 @@
 // ignore: one_member_abstracts
 import 'dart:convert';
 
-import 'package:built_value/serializer.dart';
 import 'package:dio/dio.dart';
 
 abstract class RpcService {
@@ -23,12 +22,11 @@ abstract class RpcService {
 }
 
 class JsonRPC extends RpcService {
-  final Serializers? serializers;
   final Dio dio;
 
   int _currentRequestId = 1;
 
-  JsonRPC({required this.dio, required this.serializers});
+  JsonRPC({required this.dio});
 
   /// Performs an RPC request, asking the server to execute the function with
   /// the given name and the associated parameters, which need to be encodable

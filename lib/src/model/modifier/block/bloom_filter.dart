@@ -3,11 +3,11 @@ import 'dart:typed_data';
 import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/converters/converters.dart';
+import 'package:mubrambl/src/core/converters/converters.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/string_data_types.dart';
 
-part 'bloom_filter.g.dart';
+part '../../../generated/bloom_filter.g.dart';
 
 final _size = BLOOM_FILTER_BYTES * 8;
 final _numLongs = _size ~/ 64;

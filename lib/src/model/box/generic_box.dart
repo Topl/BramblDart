@@ -1,4 +1,4 @@
-import 'package:mubrambl/src/attestation/evidence.dart';
+import 'package:mubrambl/src/model/attestation/evidence.dart';
 import 'package:mubrambl/src/model/box/box_id.dart';
 
 abstract class GenericBox<T> {

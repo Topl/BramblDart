@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/attestation/evidence.dart';
 import 'package:mubrambl/src/crypto/crypto.dart';
+import 'package:mubrambl/src/model/attestation/evidence.dart';
 import 'package:mubrambl/src/model/box/box.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
 import 'package:mubrambl/src/utils/constants.dart';

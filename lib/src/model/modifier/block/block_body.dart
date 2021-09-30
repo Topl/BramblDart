@@ -1,11 +1,10 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import 'package:mubrambl/src/transaction/transactionReceipt.dart';
+import 'package:mubrambl/brambldart.dart';
 
 import '../modifier_id.dart';
 
-part 'block_body.g.dart';
+part '../../../generated/block_body.g.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class BlockBody {

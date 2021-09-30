@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'package:mubrambl/src/modifier/block/block.dart';
-import 'package:mubrambl/src/modifier/modifier_id.dart';
+import '../modifier_id.dart';
+import 'block.dart';
 
-part 'block_response.g.dart';
+part '../../../generated/block_response.g.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class BlockResponse {

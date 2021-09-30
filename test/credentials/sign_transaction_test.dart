@@ -1,6 +1,6 @@
 import 'package:bip_topl/bip_topl.dart';
+import 'package:mubrambl/brambldart.dart';
 import 'package:mubrambl/src/core/amount.dart';
-import 'package:mubrambl/src/core/client.dart';
 import 'package:mubrambl/src/credentials/address.dart';
 import 'package:mubrambl/src/credentials/credentials.dart';
 import 'package:mubrambl/src/model/box/box.dart';
@@ -8,8 +8,7 @@ import 'package:mubrambl/src/model/box/box_id.dart';
 import 'package:mubrambl/src/model/box/recipient.dart';
 import 'package:mubrambl/src/model/box/sender.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
-import 'package:mubrambl/src/modifier/modifier_id.dart';
-import 'package:mubrambl/src/transaction/transactionReceipt.dart';
+import 'package:mubrambl/src/model/modifier/modifier_id.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';
 import 'package:pinenacl/api.dart';

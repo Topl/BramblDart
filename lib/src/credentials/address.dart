@@ -1,7 +1,7 @@
 import 'package:bip_topl/bip_topl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/src/attestation/address_codec.dart';
-import 'package:mubrambl/src/attestation/evidence.dart';
+import 'package:mubrambl/src/model/attestation/evidence.dart';
 import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
 import 'package:mubrambl/src/utils/constants.dart';
 import 'package:mubrambl/src/utils/proposition_type.dart';

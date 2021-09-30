@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/attestation/proposition.dart';
-import 'package:mubrambl/src/converters/converters.dart';
+import 'package:mubrambl/src/core/converters/converters.dart';
+import 'package:mubrambl/src/model/attestation/proposition.dart';
 import 'package:pinenacl/ed25519.dart';
 
-part 'signature_container.g.dart';
+part '../../generated/signature_container.g.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class SignatureContainer {
