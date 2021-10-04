@@ -28,6 +28,7 @@ import 'src/utils/util.dart';
 
 export 'credentials.dart';
 export 'crypto.dart';
+export 'fetch.dart';
 export 'model.dart';
 export 'src/core/amount.dart';
 export 'src/core/block_number.dart';
