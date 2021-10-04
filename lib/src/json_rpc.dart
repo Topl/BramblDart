@@ -111,4 +111,6 @@ class RPCError implements Exception {
   String toString() {
     return 'RPCError: got code $errorCode with msg \"$message\".';
   }
+
+  bool isHttpClientError() => errorCode >= 400 && errorCode < 404;
 }
