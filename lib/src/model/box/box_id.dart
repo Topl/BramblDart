@@ -1,12 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/crypto/crypto.dart';
-import 'package:mubrambl/src/model/attestation/evidence.dart';
-import 'package:mubrambl/src/model/box/box.dart';
-import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
+part of 'package:brambldart/model.dart';
 
 class BoxId<T> {
   final Digest hash;
@@ -14,7 +6,7 @@ class BoxId<T> {
   BoxId(this.hash);
 
   factory BoxId.applyByteArray(Uint8List bytes) {
-    return BoxId(Digest.from(bytes, BLAKE2B_256_DIGEST_SIZE));
+    return BoxId(Digest.from(bytes, blake2b256DigestSize));
   }
 
   factory BoxId.apply(Box<T> box) {
@@ -23,7 +15,7 @@ class BoxId<T> {
 
   factory BoxId.fromEvidence(Evidence? evidence) {
     return BoxId(evidence?.evBytes ??
-        Digest(BLAKE2B_256_DIGEST_SIZE, Uint8List(BLAKE2B_256_DIGEST_SIZE)));
+        Digest(blake2b256DigestSize, Uint8List(blake2b256DigestSize)));
   }
 
   factory BoxId.fromJson(String json) {

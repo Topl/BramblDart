@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:mubrambl/src/utils/rpc_service.dart';
+import 'package:brambldart/src/utils/rpc_service.dart';
 import 'package:test/test.dart';
 
 final uri = Uri.parse('url');

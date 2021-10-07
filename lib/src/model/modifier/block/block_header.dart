@@ -1,10 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/core/converters/converters.dart';
-import 'package:mubrambl/src/crypto/crypto.dart';
-import 'package:mubrambl/src/model/box/arbit_box.dart';
-import 'package:pinenacl/x25519.dart';
-
-import '../modifier_id.dart';
+import 'package:brambldart/crypto.dart';
+import 'package:brambldart/model.dart';
+import 'package:brambldart/utils.dart';
+import 'package:pinenacl/api.dart';
 
 part '../../../generated/block_header.g.dart';
 

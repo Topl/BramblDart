@@ -2,15 +2,13 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart';
-import 'package:mubrambl/brambldart.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/credentials/address_chain.dart';
-import 'package:mubrambl/src/credentials/hd_wallet_helper.dart';
+import 'package:brambldart/client.dart';
+import 'package:brambldart/credentials.dart';
 import 'package:test/test.dart';
 
 import 'test_api_key_auth.dart';
 
-void main() async {
+Future<void> main() async {
   late BramblClient client;
   late AddressChain addressChain10;
   late AddressChain addressChain100;
@@ -21,7 +19,7 @@ void main() async {
   final list10 = List<int>.generate(10, (i) => i + 1);
   final list100 = List<int>.generate(100, (i) => i + 1);
   final list1000 = List<int>.generate(1000, (i) => i + 1);
-  final testEntropy =
+  const testEntropy =
       'bcfa7e43752d19eabb38fa22bf6bc3622af9ed1cc4b6f645b833c7a5a8be2ce3';
 
   var connectionAttempts = 0;
@@ -70,7 +68,7 @@ void main() async {
       final balance = await client.getBalance(ToplAddress.fromBase58(
           '3NLPFnbA7i1UjkFn1yvgPCpYvN3MNtLSQrdd7QKgNGL1YPgVaY4t'));
       print(balance);
-    } catch (e) {
+    } on Exception catch (e) {
       print(e);
       fail('exception: $e');
     }
@@ -81,7 +79,7 @@ void main() async {
       final balances = await client
           .getAllAddressBalances(addressChain10.addresses.addresses);
       expect(balances.length, 10);
-    } catch (e) {
+    } on Exception catch (e) {
       print(e);
       fail('exception: $e');
     }
@@ -92,7 +90,7 @@ void main() async {
       final balances = await client
           .getAllAddressBalances(addressChain100.addresses.addresses);
       expect(balances.length, 100);
-    } catch (e) {
+    } on Exception catch (e) {
       print(e);
       fail('exception: $e');
     }
@@ -103,7 +101,7 @@ void main() async {
       final balances = await client
           .getAllAddressBalances(addressChain1000.addresses.addresses);
       expect(balances.length, 1000);
-    } catch (e) {
+    } on Exception catch (e) {
       print(e);
       fail('exception: $e');
     }

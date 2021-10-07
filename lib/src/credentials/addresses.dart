@@ -1,4 +1,4 @@
-import 'address.dart';
+part of 'package:brambldart/credentials.dart';
 
 ///
 /// BIP-0044 Multi-Account Hierarchy for Deterministic Wallets is a Bitcoin standard defining a structure
@@ -15,9 +15,9 @@ import 'address.dart';
 /// defaulting to 0.
 
 abstract class Addresses {
-  static final String defaultPurpose = '1852';
-  static final String defaultCoin = '7091';
-  static final int defaultAddressIdx = 0;
+  static const String defaultPurpose = '1852';
+  static const String defaultCoin = '7091';
+  static const int defaultAddressIdx = 0;
   String get purpose;
   String get coinType;
   List<ToplAddress> get addresses;

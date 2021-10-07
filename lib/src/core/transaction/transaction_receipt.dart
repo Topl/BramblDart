@@ -1,4 +1,4 @@
-part of 'package:mubrambl/brambldart.dart';
+part of 'package:brambldart/model.dart';
 
 typedef TxType = int;
 
@@ -109,7 +109,7 @@ class TransactionReceipt {
   String toString() {
     return 'TransactionReceipt{id: ${id.toString()}, txType: $txType, '
         'from: ${json.encode(from)}, to: ${json.encode(to)}, fee: ${fee.toString()},'
-        'timestamp: ${formatter.format(BifrostDateTime().encode(timestamp))}, '
+        'timestamp: ${formatter.format(const BifrostDateTime().encode(timestamp))}, '
         'propositionType: ${propositionType.propositionName}, messageToSign: ${Base58Data(messageToSign ?? Uint8List(0)).show},  '
         'data: ${data?.show}, newBoxes: ${encodeBoxes(newBoxes)}, '
         'boxesToRemove: ${json.encode(boxesToRemove)}, signatures: ${encodeSignatures(signatures, propositionType)}, blockNumber: $blockNumber, blockId: ${blockId.toString()}';
@@ -135,7 +135,7 @@ class TransactionReceipt {
     _validateFields(map);
 
     final data = map['data'] != null
-        ? Latin1Converter().fromJson(map['data'] as String)
+        ? const Latin1Converter().fromJson(map['data'] as String)
         : null;
 
     // ignore: unnecessary_null_comparison
@@ -145,7 +145,7 @@ class TransactionReceipt {
 
     return TransactionReceipt(
         from: (map['from'] as List)
-            .map((i) => Sender.fromJson((i as List)))
+            .map((i) => Sender.fromJson(i as List))
             .toList(),
         to: decodeTo(map['to'] as List),
         fee: PolyAmount.fromUnitAndValue(
@@ -163,7 +163,7 @@ class TransactionReceipt {
         data: data,
         newBoxes: decodeBoxes(map['newBoxes'] as List<dynamic>),
         boxesToRemove: (map['boxesToRemove'] as List)
-            .map((boxId) => BoxIdConverter().fromJson(boxId as String))
+            .map((boxId) => const BoxIdConverter().fromJson(boxId as String))
             .toList(),
         signatures: decodeSignatures(map['signatures'] as Map<String, dynamic>),
         blockId: map.containsKey('blockId')
@@ -215,10 +215,10 @@ class TransactionReceipt {
   static List<Object> decodeTo(List to) {
     return to.map((i) {
       switch (i[1]['type']) {
-        case ('Simple'):
-          return SimpleRecipient.fromJson((i as List));
-        case ('Asset'):
-          return AssetRecipient.fromJson((i as List));
+        case 'Simple':
+          return SimpleRecipient.fromJson(i as List);
+        case 'Asset':
+          return AssetRecipient.fromJson(i as List);
         default:
           throw ArgumentError('Transaction type currently not supported');
       }
@@ -228,9 +228,9 @@ class TransactionReceipt {
   static List<Object> encodeTo(List to) {
     return to.map((i) {
       switch (i.runtimeType) {
-        case (SimpleRecipient):
+        case SimpleRecipient:
           return (i as SimpleRecipient).toBroadcastJson();
-        case (AssetRecipient):
+        case AssetRecipient:
           return (i as AssetRecipient).toJson();
         default:
           throw ArgumentError('Transaction type currently not supported');
@@ -245,11 +245,11 @@ class TransactionReceipt {
   static List<TokenBox> decodeBoxes(List<dynamic> boxes) {
     return boxes.map((box) {
       switch (box['type']) {
-        case ('PolyBox'):
+        case 'PolyBox':
           return PolyBox.fromJson(box as Map<String, dynamic>);
-        case ('AssetBox'):
+        case 'AssetBox':
           return AssetBox.fromJson(box as Map<String, dynamic>);
-        case ('ArbitBox'):
+        case 'ArbitBox':
           return ArbitBox.fromJson(box as Map<String, dynamic>);
         default:
           return TokenBox.fromJson(box as Map<String, dynamic>);
@@ -275,9 +275,9 @@ class TransactionReceipt {
     final encodedSignatures = <String, String>{};
     signatures.forEach((value) {
       final newKey = Base58Data(Uint8List.fromList(
-          [PUBKEY_HASH_BYTE, ...value.proposition.buffer.asUint8List()])).show;
+          [pubKeyHashByte, ...value.proposition.buffer.asUint8List()])).show;
       final outputValue = Uint8List.fromList(
-          [PUBKEY_HASH_BYTE, ...value.proof.buffer.asUint8List()]);
+          [pubKeyHashByte, ...value.proof.buffer.asUint8List()]);
       final newValue = Base58Data(outputValue).show;
       encodedSignatures[newKey] = newValue;
     });

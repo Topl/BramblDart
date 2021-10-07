@@ -1,16 +1,9 @@
 import 'package:bip_topl/bip_topl.dart';
-import 'package:mubrambl/brambldart.dart';
-import 'package:mubrambl/src/core/amount.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/credentials/credentials.dart';
-import 'package:mubrambl/src/model/box/box.dart';
-import 'package:mubrambl/src/model/box/box_id.dart';
-import 'package:mubrambl/src/model/box/recipient.dart';
-import 'package:mubrambl/src/model/box/sender.dart';
-import 'package:mubrambl/src/model/box/token_value_holder.dart';
-import 'package:mubrambl/src/model/modifier/modifier_id.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/proposition_type.dart';
+import 'package:brambldart/client.dart';
+import 'package:brambldart/credentials.dart';
+import 'package:brambldart/model.dart';
+import 'package:brambldart/src/model/box/token_value_holder.dart';
+import 'package:brambldart/utils.dart';
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/encoding.dart';
 import 'package:test/test.dart';
@@ -23,7 +16,7 @@ void main() {
         0x01,
         PropositionType.ed25519());
     final transactionReceipt = TransactionReceipt(
-        id: ModifierId.create(Uint8List(MODIFIER_ID_SIZE)),
+        id: ModifierId.create(Uint8List(modifierIdSize)),
         txType: 'AssetTransfer',
         newBoxes: [
           TokenBox.fromJson({
@@ -36,9 +29,7 @@ void main() {
         ],
         fee: PolyAmount.zero(),
         timestamp: 0,
-        boxesToRemove: [
-          BoxId.applyByteArray(Uint8List(BLAKE2B_256_DIGEST_SIZE))
-        ],
+        boxesToRemove: [BoxId.applyByteArray(Uint8List(blake2b256DigestSize))],
         from: [
           Sender(
               ToplAddress.fromBase58(
@@ -52,7 +43,7 @@ void main() {
               SimpleValue(quantity: '0'))
         ],
         propositionType: PropositionType.ed25519());
-    final messageToSign =
+    const messageToSign =
         'R1JphThT5KxykWcoHGm8coPkeETw6NR4uixCFX68UNWHNnKrRVi8pAkoknUCXvmvrmtDxyuXrQxdv2AyUr5iam7mqzVmSMXnA1m988ReAnQCAZPuVcTdhVCQrhFLUTNGQ85Emb3kLRaC4ymgunMt2rC6EdV9ExtGtcBz4AcCMgP9GjaussQUtxmYJeVsRJqDAAWb9YxUMmaKTXeTuSZis1RCXTKahtnkWD1rs2DS8bKeq6iJLNTj8ZS3augDgcu3K5Rk2B6gUMMrNd9g65WfguJqZjkeoPcs2QzsMSFdYgsNEcAwtkYcCHdZtqr6iNts75U7CpoQCUr8irGUM9rSXY2mFE';
 
     final client = BramblClient();

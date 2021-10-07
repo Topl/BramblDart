@@ -1,10 +1,9 @@
-import 'package:mubrambl/brambldart.dart';
-import 'package:mubrambl/src/fetch/abstract_transaction_update_fetcher.dart';
+part of 'package:brambldart/client.dart';
 
 class Polling extends AbstractTransactionUpdateFetcher {
   final BramblClient client;
 
-  static const MAX_TIMEOUT = 50;
+  static const maxTimeout = 50;
 
   bool _isPolling = false;
   String txId;
@@ -12,7 +11,7 @@ class Polling extends AbstractTransactionUpdateFetcher {
   int limit;
   int timeout;
 
-  Duration retryDelay = Duration(minutes: 1);
+  Duration retryDelay = const Duration(minutes: 1);
 
   bool get isPolling => _isPolling;
 
@@ -24,9 +23,9 @@ class Polling extends AbstractTransactionUpdateFetcher {
     if (limit > 100 || limit < 1) {
       throw ShortPollingException('Limit must be between 1 and 100');
     }
-    if (timeout > MAX_TIMEOUT) {
+    if (timeout > maxTimeout) {
       throw ShortPollingException(
-          'Timeout may not be greater than $MAX_TIMEOUT');
+          'Timeout may not be greater than $maxTimeout');
     }
   }
 
@@ -81,9 +80,9 @@ class Polling extends AbstractTransactionUpdateFetcher {
     _recursivePolling();
   }
 
-  void _resetRetryDelay() => retryDelay = Duration(minutes: 1);
+  void _resetRetryDelay() => retryDelay = const Duration(minutes: 1);
   void _doubleRetryDelay() => retryDelay *= 2;
-  void _delayRetry() async => await Future.delayed(retryDelay);
+  Future<void> _delayRetry() async => await Future.delayed(retryDelay);
 }
 
 class ShortPollingException implements Exception {

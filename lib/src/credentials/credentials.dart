@@ -1,14 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:bip_topl/bip_topl.dart';
-import 'package:collection/collection.dart';
-import 'package:mubrambl/brambldart.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/model/attestation/proposition.dart';
-import 'package:mubrambl/src/utils/proposition_type.dart';
-import 'package:mubrambl/src/utils/util.dart';
-import 'package:pinenacl/ed25519.dart' hide Signature;
-import 'package:pinenacl/ed25519.dart';
+part of 'package:brambldart/credentials.dart';
 
 /// Anything that can sign payloads with a private key.
 abstract class Credentials {
@@ -69,7 +59,7 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
   @override
   Proposition get proposition => Proposition(privateKey.verifyKey.asTypedList);
 
-  /// Creates a new, random private key from the [random] number generator.
+  /// Creates a new, random private key from the random number generator.
   ///
   /// For security reasons, it is very important that the random generator used
   /// is cryptographically secure. The private key could be reconstructed by

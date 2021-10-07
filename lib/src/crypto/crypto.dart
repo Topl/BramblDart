@@ -1,22 +1,12 @@
-import 'dart:typed_data';
-
-import 'package:mubrambl/src/core/converters/converters.dart';
-import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/errors.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
-import 'package:pointycastle/api.dart';
-import 'package:pointycastle/digests/blake2b.dart';
-import 'package:pointycastle/digests/sha512.dart';
-import 'package:pointycastle/macs/hmac.dart';
+part of 'package:brambldart/crypto.dart';
 
 /// The cryptographic hash functions (https://en.wikipedia.org/wiki/Cryptographic_hash_function) are a specific family of hash function
 
-const DIGEST_LENGTH = 32;
+const digestLength = 32;
 
 /// Returns the Blake2b (https://en.wikipedia.org/wiki/BLAKE_(hash_function)) digest of the [buffer]
 Uint8List createHash(Uint8List buffer) {
-  final blake2b = Blake2bDigest(digestSize: DIGEST_LENGTH);
+  final blake2b = Blake2bDigest(digestSize: digestLength);
   return blake2b.process(buffer);
 }
 
@@ -61,7 +51,7 @@ class Digest {
   /// from a map. Pass the map to the generated `_$DigestFromJson()` constructor.
   /// The constructor is named after the source class, in this case, Digest.
   factory Digest.fromJson(String json) =>
-      Digest.fromBase58(json, BLAKE2B_256_DIGEST_SIZE);
+      Digest.fromBase58(json, blake2b256DigestSize);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated

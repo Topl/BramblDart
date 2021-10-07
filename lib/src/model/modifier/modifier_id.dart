@@ -1,9 +1,4 @@
-import 'package:collection/collection.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
-import 'package:pinenacl/ed25519.dart';
+part of 'package:brambldart/model.dart';
 
 typedef ModifierTypeId = int;
 
@@ -11,12 +6,12 @@ class ModifierId extends ByteList {
   ModifierId(Uint8List value) : super(value);
 
   factory ModifierId.create(Uint8List value) {
-    assert(value.length == MODIFIER_ID_SIZE);
+    assert(value.length == modifierIdSize);
     return ModifierId(value);
   }
 
   factory ModifierId.empty() {
-    return ModifierId(Uint8List(MODIFIER_ID_SIZE));
+    return ModifierId(Uint8List(modifierIdSize));
   }
 
   factory ModifierId.fromBase58(Base58Data data) {
@@ -33,7 +28,8 @@ class ModifierId extends ByteList {
   @override
   bool operator ==(Object other) =>
       other is ModifierId &&
-      ListEquality().equals(buffer.asUint8List(), other.buffer.asUint8List());
+      const ListEquality()
+          .equals(buffer.asUint8List(), other.buffer.asUint8List());
 
   @override
   String toString() {

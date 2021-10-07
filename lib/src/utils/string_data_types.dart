@@ -1,23 +1,16 @@
+part of 'package:brambldart/utils.dart';
+
 ///
 /// Byte data represented by Latin-1 encoded text.
 /// @param value the data bytes
 ///
-import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:bip_topl/bip_topl.dart';
-import 'package:collection/collection.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/utils/extensions.dart';
-import 'package:pinenacl/api.dart';
-import 'package:pinenacl/encoding.dart';
 
 class Latin1Data {
   final Uint8List? value;
 
   @override
   bool operator ==(Object other) =>
-      other is Latin1Data && ListEquality().equals(value, other.value);
+      other is Latin1Data && const ListEquality().equals(value, other.value);
 
   @override
   int get hashCode => value.hashCode;
@@ -89,7 +82,7 @@ class Base58Data {
   factory Base58Data.unsafe(String from) {
     try {
       return Base58Data.validated(from);
-    } catch (err) {
+    } on Exception catch (err) {
       throw ArgumentError('Invalid Base-58 string: $err');
     }
   }
@@ -116,7 +109,7 @@ class Base16Data {
   factory Base16Data.unsafe(String from) {
     try {
       return Base16Data.validated(from);
-    } catch (err) {
+    } on Exception catch (err) {
       throw ArgumentError('Invalid Base-16 string: $err');
     }
   }

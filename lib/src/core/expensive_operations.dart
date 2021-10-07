@@ -1,6 +1,4 @@
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/credentials/credentials.dart';
-import 'package:mubrambl/src/utils/proposition_type.dart';
+part of 'package:brambldart/client.dart';
 
 /// Wrapper around some potentially expensive operations so that they can
 /// optionally be executed in a background isolate. This is mainly needed for

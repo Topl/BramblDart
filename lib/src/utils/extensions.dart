@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'dart:typed_data';
+part of 'package:brambldart/utils.dart';
 
 extension StringOps on String {
   // return the byte array of a string after ensuring valid encoding

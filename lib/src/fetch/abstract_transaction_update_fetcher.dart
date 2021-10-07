@@ -1,6 +1,4 @@
-import 'dart:async';
-
-import 'package:mubrambl/brambldart.dart';
+part of 'package:brambldart/client.dart';
 
 abstract class AbstractTransactionUpdateFetcher {
   final StreamController<TransactionReceipt?>
@@ -13,7 +11,7 @@ abstract class AbstractTransactionUpdateFetcher {
   void emitTransactionUpdate(TransactionReceipt? transaction) =>
       _transactionUpdateStreamController.add(transaction);
 
-  /// When [transaction] is added to stream
+  /// When a transaction is added to the stream
   Stream<TransactionReceipt?> onUpdate() =>
       _transactionUpdateStreamController.stream;
 

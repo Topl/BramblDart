@@ -1,16 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/model/attestation/evidence.dart';
-import 'package:mubrambl/src/model/box/box.dart';
-import 'package:mubrambl/src/model/box/box_id.dart';
-import 'package:mubrambl/src/model/box/token_value_holder.dart';
+import 'package:brambldart/brambldart.dart';
+import 'package:brambldart/src/model/box/token_value_holder.dart';
 
 part '../../generated/asset_box.g.dart';
 
 /// Box that contains assets which is owned by a particular address
 @JsonSerializable()
 class AssetBox extends TokenBox {
-  static final typePrefix = 3;
-  static final typeString = 'AssetBox';
+  static const typePrefix = 3;
+  static const typeString = 'AssetBox';
 
   AssetBox(Evidence evidence, AssetValue value, Nonce nonce)
       : super(value, evidence, nonce, typeString);

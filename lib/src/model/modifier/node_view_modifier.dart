@@ -1,5 +1,4 @@
-import 'package:mubrambl/src/utils/constants.dart';
-import 'modifier_id.dart';
+part of 'package:brambldart/model.dart';
 
 typedef M = NodeViewModifier;
 
@@ -10,7 +9,6 @@ typedef M = NodeViewModifier;
 class NodeViewModifier {
   final ModifierTypeId modifierTypeId;
   final ModifierId id;
-  final int modifierIdSize = MODIFIER_ID_SIZE;
 
   NodeViewModifier(this.modifierTypeId, this.id);
 

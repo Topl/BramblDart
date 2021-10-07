@@ -24,7 +24,7 @@ PolyBox _$PolyBoxFromJson(Map<String, dynamic> json) => $checkedCreate(
     );
 
 Map<String, dynamic> _$PolyBoxToJson(PolyBox instance) => <String, dynamic>{
-      'evidence': instance.evidence.toJson(),
+      'evidence': instance.evidence!.toJson(),
       'id': const BoxIdConverter().toJson(instance.boxId),
       'value': instance.value.toJson(),
       'nonce': instance.nonce,

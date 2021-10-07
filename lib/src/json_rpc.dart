@@ -1,9 +1,6 @@
-// ignore: one_member_abstracts
-import 'dart:convert';
+part of 'package:brambldart/client.dart';
 
-import 'package:dio/dio.dart';
-
-abstract class RpcService {
+mixin RpcService {
   /// Performs an RPC request, asking the server to execute the function with
   /// the given name and the associated parameters, which need to be encodable
   /// with the [json] class of dart:convert.
@@ -21,7 +18,7 @@ abstract class RpcService {
       List<Map<String, dynamic>>? params});
 }
 
-class JsonRPC extends RpcService {
+class JsonRPC with RpcService {
   final Dio dio;
 
   int _currentRequestId = 1;

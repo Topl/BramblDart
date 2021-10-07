@@ -1,5 +1,4 @@
-import 'package:mubrambl/src/model/attestation/evidence.dart';
-import 'package:mubrambl/src/model/box/box_id.dart';
+part of 'package:brambldart/model.dart';
 
 abstract class GenericBox<T> {
   /// a commitment to the proposition locking this box

@@ -1,5 +1,5 @@
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/utils/constants.dart';
+import 'package:brambldart/credentials.dart';
+import 'package:brambldart/utils.dart';
 import 'package:test/test.dart';
 
 const _base58ValhallaAddresses = {
@@ -28,7 +28,7 @@ void main() {
     _base58PrivateAddresses.forEach((address) {
       test('parses base58 to ToplAddress private (default)', () {
         expect(
-            ToplAddress.fromBase58(address, networkPrefix: PRIVATE_PREFIX)
+            ToplAddress.fromBase58(address, networkPrefix: privatePrefix)
                 .toBase58(),
             address);
       });
@@ -37,7 +37,7 @@ void main() {
     _base58MainnetAddresses.forEach((address) {
       test('parses base58 to ToplAddress mainnet (default)', () {
         expect(
-            ToplAddress.fromBase58(address, networkPrefix: MAINNET_PREFIX)
+            ToplAddress.fromBase58(address, networkPrefix: mainnetPrefix)
                 .toBase58(),
             address);
       });

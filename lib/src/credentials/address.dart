@@ -1,12 +1,4 @@
-import 'package:bip_topl/bip_topl.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/attestation/address_codec.dart';
-import 'package:mubrambl/src/model/attestation/evidence.dart';
-import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/proposition_type.dart';
-import 'package:mubrambl/src/utils/util.dart';
-import 'package:pinenacl/api.dart';
+part of 'package:brambldart/credentials.dart';
 
 typedef NetworkId = int;
 
@@ -15,7 +7,7 @@ typedef NetworkId = int;
 ///
 /// [see](https://topl.readme.io/docs/how-topl-addresses-are-generated)
 ///
-enum AddressType { Dion_Type_1, Dion_Type_3 }
+enum AddressType { dionType1, dionType3 }
 
 String addressTypeString(AddressType type) {
   final s = type.toString();
@@ -46,14 +38,14 @@ class ToplAddress extends ByteList {
 
   /// A Topl address from the raw address bytes
   ToplAddress(List<int> bytes,
-      {this.networkId = VALHALLA_PREFIX,
-      this.proposition = const PropositionType(
-          'PublicKeyEd25519', DEFAULT_PROPOSITION_PREFIX)})
+      {this.networkId = valhallaPrefix,
+      this.proposition =
+          const PropositionType('PublicKeyEd25519', defaultPropositionPrefix)})
       : super(bytes);
 
   /// Human readable address
   String toBase58() {
-    return Uint8List.fromList((asTypedList + asTypedList.checksum()))
+    return Uint8List.fromList(asTypedList + asTypedList.checksum())
         .encodeAsBase58()
         .show;
   }
@@ -65,10 +57,9 @@ class ToplAddress extends ByteList {
   }
 
   factory ToplAddress.fromBase58(String address,
-      {NetworkId networkPrefix = VALHALLA_PREFIX}) {
+      {NetworkId networkPrefix = valhallaPrefix}) {
     final decoded = str2ByteArray(address);
-    return AddressCodec.addressFromBytes(
-        bytes: decoded, networkPrefix: networkPrefix);
+    return addressFromBytes(bytes: decoded, networkPrefix: networkPrefix);
   }
 
   factory ToplAddress.toAddress({
@@ -87,10 +78,10 @@ class ToplAddress extends ByteList {
       /// Base Address
       case 0:
       case 1:
-        return AddressType.Dion_Type_1;
+        return AddressType.dionType1;
       case 2:
       case 3:
-        return AddressType.Dion_Type_3;
+        return AddressType.dionType3;
       default:
         throw InvalidAddressTypeError(
             'addressType: $addressType is not defined. Containing address ${toBase58()}');

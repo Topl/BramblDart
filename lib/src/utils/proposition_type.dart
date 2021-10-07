@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/utils/constants.dart';
+
+import '../../brambldart.dart';
 
 part '../generated/proposition_type.g.dart';
 
@@ -15,19 +15,19 @@ class PropositionType {
   const PropositionType(this.propositionName, this.propositionPrefix);
 
   factory PropositionType.curve25519() =>
-      const PropositionType('PublicKeyCurve25519', CURVE_PREFIX);
+      const PropositionType('PublicKeyCurve25519', curvePrefix);
   factory PropositionType.ed25519() =>
-      const PropositionType('PublicKeyEd25519', DEFAULT_PROPOSITION_PREFIX);
+      const PropositionType('PublicKeyEd25519', defaultPropositionPrefix);
   factory PropositionType.thresholdCurve25519() =>
-      const PropositionType('ThresholdCurve255129', CURVE_THRESHOLD_PREFIX);
+      const PropositionType('ThresholdCurve255129', curveThresholdPrefix);
 
   factory PropositionType.fromPrefix(NetworkId prefix) {
     switch (prefix) {
-      case (CURVE_PREFIX):
+      case curvePrefix:
         return PropositionType.curve25519();
-      case (CURVE_THRESHOLD_PREFIX):
+      case curveThresholdPrefix:
         return PropositionType.thresholdCurve25519();
-      case (DEFAULT_PROPOSITION_PREFIX):
+      case defaultPropositionPrefix:
         return PropositionType.ed25519();
       default:
         throw ArgumentError('Proposition Type Prefix not currently supported');
@@ -36,11 +36,11 @@ class PropositionType {
 
   factory PropositionType.fromName(String name) {
     switch (name) {
-      case (CURVE_25519):
+      case curve25519:
         return PropositionType.curve25519();
-      case (THRESHOLD_CURVE_25519):
+      case thresholdCurve25519:
         return PropositionType.thresholdCurve25519();
-      case (ED25519):
+      case ed25519:
         return PropositionType.ed25519();
       default:
         throw ArgumentError('Proposition Type name is not currently supported');

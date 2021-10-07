@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:mubrambl/src/core/interceptors/auth/auth.dart';
+import 'package:brambldart/client.dart';
 
 ///
 /// This is the AuthInterceptor used to access the Topl blockchain via BaaS
@@ -28,10 +28,10 @@ class TestApiKeyAuthInterceptor extends AuthInterceptor {
     return file.readAsStringSync();
   }
 
-  static final apiKeyFilePath = 'baas_api_key.txt';
+  static const apiKeyFilePath = 'baas_api_key.txt';
 }
 
-final projectIdFilePath = 'baas_project_id.txt';
+const projectIdFilePath = 'baas_project_id.txt';
 
 final baasProjectId = File(projectIdFilePath).readAsStringSync();
 

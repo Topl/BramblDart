@@ -1,12 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:bip_topl/bip_topl.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/network.dart';
-import 'package:mubrambl/src/utils/proposition_type.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
-import 'package:mubrambl/src/utils/util.dart';
+part of 'package:brambldart/model.dart';
 
 /// AssetCode serves as a unique identifier for user issued assets
 class AssetCode {
@@ -24,12 +16,11 @@ class AssetCode {
     if (!isValidNetwork(networkPrefix)) {
       throw ArgumentError('Invalid network provided');
     }
-    assert(version == SUPPORTED_ASSET_CODE_VERSION,
+    assert(version == supportedAssetCodeVersion,
         'AssetCode version required to be 1');
-    assert(name.length <= SHORT_NAME_LIMIT,
+    assert(name.length <= shortNameLimit,
         'Asset short names must be less than 8 Latin-1 encoded characters');
-    final latin1Name =
-        Latin1Data.validated(name.padRight(SHORT_NAME_LIMIT, '0'));
+    final latin1Name = Latin1Data.validated(name.padRight(shortNameLimit, '0'));
     final validationResult =
         validateAddressByNetwork(networkPrefix, issuer.toBase58());
     if (!(validationResult['success'] as bool)) {
