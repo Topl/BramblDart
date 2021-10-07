@@ -1,4 +1,4 @@
-part of 'package:mubrambl/client.dart';
+part of 'package:brambldart/client.dart';
 
 mixin RpcService {
   /// Performs an RPC request, asking the server to execute the function with

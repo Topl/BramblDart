@@ -1,4 +1,4 @@
-part of 'package:mubrambl/client.dart';
+part of 'package:brambldart/client.dart';
 
 abstract class AbstractTransactionUpdateFetcher {
   final StreamController<TransactionReceipt?>

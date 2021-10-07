@@ -1,4 +1,4 @@
-part of 'package:mubrambl/utils.dart';
+part of 'package:brambldart/utils.dart';
 
 extension AsBytesInfallibleExtension on Uint8List {
   Base58Data encodeAsBase58() {

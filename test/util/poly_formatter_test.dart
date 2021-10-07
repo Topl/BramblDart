@@ -1,5 +1,5 @@
-import 'package:mubrambl/model.dart';
-import 'package:mubrambl/utils.dart';
+import 'package:brambldart/model.dart';
+import 'package:brambldart/utils.dart';
 import 'package:test/test.dart';
 
 void main() {

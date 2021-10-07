@@ -84,7 +84,7 @@ linter:
     #    - cascade_invocations (sometimes the explicit notation is more readable)
     - constant_identifier_names
     - curly_braces_in_flow_control_structures
-    - directives_ordering
+    # - directives_ordering
     - empty_catches
     - empty_constructor_bodies
     - file_names

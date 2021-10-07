@@ -1,4 +1,4 @@
-part of 'package:mubrambl/utils.dart';
+part of 'package:brambldart/utils.dart';
 
 final validNetworks = ['private', 'toplnet', 'valhalla'];
 final validPropositionTypes = [curve25519, ed25519, thresholdCurve25519];

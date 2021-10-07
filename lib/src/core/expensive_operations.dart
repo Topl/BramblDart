@@ -1,4 +1,4 @@
-part of 'package:mubrambl/client.dart';
+part of 'package:brambldart/client.dart';
 
 /// Wrapper around some potentially expensive operations so that they can
 /// optionally be executed in a background isolate. This is mainly needed for

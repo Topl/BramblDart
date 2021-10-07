@@ -1,4 +1,4 @@
-part of 'package:mubrambl/crypto.dart';
+part of 'package:brambldart/crypto.dart';
 
 /// The cryptographic hash functions (https://en.wikipedia.org/wiki/Cryptographic_hash_function) are a specific family of hash function
 

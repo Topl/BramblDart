@@ -1,4 +1,4 @@
-part of 'package:mubrambl/model.dart';
+part of 'package:brambldart/model.dart';
 
 abstract class GenericBox<T> {
   /// a commitment to the proposition locking this box

@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart';
-import 'package:mubrambl/client.dart';
-import 'package:mubrambl/credentials.dart';
+import 'package:brambldart/client.dart';
+import 'package:brambldart/credentials.dart';
 import 'package:test/test.dart';
 
 import 'test_api_key_auth.dart';

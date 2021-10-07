@@ -1,4 +1,4 @@
-part of 'package:mubrambl/utils.dart';
+part of 'package:brambldart/utils.dart';
 
 const maxMnemonicValue = 2047;
 const maxJS = 52;

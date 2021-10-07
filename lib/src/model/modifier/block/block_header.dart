@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/crypto.dart';
-import 'package:mubrambl/model.dart';
-import 'package:mubrambl/utils.dart';
+import 'package:brambldart/crypto.dart';
+import 'package:brambldart/model.dart';
+import 'package:brambldart/utils.dart';
 import 'package:pinenacl/api.dart';
 
 part '../../../generated/block_header.g.dart';

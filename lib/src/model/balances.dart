@@ -1,4 +1,4 @@
-part of 'package:mubrambl/model.dart';
+part of 'package:brambldart/model.dart';
 
 /// The amounts for polys and arbits are displayed as 10^-9 of the respective denomination
 ///

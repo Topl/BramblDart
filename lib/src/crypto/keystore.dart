@@ -1,4 +1,4 @@
-part of 'package:mubrambl/crypto.dart';
+part of 'package:brambldart/crypto.dart';
 
 /// Default options for key generation as of 8.3.2021
 const defaultOptions = <String, dynamic>{

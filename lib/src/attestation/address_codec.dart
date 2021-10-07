@@ -1,4 +1,4 @@
-part of 'package:mubrambl/credentials.dart';
+part of 'package:brambldart/credentials.dart';
 
 /// The implicit Address encoder dictates how addresses are cast to and from strings. Since this is the primary method by which users will interact with the protocol, the Address encoder adds a 4 byte checksum to the Address as a quick check that may be used with external systems.
 ///

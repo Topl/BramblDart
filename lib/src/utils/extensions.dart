@@ -1,4 +1,4 @@
-part of 'package:mubrambl/utils.dart';
+part of 'package:brambldart/utils.dart';
 
 extension StringOps on String {
   // return the byte array of a string after ensuring valid encoding

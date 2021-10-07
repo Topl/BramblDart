@@ -1,4 +1,4 @@
-part of 'package:mubrambl/credentials.dart';
+part of 'package:brambldart/credentials.dart';
 
 /// Class that will be used by the Credential Manager to generate addresses
 class AddressGenerator {

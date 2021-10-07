@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/model.dart';
-import 'package:mubrambl/src/model/box/token_value_holder.dart';
+import 'package:brambldart/model.dart';
+import 'package:brambldart/src/model/box/token_value_holder.dart';
 
 part '../../generated/box.g.dart';
 
