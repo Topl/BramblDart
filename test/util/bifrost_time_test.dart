@@ -1,4 +1,4 @@
-import 'package:mubrambl/src/utils/block_time.dart';
+import 'package:mubrambl/utils.dart';
 import 'package:test/test.dart';
 
 void main() {

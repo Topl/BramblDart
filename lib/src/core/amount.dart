@@ -1,8 +1,4 @@
-import 'dart:math';
-
-import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/model/box/asset_code.dart';
-import 'package:mubrambl/src/utils/util.dart';
+part of 'package:mubrambl/model.dart';
 
 enum PolyUnit {
   /// nanopoly, the smallest atomic unit of a poly

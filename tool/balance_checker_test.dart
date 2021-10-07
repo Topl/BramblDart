@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart';
-import 'package:mubrambl/brambldart.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/credentials/address_chain.dart';
-import 'package:mubrambl/src/credentials/hd_wallet_helper.dart';
+import 'package:mubrambl/client.dart';
+import 'package:mubrambl/credentials.dart';
 import 'package:test/test.dart';
 
 import 'test_api_key_auth.dart';

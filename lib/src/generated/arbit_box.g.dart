@@ -24,7 +24,7 @@ ArbitBox _$ArbitBoxFromJson(Map<String, dynamic> json) => $checkedCreate(
     );
 
 Map<String, dynamic> _$ArbitBoxToJson(ArbitBox instance) => <String, dynamic>{
-      'evidence': instance.evidence.toJson(),
+      'evidence': instance.evidence!.toJson(),
       'id': const BoxIdConverter().toJson(instance.boxId),
       'value': instance.value.toJson(),
       'nonce': instance.nonce,

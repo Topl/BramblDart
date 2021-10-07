@@ -25,7 +25,7 @@ Box<T> _$BoxFromJson<T>(Map<String, dynamic> json) => $checkedCreate(
     );
 
 Map<String, dynamic> _$BoxToJson<T>(Box<T> instance) => <String, dynamic>{
-      'evidence': instance.evidence.toJson(),
+      'evidence': instance.evidence!.toJson(),
       'value': _Converter<T>().toJson(instance.value),
       'nonce': instance.nonce,
       'type': instance.type,
@@ -51,7 +51,7 @@ TokenBox _$TokenBoxFromJson(Map<String, dynamic> json) => $checkedCreate(
     );
 
 Map<String, dynamic> _$TokenBoxToJson(TokenBox instance) => <String, dynamic>{
-      'evidence': instance.evidence.toJson(),
+      'evidence': instance.evidence!.toJson(),
       'type': instance.type,
       'id': const BoxIdConverter().toJson(instance.boxId),
       'value': instance.value.toJson(),

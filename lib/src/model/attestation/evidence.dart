@@ -1,7 +1,4 @@
-import 'package:mubrambl/src/crypto/crypto.dart';
-import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
-import 'package:pinenacl/api.dart';
+part of 'package:mubrambl/model.dart';
 
 /// Evidence content serves as a fingerprint (or commitment) of a particular proposition that is used to lock a box. Boxes
 /// are locked with 'Evidence' which is the concatentation of a typePrefix ++ content. The type prefix denotes what type

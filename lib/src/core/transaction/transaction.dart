@@ -1,8 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mubrambl/credentials.dart';
 import 'package:mubrambl/model.dart';
-import 'package:mubrambl/src/core/amount.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
+import 'package:mubrambl/utils.dart';
 
 part '../../generated/transaction.g.dart';
 

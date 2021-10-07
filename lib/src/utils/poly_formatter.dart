@@ -1,6 +1,4 @@
-import 'package:intl/intl.dart';
-import 'package:mubrambl/src/core/amount.dart';
-import 'package:unorm_dart/unorm_dart.dart';
+part of 'package:mubrambl/utils.dart';
 
 ///
 /// POLY-specific currency formatter that expects all currency to be in nanopoly and

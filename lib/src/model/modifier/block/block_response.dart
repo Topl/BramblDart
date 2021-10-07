@@ -1,7 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import '../modifier_id.dart';
-import 'block.dart';
+import 'package:mubrambl/brambldart.dart';
 
 part '../../../generated/block_response.g.dart';
 

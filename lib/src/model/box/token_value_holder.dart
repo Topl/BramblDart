@@ -1,8 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mubrambl/model.dart';
 
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/model/box/asset_code.dart';
-import 'package:mubrambl/src/model/box/security_root.dart';
+import '../../../credentials.dart';
 
 /// This allows the `SimpleValue` class to access private members in
 /// the generated file. The value for this is *.g.dart, where

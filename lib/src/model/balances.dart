@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import 'package:mubrambl/src/core/amount.dart';
+part of 'package:mubrambl/model.dart';
 
 /// The amounts for polys and arbits are displayed as 10^-9 of the respective denomination
 ///

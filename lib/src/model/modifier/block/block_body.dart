@@ -1,8 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/brambldart.dart';
-
-import '../modifier_id.dart';
+import 'package:mubrambl/model.dart';
 
 part '../../../generated/block_body.g.dart';
 

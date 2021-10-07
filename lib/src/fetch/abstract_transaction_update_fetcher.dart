@@ -1,6 +1,4 @@
-import 'dart:async';
-
-import 'package:mubrambl/brambldart.dart';
+part of 'package:mubrambl/client.dart';
 
 abstract class AbstractTransactionUpdateFetcher {
   final StreamController<TransactionReceipt?>

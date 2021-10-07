@@ -1,18 +1,4 @@
-import 'dart:convert';
-import 'dart:math';
-import 'dart:typed_data';
-
-import 'package:bip_topl/bip_topl.dart';
-import 'package:meta/meta.dart';
-import 'package:mubrambl/src/crypto/crypto.dart';
-import 'package:mubrambl/src/utils/network.dart';
-import 'package:mubrambl/src/utils/uuid.dart';
-import 'package:pinenacl/encoding.dart';
-import 'package:pointycastle/api.dart';
-import 'package:pointycastle/block/aes_fast.dart';
-import 'package:pointycastle/key_derivators/api.dart';
-import 'package:pointycastle/key_derivators/scrypt.dart' as scrypt;
-import 'package:pointycastle/stream/ctr.dart';
+part of 'package:mubrambl/crypto.dart';
 
 /// Default options for key generation as of 8.3.2021
 const defaultOptions = <String, dynamic>{
@@ -51,7 +37,7 @@ class _ScryptKeyDerivator extends _KeyDerivator {
 
   @override
   Uint8List deriveKey(Uint8List password) {
-    final impl = scrypt.Scrypt()..init(ScryptParameters(n, r, p, dklen, salt));
+    final impl = Scrypt()..init(ScryptParameters(n, r, p, dklen, salt));
 
     return impl.process(password);
   }
@@ -237,14 +223,5 @@ class KeyStore {
       'version': 1
     };
     return json.encode(map);
-  }
-}
-
-/// This is a utility function that is used by the keystore to decode strings that are used in the encrypted json
-Uint8List str2ByteArray(String str, {String enc = ''}) {
-  if (enc == 'latin1') {
-    return latin1.encode(str);
-  } else {
-    return Base58Encoder.instance.decode(str);
   }
 }

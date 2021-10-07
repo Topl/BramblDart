@@ -1,4 +1,4 @@
-import 'address.dart';
+part of 'package:mubrambl/credentials.dart';
 
 ///
 /// BIP-0044 Multi-Account Hierarchy for Deterministic Wallets is a Bitcoin standard defining a structure

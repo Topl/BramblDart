@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/utils/constants.dart';
+
+import '../../brambldart.dart';
 
 part '../generated/proposition_type.g.dart';
 

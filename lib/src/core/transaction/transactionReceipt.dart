@@ -1,4 +1,4 @@
-part of 'package:mubrambl/brambldart.dart';
+part of 'package:mubrambl/model.dart';
 
 typedef TxType = int;
 

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:mubrambl/src/crypto/keystore.dart';
+import 'package:mubrambl/crypto.dart';
 import 'package:test/test.dart';
 
 import 'example_keystores.dart' as input_keystores;

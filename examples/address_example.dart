@@ -1,4 +1,4 @@
-import 'package:mubrambl/src/credentials/address.dart';
+import 'package:mubrambl/credentials.dart';
 
 const _base58Addresses = {
   '3NLHCWwuZrn8wMFUX1QR76M8iWXYht4n52eNGMTM3cyxJzQayNrX',

@@ -1,5 +1,5 @@
-import 'package:mubrambl/src/core/amount.dart';
-import 'package:mubrambl/src/utils/poly_formatter.dart';
+import 'package:mubrambl/model.dart';
+import 'package:mubrambl/utils.dart';
 import 'package:test/test.dart';
 
 void main() {

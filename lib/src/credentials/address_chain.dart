@@ -1,11 +1,4 @@
-import 'dart:convert';
-import 'package:bip_topl/bip_topl.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/credentials/addresses.dart';
-import 'package:mubrambl/src/utils/proposition_type.dart';
-import 'package:mubrambl/src/utils/util.dart';
-
-import 'hd_wallet_helper.dart';
+part of 'package:mubrambl/credentials.dart';
 
 /// Class that will be used by the Credential Manager to generate addresses
 class AddressGenerator {

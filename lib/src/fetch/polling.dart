@@ -1,5 +1,4 @@
-import 'package:mubrambl/brambldart.dart';
-import 'package:mubrambl/src/fetch/abstract_transaction_update_fetcher.dart';
+part of 'package:mubrambl/client.dart';
 
 class Polling extends AbstractTransactionUpdateFetcher {
   final BramblClient client;

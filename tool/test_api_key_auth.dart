@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:mubrambl/src/core/interceptors/auth/auth.dart';
+import 'package:mubrambl/client.dart';
 
 ///
 /// This is the AuthInterceptor used to access the Topl blockchain via BaaS

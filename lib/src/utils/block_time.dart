@@ -1,4 +1,4 @@
-import 'dart:convert';
+part of 'package:mubrambl/utils.dart';
 
 ///
 /// Convert Bifrost block time (secondsSinceEpoch in UTC) to DateTime and back.

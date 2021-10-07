@@ -1,6 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:mubrambl/src/utils/string_data_types.dart';
+part of 'package:mubrambl/utils.dart';
 
 extension AsBytesInfallibleExtension on Uint8List {
   Base58Data encodeAsBase58() {

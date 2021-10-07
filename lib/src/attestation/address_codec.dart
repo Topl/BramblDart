@@ -1,11 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/crypto/crypto.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/network.dart';
-import 'package:mubrambl/src/utils/proposition_type.dart';
-import 'package:mubrambl/src/utils/util.dart';
+part of 'package:mubrambl/credentials.dart';
 
 /// The implicit Address encoder dictates how addresses are cast to and from strings. Since this is the primary method by which users will interact with the protocol, the Address encoder adds a 4 byte checksum to the Address as a quick check that may be used with external systems.
 ///

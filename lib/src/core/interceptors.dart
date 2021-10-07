@@ -1,4 +1,4 @@
-part of 'package:mubrambl/brambldart.dart';
+part of 'package:mubrambl/client.dart';
 
 class ApiKeyAuthInterceptor extends AuthInterceptor {
   final Map<String, String> apiKeys = {};

@@ -1,13 +1,4 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:bip_topl/src/bip32.dart';
-import 'package:bip_topl/src/bip32_ed25519.dart';
-import 'package:bip_topl/src/bip39_base.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:pinenacl/key_derivation.dart';
-import 'package:pinenacl/x25519.dart';
+part of 'package:mubrambl/credentials.dart';
 
 ///
 /// BIP-0044 Multi-Account Hierarchy for Deterministic Wallets is a Bitcoin standard defining a structure

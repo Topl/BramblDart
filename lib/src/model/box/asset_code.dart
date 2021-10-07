@@ -1,12 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:bip_topl/bip_topl.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/network.dart';
-import 'package:mubrambl/src/utils/proposition_type.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
-import 'package:mubrambl/src/utils/util.dart';
+part of 'package:mubrambl/model.dart';
 
 /// AssetCode serves as a unique identifier for user issued assets
 class AssetCode {

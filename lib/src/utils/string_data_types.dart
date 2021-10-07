@@ -1,16 +1,9 @@
+part of 'package:mubrambl/utils.dart';
+
 ///
 /// Byte data represented by Latin-1 encoded text.
 /// @param value the data bytes
 ///
-import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:bip_topl/bip_topl.dart';
-import 'package:collection/collection.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/utils/extensions.dart';
-import 'package:pinenacl/api.dart';
-import 'package:pinenacl/encoding.dart';
 
 class Latin1Data {
   final Uint8List? value;

@@ -1,7 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/errors.dart';
+part of 'package:mubrambl/credentials.dart';
 
 /// Seed used to generate the root private key of the HD.
 class Seed {

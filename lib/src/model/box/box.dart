@@ -1,10 +1,5 @@
-// ignore_for_file: overridden_fields
-
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/model/attestation/evidence.dart';
-
-import 'package:mubrambl/src/model/box/box_id.dart';
-import 'package:mubrambl/src/model/box/generic_box.dart';
+import 'package:mubrambl/model.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
 
 part '../../generated/box.g.dart';
@@ -14,20 +9,21 @@ typedef BoxType = int;
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class Box<T> extends GenericBox {
-  @override
-  final Evidence evidence;
-  @override
-  @_Converter()
-  final T value;
   final Nonce nonce;
   final String type;
   @override
   @BoxIdConverter()
   @JsonKey(name: 'id')
+  // ignore: overridden_fields
   late BoxId boxId = BoxId.apply(this);
 
+  @override
+  @_Converter()
+  // ignore: overridden_fields
+  final T value;
+
   Box(
-    this.evidence,
+    Evidence? evidence,
     this.value,
     this.nonce,
     this.type,
@@ -113,15 +109,13 @@ class _Converter<T> implements JsonConverter<T, Object> {
 @JsonSerializable(checked: true, explicitToJson: true)
 class TokenBox extends Box {
   @override
+  // ignore: overridden_fields
   final TokenValueHolder value;
-
-  @override
-  final Nonce nonce;
 
   TokenBox(
     this.value,
     Evidence evidence,
-    this.nonce,
+    Nonce nonce,
     String type,
   ) : super(evidence, value, nonce, type);
 

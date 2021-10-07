@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/src/core/converters/converters.dart';
-import 'package:mubrambl/src/model/attestation/proposition.dart';
+import 'package:mubrambl/model.dart';
+import 'package:mubrambl/utils.dart';
 import 'package:pinenacl/ed25519.dart';
 
 part '../../generated/signature_container.g.dart';

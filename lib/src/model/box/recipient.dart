@@ -1,5 +1,4 @@
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/model/box/token_value_holder.dart';
+part of 'package:mubrambl/model.dart';
 
 class AssetRecipient {
   final ToplAddress key;

@@ -1,5 +1,4 @@
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/model/box/box.dart';
+part of 'package:mubrambl/model.dart';
 
 class Sender {
   final ToplAddress senderAddress;

@@ -1,5 +1,5 @@
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/utils/constants.dart';
+import 'package:mubrambl/credentials.dart';
+import 'package:mubrambl/utils.dart';
 import 'package:test/test.dart';
 
 const _base58ValhallaAddresses = {

@@ -1,4 +1,4 @@
-import 'package:mubrambl/src/credentials/address.dart';
+part of 'package:mubrambl/utils.dart';
 
 /// Container for information about topl networks
 ///

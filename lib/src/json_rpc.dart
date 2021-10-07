@@ -1,7 +1,4 @@
-// ignore: one_member_abstracts
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
+part of 'package:mubrambl/client.dart';
 
 abstract class RpcService {
   /// Performs an RPC request, asking the server to execute the function with

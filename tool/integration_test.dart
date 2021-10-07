@@ -2,26 +2,19 @@
 
 import 'dart:io';
 
+// import 'containers/bifrost.dart';
 import 'package:bip_topl/bip_topl.dart';
 import 'package:dio/dio.dart';
-import 'package:docker_process/containers/cockroachdb.dart';
+import 'package:docker_process/docker_process.dart';
 import 'package:http/http.dart';
-import 'package:mubrambl/brambldart.dart';
-import 'package:mubrambl/src/core/amount.dart';
-import 'package:mubrambl/src/core/block_number.dart';
-import 'package:mubrambl/src/credentials/credentials.dart';
-import 'package:mubrambl/src/json_rpc.dart';
-import 'package:mubrambl/src/model/box/asset_code.dart';
-import 'package:mubrambl/src/model/box/recipient.dart';
-import 'package:mubrambl/src/model/box/security_root.dart';
+import 'package:mubrambl/client.dart';
+import 'package:mubrambl/credentials.dart';
+import 'package:mubrambl/model.dart';
 import 'package:mubrambl/src/model/box/token_value_holder.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/proposition_type.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
+import 'package:mubrambl/utils.dart';
 import 'package:pinenacl/encoding.dart';
 import 'package:test/test.dart';
 
-// import 'containers/bifrost.dart';
 import 'test_api_key_auth.dart';
 
 const _privateKey1 =

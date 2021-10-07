@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:bip_topl/bip_topl.dart';
-import 'package:mubrambl/src/credentials/hd_wallet_helper.dart';
-import 'package:mubrambl/src/utils/constants.dart';
+import 'package:mubrambl/credentials.dart';
+import 'package:mubrambl/utils.dart';
 import 'package:pinenacl/key_derivation.dart';
 import 'package:pinenacl/x25519.dart';
 import 'package:test/test.dart';

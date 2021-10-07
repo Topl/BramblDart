@@ -1,5 +1,4 @@
-import 'package:mubrambl/src/utils/constants.dart';
-import 'modifier_id.dart';
+part of 'package:mubrambl/model.dart';
 
 typedef M = NodeViewModifier;
 

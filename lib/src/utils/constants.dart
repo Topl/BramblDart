@@ -1,4 +1,5 @@
-const SEED_SIZE = 32;
+part of 'package:mubrambl/utils.dart';
+
 const MAX_MNEMONIC_VALUE = 2047;
 const MAX_JS = 52;
 const SHORT_NAME_LIMIT = 8;
