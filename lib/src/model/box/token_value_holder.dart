@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/model.dart';
+import 'package:brambldart/model.dart';
 
 import '../../../credentials.dart';
 

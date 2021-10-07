@@ -9,9 +9,9 @@ import 'dart:typed_data';
 import 'package:bip_topl/bip_topl.dart';
 
 import 'package:meta/meta.dart';
-import 'package:mubrambl/src/utils/errors.dart';
-import 'package:mubrambl/src/utils/uuid.dart';
-import 'package:mubrambl/utils.dart';
+import 'package:brambldart/src/utils/errors.dart';
+import 'package:brambldart/src/utils/uuid.dart';
+import 'package:brambldart/utils.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/block/aes_fast.dart';
 import 'package:pointycastle/digests/blake2b.dart';

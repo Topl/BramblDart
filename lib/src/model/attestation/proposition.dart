@@ -1,4 +1,4 @@
-part of 'package:mubrambl/model.dart';
+part of 'package:brambldart/model.dart';
 
 /// Propositions are challenges that must be satisfied by the prover.
 /// In most cases, propositions are used by transactions issuers (spenders) to prove the right

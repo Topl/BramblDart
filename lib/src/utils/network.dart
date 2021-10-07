@@ -1,4 +1,4 @@
-part of 'package:mubrambl/utils.dart';
+part of 'package:brambldart/utils.dart';
 
 /// Container for information about topl networks
 ///

@@ -1,4 +1,4 @@
-part of 'package:mubrambl/model.dart';
+part of 'package:brambldart/model.dart';
 
 /// AssetCode serves as a unique identifier for user issued assets
 class AssetCode {

@@ -1,4 +1,4 @@
-part of 'package:mubrambl/utils.dart';
+part of 'package:brambldart/utils.dart';
 
 class Uint8ListConverter implements JsonConverter<Uint8List, List<int>> {
   const Uint8ListConverter();

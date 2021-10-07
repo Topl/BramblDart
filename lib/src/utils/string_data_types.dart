@@ -1,4 +1,4 @@
-part of 'package:mubrambl/utils.dart';
+part of 'package:brambldart/utils.dart';
 
 ///
 /// Byte data represented by Latin-1 encoded text.

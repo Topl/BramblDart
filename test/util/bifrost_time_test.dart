@@ -1,4 +1,4 @@
-import 'package:mubrambl/utils.dart';
+import 'package:brambldart/utils.dart';
 import 'package:test/test.dart';
 
 void main() {

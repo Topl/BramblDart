@@ -1,4 +1,4 @@
-part of 'package:mubrambl/credentials.dart';
+part of 'package:brambldart/credentials.dart';
 
 /// Seed used to generate the root private key of the HD.
 class Seed {

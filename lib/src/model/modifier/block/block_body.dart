@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/model.dart';
+import 'package:brambldart/model.dart';
 
 part '../../../generated/block_body.g.dart';
 

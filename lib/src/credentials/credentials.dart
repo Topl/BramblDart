@@ -1,4 +1,4 @@
-part of 'package:mubrambl/credentials.dart';
+part of 'package:brambldart/credentials.dart';
 
 /// Anything that can sign payloads with a private key.
 abstract class Credentials {

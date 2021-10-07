@@ -1,4 +1,4 @@
-part of 'package:mubrambl/model.dart';
+part of 'package:brambldart/model.dart';
 
 enum PolyUnit {
   /// nanopoly, the smallest atomic unit of a poly

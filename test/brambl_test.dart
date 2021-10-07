@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:bip_topl/bip_topl.dart';
-import 'package:mubrambl/utils.dart';
+import 'package:brambldart/utils.dart';
 import 'package:test/test.dart';
 
 import 'utils/util.dart';

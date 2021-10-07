@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/utils.dart';
+import 'package:brambldart/utils.dart';
 
 part '../../../generated/bloom_filter.g.dart';
 

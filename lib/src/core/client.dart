@@ -1,5 +1,5 @@
 // ignore_for_file: unnecessary_lambdas
-part of 'package:mubrambl/client.dart';
+part of 'package:brambldart/client.dart';
 
 final log = Logger('BramblClient');
 

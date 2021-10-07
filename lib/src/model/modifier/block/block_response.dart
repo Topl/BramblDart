@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mubrambl/brambldart.dart';
+import 'package:brambldart/brambldart.dart';
 
 part '../../../generated/block_response.g.dart';
 

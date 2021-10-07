@@ -1,4 +1,4 @@
-part of 'package:mubrambl/model.dart';
+part of 'package:brambldart/model.dart';
 
 class Sender {
   final ToplAddress senderAddress;

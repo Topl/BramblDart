@@ -1,4 +1,4 @@
-part of 'package:mubrambl/model.dart';
+part of 'package:brambldart/model.dart';
 
 /// Evidence content serves as a fingerprint (or commitment) of a particular proposition that is used to lock a box. Boxes
 /// are locked with 'Evidence' which is the concatentation of a typePrefix ++ content. The type prefix denotes what type
