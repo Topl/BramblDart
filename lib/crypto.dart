@@ -19,9 +19,7 @@ import 'package:pointycastle/digests/sha512.dart';
 import 'package:pointycastle/key_derivators/api.dart';
 import 'package:pointycastle/key_derivators/scrypt.dart';
 import 'package:pointycastle/macs/hmac.dart';
-import 'package:pointycastle/src/utils.dart' as p_utils;
 import 'package:pointycastle/stream/ctr.dart';
 
 part 'src/crypto/crypto.dart';
-part 'src/crypto/formatting.dart';
 part 'src/crypto/keystore.dart';

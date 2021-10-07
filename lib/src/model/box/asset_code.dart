@@ -16,12 +16,11 @@ class AssetCode {
     if (!isValidNetwork(networkPrefix)) {
       throw ArgumentError('Invalid network provided');
     }
-    assert(version == SUPPORTED_ASSET_CODE_VERSION,
+    assert(version == supportedAssetCodeVersion,
         'AssetCode version required to be 1');
-    assert(name.length <= SHORT_NAME_LIMIT,
+    assert(name.length <= shortNameLimit,
         'Asset short names must be less than 8 Latin-1 encoded characters');
-    final latin1Name =
-        Latin1Data.validated(name.padRight(SHORT_NAME_LIMIT, '0'));
+    final latin1Name = Latin1Data.validated(name.padRight(shortNameLimit, '0'));
     final validationResult =
         validateAddressByNetwork(networkPrefix, issuer.toBase58());
     if (!(validationResult['success'] as bool)) {

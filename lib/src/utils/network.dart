@@ -5,7 +5,7 @@ part of 'package:mubrambl/utils.dart';
 /// This could be used also for other than Torus networks when this library gets extended
 /// A **Network** represents a Topl network
 ///
-const NETWORK_REGISTRY = <String, int>{
+const networkRegistry = <String, int>{
   'toplnet': 0x01,
   'valhalla': 0x10,
   'private': 0x40
@@ -37,14 +37,14 @@ class Network {
   }
 
   factory Network.toplnet() =>
-      Network(false, NETWORK_REGISTRY['toplnet']!, 'toplnet');
+      Network(false, networkRegistry['toplnet']!, 'toplnet');
   factory Network.valhalla() =>
-      Network(true, NETWORK_REGISTRY['valhalla']!, 'valhalla');
+      Network(true, networkRegistry['valhalla']!, 'valhalla');
   factory Network.private() =>
-      Network(true, NETWORK_REGISTRY['private']!, 'private');
+      Network(true, networkRegistry['private']!, 'private');
 }
 
-class NetworkType {
+mixin NetworkType {
   static final all = [Network.toplnet(), Network.valhalla(), Network.private()];
 
   static Network pickNetworkTypeByPrefix(NetworkId networkPrefix) =>

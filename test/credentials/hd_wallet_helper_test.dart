@@ -10,11 +10,11 @@ import 'package:test/test.dart';
 import '../utils/util.dart';
 
 void main() {
-  final testMnemonic1 =
+  const testMnemonic1 =
       'rude stadium move tumble spice vocal undo butter cargo win valid session question walk indoor nothing wagon column artefact monster fold gallery receive just';
-  final testEntropy1 =
+  const testEntropy1 =
       'bcfa7e43752d19eabb38fa22bf6bc3622af9ed1cc4b6f645b833c7a5a8be2ce3';
-  final testHexSeed1 =
+  const testHexSeed1 =
       'ee344a00f29cc2fb0a84e43afd91f06beabe5f39e9e84eec729f64c56068d5795ea367d197e5d851a529f33e1d582c63887d0bb59fba8956d78fcf9f697f16a1';
   final excpectedXskBip32Bytes = tolist(
       '112, 117, 59, 231, 105, 163, 101, 242, 141, 62, 216, 196, 229, 115, 212, 55, 8, 164, 41, 112, 217, 8, 6, 251, 158, 139, 43, 80, 44, 233, 169, 76, 14, 67, 79, 200, 233, 248, 142, 49, 252, 139, 11, 221, 128, 34, 58, 200, 254, 55, 38, 149, 151, 73, 95, 240, 100, 125, 37, 101, 155, 144, 5, 13, 28, 50, 236, 47, 75, 90, 232, 36, 147, 188, 217, 198, 50, 22, 196, 254, 142, 105, 205, 195, 57, 160, 171, 74, 184, 12, 58, 141, 143, 157, 230, 227');
@@ -32,11 +32,11 @@ void main() {
       '168, 233, 30, 34, 115, 135, 88, 135, 12, 240, 194, 63, 243, 146, 150, 112, 3, 232, 67, 71, 100, 137, 172, 24, 220, 199, 252, 222, 56, 233, 169, 76, 142, 116, 48, 51, 157, 72, 93, 184, 101, 78, 244, 126, 43, 158, 173, 201, 59, 56, 49, 183, 133, 88, 148, 101, 149, 232, 114, 175, 231, 181, 208, 22, 101, 238, 109, 12, 56, 7, 44, 60, 117, 15, 27, 109, 203, 123, 1, 142, 93, 43, 157, 64, 216, 73, 85, 137, 144, 67, 21, 130, 141, 64, 51, 38');
   final expectedSpend0Xvk = tolist(
       '198, 105, 157, 143, 239, 12, 101, 203, 178, 52, 197, 44, 213, 82, 65, 46, 92, 139, 69, 96, 158, 93, 187, 137, 124, 251, 19, 209, 17, 0, 60, 48, 101, 238, 109, 12, 56, 7, 44, 60, 117, 15, 27, 109, 203, 123, 1, 142, 93, 43, 157, 64, 216, 73, 85, 137, 144, 67, 21, 130, 141, 64, 51, 38');
-  final expectedSpend0Base58 =
+  const expectedSpend0Base58 =
       '9i9HaARkHwByxis8Yq17f54kTzQZYvH4Au9cFRC5zKN6xWduMuk';
-  final expectedTestnetSpend0Base58 =
+  const expectedTestnetSpend0Base58 =
       '3NQbrzZvNbgFbivPRgkQ4GVNUz1C5pzBVoF714ccTAd3KvWPadyq';
-  const public_key_size = 32;
+  const publicKeySize = 32;
 
   group('topl hd_wallet test -', () {
     test('entropy to root private and public keys', () {
@@ -56,24 +56,23 @@ void main() {
           excpectedXskBip32Bytes.sublist(ExtendedSigningKey.keyLength),
           reason: 'second 32 bytes are chain code');
       final rootXvk = rootXsk.verifyKey; //get public key
-      expect(
-          rootXvk.keyBytes, expectedXvkBip32Bytes.sublist(0, public_key_size),
+      expect(rootXvk.keyBytes, expectedXvkBip32Bytes.sublist(0, publicKeySize),
           reason: 'first 32 bytes are public key');
-      expect(rootXvk.chainCode, expectedXvkBip32Bytes.sublist(public_key_size),
+      expect(rootXvk.chainCode, expectedXvkBip32Bytes.sublist(publicKeySize),
           reason: 'second 32 bytes are chain code');
       expect(rootXsk.chainCode, rootXvk.chainCode,
           reason: 'chain code is identical in both private and public keys');
       //generate chain and addresses - m/1852'/7091'/0'/0/0
       final derivator = Bip32Ed25519KeyDerivation.instance;
-      final pvtPurpose1852 = derivator.ckdPriv(rootXsk, DEFAULT_PURPOSE);
+      final pvtPurpose1852 = derivator.ckdPriv(rootXsk, defaultPurpose);
       expect(pvtPurpose1852, expectedPurposeXsk);
-      final pvtCoin7091 = derivator.ckdPriv(pvtPurpose1852, DEFAULT_COIN_TYPE);
+      final pvtCoin7091 = derivator.ckdPriv(pvtPurpose1852, defaultCoinType);
       expect(pvtCoin7091, expectedCoinTypeXsk);
-      final pvtAccount0 = derivator.ckdPriv(pvtCoin7091, DEFAULT_ACCOUNT_INDEX);
+      final pvtAccount0 = derivator.ckdPriv(pvtCoin7091, defaultAccountIndex);
       expect(pvtAccount0, expectedAccount0Xsk);
-      final pvtChange0 = derivator.ckdPriv(pvtAccount0, DEFAULT_CHANGE);
+      final pvtChange0 = derivator.ckdPriv(pvtAccount0, defaultChange);
       expect(pvtChange0, expectedChange0Xsk);
-      final pvtAddress0 = derivator.ckdPriv(pvtChange0, DEFAULT_ADDRESS_INDEX);
+      final pvtAddress0 = derivator.ckdPriv(pvtChange0, defaultAddressIndex);
       expect(pvtAddress0, expectedSpend0Xsk);
       final pubAddress0 = pvtAddress0.publicKey;
       expect(pubAddress0, expectedSpend0Xvk);

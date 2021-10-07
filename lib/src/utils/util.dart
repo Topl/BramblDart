@@ -1,7 +1,7 @@
 part of 'package:mubrambl/utils.dart';
 
 final validNetworks = ['private', 'toplnet', 'valhalla'];
-final validPropositionTypes = [CURVE_25519, ED25519, THRESHOLD_CURVE_25519];
+final validPropositionTypes = [curve25519, ed25519, thresholdCurve25519];
 
 final privateMap = <String, int>{'hex': 0x40, 'decimal': 64};
 final toplNetMap = <String, int>{'hex': 0x01, 'decimal': 1};
@@ -17,7 +17,7 @@ final propositionMap = <String, int>{
   'PublicKeyEd25519': 0x03
 };
 
-const ADDRESS_LENGTH = 38;
+const addressLength = 38;
 
 ///Generate Hash Address using the Public Key and Network Prefix
 /// First parameter is the Base-58 encoded byte list of the public key
@@ -108,7 +108,7 @@ Map<String, dynamic> validateAddressByNetwork(
 
 // validation: base58 38 byte obj that matches the networkPrefix hex value
 
-  if (decodedAddress.length != ADDRESS_LENGTH ||
+  if (decodedAddress.length != addressLength ||
       decodedAddress.first != networkDecimal) {
     result['errorMsg'] = 'Invalid address for network: $networkPrefix';
     return result;
@@ -134,7 +134,7 @@ bool validChecksum(List<int> payload) {
   final hashChecksumBuffer = createHash(msgBuffer).sublist(0, 4);
 
 // verify checksum bytes match
-  return ListEquality().equals(checksumBuffer, hashChecksumBuffer);
+  return const ListEquality().equals(checksumBuffer, hashChecksumBuffer);
 }
 
 /// Validates whether the network passed in is valid
@@ -143,7 +143,7 @@ bool isValidNetwork(String networkPrefix) {
 }
 
 /// Takes in a [Latin1Data] and returns whether or not it is a valid data/metadata value
-/// Returns a [boolean] about whether or not the argument is valid
+/// Returns a [bool] about whether or not the argument is valid
 bool isValidMetadata(Latin1Data? metadata) {
   if (metadata == null) {
     return true;
@@ -220,15 +220,9 @@ Uint8List toUnitList(String str) {
   final s = str.toUpperCase().codeUnits;
   final bArr = Uint8List(length >> 1);
   for (var i = 0; i < length; i += 2) {
-    bArr[i >> 1] = ((hex(s[i]) << 4) | hex(s[i + 1]));
+    bArr[i >> 1] = (hex(s[i]) << 4) | hex(s[i + 1]);
   }
   return bArr;
-}
-
-/// Interface for dart:io [File].
-abstract class FileSystem {
-  Future<bool> exists(String filename);
-  Future<void> remove(String filename);
 }
 
 num parseValue(amount) {

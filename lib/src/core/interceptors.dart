@@ -69,14 +69,14 @@ class RetryOptions {
       : _retryEvaluator = retryEvaluator;
 
   factory RetryOptions.noRetry() {
-    return RetryOptions(
+    return const RetryOptions(
       retries: 0,
     );
   }
 
   static const extraKey = 'cache_retry_request';
 
-  /// Returns [true] only if the response hasn't been cancelled or got
+  /// Returns [bool] = true only if the response hasn't been cancelled or got
   /// a bas status code.
   static FutureOr<bool> defaultRetryEvaluator(DioError error) {
     return error.type != DioErrorType.cancel &&
@@ -126,7 +126,7 @@ class RetryInterceptor extends Interceptor {
       this.options = const RetryOptions()});
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(DioError err, ErrorInterceptorHandler handler) async {
     final shouldRetry =
         options.retries > 0 && await options.retryEvaluator(err);
     if (shouldRetry) {
@@ -160,7 +160,7 @@ class RetryInterceptor extends Interceptor {
           queryParameters: err.requestOptions.queryParameters,
           options: _options,
         );
-      } catch (e) {
+      } on Exception {
         rethrow;
       }
     }

@@ -33,7 +33,7 @@ export 'src/model/box/poly_box.dart';
 export 'src/model/modifier/block/block.dart';
 export 'src/model/modifier/block/block_response.dart';
 
-part 'src/core/transaction/transactionReceipt.dart';
+part 'src/core/transaction/transaction_receipt.dart';
 part 'src/model/balances.dart';
 part 'src/model/modifier/modifier_id.dart';
 part 'src/model/box/box_id.dart';

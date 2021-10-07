@@ -11,7 +11,7 @@ abstract class AbstractTransactionUpdateFetcher {
   void emitTransactionUpdate(TransactionReceipt? transaction) =>
       _transactionUpdateStreamController.add(transaction);
 
-  /// When [transaction] is added to stream
+  /// When a transaction is added to the stream
   Stream<TransactionReceipt?> onUpdate() =>
       _transactionUpdateStreamController.stream;
 

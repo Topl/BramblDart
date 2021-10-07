@@ -6,7 +6,7 @@ class BoxId<T> {
   BoxId(this.hash);
 
   factory BoxId.applyByteArray(Uint8List bytes) {
-    return BoxId(Digest.from(bytes, BLAKE2B_256_DIGEST_SIZE));
+    return BoxId(Digest.from(bytes, blake2b256DigestSize));
   }
 
   factory BoxId.apply(Box<T> box) {
@@ -15,7 +15,7 @@ class BoxId<T> {
 
   factory BoxId.fromEvidence(Evidence? evidence) {
     return BoxId(evidence?.evBytes ??
-        Digest(BLAKE2B_256_DIGEST_SIZE, Uint8List(BLAKE2B_256_DIGEST_SIZE)));
+        Digest(blake2b256DigestSize, Uint8List(blake2b256DigestSize)));
   }
 
   factory BoxId.fromJson(String json) {

@@ -4,7 +4,7 @@ extension AsBytesInfallibleExtension on Uint8List {
   Base58Data encodeAsBase58() {
     try {
       return Base58Data(this);
-    } catch (e) {
+    } on Exception catch (e) {
       throw ArgumentError('Infallible encoder failed: $e');
     }
   }
@@ -12,7 +12,7 @@ extension AsBytesInfallibleExtension on Uint8List {
   Base16Data encodeAsBase16() {
     try {
       return Base16Data(this);
-    } catch (e) {
+    } on Exception catch (e) {
       throw ArgumentError('Infallible encoder failed: $e');
     }
   }

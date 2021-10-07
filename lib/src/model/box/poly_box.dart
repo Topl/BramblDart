@@ -7,8 +7,8 @@ part '../../generated/poly_box.g.dart';
 /// Box that contains polys which is owned by a particular address
 @JsonSerializable(checked: true, explicitToJson: true)
 class PolyBox extends TokenBox {
-  static final typePrefix = 2;
-  static final typeString = 'PolyBox';
+  static const typePrefix = 2;
+  static const typeString = 'PolyBox';
 
   PolyBox(Evidence evidence, SimpleValue value, Nonce nonce)
       : super(value, evidence, nonce, typeString);

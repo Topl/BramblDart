@@ -14,7 +14,7 @@ class Proposition extends ByteList {
   factory Proposition.fromString(String str) {
     try {
       return Proposition.fromBase58(Base58Data.validated(str));
-    } catch (e) {
+    } on Exception catch (e) {
       throw IncorrectEncoding('String is an incorrect encoding type: $e');
     }
   }
@@ -34,7 +34,8 @@ class Proposition extends ByteList {
   @override
   bool operator ==(Object other) =>
       other is Proposition &&
-      ListEquality().equals(buffer.asUint8List(), other.buffer.asUint8List());
+      const ListEquality()
+          .equals(buffer.asUint8List(), other.buffer.asUint8List());
 
   @override
   int get hashCode => buffer.hashCode;

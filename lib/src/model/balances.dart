@@ -29,13 +29,13 @@ class Balance {
   factory Balance.fromData(Map<String, dynamic> data, String address) {
     return Balance(
         address: address,
-        polys:
-            PolyAmountConverter().fromJson(data['Balances']['Polys'] as String),
-        arbits: ArbitAmountConverter()
+        polys: const PolyAmountConverter()
+            .fromJson(data['Balances']['Polys'] as String),
+        arbits: const ArbitAmountConverter()
             .fromJson(data['Balances']['Arbits'] as String),
         assets: (data['Boxes']['AssetBox'] as List<dynamic>)
-            .map((box) =>
-                AssetAmountConverter().fromJson(box as Map<String, dynamic>))
+            .map((box) => const AssetAmountConverter()
+                .fromJson(box as Map<String, dynamic>))
             .toList());
   }
 }

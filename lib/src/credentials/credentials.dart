@@ -59,7 +59,7 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
   @override
   Proposition get proposition => Proposition(privateKey.verifyKey.asTypedList);
 
-  /// Creates a new, random private key from the [random] number generator.
+  /// Creates a new, random private key from the random number generator.
   ///
   /// For security reasons, it is very important that the random generator used
   /// is cryptographically secure. The private key could be reconstructed by

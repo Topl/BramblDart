@@ -28,10 +28,10 @@ class TestApiKeyAuthInterceptor extends AuthInterceptor {
     return file.readAsStringSync();
   }
 
-  static final apiKeyFilePath = 'baas_api_key.txt';
+  static const apiKeyFilePath = 'baas_api_key.txt';
 }
 
-final projectIdFilePath = 'baas_project_id.txt';
+const projectIdFilePath = 'baas_project_id.txt';
 
 final baasProjectId = File(projectIdFilePath).readAsStringSync();
 

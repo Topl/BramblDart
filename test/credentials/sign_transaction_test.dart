@@ -16,7 +16,7 @@ void main() {
         0x01,
         PropositionType.ed25519());
     final transactionReceipt = TransactionReceipt(
-        id: ModifierId.create(Uint8List(MODIFIER_ID_SIZE)),
+        id: ModifierId.create(Uint8List(modifierIdSize)),
         txType: 'AssetTransfer',
         newBoxes: [
           TokenBox.fromJson({
@@ -29,9 +29,7 @@ void main() {
         ],
         fee: PolyAmount.zero(),
         timestamp: 0,
-        boxesToRemove: [
-          BoxId.applyByteArray(Uint8List(BLAKE2B_256_DIGEST_SIZE))
-        ],
+        boxesToRemove: [BoxId.applyByteArray(Uint8List(blake2b256DigestSize))],
         from: [
           Sender(
               ToplAddress.fromBase58(
@@ -45,7 +43,7 @@ void main() {
               SimpleValue(quantity: '0'))
         ],
         propositionType: PropositionType.ed25519());
-    final messageToSign =
+    const messageToSign =
         'R1JphThT5KxykWcoHGm8coPkeETw6NR4uixCFX68UNWHNnKrRVi8pAkoknUCXvmvrmtDxyuXrQxdv2AyUr5iam7mqzVmSMXnA1m988ReAnQCAZPuVcTdhVCQrhFLUTNGQ85Emb3kLRaC4ymgunMt2rC6EdV9ExtGtcBz4AcCMgP9GjaussQUtxmYJeVsRJqDAAWb9YxUMmaKTXeTuSZis1RCXTKahtnkWD1rs2DS8bKeq6iJLNTj8ZS3augDgcu3K5Rk2B6gUMMrNd9g65WfguJqZjkeoPcs2QzsMSFdYgsNEcAwtkYcCHdZtqr6iNts75U7CpoQCUr8irGUM9rSXY2mFE';
 
     final client = BramblClient();

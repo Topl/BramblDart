@@ -3,7 +3,7 @@ part of 'package:mubrambl/client.dart';
 
 final log = Logger('BramblClient');
 
-const RETRY_VALUE = 5;
+const retryValue = 5;
 
 /// Class for sending requests over an HTTP JSON-RPC API endpoint to Bifrost
 /// nodes. You will instead have to obtain private keys of
@@ -160,7 +160,7 @@ class BramblClient {
     return arr;
   }
 
-  ///Retrieves balances for multiple addresses. If there are more than [batch] addresses to process
+  ///Retrieves balances for multiple addresses. If there are more than [batchSize] addresses to process
   /// this method will process via chunks of [batchSize] addresses
   Future<List<Balance>> getAllAddressBalances(List<ToplAddress> addresses,
       {int batchSize = 50}) async {
@@ -176,7 +176,7 @@ class BramblClient {
 
   /// Sends a raw asset transfer call to a node
   ///
-  /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
+  /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the sender inside the transaction to specify any Topl address that would call the above method.
   ///
   Future<Map<String, dynamic>> sendRawAssetTransfer(
       {required AssetTransaction assetTransaction}) async {
@@ -192,7 +192,7 @@ class BramblClient {
 
   /// Sends a raw poly transfer call to a node
   ///
-  /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
+  /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction].  As no data will be written, you can use the sender inside the transaction to specify any Topl address that would call the above method.
   ///
   Future<Map<String, dynamic>> sendRawPolyTransfer(
       {required PolyTransaction polyTransaction}) async {
@@ -208,7 +208,7 @@ class BramblClient {
 
   /// Sends a raw arbit transfer call to a node
   ///
-  /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the [sender] to specify any Topl address that would call the above method. To use the address of a credential, call [Credential.extractAddress]
+  /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction].  As no data will be written, you can use the sender inside the transaction to specify any Topl address that would call the above method.
   ///
   Future<Map<String, dynamic>> sendRawArbitTransfer(
       {required ArbitTransaction arbitTransaction}) async {
@@ -222,12 +222,9 @@ class BramblClient {
             });
   }
 
-  /// Signs the [transaction] with the credentials [cred]. The transaction will
+  /// Signs the [transactionReceipt] with the credentials [cred]. The transaction will
   /// not be sent.
   ///
-  /// See also:
-  ///  - [bytesToHex], which can be used to get the more common hexadecimal
-  /// representation of the transaction.
   Future<TransactionReceipt> signTransaction(List<Credentials> cred,
       TransactionReceipt transactionReceipt, Uint8List messageToSign) async {
     final signatures = await _genSig(cred, messageToSign);
@@ -323,10 +320,10 @@ class BramblClient {
 
   Future<PolyAmount> getFee() async {
     final network = await getNetwork();
-    if (network == TOPLNET) {
-      return PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, TOPLNET_FEE);
-    } else if (network == VALHALLA) {
-      return PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, VALHALLA_FEE);
+    if (network == toplnet) {
+      return PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, toplnetFee);
+    } else if (network == valhalla) {
+      return PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, valhallaFee);
     } else {
       return PolyAmount.zero();
     }

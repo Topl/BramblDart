@@ -7,8 +7,8 @@ part '../../generated/asset_box.g.dart';
 /// Box that contains assets which is owned by a particular address
 @JsonSerializable()
 class AssetBox extends TokenBox {
-  static final typePrefix = 3;
-  static final typeString = 'AssetBox';
+  static const typePrefix = 3;
+  static const typeString = 'AssetBox';
 
   AssetBox(Evidence evidence, AssetValue value, Nonce nonce)
       : super(value, evidence, nonce, typeString);

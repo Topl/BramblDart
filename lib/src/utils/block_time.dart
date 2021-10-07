@@ -6,26 +6,28 @@ part of 'package:mubrambl/utils.dart';
 class BifrostDateTime extends Codec<int, DateTime> {
   const BifrostDateTime();
   @override
+  // ignore: avoid_field_initializers_in_const_classes
   final encoder = const BifrostDateTimeEncoder();
   @override
+  // ignore: avoid_field_initializers_in_const_classes
   final decoder = const BifrostDateTimeDecoder();
   @override
-  DateTime encode(int secondsSinceEpoch) => encoder.convert(secondsSinceEpoch);
+  DateTime encode(int input) => encoder.convert(input);
   @override
-  int decode(DateTime dateTime) => decoder.convert(dateTime);
+  int decode(DateTime encoded) => decoder.convert(encoded);
 }
 
 class BifrostDateTimeEncoder extends Converter<int, DateTime> {
   const BifrostDateTimeEncoder();
   @override
-  DateTime convert(int secondsSinceEpoch) =>
-      DateTime.fromMillisecondsSinceEpoch(secondsSinceEpoch, isUtc: true);
+  DateTime convert(int input) =>
+      DateTime.fromMillisecondsSinceEpoch(input, isUtc: true);
 }
 
 class BifrostDateTimeDecoder extends Converter<DateTime, int> {
   const BifrostDateTimeDecoder();
   @override
-  int convert(DateTime dateTime) => (dateTime.millisecondsSinceEpoch).round();
+  int convert(DateTime input) => (input.millisecondsSinceEpoch).round();
 }
 
-final adaDateTime = BifrostDateTime();
+const polyDateTime = BifrostDateTime();

@@ -47,11 +47,11 @@ class DateTimeConverter implements JsonConverter<DateTime, int> {
 
   @override
   DateTime fromJson(int json) {
-    return BifrostDateTime().encode(json);
+    return const BifrostDateTime().encode(json);
   }
 
   @override
   int toJson(DateTime object) {
-    return BifrostDateTime().decode(object);
+    return const BifrostDateTime().decode(object);
   }
 }

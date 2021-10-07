@@ -10,7 +10,7 @@ class Latin1Data {
 
   @override
   bool operator ==(Object other) =>
-      other is Latin1Data && ListEquality().equals(value, other.value);
+      other is Latin1Data && const ListEquality().equals(value, other.value);
 
   @override
   int get hashCode => value.hashCode;
@@ -82,7 +82,7 @@ class Base58Data {
   factory Base58Data.unsafe(String from) {
     try {
       return Base58Data.validated(from);
-    } catch (err) {
+    } on Exception catch (err) {
       throw ArgumentError('Invalid Base-58 string: $err');
     }
   }
@@ -109,7 +109,7 @@ class Base16Data {
   factory Base16Data.unsafe(String from) {
     try {
       return Base16Data.validated(from);
-    } catch (err) {
+    } on Exception catch (err) {
       throw ArgumentError('Invalid Base-16 string: $err');
     }
   }

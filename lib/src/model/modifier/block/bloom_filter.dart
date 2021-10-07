@@ -7,8 +7,8 @@ import 'package:mubrambl/utils.dart';
 
 part '../../../generated/bloom_filter.g.dart';
 
-final _size = BLOOM_FILTER_BYTES * 8;
-final _numLongs = _size ~/ 64;
+const _size = bloomFilterBytes * 8;
+const _numLongs = _size ~/ 64;
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class BloomFilter {
@@ -46,14 +46,13 @@ class BloomFilter {
   @override
   String toString() => Base58Encoder.instance.encode(value);
 
-  /// TODO: Write the contains method that takes in a bloomTopic and returns whether or not the topic is in the filter
   bool contains(Uint8List bloomTopic) {
     throw UnsupportedError('Not yet implemented');
   }
 
   @override
   bool operator ==(Object other) =>
-      other is BloomFilter && ListEquality().equals(value, other.value);
+      other is BloomFilter && const ListEquality().equals(value, other.value);
 
   @override
   int get hashCode => value.hashCode;

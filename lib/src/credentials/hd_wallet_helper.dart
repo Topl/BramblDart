@@ -42,7 +42,7 @@ class HdWallet {
   static Bip32SigningKey _bip32signingKey(Uint8List entropy,
       {String password = ''}) {
     final salt = Uint8List.fromList(utf8.encode(password));
-    final rawMaster = PBKDF2.hmac_sha512(salt, entropy, 4096, xprv_size);
+    final rawMaster = PBKDF2.hmac_sha512(salt, entropy, 4096, xprvSize);
     final rootXsk = Bip32SigningKey.normalizeBytes(rawMaster);
     return rootXsk;
   }
@@ -73,7 +73,7 @@ class HdWallet {
   /// |   Purpose Private Key    |
   /// +--------------------------+
   ///        |
-  ///        | coin type (e.g. 1815' for ADA)
+  ///        | coin type (e.g. 7091' for Poly)
   ///        v
   /// +--------------------------+
   /// |  Coin Type Private Key   |
@@ -121,11 +121,11 @@ class HdWallet {
   }
 
   Bip32KeyPair deriveAddress(
-      {int purpose = DEFAULT_PURPOSE,
-      int coinType = DEFAULT_COIN_TYPE,
-      int account = DEFAULT_ACCOUNT_INDEX,
-      int change = DEFAULT_CHANGE,
-      int address = DEFAULT_ADDRESS_INDEX}) {
+      {int purpose = defaultPurpose,
+      int coinType = defaultCoinType,
+      int account = defaultAccountIndex,
+      int change = defaultChange,
+      int address = defaultAddressIndex}) {
     final rootKeys =
         Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
     final pair0 = derive(keys: rootKeys, index: purpose);
@@ -137,7 +137,7 @@ class HdWallet {
   }
 
   Bip32KeyPair deriveBaseAddress(
-      {int purpose = DEFAULT_PURPOSE, int coinType = DEFAULT_COIN_TYPE}) {
+      {int purpose = defaultPurpose, int coinType = defaultCoinType}) {
     final rootKeys =
         Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
     final pair0 = derive(keys: rootKeys, index: purpose);
@@ -145,9 +145,9 @@ class HdWallet {
   }
 
   Bip32KeyPair deriveLastThreeLayers(
-      {int account = DEFAULT_ACCOUNT_INDEX,
-      int change = DEFAULT_CHANGE,
-      int address = DEFAULT_ADDRESS_INDEX}) {
+      {int account = defaultAccountIndex,
+      int change = defaultChange,
+      int address = defaultAddressIndex}) {
     final rootKeys =
         Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
     final pair0 = derive(keys: rootKeys, index: account);
@@ -169,8 +169,8 @@ class Bip32KeyPair {
 /// default purpose. Reference: [CIP-1852](https://github.com/cardano-foundation/CIPs/blob/master/CIP-1852/CIP-1852.md)
 
 /// Extended Private key size in bytes
-const xprv_size = 96;
-const extended_secret_key_size = 64;
+const xprvSize = 96;
+const extendedSecretKeySize = 64;
 
-int harden(int index) => index | HARDENED_OFFSET;
-bool isHardened(int index) => index & HARDENED_OFFSET != 0;
+int harden(int index) => index | hardenedOffset;
+bool isHardened(int index) => index & hardenedOffset != 0;
