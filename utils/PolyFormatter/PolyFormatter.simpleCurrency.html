@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the PolyFormatter.simpleCurrency constructor from the Class PolyFormatter class from the utils library, for the Dart programming language.">
+  <title>PolyFormatter.simpleCurrency constructor - PolyFormatter class - utils library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">brambldart</a></li>
+    <li><a href="../../utils/utils-library.html">utils</a></li>
+    <li><a href="../../utils/PolyFormatter-class.html">PolyFormatter</a></li>
+    <li class="self-crumb">PolyFormatter.simpleCurrency factory constructor</li>
+  </ol>
+  <div class="self-name">PolyFormatter.simpleCurrency</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-constructor">PolyFormatter.simpleCurrency</span> constructor 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      <span class="name ">PolyFormatter.simpleCurrency</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="simpleCurrency-param-locale">{<span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">locale</span> = <span class="default-value">&#39;en&#39;</span>, </span></li>
+<li><span class="parameter" id="simpleCurrency-param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span> = <span class="default-value">poly</span>, </span></li>
+<li><span class="parameter" id="simpleCurrency-param-decimalDigits"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">decimalDigits</span> = <span class="default-value">9</span>}</span></li>
+</ol>)
+    </section>
+
+    
+<section class="desc markdown">
+  <p>Creates a <a href="https://pub.dev/documentation/intl/0.17.0/intl/NumberFormat-class.html">NumberFormat</a> for currencies, using the simple symbol for the
+currency if one is available (e.g. $, €), so it should only be used if the
+short currency symbol will be unambiguous.</p>
+<p>If <code>locale</code> is not specified, it will use the current default locale.</p>
+<p>If <code>name</code> is specified, the currency with that ISO 4217 name will be used.
+Otherwise we will use the default currency name for the current locale. We
+will assume that the symbol for this is well known in the locale and
+unambiguous. If you format CAD in an en_US locale using this format it
+will display as "$", which may be confusing to the user.</p>
+<p>If <code>decimalDigits</code> is specified, numbers will format with that many digits
+after the decimal place. If it's not, they will use the default for the
+currency in <code>name</code>, and the default currency for <code>locale</code> if the currency
+name is not specified. e.g.
+      NumberFormat.simpleCurrency(name: 'USD', decimalDigits: 7)
+will format with 7 decimal digits, because that's what we asked for. But
+      NumberFormat.simpleCurrency(locale: 'en_US', name: 'JPY')
+will format with zero, because that's the default for JPY, and the
+currency's default takes priority over the locale's default.
+      NumberFormat.simpleCurrency(locale: 'en_US')
+will format with two, which is the default for that locale.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">factory PolyFormatter.simpleCurrency(
+        {String? locale = &#39;en&#39;,
+        String? name = poly,
+        int? decimalDigits = 9}) =&gt;
+    PolyFormatter(
+        formatter: NumberFormat.simpleCurrency(
+            locale: locale, name: name, decimalDigits: decimalDigits));</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">brambldart</a></li>
+  <li><a href="../../utils/utils-library.html">utils</a></li>
+  <li><a href="../../utils/PolyFormatter-class.html">PolyFormatter</a></li>
+  <li class="self-crumb">PolyFormatter.simpleCurrency factory constructor</li>
+</ol>
+
+
+    <h5>PolyFormatter class</h5>
+    <ol>
+
+    <li class="section-title"><a href="../../utils/PolyFormatter-class.html#constructors">Constructors</a></li>
+    <li><a href="../../utils/PolyFormatter/PolyFormatter.html">PolyFormatter</a></li>
+    <li><a href="../../utils/PolyFormatter/PolyFormatter.compactCurrency.html">compactCurrency</a></li>
+    <li><a href="../../utils/PolyFormatter/PolyFormatter.compactSimpleCurrency.html">compactSimpleCurrency</a></li>
+    <li><a href="../../utils/PolyFormatter/PolyFormatter.currency.html">currency</a></li>
+    <li><a href="../../utils/PolyFormatter/PolyFormatter.simpleCurrency.html">simpleCurrency</a></li>
+
+
+    <li class="section-title">
+      <a href="../../utils/PolyFormatter-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="../../utils/PolyFormatter/formatter.html">formatter</a></li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../../utils/PolyFormatter-class.html#instance-methods">Methods</a></li>
+    <li><a href="../../utils/PolyFormatter/format.html">format</a></li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../../utils/PolyFormatter-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+    <li class="section-title"><a href="../../utils/PolyFormatter-class.html#constants">Constants</a></li>
+    <li><a href="../../utils/PolyFormatter/poly-constant.html">poly</a></li>
+    <li><a href="../../utils/PolyFormatter/symbol-constant.html">symbol</a></li>
+</ol>
+
+  </div><!--/.sidebar-offcanvas-left-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    brambldart
+      0.0.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

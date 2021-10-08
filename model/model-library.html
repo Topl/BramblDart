@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="model library API docs, for the Dart programming language.">
+  <title>model library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">brambldart</a></li>
+    <li class="self-crumb">model library</li>
+  </ol>
+  <div class="self-name">model</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-library">model</span> library 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+
+
+    <section class="summary offset-anchor" id="classes">
+      <h2>Classes</h2>
+
+      <dl>
+        <dt id="Amount">
+  <span class="name "><a href="../model/Amount-class.html">Amount</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="ArbitAmount">
+  <span class="name "><a href="../model/ArbitAmount-class.html">ArbitAmount</a></span> 
+
+</dt>
+<dd>
+  Utility class to easily convert amounts of Arbit into different units of
+quantities. 
+</dd>
+
+        <dt id="ArbitAmountConverter">
+  <span class="name "><a href="../model/ArbitAmountConverter-class.html">ArbitAmountConverter</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="ArbitAmountNullableConverter">
+  <span class="name "><a href="../model/ArbitAmountNullableConverter-class.html">ArbitAmountNullableConverter</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="ArbitBox">
+  <span class="name "><a href="../model/ArbitBox-class.html">ArbitBox</a></span> 
+
+</dt>
+<dd>
+  Box that contains arbits as well as the ArbitBox that it is owned by a particular address 
+</dd>
+
+        <dt id="ArbitTransaction">
+  <span class="name "><a href="../model/ArbitTransaction-class.html">ArbitTransaction</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="AssetAmount">
+  <span class="name "><a href="../model/AssetAmount-class.html">AssetAmount</a></span> 
+
+</dt>
+<dd>
+  Utility class to deserialize asset quantities. This may be updated as we understand more about the use cases for assets 
+</dd>
+
+        <dt id="AssetAmountConverter">
+  <span class="name "><a href="../model/AssetAmountConverter-class.html">AssetAmountConverter</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="AssetBox">
+  <span class="name "><a href="../model/AssetBox-class.html">AssetBox</a></span> 
+
+</dt>
+<dd>
+  Box that contains assets which is owned by a particular address 
+</dd>
+
+        <dt id="AssetCode">
+  <span class="name "><a href="../model/AssetCode-class.html">AssetCode</a></span> 
+
+</dt>
+<dd>
+  AssetCode serves as a unique identifier for user issued assets 
+</dd>
+
+        <dt id="AssetRecipient">
+  <span class="name "><a href="../model/AssetRecipient-class.html">AssetRecipient</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="AssetTransaction">
+  <span class="name "><a href="../model/AssetTransaction-class.html">AssetTransaction</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="Balance">
+  <span class="name "><a href="../model/Balance-class.html">Balance</a></span> 
+
+</dt>
+<dd>
+  The amounts for polys and arbits are displayed as 10^-9 of the respective denomination 
+</dd>
+
+        <dt id="Block">
+  <span class="name "><a href="../model/Block-class.html">Block</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="BlockNum">
+  <span class="name "><a href="../model/BlockNum-class.html">BlockNum</a></span> 
+
+</dt>
+<dd>
+  For operations that are reading data from the blockchain without making a
+transaction that would modify it, the Bifrost client can read that data
+from previous states of the blockchain as well. This class specifies which
+state to use. 
+</dd>
+
+        <dt id="BlockResponse">
+  <span class="name "><a href="../model/BlockResponse-class.html">BlockResponse</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="Box">
+  <span class="name "><a href="../model/Box-class.html">Box</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="BoxId">
+  <span class="name "><a href="../model/BoxId-class.html">BoxId</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="BoxIdConverter">
+  <span class="name "><a href="../model/BoxIdConverter-class.html">BoxIdConverter</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="Evidence">
+  <span class="name "><a href="../model/Evidence-class.html">Evidence</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="GenericBox">
+  <span class="name "><a href="../model/GenericBox-class.html">GenericBox</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="ModifierId">
+  <span class="name "><a href="../model/ModifierId-class.html">ModifierId</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="ModifierIdConverter">
+  <span class="name "><a href="../model/ModifierIdConverter-class.html">ModifierIdConverter</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="NodeViewModifier">
+  <span class="name "><a href="../model/NodeViewModifier-class.html">NodeViewModifier</a></span> 
+
+</dt>
+<dd>
+  It is supposed that all the modifiers (offchain transactions, blocks, blockheaders etc)
+have identifiers of the some length fixed with the ModifierIdSize constant 
+</dd>
+
+        <dt id="PolyAmount">
+  <span class="name "><a href="../model/PolyAmount-class.html">PolyAmount</a></span> 
+
+</dt>
+<dd>
+  Utility class to easily convert amounts of Poly into different units of
+quantities. 
+</dd>
+
+        <dt id="PolyAmountConverter">
+  <span class="name "><a href="../model/PolyAmountConverter-class.html">PolyAmountConverter</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="PolyAmountNullableConverter">
+  <span class="name "><a href="../model/PolyAmountNullableConverter-class.html">PolyAmountNullableConverter</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="PolyBox">
+  <span class="name "><a href="../model/PolyBox-class.html">PolyBox</a></span> 
+
+</dt>
+<dd>
+  Box that contains polys which is owned by a particular address 
+</dd>
+
+        <dt id="PolyTransaction">
+  <span class="name "><a href="../model/PolyTransaction-class.html">PolyTransaction</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="Proposition">
+  <span class="name "><a href="../model/Proposition-class.html">Proposition</a></span> 
+
+</dt>
+<dd>
+  Propositions are challenges that must be satisfied by the prover.
+In most cases, propositions are used by transactions issuers (spenders) to prove the right
+to use a UTXO in a transaction. 
+</dd>
+
+        <dt id="PropositionConverter">
+  <span class="name "><a href="../model/PropositionConverter-class.html">PropositionConverter</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="SecurityRoot">
+  <span class="name "><a href="../model/SecurityRoot-class.html">SecurityRoot</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="Sender">
+  <span class="name "><a href="../model/Sender-class.html">Sender</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="SignatureContainer">
+  <span class="name "><a href="../model/SignatureContainer-class.html">SignatureContainer</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="SimpleRecipient">
+  <span class="name "><a href="../model/SimpleRecipient-class.html">SimpleRecipient</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="TokenBox">
+  <span class="name "><a href="../model/TokenBox-class.html">TokenBox</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="Transaction">
+  <span class="name "><a href="../model/Transaction-class.html">Transaction</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="TransactionReceipt">
+  <span class="name "><a href="../model/TransactionReceipt-class.html">TransactionReceipt</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+    <section class="summary offset-anchor" id="properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="formatter" class="property">
+  <span class="name"><a href="../model/formatter.html">formatter</a></span>
+  <span class="signature">&#8594; <a href="https://pub.dev/documentation/intl/0.17.0/intl/DateFormat-class.html">DateFormat</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+
+    <section class="summary offset-anchor" id="enums">
+      <h2>Enums</h2>
+
+      <dl>
+        <dt id="ArbitUnit">
+  <span class="name "><a href="../model/ArbitUnit-class.html">ArbitUnit</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+        <dt id="PolyUnit">
+  <span class="name "><a href="../model/PolyUnit-class.html">PolyUnit</a></span> 
+
+</dt>
+<dd>
+   
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="typedefs">
+      <h2>Typedefs</h2>
+
+      <dl>
+          
+  <dt id="BoxType" class="">
+  <span class="name"><a href="../model/BoxType.html">BoxType</a></span>
+    = <a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+
+          
+  <dt id="EvidenceTypePrefix" class="">
+  <span class="name"><a href="../model/EvidenceTypePrefix.html">EvidenceTypePrefix</a></span>
+    = <a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a>
+  </span>
+  
+
+</dt>
+<dd>
+  Evidence content serves as a fingerprint (or commitment) of a particular proposition that is used to lock a box. Boxes
+are locked with 'Evidence' which is the concatentation of a typePrefix ++ content. The type prefix denotes what type
+of proposition the content references and the content serves as the commitment that a proposition will be checked
+against when a box is being unlocked during a transaction. <a href="../model/EvidenceTypePrefix.html">[...]</a>
+  
+
+</dd>
+
+
+          
+  <dt id="M" class="">
+  <span class="name"><a href="../model/M.html">M</a></span>
+    = <a href="../model/NodeViewModifier-class.html">NodeViewModifier</a>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+
+          
+  <dt id="ModifierTypeId" class="">
+  <span class="name"><a href="../model/ModifierTypeId.html">ModifierTypeId</a></span>
+    = <a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+
+          
+  <dt id="Nonce" class="">
+  <span class="name"><a href="../model/Nonce.html">Nonce</a></span>
+    = <a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+
+          
+  <dt id="TxType" class="">
+  <span class="name"><a href="../model/TxType.html">TxType</a></span>
+    = <a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+
+      </dl>
+    </section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">brambldart</a></li>
+  <li class="self-crumb">model library</li>
+</ol>
+
+
+    <h5><span class="package-name">brambldart</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../brambldart/brambldart-library.html">brambldart</a></li>
+      <li><a href="../client/client-library.html">client</a></li>
+      <li><a href="../credentials/credentials-library.html">credentials</a></li>
+      <li><a href="../crypto/crypto-library.html">crypto</a></li>
+      <li><a href="../model/model-library.html">model</a></li>
+      <li><a href="../utils/utils-library.html">utils</a></li>
+</ol>
+
+  </div>
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <h5>model library</h5>
+    <ol>
+  <li class="section-title"><a href="../model/model-library.html#classes">Classes</a></li>
+  <li><a href="../model/Amount-class.html">Amount</a></li>
+  <li><a href="../model/ArbitAmount-class.html">ArbitAmount</a></li>
+  <li><a href="../model/ArbitAmountConverter-class.html">ArbitAmountConverter</a></li>
+  <li><a href="../model/ArbitAmountNullableConverter-class.html">ArbitAmountNullableConverter</a></li>
+  <li><a href="../model/ArbitBox-class.html">ArbitBox</a></li>
+  <li><a href="../model/ArbitTransaction-class.html">ArbitTransaction</a></li>
+  <li><a href="../model/AssetAmount-class.html">AssetAmount</a></li>
+  <li><a href="../model/AssetAmountConverter-class.html">AssetAmountConverter</a></li>
+  <li><a href="../model/AssetBox-class.html">AssetBox</a></li>
+  <li><a href="../model/AssetCode-class.html">AssetCode</a></li>
+  <li><a href="../model/AssetRecipient-class.html">AssetRecipient</a></li>
+  <li><a href="../model/AssetTransaction-class.html">AssetTransaction</a></li>
+  <li><a href="../model/Balance-class.html">Balance</a></li>
+  <li><a href="../model/Block-class.html">Block</a></li>
+  <li><a href="../model/BlockNum-class.html">BlockNum</a></li>
+  <li><a href="../model/BlockResponse-class.html">BlockResponse</a></li>
+  <li><a href="../model/Box-class.html">Box</a></li>
+  <li><a href="../model/BoxId-class.html">BoxId</a></li>
+  <li><a href="../model/BoxIdConverter-class.html">BoxIdConverter</a></li>
+  <li><a href="../model/Evidence-class.html">Evidence</a></li>
+  <li><a href="../model/GenericBox-class.html">GenericBox</a></li>
+  <li><a href="../model/ModifierId-class.html">ModifierId</a></li>
+  <li><a href="../model/ModifierIdConverter-class.html">ModifierIdConverter</a></li>
+  <li><a href="../model/NodeViewModifier-class.html">NodeViewModifier</a></li>
+  <li><a href="../model/PolyAmount-class.html">PolyAmount</a></li>
+  <li><a href="../model/PolyAmountConverter-class.html">PolyAmountConverter</a></li>
+  <li><a href="../model/PolyAmountNullableConverter-class.html">PolyAmountNullableConverter</a></li>
+  <li><a href="../model/PolyBox-class.html">PolyBox</a></li>
+  <li><a href="../model/PolyTransaction-class.html">PolyTransaction</a></li>
+  <li><a href="../model/Proposition-class.html">Proposition</a></li>
+  <li><a href="../model/PropositionConverter-class.html">PropositionConverter</a></li>
+  <li><a href="../model/SecurityRoot-class.html">SecurityRoot</a></li>
+  <li><a href="../model/Sender-class.html">Sender</a></li>
+  <li><a href="../model/SignatureContainer-class.html">SignatureContainer</a></li>
+  <li><a href="../model/SimpleRecipient-class.html">SimpleRecipient</a></li>
+  <li><a href="../model/TokenBox-class.html">TokenBox</a></li>
+  <li><a href="../model/Transaction-class.html">Transaction</a></li>
+  <li><a href="../model/TransactionReceipt-class.html">TransactionReceipt</a></li>
+
+
+
+
+  <li class="section-title"><a href="../model/model-library.html#properties">Properties</a></li>
+  <li><a href="../model/formatter.html">formatter</a></li>
+
+
+  <li class="section-title"><a href="../model/model-library.html#enums">Enums</a></li>
+  <li><a href="../model/ArbitUnit-class.html">ArbitUnit</a></li>
+  <li><a href="../model/PolyUnit-class.html">PolyUnit</a></li>
+
+  <li class="section-title"><a href="../model/model-library.html#typedefs">Typedefs</a></li>
+  <li><a href="../model/BoxType.html">BoxType</a></li>
+  <li><a href="../model/EvidenceTypePrefix.html">EvidenceTypePrefix</a></li>
+  <li><a href="../model/M.html">M</a></li>
+  <li><a href="../model/ModifierTypeId.html">ModifierTypeId</a></li>
+  <li><a href="../model/Nonce.html">Nonce</a></li>
+  <li><a href="../model/TxType.html">TxType</a></li>
+
+</ol>
+
+  </div><!--/sidebar-offcanvas-right-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    brambldart
+      0.0.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

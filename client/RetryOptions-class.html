@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the RetryOptions class from the client library, for the Dart programming language.">
+  <title>RetryOptions class - client library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">brambldart</a></li>
+    <li><a href="../client/client-library.html">client</a></li>
+    <li class="self-crumb">RetryOptions class</li>
+  </ol>
+  <div class="self-name">RetryOptions</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-class">RetryOptions</span> class 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+
+
+
+    <section class="summary offset-anchor" id="constructors">
+      <h2>Constructors</h2>
+
+      <dl class="constructor-summary-list">
+        <dt id="RetryOptions" class="callable">
+          <span class="name"><a href="../client/RetryOptions/RetryOptions.html">RetryOptions</a></span><span class="signature">(<span class="parameter" id="-param-retries">{<span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a></span> <span class="parameter-name">retries</span> = <span class="default-value">3</span>, </span><span class="parameter" id="-param-retryEvaluator"><span class="type-annotation"><a href="../client/RetryEvaluator.html">RetryEvaluator</a></span> <span class="parameter-name">retryEvaluator</span> = <span class="default-value">defaultRetryEvaluator</span>, </span><span class="parameter" id="-param-retryInterval"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Duration-class.html">Duration</a></span> <span class="parameter-name">retryInterval</span> = <span class="default-value">const Duration(seconds: 1)</span>}</span>)</span>
+        </dt>
+        <dd>
+           
+          <div class="constructor-modifier features">const</div>
+        </dd>
+        <dt id="RetryOptions.fromExtra" class="callable">
+          <span class="name"><a href="../client/RetryOptions/RetryOptions.fromExtra.html">RetryOptions.fromExtra</a></span><span class="signature">(<span class="parameter" id="fromExtra-param-request"><span class="type-annotation"><a href="https://pub.dev/documentation/dio/4.0.0/dio/RequestOptions-class.html">RequestOptions</a></span> <span class="parameter-name">request</span></span>)</span>
+        </dt>
+        <dd>
+           
+          <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="RetryOptions.noRetry" class="callable">
+          <span class="name"><a href="../client/RetryOptions/RetryOptions.noRetry.html">RetryOptions.noRetry</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+           
+          <div class="constructor-modifier features">factory</div>
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd class="inherited">
+  The hash code for this object. <a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/hashCode.html">[...]</a>
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="retries" class="property">
+  <span class="name"><a href="../client/RetryOptions/retries.html">retries</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+  The number of retry in case of an error 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="retryEvaluator" class="property">
+  <span class="name"><a href="../client/RetryOptions/retryEvaluator.html">retryEvaluator</a></span>
+  <span class="signature">&#8594; <a href="../client/RetryEvaluator.html">RetryEvaluator</a></span> 
+
+</dt>
+<dd>
+  Evaluating if a retry is necessary.regarding the error. <a href="../client/RetryOptions/retryEvaluator.html">[...]</a>
+  <div class="features">read-only</div>
+
+</dd>
+
+        <dt id="retryInterval" class="property">
+  <span class="name"><a href="../client/RetryOptions/retryInterval.html">retryInterval</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/Duration-class.html">Duration</a></span> 
+
+</dt>
+<dd>
+  The interval before a retry. 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/Type-class.html">Type</a></span> 
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object. 
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-methods">
+      <h2>Methods</h2>
+      <dl class="callables">
+        <dt id="copyWith" class="callable">
+  <span class="name"><a href="../client/RetryOptions/copyWith.html">copyWith</a></span><span class="signature">(<wbr><span class="parameter" id="copyWith-param-retries">{<span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">retries</span>, </span><span class="parameter" id="copyWith-param-retryInterval"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Duration-class.html">Duration</a>?</span> <span class="parameter-name">retryInterval</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="../client/RetryOptions-class.html">RetryOptions</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="mergeIn" class="callable">
+  <span class="name"><a href="../client/RetryOptions/mergeIn.html">mergeIn</a></span><span class="signature">(<wbr><span class="parameter" id="mergeIn-param-options"><span class="type-annotation"><a href="https://pub.dev/documentation/dio/4.0.0/dio/Options-class.html">Options</a></span> <span class="parameter-name">options</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/dio/4.0.0/dio/Options-class.html">Options</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a non-existent method or property is accessed. <a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/noSuchMethod.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="toExtra" class="callable">
+  <span class="name"><a href="../client/RetryOptions/toExtra.html">toExtra</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="toOptions" class="callable">
+  <span class="name"><a href="../client/RetryOptions/toOptions.html">toOptions</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/dio/4.0.0/dio/Options-class.html">Options</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object. <a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/toString.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor inherited" id="operators">
+      <h2>Operators</h2>
+      <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator. <a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/operator_equals.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+
+    <section class="summary offset-anchor" id="static-methods">
+      <h2>Static Methods</h2>
+      <dl class="callables">
+        <dt id="defaultRetryEvaluator" class="callable">
+  <span class="name"><a href="../client/RetryOptions/defaultRetryEvaluator.html">defaultRetryEvaluator</a></span><span class="signature">(<wbr><span class="parameter" id="defaultRetryEvaluator-param-error"><span class="type-annotation"><a href="https://pub.dev/documentation/dio/4.0.0/dio/DioError-class.html">DioError</a></span> <span class="parameter-name">error</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns <code>bool</code> = true only if the response hasn't been cancelled or got
+a bas status code. 
+  
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="constants">
+      <h2>Constants</h2>
+
+      <dl class="properties">
+        <dt id="extraKey" class="constant">
+  <span class="name "><a href="../client/RetryOptions/extraKey-constant.html">extraKey</a></span>
+  <span class="signature">&#8594; const <a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>
+  
+
+</dt>
+<dd>
+   
+  
+
+  <div>
+    <span class="signature"><code>&#39;cache_retry_request&#39;</code></span>
+  </div>
+</dd>
+
+      </dl>
+    </section>
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">brambldart</a></li>
+  <li><a href="../client/client-library.html">client</a></li>
+  <li class="self-crumb">RetryOptions class</li>
+</ol>
+
+
+    <h5>client library</h5>
+    <ol>
+  <li class="section-title"><a href="../client/client-library.html#classes">Classes</a></li>
+  <li><a href="../client/AbstractTransactionUpdateFetcher-class.html">AbstractTransactionUpdateFetcher</a></li>
+  <li><a href="../client/ApiKeyAuthInterceptor-class.html">ApiKeyAuthInterceptor</a></li>
+  <li><a href="../client/AuthInterceptor-class.html">AuthInterceptor</a></li>
+  <li><a href="../client/BramblClient-class.html">BramblClient</a></li>
+  <li><a href="../client/ExpensiveOperations-class.html">ExpensiveOperations</a></li>
+  <li><a href="../client/JsonRPC-class.html">JsonRPC</a></li>
+  <li><a href="../client/Polling-class.html">Polling</a></li>
+  <li><a href="../client/RetryInterceptor-class.html">RetryInterceptor</a></li>
+  <li><a href="../client/RetryOptions-class.html">RetryOptions</a></li>
+  <li><a href="../client/RPCResponse-class.html">RPCResponse</a></li>
+
+
+  <li class="section-title"><a href="../client/client-library.html#mixins">Mixins</a></li>
+  <li><a href="../client/RpcService-mixin.html">RpcService</a></li>
+
+  <li class="section-title"><a href="../client/client-library.html#constants">Constants</a></li>
+  <li><a href="../client/retryValue-constant.html">retryValue</a></li>
+
+  <li class="section-title"><a href="../client/client-library.html#properties">Properties</a></li>
+  <li><a href="../client/log.html">log</a></li>
+
+
+
+  <li class="section-title"><a href="../client/client-library.html#typedefs">Typedefs</a></li>
+  <li><a href="../client/RetryEvaluator.html">RetryEvaluator</a></li>
+
+  <li class="section-title"><a href="../client/client-library.html#exceptions">Exceptions</a></li>
+  <li><a href="../client/RPCError-class.html">RPCError</a></li>
+  <li><a href="../client/ShortPollingException-class.html">ShortPollingException</a></li>
+</ol>
+
+  </div>
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <ol>
+
+    <li class="section-title"><a href="../client/RetryOptions-class.html#constructors">Constructors</a></li>
+    <li><a href="../client/RetryOptions/RetryOptions.html">RetryOptions</a></li>
+    <li><a href="../client/RetryOptions/RetryOptions.fromExtra.html">fromExtra</a></li>
+    <li><a href="../client/RetryOptions/RetryOptions.noRetry.html">noRetry</a></li>
+
+
+    <li class="section-title">
+      <a href="../client/RetryOptions-class.html#instance-properties">Properties</a>
+    </li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li><a href="../client/RetryOptions/retries.html">retries</a></li>
+    <li><a href="../client/RetryOptions/retryEvaluator.html">retryEvaluator</a></li>
+    <li><a href="../client/RetryOptions/retryInterval.html">retryInterval</a></li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title"><a href="../client/RetryOptions-class.html#instance-methods">Methods</a></li>
+    <li><a href="../client/RetryOptions/copyWith.html">copyWith</a></li>
+    <li><a href="../client/RetryOptions/mergeIn.html">mergeIn</a></li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../client/RetryOptions/toExtra.html">toExtra</a></li>
+    <li><a href="../client/RetryOptions/toOptions.html">toOptions</a></li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../client/RetryOptions-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+    <li class="section-title"><a href="../client/RetryOptions-class.html#static-methods">Static methods</a></li>
+    <li><a href="../client/RetryOptions/defaultRetryEvaluator.html">defaultRetryEvaluator</a></li>
+
+    <li class="section-title"><a href="../client/RetryOptions-class.html#constants">Constants</a></li>
+    <li><a href="../client/RetryOptions/extraKey-constant.html">extraKey</a></li>
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    brambldart
+      0.0.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

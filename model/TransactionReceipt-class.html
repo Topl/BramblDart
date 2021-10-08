@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the TransactionReceipt class from the model library, for the Dart programming language.">
+  <title>TransactionReceipt class - model library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">brambldart</a></li>
+    <li><a href="../model/model-library.html">model</a></li>
+    <li class="self-crumb">TransactionReceipt class</li>
+  </ol>
+  <div class="self-name">TransactionReceipt</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-class">TransactionReceipt</span> class 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    
+
+
+
+    <section class="summary offset-anchor" id="constructors">
+      <h2>Constructors</h2>
+
+      <dl class="constructor-summary-list">
+        <dt id="TransactionReceipt" class="callable">
+          <span class="name"><a href="../model/TransactionReceipt/TransactionReceipt.html">TransactionReceipt</a></span><span class="signature">(<span class="parameter" id="-param-id">{<span>required</span> <span class="type-annotation"><a href="../model/ModifierId-class.html">ModifierId</a></span> <span class="parameter-name">id</span>, </span><span class="parameter" id="-param-txType"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span> <span class="parameter-name">txType</span>, </span><span class="parameter" id="-param-newBoxes"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/TokenBox-class.html">TokenBox</a></span>&gt;</span></span> <span class="parameter-name">newBoxes</span>, </span><span class="parameter" id="-param-signatures"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/SignatureContainer-class.html">SignatureContainer</a></span>&gt;</span></span> <span class="parameter-name">signatures</span> = <span class="default-value">const []</span>, </span><span class="parameter" id="-param-status"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">status</span> = <span class="default-value">false</span>, </span><span class="parameter" id="-param-fee"><span>required</span> <span class="type-annotation"><a href="../model/PolyAmount-class.html">PolyAmount</a>?</span> <span class="parameter-name">fee</span>, </span><span class="parameter" id="-param-timestamp"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a></span> <span class="parameter-name">timestamp</span>, </span><span class="parameter" id="-param-messageToSign"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-typed_data/Uint8List-class.html">Uint8List</a>?</span> <span class="parameter-name">messageToSign</span>, </span><span class="parameter" id="-param-boxesToRemove"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/BoxId-class.html">BoxId</a></span>&gt;</span></span> <span class="parameter-name">boxesToRemove</span>, </span><span class="parameter" id="-param-from"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/Sender-class.html">Sender</a></span>&gt;</span>?</span> <span class="parameter-name">from</span>, </span><span class="parameter" id="-param-to"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a></span> <span class="parameter-name">to</span>, </span><span class="parameter" id="-param-propositionType"><span>required</span> <span class="type-annotation"><a href="../utils/PropositionType-class.html">PropositionType</a></span> <span class="parameter-name">propositionType</span>, </span><span class="parameter" id="-param-data"><span class="type-annotation"><a href="../utils/Latin1Data-class.html">Latin1Data</a>?</span> <span class="parameter-name">data</span>, </span><span class="parameter" id="-param-minting"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">minting</span>, </span><span class="parameter" id="-param-blockId"><span class="type-annotation"><a href="../model/ModifierId-class.html">ModifierId</a>?</span> <span class="parameter-name">blockId</span>, </span><span class="parameter" id="-param-blockNumber"><span class="type-annotation"><a href="../model/BlockNum-class.html">BlockNum</a>?</span> <span class="parameter-name">blockNumber</span>}</span>)</span>
+        </dt>
+        <dd>
+           
+        </dd>
+        <dt id="TransactionReceipt.fromJson" class="callable">
+          <span class="name"><a href="../model/TransactionReceipt/TransactionReceipt.fromJson.html">TransactionReceipt.fromJson</a></span><span class="signature">(<span class="parameter" id="fromJson-param-map"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">map</span></span>)</span>
+        </dt>
+        <dd>
+           
+          <div class="constructor-modifier features">factory</div>
+        </dd>
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="blockId" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/blockId.html">blockId</a></span>
+  <span class="signature">&#8594; <a href="../model/ModifierId-class.html">ModifierId</a>?</span> 
+
+</dt>
+<dd>
+  Hash of the messageToSign of this block where this transaction is in (32 bytes). 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="blockNumber" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/blockNumber.html">blockNumber</a></span>
+  <span class="signature">&#8594; <a href="../model/BlockNum-class.html">BlockNum</a>?</span> 
+
+</dt>
+<dd>
+  The number of the block into which this transaction was forged 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="boxesToRemove" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/boxesToRemove.html">boxesToRemove</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/BoxId-class.html">BoxId</a></span>&gt;</span></span> 
+
+</dt>
+<dd>
+  The boxes that will be deleted as a result of this transaction 
+  <div class="features">@<a href="../model/BoxIdConverter-class.html">BoxIdConverter</a>(), final</div>
+
+</dd>
+
+        <dt id="data" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/data.html">data</a></span>
+  <span class="signature">&#8594; <a href="../utils/Latin1Data-class.html">Latin1Data</a>?</span> 
+
+</dt>
+<dd>
+  Data string which can be associated with this transaction (may be empty). Data has a maximum value of 127 Latin-1 encoded characters 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="fee" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/fee.html">fee</a></span>
+  <span class="signature">&#8594; <a href="../model/PolyAmount-class.html">PolyAmount</a>?</span> 
+
+</dt>
+<dd>
+  The amount of polys that was used to pay for this transaction to the network 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="from" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/from.html">from</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/Sender-class.html">Sender</a></span>&gt;</span>?</span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="hashCode" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+  The hash code for this object. <a href="../model/TransactionReceipt/hashCode.html">[...]</a>
+  <div class="features">read-only, override</div>
+
+</dd>
+
+        <dt id="id" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/id.html">id</a></span>
+  <span class="signature">&#8594; <a href="../model/ModifierId-class.html">ModifierId</a></span> 
+
+</dt>
+<dd>
+  The hash of the message to sign. 
+  <div class="features">@<a href="../model/ModifierIdConverter-class.html">ModifierIdConverter</a>(), final</div>
+
+</dd>
+
+        <dt id="messageToSign" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/messageToSign.html">messageToSign</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-typed_data/Uint8List-class.html">Uint8List</a>?</span> 
+
+</dt>
+<dd>
+  The message that will have to be signed by the sender of this transaction 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="minting" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/minting.html">minting</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/bool-class.html">bool</a>?</span> 
+
+</dt>
+<dd>
+  Whether this transfer will be a minting transfer. This field is not strictly necessary for poly or arbit transfers but since it exists in the JSON-RPC output, it is included here for completeness 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="newBoxes" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/newBoxes.html">newBoxes</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/TokenBox-class.html">TokenBox</a></span>&gt;</span></span> 
+
+</dt>
+<dd>
+  The number of boxes that were generated with this transaction. 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="propositionType" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/propositionType.html">propositionType</a></span>
+  <span class="signature">&#8594; <a href="../utils/PropositionType-class.html">PropositionType</a></span> 
+
+</dt>
+<dd>
+  The propositionType that has or will be used by the sender to generate the proposition. This proposition will be used to verify the authenticity of this transaction together with the provided proof 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/Type-class.html">Type</a></span> 
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object. 
+  <div class="features">read-only, inherited</div>
+
+</dd>
+
+        <dt id="signatures" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/signatures.html">signatures</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/SignatureContainer-class.html">SignatureContainer</a></span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Proposition Type signature(s) 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="status" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/status.html">status</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+  Whether or not this transfer has been successfully confirmed into a block 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="timestamp" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/timestamp.html">timestamp</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd>
+  The time at which this transaction was received by the network 
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="to" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/to.html">to</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a></span> 
+
+</dt>
+<dd>
+   
+  <div class="features">final</div>
+
+</dd>
+
+        <dt id="txType" class="property">
+  <span class="name"><a href="../model/TransactionReceipt/txType.html">txType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span> 
+
+</dt>
+<dd>
+  The type of transaction 
+  <div class="features">final</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="instance-methods">
+      <h2>Methods</h2>
+      <dl class="callables">
+        <dt id="copyWith" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/copyWith.html">copyWith</a></span><span class="signature">(<wbr><span class="parameter" id="copyWith-param-id">{<span class="type-annotation"><a href="../model/ModifierId-class.html">ModifierId</a>?</span> <span class="parameter-name">id</span>, </span><span class="parameter" id="copyWith-param-newBoxes"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/TokenBox-class.html">TokenBox</a></span>&gt;</span>?</span> <span class="parameter-name">newBoxes</span>, </span><span class="parameter" id="copyWith-param-signatures"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/SignatureContainer-class.html">SignatureContainer</a></span>&gt;</span>?</span> <span class="parameter-name">signatures</span>, </span><span class="parameter" id="copyWith-param-fee"><span class="type-annotation"><a href="../model/PolyAmount-class.html">PolyAmount</a>?</span> <span class="parameter-name">fee</span>, </span><span class="parameter" id="copyWith-param-timestamp"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">timestamp</span>, </span><span class="parameter" id="copyWith-param-messageToSign"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-typed_data/Uint8List-class.html">Uint8List</a>?</span> <span class="parameter-name">messageToSign</span>, </span><span class="parameter" id="copyWith-param-boxesToRemove"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/BoxId-class.html">BoxId</a></span>&gt;</span>?</span> <span class="parameter-name">boxesToRemove</span>, </span><span class="parameter" id="copyWith-param-from"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/Sender-class.html">Sender</a></span>&gt;</span>?</span> <span class="parameter-name">from</span>, </span><span class="parameter" id="copyWith-param-to"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a>?</span> <span class="parameter-name">to</span>, </span><span class="parameter" id="copyWith-param-propositionType"><span class="type-annotation"><a href="../utils/PropositionType-class.html">PropositionType</a>?</span> <span class="parameter-name">propositionType</span>, </span><span class="parameter" id="copyWith-param-data"><span class="type-annotation"><a href="../utils/Latin1Data-class.html">Latin1Data</a>?</span> <span class="parameter-name">data</span>, </span><span class="parameter" id="copyWith-param-minting"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">minting</span>, </span><span class="parameter" id="copyWith-param-status"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">status</span>, </span><span class="parameter" id="copyWith-param-txType"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">txType</span>, </span><span class="parameter" id="copyWith-param-blockId"><span class="type-annotation"><a href="../model/ModifierId-class.html">ModifierId</a>?</span> <span class="parameter-name">blockId</span>, </span><span class="parameter" id="copyWith-param-blockNumber"><span class="type-annotation"><a href="../model/BlockNum-class.html">BlockNum</a>?</span> <span class="parameter-name">blockNumber</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="../model/TransactionReceipt-class.html">TransactionReceipt</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="encodeBoxes" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/encodeBoxes.html">encodeBoxes</a></span><span class="signature">(<wbr><span class="parameter" id="encodeBoxes-param-boxes"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/TokenBox-class.html">TokenBox</a></span>&gt;</span></span> <span class="parameter-name">boxes</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a non-existent method or property is accessed. <a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/noSuchMethod.html">[...]</a>
+  <div class="features">inherited</div>
+
+</dd>
+
+        <dt id="toBroadcastJson" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/toBroadcastJson.html">toBroadcastJson</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="toJson" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/toJson.html">toJson</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="toMempoolJson" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/toMempoolJson.html">toMempoolJson</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="toString" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  A string representation of this object. <a href="../model/TransactionReceipt/toString.html">[...]</a>
+  <div class="features">override</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    <section class="summary offset-anchor" id="operators">
+      <h2>Operators</h2>
+      <dl class="callables">
+        <dt id="operator ==" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  The equality operator. <a href="../model/TransactionReceipt/operator_equals.html">[...]</a>
+  <div class="features">override</div>
+
+</dd>
+
+      </dl>
+    </section>
+
+
+    <section class="summary offset-anchor" id="static-methods">
+      <h2>Static Methods</h2>
+      <dl class="callables">
+        <dt id="decodeBoxes" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/decodeBoxes.html">decodeBoxes</a></span><span class="signature">(<wbr><span class="parameter" id="decodeBoxes-param-boxes"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a></span> <span class="parameter-name">boxes</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/TokenBox-class.html">TokenBox</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="decodeSignatures" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/decodeSignatures.html">decodeSignatures</a></span><span class="signature">(<wbr><span class="parameter" id="decodeSignatures-param-signatures"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">signatures</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/SignatureContainer-class.html">SignatureContainer</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="decodeTo" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/decodeTo.html">decodeTo</a></span><span class="signature">(<wbr><span class="parameter" id="decodeTo-param-to"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a></span> <span class="parameter-name">to</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="encodeSignatures" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/encodeSignatures.html">encodeSignatures</a></span><span class="signature">(<wbr><span class="parameter" id="encodeSignatures-param-signatures"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../model/SignatureContainer-class.html">SignatureContainer</a></span>&gt;</span></span> <span class="parameter-name">signatures</span>, </span><span class="parameter" id="encodeSignatures-param-proposition"><span class="type-annotation"><a href="../utils/PropositionType-class.html">PropositionType</a></span> <span class="parameter-name">proposition</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+        <dt id="encodeTo" class="callable">
+  <span class="name"><a href="../model/TransactionReceipt/encodeTo.html">encodeTo</a></span><span class="signature">(<wbr><span class="parameter" id="encodeTo-param-to"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a></span> <span class="parameter-name">to</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.14.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+   
+  
+
+</dd>
+
+      </dl>
+    </section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">brambldart</a></li>
+  <li><a href="../model/model-library.html">model</a></li>
+  <li class="self-crumb">TransactionReceipt class</li>
+</ol>
+
+
+    <h5>model library</h5>
+    <ol>
+  <li class="section-title"><a href="../model/model-library.html#classes">Classes</a></li>
+  <li><a href="../model/Amount-class.html">Amount</a></li>
+  <li><a href="../model/ArbitAmount-class.html">ArbitAmount</a></li>
+  <li><a href="../model/ArbitAmountConverter-class.html">ArbitAmountConverter</a></li>
+  <li><a href="../model/ArbitAmountNullableConverter-class.html">ArbitAmountNullableConverter</a></li>
+  <li><a href="../model/ArbitBox-class.html">ArbitBox</a></li>
+  <li><a href="../model/ArbitTransaction-class.html">ArbitTransaction</a></li>
+  <li><a href="../model/AssetAmount-class.html">AssetAmount</a></li>
+  <li><a href="../model/AssetAmountConverter-class.html">AssetAmountConverter</a></li>
+  <li><a href="../model/AssetBox-class.html">AssetBox</a></li>
+  <li><a href="../model/AssetCode-class.html">AssetCode</a></li>
+  <li><a href="../model/AssetRecipient-class.html">AssetRecipient</a></li>
+  <li><a href="../model/AssetTransaction-class.html">AssetTransaction</a></li>
+  <li><a href="../model/Balance-class.html">Balance</a></li>
+  <li><a href="../model/Block-class.html">Block</a></li>
+  <li><a href="../model/BlockNum-class.html">BlockNum</a></li>
+  <li><a href="../model/BlockResponse-class.html">BlockResponse</a></li>
+  <li><a href="../model/Box-class.html">Box</a></li>
+  <li><a href="../model/BoxId-class.html">BoxId</a></li>
+  <li><a href="../model/BoxIdConverter-class.html">BoxIdConverter</a></li>
+  <li><a href="../model/Evidence-class.html">Evidence</a></li>
+  <li><a href="../model/GenericBox-class.html">GenericBox</a></li>
+  <li><a href="../model/ModifierId-class.html">ModifierId</a></li>
+  <li><a href="../model/ModifierIdConverter-class.html">ModifierIdConverter</a></li>
+  <li><a href="../model/NodeViewModifier-class.html">NodeViewModifier</a></li>
+  <li><a href="../model/PolyAmount-class.html">PolyAmount</a></li>
+  <li><a href="../model/PolyAmountConverter-class.html">PolyAmountConverter</a></li>
+  <li><a href="../model/PolyAmountNullableConverter-class.html">PolyAmountNullableConverter</a></li>
+  <li><a href="../model/PolyBox-class.html">PolyBox</a></li>
+  <li><a href="../model/PolyTransaction-class.html">PolyTransaction</a></li>
+  <li><a href="../model/Proposition-class.html">Proposition</a></li>
+  <li><a href="../model/PropositionConverter-class.html">PropositionConverter</a></li>
+  <li><a href="../model/SecurityRoot-class.html">SecurityRoot</a></li>
+  <li><a href="../model/Sender-class.html">Sender</a></li>
+  <li><a href="../model/SignatureContainer-class.html">SignatureContainer</a></li>
+  <li><a href="../model/SimpleRecipient-class.html">SimpleRecipient</a></li>
+  <li><a href="../model/TokenBox-class.html">TokenBox</a></li>
+  <li><a href="../model/Transaction-class.html">Transaction</a></li>
+  <li><a href="../model/TransactionReceipt-class.html">TransactionReceipt</a></li>
+
+
+
+
+  <li class="section-title"><a href="../model/model-library.html#properties">Properties</a></li>
+  <li><a href="../model/formatter.html">formatter</a></li>
+
+
+  <li class="section-title"><a href="../model/model-library.html#enums">Enums</a></li>
+  <li><a href="../model/ArbitUnit-class.html">ArbitUnit</a></li>
+  <li><a href="../model/PolyUnit-class.html">PolyUnit</a></li>
+
+  <li class="section-title"><a href="../model/model-library.html#typedefs">Typedefs</a></li>
+  <li><a href="../model/BoxType.html">BoxType</a></li>
+  <li><a href="../model/EvidenceTypePrefix.html">EvidenceTypePrefix</a></li>
+  <li><a href="../model/M.html">M</a></li>
+  <li><a href="../model/ModifierTypeId.html">ModifierTypeId</a></li>
+  <li><a href="../model/Nonce.html">Nonce</a></li>
+  <li><a href="../model/TxType.html">TxType</a></li>
+
+</ol>
+
+  </div>
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <ol>
+
+    <li class="section-title"><a href="../model/TransactionReceipt-class.html#constructors">Constructors</a></li>
+    <li><a href="../model/TransactionReceipt/TransactionReceipt.html">TransactionReceipt</a></li>
+    <li><a href="../model/TransactionReceipt/TransactionReceipt.fromJson.html">fromJson</a></li>
+
+
+    <li class="section-title">
+      <a href="../model/TransactionReceipt-class.html#instance-properties">Properties</a>
+    </li>
+    <li><a href="../model/TransactionReceipt/blockId.html">blockId</a></li>
+    <li><a href="../model/TransactionReceipt/blockNumber.html">blockNumber</a></li>
+    <li><a href="../model/TransactionReceipt/boxesToRemove.html">boxesToRemove</a></li>
+    <li><a href="../model/TransactionReceipt/data.html">data</a></li>
+    <li><a href="../model/TransactionReceipt/fee.html">fee</a></li>
+    <li><a href="../model/TransactionReceipt/from.html">from</a></li>
+    <li><a href="../model/TransactionReceipt/hashCode.html">hashCode</a></li>
+    <li><a href="../model/TransactionReceipt/id.html">id</a></li>
+    <li><a href="../model/TransactionReceipt/messageToSign.html">messageToSign</a></li>
+    <li><a href="../model/TransactionReceipt/minting.html">minting</a></li>
+    <li><a href="../model/TransactionReceipt/newBoxes.html">newBoxes</a></li>
+    <li><a href="../model/TransactionReceipt/propositionType.html">propositionType</a></li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/runtimeType.html">runtimeType</a></li>
+    <li><a href="../model/TransactionReceipt/signatures.html">signatures</a></li>
+    <li><a href="../model/TransactionReceipt/status.html">status</a></li>
+    <li><a href="../model/TransactionReceipt/timestamp.html">timestamp</a></li>
+    <li><a href="../model/TransactionReceipt/to.html">to</a></li>
+    <li><a href="../model/TransactionReceipt/txType.html">txType</a></li>
+
+    <li class="section-title"><a href="../model/TransactionReceipt-class.html#instance-methods">Methods</a></li>
+    <li><a href="../model/TransactionReceipt/copyWith.html">copyWith</a></li>
+    <li><a href="../model/TransactionReceipt/encodeBoxes.html">encodeBoxes</a></li>
+    <li class="inherited"><a href="https://api.dart.dev/stable/2.14.3/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li><a href="../model/TransactionReceipt/toBroadcastJson.html">toBroadcastJson</a></li>
+    <li><a href="../model/TransactionReceipt/toJson.html">toJson</a></li>
+    <li><a href="../model/TransactionReceipt/toMempoolJson.html">toMempoolJson</a></li>
+    <li><a href="../model/TransactionReceipt/toString.html">toString</a></li>
+
+    <li class="section-title"><a href="../model/TransactionReceipt-class.html#operators">Operators</a></li>
+    <li><a href="../model/TransactionReceipt/operator_equals.html">operator ==</a></li>
+
+
+
+    <li class="section-title"><a href="../model/TransactionReceipt-class.html#static-methods">Static methods</a></li>
+    <li><a href="../model/TransactionReceipt/decodeBoxes.html">decodeBoxes</a></li>
+    <li><a href="../model/TransactionReceipt/decodeSignatures.html">decodeSignatures</a></li>
+    <li><a href="../model/TransactionReceipt/decodeTo.html">decodeTo</a></li>
+    <li><a href="../model/TransactionReceipt/encodeSignatures.html">encodeSignatures</a></li>
+    <li><a href="../model/TransactionReceipt/encodeTo.html">encodeTo</a></li>
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    brambldart
+      0.0.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+
