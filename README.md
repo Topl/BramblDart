@@ -91,7 +91,7 @@ print(keystore.toJson());
 You can also write `keystore.toJson()` to file which you can later open with [BramblSC](https://github.com/Topl/Bifrost/wiki/BramblSc-examples) and potentially other Topl API libraries in the future.
 
 #### Custom credentials
-If you want to integrate `brambljs` with other wallet providers, you can implement
+If you want to integrate `brambldart` with other wallet providers, you can implement
 `Credentials` and override the appropriate methods.
 
 ### Connecting to an RPC server
