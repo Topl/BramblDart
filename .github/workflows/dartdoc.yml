@@ -1,0 +1,23 @@
+name: Update Dart Documentation
+on: 
+  workflow_dispatch:
+jobs:
+    dartdoc:
+        name: Dartdoc
+        runs-on: ubuntu-latest
+    
+        steps:
+          - uses: actions/checkout@v2
+          - uses: dart-lang/setup-dart@v1
+          - run: dart pub get
+          - name: dartdoc brambldart
+            run: dartdoc --no-auto-include-dependencies --quiet
+          - name: deploy
+            uses: peaceiris/actions-gh-pages@v3
+            with: 
+              github_token: ${{ secrets.GITHUB_TOKEN }}
+              publish_dir: ./doc/api
+              cname: brambldart.docs.topl.co
+              enable_jekyll: true
+              user_name: 'github-actions[bot]'
+              user_email: 'github-actions[bot]@users.noreply.github.com'
