@@ -10,7 +10,7 @@ A [Dart][dart] library that supports the [Topl][topl] blockchain.
       <a href="https://opensource.org/licenses/MPL-2.0"><img width="100%"  alt="License" src="https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg"></a>
     </td>
     <td>
-      <a href=[dart-test]><img alt="Github build status" src="https://github.com/Topl/BramblDart/actions/workflows/ci.yml/badge.svg"></a>
+      <a href=https://github.com/Topl/BramblDart/actions/workflows/ci.yml><img alt="Github build status" src="https://github.com/Topl/BramblDart/actions/workflows/ci.yml/badge.svg?branch=dev"></a>
       <a href=https://codecov.io/gh/Topl/bip-topl><img alt="bip-topl code coverage" src="https://codecov.io/gh/Topl/BramblDart/branch/main/graph/badge.svg"></a>
     </td>
     <td>
