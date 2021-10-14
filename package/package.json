@@ -1,0 +1,18 @@
+{
+    "name": "BramblDart",
+    "description": "A pure JavaScript implementation of BramblDart.",
+    "license": "MPL-2",
+    "bugs": "https://github.com/Topl/BramblDart/issues",
+    "homepage": "https://github.com/Topl/BramblDart",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/Topl/BramblDart"
+    },
+    "author": {
+      "name": "Topl"
+    },
+    "engines": {
+      "node": ">=8.9.0"
+    },
+    "keywords": ["key-management", "crypto", "blockchain", "brambl", "topl"]
+  }
