@@ -100,6 +100,6 @@ String _readAndResolveMarkdown(String path) => File(path)
 
 /// Throws a nice [SourceSpanException] associated with [match].
 void _matchError(Match match, String message, {Object? url}) {
-  var file = SourceFile.fromString(match.input, url: url);
+  final file = SourceFile.fromString(match.input, url: url);
   throw SourceSpanException(message, file.span(match.start, match.end));
 }
