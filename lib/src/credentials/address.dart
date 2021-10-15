@@ -1,7 +1,4 @@
-import 'package:bip_topl/bip_topl.dart';
-import 'package:mubrambl/src/utils/proposition.dart';
-import 'package:mubrambl/src/utils/util.dart';
-import 'package:pinenacl/api.dart';
+part of 'package:brambldart/credentials.dart';
 
 typedef NetworkId = int;
 
@@ -10,7 +7,7 @@ typedef NetworkId = int;
 ///
 /// [see](https://topl.readme.io/docs/how-topl-addresses-are-generated)
 ///
-enum AddressType { Dion_Type_1, Dion_Type_3 }
+enum AddressType { dionType1, dionType3 }
 
 String addressTypeString(AddressType type) {
   final s = type.toString();
@@ -30,32 +27,27 @@ String networkIdString(NetworkId id) {
   }
 }
 
-abstract class CredentialHash32 extends ByteList {
-  static const hashLength = 32;
-  CredentialHash32(List<int> bytes) : super(bytes, hashLength);
-}
-
-class KeyHash32 extends CredentialHash32 {
-  KeyHash32(List<int> bytes) : super(bytes);
-}
-
 /// The abstract class of a Topl Address that contains all of the components to generate a Topl Address
 /// [see](https://topl.readme.io/docs/how-topl-addresses-are-generated)
-abstract class ToplAddress extends ByteList {
+class ToplAddress extends ByteList {
   /// The length of a Topl Address in bytes
-  static const addressSize = 38;
+  static const addressSize = 2 + Evidence.contentLength;
 
   final NetworkId networkId;
-  late Proposition proposition;
+  late PropositionType proposition;
 
   /// A Topl address from the raw address bytes
-  ToplAddress(this.networkId, List<int> bytes) : super(bytes);
-
-  AddressType get addressType;
+  ToplAddress(List<int> bytes,
+      {this.networkId = valhallaPrefix,
+      this.proposition =
+          const PropositionType('PublicKeyEd25519', defaultPropositionPrefix)})
+      : super(bytes);
 
   /// Human readable address
   String toBase58() {
-    return encode(Base58Encoder.instance);
+    return Uint8List.fromList(asTypedList + asTypedList.checksum())
+        .encodeAsBase58()
+        .show;
   }
 
   /// Note that this give much more detail than toBase58, designed for developers who want to inspect addresses in detail.
@@ -64,73 +56,71 @@ abstract class ToplAddress extends ByteList {
     return '${addressTypeString(addressType)} ${networkIdString(networkId)} ${proposition.propositionName}${toBase58()}';
   }
 
-  static ToplAddress fromBase58(String address) {
-    final bytes = str2ByteArray(address);
-    return fromBytes(bytes);
+  factory ToplAddress.fromBase58(String address,
+      {NetworkId networkPrefix = valhallaPrefix}) {
+    final decoded = str2ByteArray(address);
+    return addressFromBytes(bytes: decoded, networkPrefix: networkPrefix);
   }
 
-  /// Generates an address from decoded Base58 string
-  static ToplAddress fromBytes(List<int> bytes) {
-    final addrType = bytes[1];
+  factory ToplAddress.toAddress({
+    required Bip32PublicKey spendCredential,
+    PropositionType propositionType =
+        const PropositionType('PublicKeyEd25519', 0x03),
+    NetworkId networkId = 0x10,
+  }) =>
+      generatePubKeyHashAddress(
+          spendCredential, networkId, propositionType.propositionName);
+
+  AddressType get addressType {
+    final addrType = this[1];
     switch (addrType) {
-      // Base Address
+
+      /// Base Address
       case 0:
       case 1:
-        return Dion_Type_1_Address.fromAddressBytes(Uint8List.fromList(bytes));
+        return AddressType.dionType1;
       case 2:
       case 3:
-        return Dion_Type_3_Address.fromAddressBytes(Uint8List.fromList(bytes));
+        return AddressType.dionType3;
       default:
-        throw Exception('Unsupported Topl Address, type: $addrType');
+        throw InvalidAddressTypeError(
+            'addressType: $addressType is not defined. Containing address ${toBase58()}');
     }
   }
 }
 
-/// Legacy Implementation of the Topl Address to support Curve 25519 signing
-class Dion_Type_1_Address extends ToplAddress {
-  Dion_Type_1_Address(NetworkId networkId, CredentialHash32 paymentBytes)
-      : super(
-            networkId,
-            str2ByteArray(generatePubKeyHashAddress(
-                Uint8List.fromList(paymentBytes),
-                networkIdString(networkId),
-                'PublicKeyCurve25519')['address']));
-
-  Dion_Type_1_Address.fromKeys(
-    NetworkId networkId,
-    Bip32Key paymentKey,
-  ) : this(networkId, _toHash(paymentKey));
+class InvalidAddressTypeError extends Error {
+  final String message;
+  InvalidAddressTypeError(this.message);
   @override
-  AddressType get addressType => AddressType.Dion_Type_1;
-  static CredentialHash32 _toHash(Bip32Key key) {
-    return KeyHash32(key.buffer.asInt32List());
-  }
-
-  Dion_Type_1_Address.fromAddressBytes(Uint8List addressBytes)
-      : super(addressBytes.first, addressBytes);
+  String toString() => message;
 }
 
-// Current version of the Topl Address supporting Ed25519 signing.
-class Dion_Type_3_Address extends ToplAddress {
-  Dion_Type_3_Address(NetworkId networkId, CredentialHash32 paymentBytes)
-      : super(
-            networkId,
-            str2ByteArray(generatePubKeyHashAddress(
-                Uint8List.fromList(paymentBytes),
-                networkIdString(networkId),
-                'PublicKeyED25519')['address']));
-
-  Dion_Type_3_Address.fromKeys(
-    NetworkId networkId,
-    Bip32Key paymentKey,
-  ) : this(networkId, _toHash(paymentKey));
-
-  Dion_Type_3_Address.fromAddressBytes(Uint8List addressBytes)
-      : super(addressBytes.first, addressBytes);
+class ToplAddressNullableConverter
+    implements JsonConverter<ToplAddress?, String> {
+  const ToplAddressNullableConverter();
 
   @override
-  AddressType get addressType => AddressType.Dion_Type_3;
-  static CredentialHash32 _toHash(Bip32Key key) {
-    return KeyHash32(key.buffer.asInt32List());
+  ToplAddress? fromJson(String json) {
+    return ToplAddress.fromBase58(json);
+  }
+
+  @override
+  String toJson(ToplAddress? object) {
+    return object?.toBase58() ?? '';
+  }
+}
+
+class ToplAddressConverter implements JsonConverter<ToplAddress, String> {
+  const ToplAddressConverter();
+
+  @override
+  ToplAddress fromJson(String json) {
+    return ToplAddress.fromBase58(json);
+  }
+
+  @override
+  String toJson(ToplAddress object) {
+    return object.toBase58();
   }
 }

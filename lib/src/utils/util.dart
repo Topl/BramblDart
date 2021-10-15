@@ -1,14 +1,7 @@
-import 'dart:typed_data';
-import 'package:fast_base58/fast_base58.dart';
-import 'package:mubrambl/src/crypto/crypto.dart';
-import 'package:collection/collection.dart';
+part of 'package:brambldart/utils.dart';
 
 final validNetworks = ['private', 'toplnet', 'valhalla'];
-final validPropositionTypes = [
-  'PublicKeyCurve25519',
-  'ThresholdCurve25519',
-  'ED25519'
-];
+final validPropositionTypes = [curve25519, ed25519, thresholdCurve25519];
 
 final privateMap = <String, int>{'hex': 0x40, 'decimal': 64};
 final toplNetMap = <String, int>{'hex': 0x01, 'decimal': 1};
@@ -21,69 +14,47 @@ final networksDefault = <String, Map<String, int>>{
 final propositionMap = <String, int>{
   'PublicKeyCurve25519': 0x01,
   'ThresholdCurve25519': 0x02,
-  'PublicKeyED25519': 0x03
+  'PublicKeyEd25519': 0x03
 };
 
-final ADDRESS_LENGTH = 38;
+const addressLength = 38;
 
 ///Generate Hash Address using the Public Key and Network Prefix
 /// First parameter is the Base-58 encoded byte list of the public key
 /// The second parameter is the prefix of the network where the address will be used
 /// Third is the type of proposition used
 /// Returns the address and whether or not the operation was successful
-Map<String, dynamic> generatePubKeyHashAddress(
-    Uint8List publicKey, String networkPrefix, String propositionType) {
-  final result = <String, dynamic>{};
-  result['success'] = false;
+ToplAddress generatePubKeyHashAddress(
+    Bip32PublicKey publicKey, NetworkId networkPrefix, String propositionType) {
   final b = BytesBuilder();
-
-  // validate network prefix
-
-  if (!isValidNetwork(networkPrefix)) {
-    result['errorMsg'] = 'Invalid network provided';
-    return result;
-  }
 
   // validate propositionType
 
   if (!isValidPropositionType(propositionType)) {
-    result['errorMsg'] = 'Invalid proposition type provided';
-    return result;
+    throw ArgumentError('Invalid proposition type provided');
   }
 
   // validate public key
-  if (publicKey.length != 32) {
-    result['errorMsg'] = 'Invalid publicKey length';
-    return result;
+  if (publicKey.rawKey.length != 32) {
+    throw ArgumentError('Invalid publicKey length');
   }
 
-  final networkHex = getHexByNetwork(networkPrefix);
-  final credentialHash = createHash(publicKey);
   // network hex + proposition hex
-  b.add([networkHex, propositionMap[propositionType] ?? 0x01]);
-  b.add(createHash(publicKey));
+  b.add([networkPrefix, propositionMap[propositionType] ?? 0x01]);
+  b.add(createHash(Uint8List.fromList(publicKey.rawKey)));
   final concatEvidence = b.toBytes().sublist(0, 34);
-  final hashChecksumBuffer = createHash(concatEvidence).sublist(0, 4);
   b.clear();
   b.add(concatEvidence);
-  b.add(hashChecksumBuffer);
-  final address = b.toBytes().sublist(0, 38);
-  result['address'] = address;
-  result['credentialHash'] = credentialHash;
-  result['checksum'] = hashChecksumBuffer;
-  result['success'] = true;
-  return result;
-}
-
-/// Returns the hex value for a given networkPrefix
-int getHexByNetwork(networkPrefix) {
-  return (networksDefault[networkPrefix] ?? const {})['hex'] ?? 0x01;
+  final address = b.toBytes().sublist(0, ToplAddress.addressSize);
+  return ToplAddress(address,
+      networkId: networkPrefix,
+      proposition: PropositionType.fromName(propositionType));
 }
 
 /// Returns the networkPrefix for a valid address
 /// Returns {success: boolean, networkPrefix: <prefix if found>, error: "<message>"}
-Map<String, dynamic> getAddressNetwork(address) {
-  final decodedAddress = Base58Decode(address);
+Map<String, dynamic> getAddressNetwork(String address) {
+  final decodedAddress = Base58Encoder.instance.decode(address);
   final result = <String, dynamic>{};
   result['success'] = false;
 
@@ -96,7 +67,7 @@ Map<String, dynamic> getAddressNetwork(address) {
       }
     });
     if (result['networkPrefix'] == null ||
-        !isValidNetwork(result['networkPrefixString'])) {
+        !isValidNetwork(result['networkPrefixString'] as String)) {
       result['error'] = 'invalid network prefix found';
     } else {
       result['success'] = true;
@@ -115,7 +86,7 @@ Map<String, dynamic> getAddressNetwork(address) {
 Map<String, dynamic> validateAddressByNetwork(
     String networkPrefix, String address) {
 // response on completion of the validation
-  var result = <String, dynamic>{};
+  final result = <String, dynamic>{};
   result['success'] = false;
   if (!isValidNetwork(networkPrefix)) {
     result['errorMsg'] = 'Invalid network provided';
@@ -128,21 +99,22 @@ Map<String, dynamic> validateAddressByNetwork(
   }
 
 // get the decimal of the network prefix. It should always be a valid network prefix due to the first conditional, but the language constraint requires us to check if it is null first.
-  var networkDecimal = (networksDefault[networkPrefix] ?? const {})['decimal'];
+  final networkDecimal =
+      (networksDefault[networkPrefix] ?? const {})['decimal'];
 
 // run validation on the address
 
-  var decodedAddress = Base58Decode(address);
+  final decodedAddress = Base58Encoder.instance.decode(address);
 
 // validation: base58 38 byte obj that matches the networkPrefix hex value
 
-  if (decodedAddress.length != ADDRESS_LENGTH ||
+  if (decodedAddress.length != addressLength ||
       decodedAddress.first != networkDecimal) {
-    result['errorMsg'] = 'Invalid address for network: ' + networkPrefix;
+    result['errorMsg'] = 'Invalid address for network: $networkPrefix';
     return result;
   } else {
     //address has correct length and matches the network, now validate the checksum
-    if (!_validChecksum(decodedAddress)) {
+    if (!validChecksum(decodedAddress)) {
       result['errorMsg'] = 'Addresses with invalid checksums found';
       return result;
     }
@@ -154,7 +126,7 @@ Map<String, dynamic> validateAddressByNetwork(
 }
 
 /// Verify that the payload has not been corrupted by checking that the checksum is valid
-bool _validChecksum(List<int> payload) {
+bool validChecksum(List<int> payload) {
   final msgBuffer = Uint8List.fromList(payload).sublist(0, 34);
   final checksumBuffer =
       Uint8List.fromList(payload).sublist(34, payload.length);
@@ -162,12 +134,24 @@ bool _validChecksum(List<int> payload) {
   final hashChecksumBuffer = createHash(msgBuffer).sublist(0, 4);
 
 // verify checksum bytes match
-  return ListEquality().equals(checksumBuffer, hashChecksumBuffer);
+  return const ListEquality().equals(checksumBuffer, hashChecksumBuffer);
 }
 
 /// Validates whether the network passed in is valid
 bool isValidNetwork(String networkPrefix) {
   return validNetworks.contains(networkPrefix);
+}
+
+/// Takes in a [Latin1Data] and returns whether or not it is a valid data/metadata value
+/// Returns a [bool] about whether or not the argument is valid
+bool isValidMetadata(Latin1Data? metadata) {
+  if (metadata == null) {
+    return true;
+  }
+  if (metadata.show.length > 127) {
+    return false;
+  }
+  return true;
 }
 
 /// Validates whether the proposition passed in is valid
@@ -178,15 +162,15 @@ bool isValidPropositionType(String propositionType) {
 final hexRegex = RegExp('^(0x)?[0-9a-fA-F]{1,}\$');
 
 String toHex(Uint8List bArr) {
-  var length = bArr.length;
+  final length = bArr.length;
   if (length <= 0) {
     return '';
   }
-  var cArr = Uint8List(length << 1);
+  final cArr = Uint8List(length << 1);
   var i = 0;
   for (var i2 = 0; i2 < length; i2++) {
-    var i3 = i + 1;
-    var cArr2 = [
+    final i3 = i + 1;
+    final cArr2 = [
       '0',
       '1',
       '2',
@@ -205,7 +189,7 @@ String toHex(Uint8List bArr) {
       'f'
     ];
 
-    var index = (bArr[i2] >> 4) & 15;
+    final index = (bArr[i2] >> 4) & 15;
     cArr[i] = cArr2[index].codeUnitAt(0);
     i = i3 + 1;
     cArr[i3] = cArr2[bArr[i2] & 15].codeUnitAt(0);
@@ -230,19 +214,36 @@ int hex(int c) {
 Uint8List toUnitList(String str) {
   var length = str.length;
   if (length % 2 != 0) {
-    str = '0' + str;
+    str = '0$str';
     length++;
   }
-  var s = str.toUpperCase().codeUnits;
-  var bArr = Uint8List(length >> 1);
+  final s = str.toUpperCase().codeUnits;
+  final bArr = Uint8List(length >> 1);
   for (var i = 0; i < length; i += 2) {
-    bArr[i >> 1] = ((hex(s[i]) << 4) | hex(s[i + 1]));
+    bArr[i >> 1] = (hex(s[i]) << 4) | hex(s[i + 1]);
   }
   return bArr;
 }
 
-/// Interface for dart:io [File].
-abstract class FileSystem {
-  Future<bool> exists(String filename);
-  Future<void> remove(String filename);
+num parseValue(amount) {
+  num parsedAmount;
+
+  if (amount is num) {
+    parsedAmount = amount;
+  } else if (amount is String) {
+    try {
+      parsedAmount = num.parse(amount);
+    } on FormatException {
+      throw ArgumentError(
+          'Invalid poly value, unable to parse value into a numerical type');
+    }
+  } else {
+    throw ArgumentError('Invalid type, must be string or a numerical value');
+  }
+
+  if (parsedAmount > pow(2, 53) - 1 || parsedAmount < 0) {
+    throw ArgumentError(
+        'Invalid value, value is outside of valid range for transactions with this library');
+  }
+  return parsedAmount;
 }

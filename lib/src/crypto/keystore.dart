@@ -1,18 +1,4 @@
-import 'dart:convert';
-import 'dart:math';
-import 'package:bip_topl/bip_topl.dart';
-import 'package:fast_base58/fast_base58.dart';
-import 'package:meta/meta.dart';
-import 'package:mubrambl/src/crypto/crypto.dart';
-import 'package:mubrambl/src/utils/network.dart';
-import 'package:mubrambl/src/utils/uuid.dart';
-import 'package:pinenacl/encoding.dart';
-import 'package:pointycastle/api.dart';
-import 'package:pointycastle/block/aes_fast.dart';
-import 'package:pointycastle/key_derivators/api.dart';
-import 'package:pointycastle/key_derivators/scrypt.dart' as scrypt;
-import 'package:pointycastle/stream/ctr.dart';
-import 'dart:typed_data';
+part of 'package:brambldart/crypto.dart';
 
 /// Default options for key generation as of 8.3.2021
 const defaultOptions = <String, dynamic>{
@@ -30,7 +16,7 @@ const defaultOptions = <String, dynamic>{
 
   //network
   // ignore: unnecessary_const
-  'network': const Network(false, 0x01, 'toplnet')
+  'network': Network(false, 0x01, 'toplnet')
 };
 
 abstract class _KeyDerivator {
@@ -51,7 +37,7 @@ class _ScryptKeyDerivator extends _KeyDerivator {
 
   @override
   Uint8List deriveKey(Uint8List password) {
-    final impl = scrypt.Scrypt()..init(ScryptParameters(n, r, p, dklen, salt));
+    final impl = Scrypt()..init(ScryptParameters(n, r, p, dklen, salt));
 
     return impl.process(password);
   }
@@ -107,8 +93,12 @@ class KeyStore {
         Uint8List.fromList(str2ByteArray(password, enc: 'latin1'));
     final dartRandom = RandomBridge(random);
     final salt = dartRandom.nextBytes(32);
-    final derivator = _ScryptKeyDerivator(defaultOptions['kdfParams']['dkLen'],
-        scryptN, defaultOptions['kdfParams']['r'], p, salt);
+    final derivator = _ScryptKeyDerivator(
+        defaultOptions['kdfParams']['dkLen'] as int,
+        scryptN,
+        defaultOptions['kdfParams']['r'] as int,
+        p,
+        salt);
     final uuid = generateUuidV4();
     final iv = dartRandom.nextBytes(128 ~/ 8);
     return KeyStore._(credentials, derivator, passwordBytes, iv, uuid);
@@ -184,7 +174,8 @@ class KeyStore {
 
     final aes = _initCipher(false, derivedKey, iv);
 
-    final privateKey = Base58Encode(aes.process(encryptedPrivateKey));
+    final privateKey =
+        Base58Encoder.instance.encode(aes.process(encryptedPrivateKey));
 
     final id = parseUuid(data['id'] as String);
 
@@ -232,14 +223,5 @@ class KeyStore {
       'version': 1
     };
     return json.encode(map);
-  }
-}
-
-/// This is a utility function that is used by the keystore to decode strings that are used in the encrypted json
-Uint8List str2ByteArray(String str, {String enc = ''}) {
-  if (enc == 'latin1') {
-    return latin1.encode(str);
-  } else {
-    return Base58Encoder.instance.decode(str);
   }
 }

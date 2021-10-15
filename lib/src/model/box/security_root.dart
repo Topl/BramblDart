@@ -1,10 +1,4 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:collection/collection.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/codecs/string_data_types_codec.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
+part of 'package:brambldart/model.dart';
 
 class SecurityRoot {
   final Uint8List root;
@@ -12,12 +6,12 @@ class SecurityRoot {
   SecurityRoot(this.root);
 
   factory SecurityRoot.create(Uint8List root) {
-    assert(root.length == BLAKE2B_256_DIGEST_SIZE, 'Invalid Security Root');
+    assert(root.length == blake2b256DigestSize, 'Invalid Security Root');
     return SecurityRoot(root);
   }
 
   factory SecurityRoot.empty() {
-    return SecurityRoot(Uint8List(BLAKE2B_256_DIGEST_SIZE));
+    return SecurityRoot(Uint8List(blake2b256DigestSize));
   }
 
   factory SecurityRoot.apply(String str) {
@@ -30,7 +24,7 @@ class SecurityRoot {
 
   @override
   bool operator ==(Object other) =>
-      other is SecurityRoot && ListEquality().equals(root, other.root);
+      other is SecurityRoot && const ListEquality().equals(root, other.root);
 
   @override
   String toString() {
@@ -43,13 +37,14 @@ class SecurityRoot {
   /// A necessary factory constructor for creating a new AssetCode instance
   /// from a map.
   /// The constructor is named after the source class, in this case, AssetCode.
-  factory SecurityRoot.fromJson(Map<String, dynamic> json) =>
-      SecurityRoot.fromBase58(json['securityRoot']);
+  factory SecurityRoot.fromJson(String json) {
+    return SecurityRoot.fromBase58(Base58Data.validated(json));
+  }
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$AssetCodeToJson`.
-  Map<String, dynamic> toJson() => json.decode(toString());
+  String toJson() => toString();
 
   Uint8List get getRoot => root;
 }

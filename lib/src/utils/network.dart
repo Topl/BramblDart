@@ -1,9 +1,11 @@
+part of 'package:brambldart/utils.dart';
+
 /// Container for information about topl networks
 ///
 /// This could be used also for other than Torus networks when this library gets extended
 /// A **Network** represents a Topl network
 ///
-final NETWORK_REGISTRY = <String, int>{
+const networkRegistry = <String, int>{
   'toplnet': 0x01,
   'valhalla': 0x10,
   'private': 0x40
@@ -14,12 +16,12 @@ class Network {
   final bool testnet;
 
   /// the networkPrefix of the network in hex ([int])
-  final int networkPrefix;
+  final NetworkId networkPrefix;
 
   // the string of the networkPrefix
-  final String networkPrefixString;
+  final String name;
 
-  const Network(this.testnet, this.networkPrefix, this.networkPrefixString);
+  const Network(this.testnet, this.networkPrefix, this.name);
 
   factory Network.fromNetworkPrefix(int networkPrefix) {
     switch (networkPrefix) {
@@ -34,10 +36,19 @@ class Network {
     }
   }
 
-  factory Network.Toplnet() =>
-      Network(false, NETWORK_REGISTRY['toplnet']!, 'toplnet');
-  factory Network.Valhalla() =>
-      Network(true, NETWORK_REGISTRY['valhalla']!, 'valhalla');
-  factory Network.Private() =>
-      Network(true, NETWORK_REGISTRY['private']!, 'private');
+  factory Network.toplnet() =>
+      Network(false, networkRegistry['toplnet']!, 'toplnet');
+  factory Network.valhalla() =>
+      Network(true, networkRegistry['valhalla']!, 'valhalla');
+  factory Network.private() =>
+      Network(true, networkRegistry['private']!, 'private');
+}
+
+mixin NetworkType {
+  static final all = [Network.toplnet(), Network.valhalla(), Network.private()];
+
+  static Network pickNetworkTypeByPrefix(NetworkId networkPrefix) =>
+      NetworkType.all.where((_) => _.networkPrefix == networkPrefix).first;
+  static Network pickNetworkTypeByName(String name) =>
+      NetworkType.all.where((_) => _.name == name).first;
 }

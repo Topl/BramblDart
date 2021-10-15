@@ -1,7 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:bip_topl/bip_topl.dart';
-import 'package:fast_base58/fast_base58.dart';
-import 'package:mubrambl/src/utils/util.dart';
+import 'package:brambldart/utils.dart';
 import 'package:test/test.dart';
+
+import 'utils/util.dart';
+
+final expectedSpend0Xvk = tolist(
+    '240, 207, 127, 6, 10, 80, 84, 195, 195, 28, 6, 241, 247, 25, 133, 59, 91, 129, 245, 186, 104, 159, 64, 50, 78, 44, 205, 14, 168, 149, 29, 218, 237, 38, 41, 149, 100, 209, 66, 77, 183, 244, 31, 246, 89, 71, 121, 92, 145, 162, 52, 225, 219, 254, 184, 38, 180, 69, 221, 43, 101, 219, 77, 133');
 
 void main() {
   group('validate addresses', () {
@@ -140,12 +146,6 @@ void main() {
       expect(networkResult['success'], false);
       expect(networkResult['error'], 'invalid network prefix found');
     });
-
-    // test get network prefix for address failure empty
-    test('getAddressNetwork failure empty string', () {
-      expect(
-          () => getAddressNetwork(''), throwsA(TypeMatcher<Base58Exception>()));
-    });
   });
 
   group('test generatePubKeyHashAddress', () {
@@ -155,52 +155,33 @@ void main() {
     // valhalla
     test('generatePubKeyHashAddress success', () {
       final addressResult = generatePubKeyHashAddress(
-          str2ByteArray('3L92EtcUV6Eh8G5A9iBnFhitLuTdzeZ814SuMD5dzDqv'),
-          'valhalla',
+          Bip32VerifyKey(Uint8List.fromList(expectedSpend0Xvk)),
+          0x01,
           'PublicKeyCurve25519');
-      expect(addressResult['success'], true);
-      expect(addressResult['address'],
-          Base58Decode('3NKunrdkLG6nEZ5EKqvxP5u4VjML3GBXk2UQgA9ad5Rsdzh412Dk'));
+      expect(addressResult.toBase58(),
+          '9cnUp5sphWKM3F1wLPtsNbv6QRwKocc6PqxmMqCZrJpdTTsjmnN');
     });
 
     // test generate address for valid network, valid propositionType, valid publicKey
     // private
     test('generatePubKeyHashAddress success private', () {
       final addressResult = generatePubKeyHashAddress(
-          str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjogYHS7n'),
-          'private',
+          Bip32VerifyKey(Uint8List.fromList(expectedSpend0Xvk)),
+          0x40,
           'PublicKeyCurve25519');
-      expect(addressResult['success'], true);
-      expect(addressResult['address'],
-          Base58Decode('AU9xd9iQ8JHz9dUKiYnDXoPFwahoonUGQHbbSG6SW1ZXu4K7nbx7'));
+      expect(addressResult.toBase58(),
+          'AU9WVynYrPDyje5Qn7GA2LZbmn62vAhQME6B1yfAVznfNJxKKLKh');
     });
 
     // test generate address for valid network, valid propositionType, invalid publicKey
     test('generatePubKeyHashAddress failure invalidPublicKey', () {
-      final addressResult = generatePubKeyHashAddress(
-          str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog'),
-          'valhalla',
-          'PublicKeyCurve25519');
-      expect(addressResult['success'], false);
-      expect(addressResult['errorMsg'], 'Invalid publicKey length');
-    });
-
-    // test generate address for invalid network, valid propositionType, invalid publicKey
-    test('generatePubKeyHashAddress failure invalid network', () {
-      final addressResult = generatePubKeyHashAddress(
-          str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog'),
-          'val',
-          'PublicKeyCurve25519');
-      expect(addressResult['success'], false);
-    });
-
-    // test generate address for valid network, invalid propositionType, invalid publicKey
-    test('generatePubKeyHashAddress failure invalid network', () {
-      final addressResult = generatePubKeyHashAddress(
-          str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog'),
-          'private',
-          'PublicKeyCurve25518');
-      expect(addressResult['success'], false);
+      expect(
+          () => generatePubKeyHashAddress(
+              Bip32VerifyKey(
+                  str2ByteArray('GFcygo2bL7VErTNaxMekDyNv4ME3EWtSBH3xjog')),
+              0x10,
+              'PublicKeyCurve25519'),
+          throwsA(isA<Exception>()));
     });
   });
 }

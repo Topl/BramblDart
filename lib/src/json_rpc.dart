@@ -1,10 +1,6 @@
-// ignore: one_member_abstracts
-import 'dart:convert';
+part of 'package:brambldart/client.dart';
 
-import 'package:built_value/serializer.dart';
-import 'package:dio/dio.dart';
-
-abstract class RpcService {
+mixin RpcService {
   /// Performs an RPC request, asking the server to execute the function with
   /// the given name and the associated parameters, which need to be encodable
   /// with the [json] class of dart:convert.
@@ -22,13 +18,12 @@ abstract class RpcService {
       List<Map<String, dynamic>>? params});
 }
 
-class JsonRPC extends RpcService {
-  final Serializers? serializers;
+class JsonRPC with RpcService {
   final Dio dio;
 
   int _currentRequestId = 1;
 
-  JsonRPC({required this.dio, required this.serializers});
+  JsonRPC({required this.dio});
 
   /// Performs an RPC request, asking the server to execute the function with
   /// the given name and the associated parameters, which need to be encodable
@@ -74,9 +69,9 @@ class JsonRPC extends RpcService {
         onReceiveProgress: onReceiveProgress);
 
     final data = response.data!;
-    final id = int.parse(data['id']);
+    final id = int.parse(data['id'] as String);
 
-    if (data.containsKey('error')) {
+    if (data.containsKey('error') as bool) {
       final error = data['error'];
 
       final code = error['code'] as int;
@@ -113,4 +108,6 @@ class RPCError implements Exception {
   String toString() {
     return 'RPCError: got code $errorCode with msg \"$message\".';
   }
+
+  bool isHttpClientError() => errorCode >= 400 && errorCode < 404;
 }

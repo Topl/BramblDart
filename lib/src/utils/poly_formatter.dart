@@ -1,6 +1,4 @@
-import 'package:intl/intl.dart';
-import 'package:mubrambl/src/core/amount.dart';
-import 'package:unorm_dart/unorm_dart.dart';
+part of 'package:brambldart/utils.dart';
 
 ///
 /// POLY-specific currency formatter that expects all currency to be in nanopoly and
@@ -12,7 +10,7 @@ import 'package:unorm_dart/unorm_dart.dart';
 ///
 class PolyFormatter {
   static const symbol = 'φ';
-  static const POLY = 'POLY ';
+  static const poly = 'POLY ';
   final NumberFormat formatter;
 
   PolyFormatter({required this.formatter});
@@ -54,7 +52,7 @@ class PolyFormatter {
   /// unsupported formats (e.g. accounting format for currencies.)
   factory PolyFormatter.currency(
           {String? locale = 'en',
-          String? name = POLY,
+          String? name = poly,
           String? symbol = symbol,
           int? decimalDigits = 9,
           String? customPattern}) =>
@@ -69,7 +67,7 @@ class PolyFormatter {
   /// A number format for compact currency representations, e.g. "P1.2M" instead of "P1,200,000".
   factory PolyFormatter.compactCurrency(
           {String? locale = 'en',
-          String? name = POLY,
+          String? name = poly,
           String? symbol = symbol,
           int? decimalDigits = 9}) =>
       PolyFormatter(
@@ -104,7 +102,7 @@ class PolyFormatter {
   /// will format with two, which is the default for that locale.
   factory PolyFormatter.simpleCurrency(
           {String? locale = 'en',
-          String? name = POLY,
+          String? name = poly,
           int? decimalDigits = 9}) =>
       PolyFormatter(
           formatter: NumberFormat.simpleCurrency(
@@ -116,13 +114,13 @@ class PolyFormatter {
   /// [NumberFormat.simpleCurrency].
   factory PolyFormatter.compactSimpleCurrency(
           {String? locale = 'en',
-          String? name = POLY,
+          String? name = poly,
           int? decimalDigits = 9}) =>
       PolyFormatter(
           formatter: NumberFormat.compactSimpleCurrency(
               locale: locale, name: name, decimalDigits: decimalDigits));
 
-  /// Convert nanopoly to poly and format [number] according to our pattern and return the formatted string.
+  /// Convert nanopoly to poly and format [num] according to our pattern and return the formatted string.
   String format(PolyAmount poly) =>
       nfkd(formatter.format(poly.getValueInUnit(PolyUnit.poly)));
 }

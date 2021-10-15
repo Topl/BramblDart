@@ -1,5 +1,5 @@
-import 'package:mubrambl/src/core/amount.dart';
-import 'package:mubrambl/src/utils/poly_formatter.dart';
+import 'package:brambldart/model.dart';
+import 'package:brambldart/utils.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -33,7 +33,7 @@ void main() {
       expect(
           () => formatter.format(PolyAmount.fromUnitAndValue(
               PolyUnit.nanopoly, 9000000000000000000)),
-          throwsA(TypeMatcher<ArgumentError>()));
+          throwsA(const TypeMatcher<ArgumentError>()));
 
       expect(
           formatter.format(
@@ -76,7 +76,7 @@ void main() {
       expect(
           () => formatter.format(PolyAmount.fromUnitAndValue(
               PolyUnit.nanopoly, '9000000000000000000000')),
-          throwsA(TypeMatcher<ArgumentError>()));
+          throwsA(const TypeMatcher<ArgumentError>()));
     });
     test('simpleCurrency', () {
       final formatter = PolyFormatter.simpleCurrency();
@@ -115,7 +115,7 @@ void main() {
       expect(
           () => formatter.format(PolyAmount.fromUnitAndValue(
               PolyUnit.nanopoly, 9000000000000000000)),
-          throwsA(TypeMatcher<ArgumentError>()));
+          throwsA(const TypeMatcher<ArgumentError>()));
     });
     test('simpleCurrencyEU', () {
       final formatter =
@@ -155,7 +155,7 @@ void main() {
       expect(
           () => formatter.format(PolyAmount.fromUnitAndValue(
               PolyUnit.nanopoly, 9000000000000000000)),
-          throwsA(TypeMatcher<ArgumentError>()));
+          throwsA(const TypeMatcher<ArgumentError>()));
     });
     test('compactSimpleCurrency', () {
       final formatter = PolyFormatter.compactSimpleCurrency();
@@ -194,12 +194,12 @@ void main() {
       expect(
           () => formatter.format(PolyAmount.fromUnitAndValue(
               PolyUnit.nanopoly, 9000000000000000000)),
-          throwsA(TypeMatcher<ArgumentError>()));
+          throwsA(const TypeMatcher<ArgumentError>()));
 
       expect(
           () => formatter.format(PolyAmount.fromUnitAndValue(
               PolyUnit.nanopoly, '9000000000000000000000')),
-          throwsA(TypeMatcher<ArgumentError>()));
+          throwsA(const TypeMatcher<ArgumentError>()));
     });
   });
 }

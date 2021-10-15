@@ -1,12 +1,4 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:bip_topl/bip_topl.dart';
-import 'package:mubrambl/src/credentials/address.dart';
-import 'package:mubrambl/src/utils/constants.dart';
-import 'package:mubrambl/src/utils/network.dart';
-import 'package:mubrambl/src/utils/string_data_types.dart';
-import 'package:mubrambl/src/utils/util.dart';
+part of 'package:brambldart/model.dart';
 
 /// AssetCode serves as a unique identifier for user issued assets
 class AssetCode {
@@ -18,34 +10,36 @@ class AssetCode {
   AssetCode(
       this.assetCodeVersion, this.issuer, this.shortName, this.networkPrefix);
 
+  /// This method creates a new assetCode with correct [version] [networkPrefix] (which is the network on which the asset will be stored). The short name of the asset [name] is only allowed to be up to 8 bytes long with a latin-1 encoding. Returns a new assetCode
   factory AssetCode.initialize(
-      int version, ToplAddress issuer, Latin1Data name, String networkPrefix) {
+      int version, ToplAddress issuer, String name, String networkPrefix) {
     if (!isValidNetwork(networkPrefix)) {
       throw ArgumentError('Invalid network provided');
     }
-    assert(version == 1, 'AssetCode version required to be 1');
-    assert(name.value!.length <= SHORT_NAME_LIMIT,
+    assert(version == supportedAssetCodeVersion,
+        'AssetCode version required to be 1');
+    assert(name.length <= shortNameLimit,
         'Asset short names must be less than 8 Latin-1 encoded characters');
+    final latin1Name =
+        Latin1Data.validated(name.padRight(shortNameLimit, latin1.decode([0])));
     final validationResult =
         validateAddressByNetwork(networkPrefix, issuer.toBase58());
-    if (!validationResult['success']) {
-      throw ArgumentError('Invalid Issuer Address:: Network Type: <' +
-          networkPrefix +
-          '>' +
-          ' Invalid Address: <' +
-          issuer.toBase58() +
-          '>');
+    if (!(validationResult['success'] as bool)) {
+      throw ArgumentError(
+          'Invalid Issuer Address:: Network Type: <$networkPrefix> Invalid Address: <${issuer.toBase58()}>');
     }
-    return AssetCode(version, issuer, name, networkPrefix);
+    return AssetCode(version, issuer, latin1Name, networkPrefix);
   }
 
   factory AssetCode.deserialize(String from) {
     final decoded = Base58Encoder.instance.decode(from);
-    return AssetCode.initialize(
+    return AssetCode(
         decoded.first,
-        Dion_Type_3_Address.fromAddressBytes(decoded.sublist(1, 35)),
+        ToplAddress(decoded.sublist(1, 1 + ToplAddress.addressSize),
+            networkId: decoded[1],
+            proposition: PropositionType.fromPrefix(decoded[2])),
         Latin1Data(decoded.sublist(35)),
-        Network.fromNetworkPrefix(decoded[1]).networkPrefixString);
+        Network.fromNetworkPrefix(decoded[1]).name);
   }
 
   /// @returns {string} return asset code
@@ -63,16 +57,16 @@ class AssetCode {
 
   @override
   String toString() {
-    return 'assetCode: ${serialize()}';
+    return serialize();
   }
 
   /// A necessary factory constructor for creating a new AssetCode instance
   /// from a map.
   /// The constructor is named after the source class, in this case, AssetCode.
-  factory AssetCode.fromJson(Map<String, dynamic> json) =>
-      AssetCode.deserialize(json['assetCode']);
+  factory AssetCode.fromJson(String assetCode) =>
+      AssetCode.deserialize(assetCode);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON.
-  Map<String, dynamic> toJson() => json.decode(toString());
+  String toJson() => toString();
 }
