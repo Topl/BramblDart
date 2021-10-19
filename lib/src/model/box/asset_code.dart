@@ -20,7 +20,8 @@ class AssetCode {
         'AssetCode version required to be 1');
     assert(name.length <= shortNameLimit,
         'Asset short names must be less than 8 Latin-1 encoded characters');
-    final latin1Name = Latin1Data.validated(name.padRight(shortNameLimit, '0'));
+    final latin1Name =
+        Latin1Data.validated(name.padRight(shortNameLimit, latin1.decode([0])));
     final validationResult =
         validateAddressByNetwork(networkPrefix, issuer.toBase58());
     if (!(validationResult['success'] as bool)) {
