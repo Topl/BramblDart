@@ -49,8 +49,7 @@ Future<void> main() async {
     do {
       connectionAttempts++;
       try {
-        await get(Uri.parse(
-            'https://staging.vertx.topl.services/valhalla/$baasProjectId'));
+        await get(Uri.parse('https://staging.vertx.topl.services/admin'));
         // await get(Uri.parse('http://localhost:9085'));
         successful = true;
       } on SocketException {
