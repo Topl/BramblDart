@@ -19,7 +19,7 @@ class AssetCode {
     assert(version == supportedAssetCodeVersion,
         'AssetCode version required to be 1');
     assert(name.length <= shortNameLimit,
-        'Asset short names must be less than 8 Latin-1 encoded characters');
+        'Asset short names must be no greater than 8 Latin-1 encoded characters');
     final latin1Name =
         Latin1Data.validated(name.padRight(shortNameLimit, latin1.decode([0])));
     final validationResult =
@@ -69,4 +69,19 @@ class AssetCode {
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON.
   String toJson() => toString();
+
+  @override
+  bool operator ==(Object other) =>
+      other is AssetCode &&
+      assetCodeVersion == other.assetCodeVersion &&
+      issuer == other.issuer &&
+      shortName == other.shortName &&
+      networkPrefix == other.networkPrefix;
+
+  @override
+  int get hashCode =>
+      assetCodeVersion.hashCode ^
+      issuer.hashCode ^
+      shortName.hashCode ^
+      networkPrefix.hashCode;
 }
