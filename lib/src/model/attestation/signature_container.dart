@@ -1,9 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/model.dart';
-import 'package:brambldart/utils.dart';
-import 'package:pinenacl/ed25519.dart';
-
-part '../../generated/signature_container.g.dart';
+part of 'package:brambldart/model.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class SignatureContainer {

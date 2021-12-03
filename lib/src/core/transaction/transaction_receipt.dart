@@ -131,7 +131,8 @@ class TransactionReceipt {
     }
   }
 
-  factory TransactionReceipt.fromJson(Map<String, dynamic> map) {
+  factory TransactionReceipt.fromJson(Map<String, dynamic> map,
+      {NetworkId networkPrefix = valhallaPrefix}) {
     _validateFields(map);
 
     final data = map['data'] != null
@@ -147,7 +148,7 @@ class TransactionReceipt {
         from: (map['from'] as List)
             .map((i) => Sender.fromJson(i as List))
             .toList(),
-        to: decodeTo(map['to'] as List),
+        to: decodeTo(map['to'] as List, networkPrefix: networkPrefix),
         fee: PolyAmount.fromUnitAndValue(
             PolyUnit.nanopoly, map['fee'] as String),
         timestamp: map['timestamp'] as int,
@@ -212,13 +213,16 @@ class TransactionReceipt {
         blockNumber: blockNumber ?? this.blockNumber);
   }
 
-  static List<Object> decodeTo(List to) {
+  static List<Object> decodeTo(List to,
+      {NetworkId networkPrefix = valhallaPrefix}) {
     return to.map((i) {
       switch (i[1]['type']) {
         case 'Simple':
-          return SimpleRecipient.fromJson(i as List);
+          return SimpleRecipient.fromJson(i as List,
+              networkPrefix: networkPrefix);
         case 'Asset':
-          return AssetRecipient.fromJson(i as List);
+          return AssetRecipient.fromJson(i as List,
+              networkPrefix: networkPrefix);
         default:
           throw ArgumentError('Transaction type currently not supported');
       }

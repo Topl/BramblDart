@@ -1,8 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/brambldart.dart';
-import 'package:brambldart/src/model/box/token_value_holder.dart';
-
-part '../../generated/asset_box.g.dart';
+part of 'package:brambldart/model.dart';
 
 /// Box that contains assets which is owned by a particular address
 @JsonSerializable()

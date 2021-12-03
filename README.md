@@ -38,6 +38,10 @@ more!
 
 ## Usage
 
+# Running the code generator
+
+Run `dart run build_runner build` in the package directory to generate the missing `.g.dart`generated dart files
+
 ### Credentials and Wallets
 In order to send transactions on the Topl network, some credentials
 are required. The library supports raw private keys and v1 encrypted key-files. 

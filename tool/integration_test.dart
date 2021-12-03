@@ -8,7 +8,6 @@ import 'package:http/http.dart';
 import 'package:brambldart/client.dart';
 import 'package:brambldart/credentials.dart';
 import 'package:brambldart/model.dart';
-import 'package:brambldart/src/model/box/token_value_holder.dart';
 import 'package:brambldart/utils.dart';
 import 'package:pinenacl/encoding.dart';
 import 'package:test/test.dart';
@@ -51,7 +50,7 @@ Future<void> main() async {
       try {
         await get(Uri.parse(
             'https://staging.vertx.topl.services/valhalla/$baasProjectId'));
-        // await get(Uri.parse('http://localhost:9085'));
+        //await get(Uri.parse('http://localhost:9085'));
         successful = true;
       } on SocketException {
         await Future.delayed(const Duration(seconds: 2));
@@ -76,7 +75,7 @@ Future<void> main() async {
         TestApiKeyAuthInterceptor(),
         RetryInterceptor(
             dio: Dio(BaseOptions(
-                baseUrl:
+                baseUrl: //'http://localhost:9085',
                     'https://staging.vertx.topl.services/valhalla/$baasProjectId',
                 contentType: 'application/json',
                 connectTimeout: 5000,

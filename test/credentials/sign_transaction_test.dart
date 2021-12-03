@@ -2,7 +2,6 @@ import 'package:bip_topl/bip_topl.dart';
 import 'package:brambldart/client.dart';
 import 'package:brambldart/credentials.dart';
 import 'package:brambldart/model.dart';
-import 'package:brambldart/src/model/box/token_value_holder.dart';
 import 'package:brambldart/utils.dart';
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/encoding.dart';

@@ -1,8 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-
-import '../../brambldart.dart';
-
-part '../generated/proposition_type.g.dart';
+part of 'package:brambldart/model.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class PropositionType {
