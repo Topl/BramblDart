@@ -15,9 +15,6 @@ import 'package:pinenacl/ed25519.dart';
 import 'package:pinenacl/x25519.dart';
 import 'package:unorm_dart/unorm_dart.dart';
 
-import 'src/utils/proposition_type.dart';
-export 'src/utils/proposition_type.dart';
-
 part 'src/utils/block_time.dart';
 part 'src/utils/constants.dart';
 part 'src/utils/string_data_types.dart';

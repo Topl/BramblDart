@@ -10,7 +10,6 @@ import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
 import 'package:brambldart/credentials.dart';
 import 'package:brambldart/model.dart';
-import 'package:brambldart/src/utils/proposition_type.dart';
 import 'package:brambldart/utils.dart';
 
 part 'src/core/client.dart';

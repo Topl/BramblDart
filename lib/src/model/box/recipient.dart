@@ -9,9 +9,12 @@ class AssetRecipient {
   /// A necessary factory constructor for creating a new Recipient instance
   /// from a map. Pass the map to the generated `_$RecipientFromJson()` constructor.
   /// The constructor is named after the source class, in this case, Recipient.
-  factory AssetRecipient.fromJson(List jsonList) => AssetRecipient(
-      ToplAddress.fromBase58(jsonList[0] as String),
-      AssetValue.fromJson(jsonList[1] as Map<String, dynamic>));
+  factory AssetRecipient.fromJson(List jsonList,
+          {NetworkId networkPrefix = valhallaPrefix}) =>
+      AssetRecipient(
+          ToplAddress.fromBase58(jsonList[0] as String,
+              networkPrefix: networkPrefix),
+          AssetValue.fromJson(jsonList[1] as Map<String, dynamic>));
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -35,9 +38,12 @@ class SimpleRecipient {
   /// A necessary factory constructor for creating a new Recipient instance
   /// from a map. Pass the map to the generated `_$RecipientFromJson()` constructor.
   /// The constructor is named after the source class, in this case, Recipient.
-  factory SimpleRecipient.fromJson(List jsonList) => SimpleRecipient(
-      ToplAddress.fromBase58(jsonList[0] as String),
-      SimpleValue.fromJson(jsonList[1] as Map<String, dynamic>));
+  factory SimpleRecipient.fromJson(List jsonList,
+          {NetworkId networkPrefix = valhallaPrefix}) =>
+      SimpleRecipient(
+          ToplAddress.fromBase58(jsonList[0] as String,
+              networkPrefix: networkPrefix),
+          SimpleValue.fromJson(jsonList[1] as Map<String, dynamic>));
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated

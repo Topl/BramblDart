@@ -1,8 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/brambldart.dart';
-import 'package:brambldart/src/model/box/token_value_holder.dart';
-
-part '../../generated/poly_box.g.dart';
+part of 'package:brambldart/model.dart';
 
 /// Box that contains polys which is owned by a particular address
 @JsonSerializable(checked: true, explicitToJson: true)
