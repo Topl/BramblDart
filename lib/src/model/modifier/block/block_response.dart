@@ -1,7 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/brambldart.dart';
-
-part '../../../generated/block_response.g.dart';
+part of 'package:brambldart/model.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class BlockResponse {

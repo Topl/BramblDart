@@ -1,9 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/credentials.dart';
-import 'package:brambldart/model.dart';
-import 'package:brambldart/utils.dart';
-
-part '../../generated/transaction.g.dart';
+part of 'package:brambldart/model.dart';
 
 class Transaction {
   /// Type of proposition, eg., PublicKeyCurve25519, ThresholdCurve25519, PublicKeyEd25519

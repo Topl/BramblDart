@@ -1,8 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/model.dart';
-import 'package:brambldart/src/model/box/token_value_holder.dart';
-
-part '../../generated/box.g.dart';
+part of 'package:brambldart/model.dart';
 
 typedef Nonce = String;
 typedef BoxType = int;

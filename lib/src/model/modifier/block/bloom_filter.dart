@@ -1,11 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:bip_topl/bip_topl.dart';
-import 'package:collection/collection.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/utils.dart';
-
-part '../../../generated/bloom_filter.g.dart';
+part of 'package:brambldart/model.dart';
 
 const _size = bloomFilterBytes * 8;
 const _numLongs = _size ~/ 64;

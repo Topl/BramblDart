@@ -1,8 +1,4 @@
-import 'package:collection/collection.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/model.dart';
-
-part '../../../generated/block_body.g.dart';
+part of 'package:brambldart/model.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class BlockBody {

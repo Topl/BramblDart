@@ -1,10 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/crypto.dart';
-import 'package:brambldart/model.dart';
-import 'package:brambldart/utils.dart';
-import 'package:pinenacl/api.dart';
-
-part '../../../generated/block_header.g.dart';
+part of 'package:brambldart/model.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class BlockHeader {

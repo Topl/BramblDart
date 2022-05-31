@@ -194,7 +194,7 @@ class KeyStore {
 
   static CTRStreamCipher _initCipher(
       bool forEncryption, Uint8List key, Uint8List iv) {
-    return CTRStreamCipher(AESFastEngine())
+    return CTRStreamCipher(AESEngine())
       ..init(forEncryption, ParametersWithIV(KeyParameter(key), iv));
   }
 
