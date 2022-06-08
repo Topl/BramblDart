@@ -11,7 +11,8 @@ import '../utils/util.dart';
 void main() {
   const testMnemonic1 =
       'rude stadium move tumble spice vocal undo butter cargo win valid session question walk indoor nothing wagon column artefact monster fold gallery receive just';
-  const testEntropy1 = 'bcfa7e43752d19eabb38fa22bf6bc3622af9ed1cc4b6f645b833c7a5a8be2ce3';
+  const testEntropy1 =
+      'bcfa7e43752d19eabb38fa22bf6bc3622af9ed1cc4b6f645b833c7a5a8be2ce3';
   const testHexSeed1 =
       'ee344a00f29cc2fb0a84e43afd91f06beabe5f39e9e84eec729f64c56068d5795ea367d197e5d851a529f33e1d582c63887d0bb59fba8956d78fcf9f697f16a1';
   final excpectedXskBip32Bytes = tolist(
@@ -30,29 +31,36 @@ void main() {
       '168, 233, 30, 34, 115, 135, 88, 135, 12, 240, 194, 63, 243, 146, 150, 112, 3, 232, 67, 71, 100, 137, 172, 24, 220, 199, 252, 222, 56, 233, 169, 76, 142, 116, 48, 51, 157, 72, 93, 184, 101, 78, 244, 126, 43, 158, 173, 201, 59, 56, 49, 183, 133, 88, 148, 101, 149, 232, 114, 175, 231, 181, 208, 22, 101, 238, 109, 12, 56, 7, 44, 60, 117, 15, 27, 109, 203, 123, 1, 142, 93, 43, 157, 64, 216, 73, 85, 137, 144, 67, 21, 130, 141, 64, 51, 38');
   final expectedSpend0Xvk = tolist(
       '198, 105, 157, 143, 239, 12, 101, 203, 178, 52, 197, 44, 213, 82, 65, 46, 92, 139, 69, 96, 158, 93, 187, 137, 124, 251, 19, 209, 17, 0, 60, 48, 101, 238, 109, 12, 56, 7, 44, 60, 117, 15, 27, 109, 203, 123, 1, 142, 93, 43, 157, 64, 216, 73, 85, 137, 144, 67, 21, 130, 141, 64, 51, 38');
-  const expectedSpend0Base58 = '9i9HaARkHwByxis8Yq17f54kTzQZYvH4Au9cFRC5zKN6xWduMuk';
-  const expectedTestnetSpend0Base58 = '3NQbrzZvNbgFbivPRgkQ4GVNUz1C5pzBVoF714ccTAd3KvWPadyq';
+  const expectedSpend0Base58 =
+      '9i9HaARkHwByxis8Yq17f54kTzQZYvH4Au9cFRC5zKN6xWduMuk';
+  const expectedTestnetSpend0Base58 =
+      '3NQbrzZvNbgFbivPRgkQ4GVNUz1C5pzBVoF714ccTAd3KvWPadyq';
   const publicKeySize = 32;
 
   group('topl hd_wallet test -', () {
     test('entropy to root private and public keys', () {
       final salt = Uint8List.fromList(utf8.encode(''));
-      final entropy = Uint8List.fromList(HexCoder.instance.decode(testEntropy1));
+      final entropy =
+          Uint8List.fromList(HexCoder.instance.decode(testEntropy1));
       final rawMaster = PBKDF2.hmac_sha512(salt, entropy, 4096, XPRV_SIZE);
       expect(rawMaster[0], 117, reason: 'byte 0 before normalization');
       expect(rawMaster[31], 140, reason: 'byte 31 before normalization');
       final rootXsk = Bip32SigningKey.normalizeBytes(rawMaster);
       expect(rootXsk.keyBytes[0], 112, reason: 'byte 0 after normalization');
       expect(rootXsk.keyBytes[31], 76, reason: 'byte 31 after normalization');
-      expect(rootXsk.keyBytes, excpectedXskBip32Bytes.sublist(0, ExtendedSigningKey.keyLength),
+      expect(rootXsk.keyBytes,
+          excpectedXskBip32Bytes.sublist(0, ExtendedSigningKey.keyLength),
           reason: 'first 64 bytes are private key');
-      expect(rootXsk.chainCode, excpectedXskBip32Bytes.sublist(ExtendedSigningKey.keyLength),
+      expect(rootXsk.chainCode,
+          excpectedXskBip32Bytes.sublist(ExtendedSigningKey.keyLength),
           reason: 'second 32 bytes are chain code');
       final rootXvk = rootXsk.verifyKey; //get public key
       expect(rootXvk.keyBytes, expectedXvkBip32Bytes.sublist(0, publicKeySize),
           reason: 'first 32 bytes are public key');
-      expect(rootXvk.chainCode, expectedXvkBip32Bytes.sublist(publicKeySize), reason: 'second 32 bytes are chain code');
-      expect(rootXsk.chainCode, rootXvk.chainCode, reason: 'chain code is identical in both private and public keys');
+      expect(rootXvk.chainCode, expectedXvkBip32Bytes.sublist(publicKeySize),
+          reason: 'second 32 bytes are chain code');
+      expect(rootXsk.chainCode, rootXvk.chainCode,
+          reason: 'chain code is identical in both private and public keys');
       //generate chain and addresses - m/1852'/7091'/0'/0/0
       const derivator = Bip32Ed25519KeyDerivation.instance;
       final pvtPurpose1852 = derivator.ckdPriv(rootXsk, defaultPurpose);
@@ -73,13 +81,16 @@ void main() {
   group('HdWallet -', () {
     test('private/public key and address generation', () {
       final hdWallet = HdWallet.fromHexEntropy(testEntropy1);
-      expect(hdWallet.rootVerifyKey, expectedXvkBip32Bytes, reason: 'root public/verify key');
+      expect(hdWallet.rootVerifyKey, expectedXvkBip32Bytes,
+          reason: 'root public/verify key');
       final spendAddress0Pair = hdWallet.deriveAddress();
       expect(spendAddress0Pair.privateKey, expectedSpend0Xsk);
       expect(spendAddress0Pair.publicKey, expectedSpend0Xvk);
-      final addr0 = hdWallet.toBaseAddress(networkId: 0x01, spend: spendAddress0Pair.publicKey!);
+      final addr0 = hdWallet.toBaseAddress(
+          networkId: 0x01, spend: spendAddress0Pair.publicKey!);
       expect(addr0.toBase58(), expectedSpend0Base58);
-      final addrTest0 = hdWallet.toBaseAddress(spend: spendAddress0Pair.publicKey!);
+      final addrTest0 =
+          hdWallet.toBaseAddress(spend: spendAddress0Pair.publicKey!);
       expect(addrTest0.toBase58(), expectedTestnetSpend0Base58);
     });
   });
@@ -88,7 +99,8 @@ void main() {
     test('HdWallet -', () {
       final hdWallet = HdWallet.fromMnemonic(testMnemonic1);
       final spendAddress0Pair = hdWallet.deriveAddress();
-      final addrTest = hdWallet.toBaseAddress(spend: spendAddress0Pair.publicKey!);
+      final addrTest =
+          hdWallet.toBaseAddress(spend: spendAddress0Pair.publicKey!);
       expect(addrTest.toBase58(), expectedTestnetSpend0Base58);
     });
   });
@@ -96,7 +108,8 @@ void main() {
   group('mnemonic words -', () {
     setUp(() {});
     test('validate', () {
-      expect(validateMnemonic(testMnemonic1, 'english'), isTrue, reason: 'validateMnemonic returns true');
+      expect(validateMnemonic(testMnemonic1, 'english'), isTrue,
+          reason: 'validateMnemonic returns true');
     });
     test('to entropy', () {
       // ignore: omit_local_variable_types
