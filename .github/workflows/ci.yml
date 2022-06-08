@@ -36,7 +36,7 @@ jobs:
       image: google/dart
     steps:
       - uses: actions/checkout@v2
-      - run: "dart format --fix --show none --summary none --output none --set-exit-if-changed lib test tool"
+      - run: "dart format --fix --show none --summary none --output none --set-exit-if-changed lib test tool --line-length 120"
   
   analyze: 
     name: "Analysis"
