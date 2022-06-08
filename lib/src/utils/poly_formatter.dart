@@ -58,24 +58,14 @@ class PolyFormatter {
           String? customPattern}) =>
       PolyFormatter(
           formatter: NumberFormat.currency(
-              locale: locale,
-              name: name,
-              symbol: symbol,
-              decimalDigits: decimalDigits,
-              customPattern: customPattern));
+              locale: locale, name: name, symbol: symbol, decimalDigits: decimalDigits, customPattern: customPattern));
 
   /// A number format for compact currency representations, e.g. "P1.2M" instead of "P1,200,000".
   factory PolyFormatter.compactCurrency(
-          {String? locale = 'en',
-          String? name = poly,
-          String? symbol = symbol,
-          int? decimalDigits = 9}) =>
+          {String? locale = 'en', String? name = poly, String? symbol = symbol, int? decimalDigits = 9}) =>
       PolyFormatter(
-          formatter: NumberFormat.compactCurrency(
-              locale: locale,
-              name: name,
-              symbol: symbol,
-              decimalDigits: decimalDigits));
+          formatter:
+              NumberFormat.compactCurrency(locale: locale, name: name, symbol: symbol, decimalDigits: decimalDigits));
 
   /// Creates a [NumberFormat] for currencies, using the simple symbol for the
   /// currency if one is available (e.g. $, €), so it should only be used if the
@@ -100,27 +90,17 @@ class PolyFormatter {
   /// currency's default takes priority over the locale's default.
   ///       NumberFormat.simpleCurrency(locale: 'en_US')
   /// will format with two, which is the default for that locale.
-  factory PolyFormatter.simpleCurrency(
-          {String? locale = 'en',
-          String? name = poly,
-          int? decimalDigits = 9}) =>
-      PolyFormatter(
-          formatter: NumberFormat.simpleCurrency(
-              locale: locale, name: name, decimalDigits: decimalDigits));
+  factory PolyFormatter.simpleCurrency({String? locale = 'en', String? name = poly, int? decimalDigits = 9}) =>
+      PolyFormatter(formatter: NumberFormat.simpleCurrency(locale: locale, name: name, decimalDigits: decimalDigits));
 
   /// A number format for compact currency representations, e.g. "$1.2M" instead
   /// of "$1,200,000", and which will automatically determine a currency symbol
   /// based on the currency name or the locale. See
   /// [NumberFormat.simpleCurrency].
-  factory PolyFormatter.compactSimpleCurrency(
-          {String? locale = 'en',
-          String? name = poly,
-          int? decimalDigits = 9}) =>
+  factory PolyFormatter.compactSimpleCurrency({String? locale = 'en', String? name = poly, int? decimalDigits = 9}) =>
       PolyFormatter(
-          formatter: NumberFormat.compactSimpleCurrency(
-              locale: locale, name: name, decimalDigits: decimalDigits));
+          formatter: NumberFormat.compactSimpleCurrency(locale: locale, name: name, decimalDigits: decimalDigits));
 
   /// Convert nanopoly to poly and format [num] according to our pattern and return the formatted string.
-  String format(PolyAmount poly) =>
-      nfkd(formatter.format(poly.getValueInUnit(PolyUnit.poly)));
+  String format(PolyAmount poly) => nfkd(formatter.format(poly.getValueInUnit(PolyUnit.poly)));
 }

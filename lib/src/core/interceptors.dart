@@ -79,8 +79,7 @@ class RetryOptions {
   /// Returns [bool] = true only if the response hasn't been cancelled or got
   /// a bas status code.
   static FutureOr<bool> defaultRetryEvaluator(DioError error) {
-    return error.type != DioErrorType.cancel &&
-        error.type != DioErrorType.response;
+    return error.type != DioErrorType.cancel && error.type != DioErrorType.response;
   }
 
   factory RetryOptions.fromExtra(RequestOptions request) {
@@ -120,15 +119,11 @@ class RetryInterceptor extends Interceptor {
   final Logger logger;
   RetryOptions options;
 
-  RetryInterceptor(
-      {required this.dio,
-      required this.logger,
-      this.options = const RetryOptions()});
+  RetryInterceptor({required this.dio, required this.logger, this.options = const RetryOptions()});
 
   @override
   Future<void> onError(DioError err, ErrorInterceptorHandler handler) async {
-    final shouldRetry =
-        options.retries > 0 && await options.retryEvaluator(err);
+    final shouldRetry = options.retries > 0 && await options.retryEvaluator(err);
     if (shouldRetry) {
       if (options.retryInterval.inMilliseconds > 0) {
         await Future.delayed(options.retryInterval);
@@ -136,8 +131,7 @@ class RetryInterceptor extends Interceptor {
 
       // Update options to decrease retry count before new try
       options = options.copyWith(retries: options.retries - 1);
-      err.requestOptions.extra = err.requestOptions.extra
-        ..addAll(options.toExtra());
+      err.requestOptions.extra = err.requestOptions.extra..addAll(options.toExtra());
 
       try {
         logger.warning(

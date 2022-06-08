@@ -20,8 +20,7 @@ class BifrostDateTime extends Codec<int, DateTime> {
 class BifrostDateTimeEncoder extends Converter<int, DateTime> {
   const BifrostDateTimeEncoder();
   @override
-  DateTime convert(int input) =>
-      DateTime.fromMillisecondsSinceEpoch(input, isUtc: true);
+  DateTime convert(int input) => DateTime.fromMillisecondsSinceEpoch(input, isUtc: true);
 }
 
 class BifrostDateTimeDecoder extends Converter<DateTime, int> {

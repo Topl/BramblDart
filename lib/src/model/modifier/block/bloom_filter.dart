@@ -28,8 +28,7 @@ class BloomFilter {
   /// A necessary factory constructor for creating a new BloomFilter instance
   /// from a map. Pass the map to the generated `_$BloomFilterFromJson()` constructor.
   /// The constructor is named after the source class, in this case, BloomFilter.
-  factory BloomFilter.fromJson(Map<String, dynamic> json) =>
-      _$BloomFilterFromJson(json);
+  factory BloomFilter.fromJson(Map<String, dynamic> json) => _$BloomFilterFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -44,8 +43,7 @@ class BloomFilter {
   }
 
   @override
-  bool operator ==(Object other) =>
-      other is BloomFilter && const ListEquality().equals(value, other.value);
+  bool operator ==(Object other) => other is BloomFilter && const ListEquality().equals(value, other.value);
 
   @override
   int get hashCode => value.hashCode;

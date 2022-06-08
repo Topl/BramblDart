@@ -28,6 +28,5 @@ class TokenMetadata {
   TokenMetadata(this.name, this.description, this.url);
 
   @override
-  String toString() =>
-      'TokenMetadata(name: $name url: $url description: $description';
+  String toString() => 'TokenMetadata(name: $name url: $url description: $description';
 }

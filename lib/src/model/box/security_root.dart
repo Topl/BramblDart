@@ -23,8 +23,7 @@ class SecurityRoot {
   }
 
   @override
-  bool operator ==(Object other) =>
-      other is SecurityRoot && const ListEquality().equals(root, other.root);
+  bool operator ==(Object other) => other is SecurityRoot && const ListEquality().equals(root, other.root);
 
   @override
   String toString() {
