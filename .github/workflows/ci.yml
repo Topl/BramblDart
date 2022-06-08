@@ -49,7 +49,7 @@ jobs:
           path: .dart_tool
           key: dart-dependencies-${{ hashFiles('pubspec.yaml')}}
       - uses: dart-lang/setup-dart@v1
-      - run: dart run build_runner build
+      - run: dart run build_runner build --delete-conflicting-outputs
       - run: dart analyze --fatal-infos
   
   vm_tests:
@@ -63,7 +63,7 @@ jobs:
           path: .dart_tool
           key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
       - uses: dart-lang/setup-dart@v1
-      - run: dart run build_runner build
+      - run: dart run build_runner build --delete-conflicting-outputs
       - run: dart test --coverage test_coverage
       - run: dart run tool/format_coverage.dart
       - uses: codecov/codecov-action@v1
@@ -83,7 +83,7 @@ jobs:
           key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
       - uses: dart-lang/setup-dart@v1
       - uses: browser-actions/setup-firefox@latest
-      - run: dart run build_runner build
+      - run: dart run build_runner build --delete-conflicting-outputs
       - run: dart test -x expensive --platform chrome,firefox
   
   integration_tests:
@@ -100,6 +100,6 @@ jobs:
         env:
           GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
       - uses: dart-lang/setup-dart@v1
-      - run: dart run build_runner build
+      - run: dart run build_runner build --delete-conflicting-outputs
       - run: dart run tool/integration_test.dart
   
