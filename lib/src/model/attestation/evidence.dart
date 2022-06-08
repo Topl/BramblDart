@@ -29,15 +29,13 @@ class Evidence {
   String toJson() => toString();
 
   factory Evidence.apply(EvidenceTypePrefix prefix, Digest content) {
-    assert(content.bytes.length == contentLength,
-        'Invalid evidence: incorrect EvidenceContent length');
+    assert(content.bytes.length == contentLength, 'Invalid evidence: incorrect EvidenceContent length');
     return Evidence(prefix, content);
   }
 
   factory Evidence.fromBase58(String evidence) {
     final decodedEvidence = Base58Data.validated(evidence).value;
-    return Evidence.apply(decodedEvidence[0],
-        Digest.from(decodedEvidence.sublist(1), Evidence.contentLength));
+    return Evidence.apply(decodedEvidence[0], Digest.from(decodedEvidence.sublist(1), Evidence.contentLength));
   }
 
   @override
@@ -46,8 +44,7 @@ class Evidence {
   }
 
   @override
-  bool operator ==(Object other) =>
-      other is Evidence && evBytes == other.evBytes;
+  bool operator ==(Object other) => other is Evidence && evBytes == other.evBytes;
 
   @override
   int get hashCode => evBytes.hashCode;

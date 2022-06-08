@@ -9,8 +9,7 @@ class Latin1Data {
   final Uint8List? value;
 
   @override
-  bool operator ==(Object other) =>
-      other is Latin1Data && const ListEquality().equals(value, other.value);
+  bool operator ==(Object other) => other is Latin1Data && const ListEquality().equals(value, other.value);
 
   @override
   int get hashCode => value.hashCode;
@@ -69,8 +68,7 @@ class Base58Data {
   ///@param from the `String` to create the `Base58Data` from.
   ///@return a `DataEncodingValidationFailure` representing a validation error or the `Base58Data` instance
   ///
-  Base58Data.validated(String from)
-      : value = Base58Encoder.instance.decode(from);
+  Base58Data.validated(String from) : value = Base58Encoder.instance.decode(from);
 
   ///
   /// Unsafely creates a `Base58Data` instance from a `String`.

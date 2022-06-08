@@ -21,8 +21,7 @@ class BlockHeader {
   /// A necessary factory constructor for creating a new BlockHeader instance
   /// from a map. Pass the map to the generated `_$BlockHeaderFromJson()` constructor.
   /// The constructor is named after the source class, in this case, BlockHeader.
-  factory BlockHeader.fromJson(Map<String, dynamic> json) =>
-      _$BlockHeaderFromJson(json);
+  factory BlockHeader.fromJson(Map<String, dynamic> json) => _$BlockHeaderFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated

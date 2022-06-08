@@ -24,8 +24,7 @@ class Polling extends AbstractTransactionUpdateFetcher {
       throw ShortPollingException('Limit must be between 1 and 100');
     }
     if (timeout > maxTimeout) {
-      throw ShortPollingException(
-          'Timeout may not be greater than $maxTimeout');
+      throw ShortPollingException('Timeout may not be greater than $maxTimeout');
     }
   }
 
@@ -57,9 +56,7 @@ class Polling extends AbstractTransactionUpdateFetcher {
         _resetRetryDelay();
         _recursivePolling();
       }).catchError((error) {
-        error is RPCError
-            ? _onRecursivePollingRpcError(error)
-            : _onRecursivePollingError(error);
+        error is RPCError ? _onRecursivePollingRpcError(error) : _onRecursivePollingError(error);
       });
     }
     return Future.value();

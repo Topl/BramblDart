@@ -27,9 +27,7 @@ class ModifierId extends ByteList {
 
   @override
   bool operator ==(Object other) =>
-      other is ModifierId &&
-      const ListEquality()
-          .equals(buffer.asUint8List(), other.buffer.asUint8List());
+      other is ModifierId && const ListEquality().equals(buffer.asUint8List(), other.buffer.asUint8List());
 
   @override
   String toString() {

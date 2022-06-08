@@ -50,8 +50,7 @@ class Digest {
   /// A necessary factory constructor for creating a new Digest instance
   /// from a map. Pass the map to the generated `_$DigestFromJson()` constructor.
   /// The constructor is named after the source class, in this case, Digest.
-  factory Digest.fromJson(String json) =>
-      Digest.fromBase58(json, blake2b256DigestSize);
+  factory Digest.fromJson(String json) => Digest.fromBase58(json, blake2b256DigestSize);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated

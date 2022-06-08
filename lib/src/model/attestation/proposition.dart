@@ -23,8 +23,7 @@ class Proposition extends ByteList {
     return Proposition(data.value.sublist(1));
   }
 
-  Evidence produceEvidence() => Evidence.apply(
-      typePrefix, Digest.from(buffer.asUint8List(), Evidence.contentLength));
+  Evidence produceEvidence() => Evidence.apply(typePrefix, Digest.from(buffer.asUint8List(), Evidence.contentLength));
 
   @override
   String toString() {
@@ -33,9 +32,7 @@ class Proposition extends ByteList {
 
   @override
   bool operator ==(Object other) =>
-      other is Proposition &&
-      const ListEquality()
-          .equals(buffer.asUint8List(), other.buffer.asUint8List());
+      other is Proposition && const ListEquality().equals(buffer.asUint8List(), other.buffer.asUint8List());
 
   @override
   int get hashCode => buffer.hashCode;

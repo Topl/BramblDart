@@ -25,13 +25,11 @@ abstract class Amount {
 /// Utility class to deserialize asset quantities. This may be updated as we understand more about the use cases for assets
 class AssetAmount extends Amount {
   final AssetCode assetCode;
-  AssetAmount(
-      {required num quantity, required this.assetCode, unit = 'nanoasset'})
+  AssetAmount({required num quantity, required this.assetCode, unit = 'nanoasset'})
       : super(quantity: quantity, unit: unit);
 
   @override
-  String toString() =>
-      'AssetAmount(assetCode: ${assetCode.toString()}, count: $quantity';
+  String toString() => 'AssetAmount(assetCode: ${assetCode.toString()}, count: $quantity';
 
   factory AssetAmount.fromQuantity(AssetCode assetCode, quantity) {
     return AssetAmount(quantity: parseValue(quantity), assetCode: assetCode);
@@ -41,20 +39,15 @@ class AssetAmount extends Amount {
 /// Utility class to easily convert amounts of Poly into different units of
 /// quantities.
 class PolyAmount extends Amount {
-  PolyAmount({required num quantity, required unit})
-      : super(quantity: quantity, unit: unit);
+  PolyAmount({required num quantity, required unit}) : super(quantity: quantity, unit: unit);
 
-  static final Map<PolyUnit, num> _factors = {
-    PolyUnit.nanopoly: 1,
-    PolyUnit.poly: pow(10, 9)
-  };
+  static final Map<PolyUnit, num> _factors = {PolyUnit.nanopoly: 1, PolyUnit.poly: pow(10, 9)};
 
   num get getInNanopoly => quantity;
 
   num get getInPoly => getValueInUnitBI(PolyUnit.poly);
 
-  PolyAmount.inNanopoly({required num quantity})
-      : super(quantity: quantity, unit: PolyUnit.nanopoly);
+  PolyAmount.inNanopoly({required num quantity}) : super(quantity: quantity, unit: PolyUnit.nanopoly);
 
   PolyAmount.zero() : this.inNanopoly(quantity: 0);
 
@@ -62,8 +55,7 @@ class PolyAmount extends Amount {
   /// either be a base10 string, an int, or any numerical value.
 
   factory PolyAmount.fromUnitAndValue(PolyUnit unit, dynamic amount) {
-    return PolyAmount.inNanopoly(
-        quantity: parseValue(amount) * _factors[unit]!);
+    return PolyAmount.inNanopoly(quantity: parseValue(amount) * _factors[unit]!);
   }
 
   /// Gets the value of this amount in the specified unit as a whole number.
@@ -96,27 +88,21 @@ class PolyAmount extends Amount {
   int get hashCode => getInNanopoly.hashCode;
 
   @override
-  bool operator ==(dynamic other) =>
-      other is PolyAmount && other.getInNanopoly == getInNanopoly;
+  bool operator ==(dynamic other) => other is PolyAmount && other.getInNanopoly == getInNanopoly;
 }
 
 /// Utility class to easily convert amounts of Arbit into different units of
 /// quantities.
 class ArbitAmount extends Amount {
-  ArbitAmount({required num quantity, required unit})
-      : super(quantity: quantity, unit: unit);
+  ArbitAmount({required num quantity, required unit}) : super(quantity: quantity, unit: unit);
 
-  static final Map<ArbitUnit, num> _factors = {
-    ArbitUnit.nanoarbit: 1,
-    ArbitUnit.arbit: pow(10, 9)
-  };
+  static final Map<ArbitUnit, num> _factors = {ArbitUnit.nanoarbit: 1, ArbitUnit.arbit: pow(10, 9)};
 
   num get getInNanoarbit => quantity;
 
   num get getInArbit => getValueInUnitBI(ArbitUnit.arbit);
 
-  ArbitAmount.inNanoarbit({required num quantity})
-      : super(quantity: quantity, unit: ArbitUnit.nanoarbit);
+  ArbitAmount.inNanoarbit({required num quantity}) : super(quantity: quantity, unit: ArbitUnit.nanoarbit);
 
   ArbitAmount.zero() : this.inNanoarbit(quantity: 0);
 
@@ -124,8 +110,7 @@ class ArbitAmount extends Amount {
   /// either be a base10 string, an int, or any numerical value.
 
   factory ArbitAmount.fromUnitAndValue(ArbitUnit unit, dynamic amount) {
-    return ArbitAmount.inNanoarbit(
-        quantity: parseValue(amount) * _factors[unit]!);
+    return ArbitAmount.inNanoarbit(quantity: parseValue(amount) * _factors[unit]!);
   }
 
   /// Gets the value of this amount in the specified unit as a whole number.
@@ -158,12 +143,10 @@ class ArbitAmount extends Amount {
   int get hashCode => getInNanoarbit.hashCode;
 
   @override
-  bool operator ==(dynamic other) =>
-      other is ArbitAmount && other.getInNanoarbit == getInNanoarbit;
+  bool operator ==(dynamic other) => other is ArbitAmount && other.getInNanoarbit == getInNanoarbit;
 }
 
-class PolyAmountNullableConverter
-    implements JsonConverter<PolyAmount?, String> {
+class PolyAmountNullableConverter implements JsonConverter<PolyAmount?, String> {
   const PolyAmountNullableConverter();
 
   @override
@@ -191,8 +174,7 @@ class PolyAmountConverter implements JsonConverter<PolyAmount, String> {
   }
 }
 
-class ArbitAmountNullableConverter
-    implements JsonConverter<ArbitAmount, String> {
+class ArbitAmountNullableConverter implements JsonConverter<ArbitAmount, String> {
   const ArbitAmountNullableConverter();
 
   @override
@@ -220,15 +202,13 @@ class ArbitAmountConverter implements JsonConverter<ArbitAmount, String> {
   }
 }
 
-class AssetAmountConverter
-    implements JsonConverter<AssetAmount, Map<String, dynamic>> {
+class AssetAmountConverter implements JsonConverter<AssetAmount, Map<String, dynamic>> {
   const AssetAmountConverter();
 
   @override
   AssetAmount fromJson(Map<String, dynamic> json) {
     return AssetAmount.fromQuantity(
-        AssetCode.fromJson(json['value']['assetCode'] as String),
-        json['value']['quantity'] as String);
+        AssetCode.fromJson(json['value']['assetCode'] as String), json['value']['quantity'] as String);
   }
 
   @override

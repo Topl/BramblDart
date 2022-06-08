@@ -9,18 +9,14 @@ const checksumLength = 4;
 
 const _encodedAddressLength = ToplAddress.addressSize + checksumLength;
 
-ToplAddress addressFromBytes(
-    {NetworkId networkPrefix = valhallaPrefix, required Uint8List bytes}) {
+ToplAddress addressFromBytes({NetworkId networkPrefix = valhallaPrefix, required Uint8List bytes}) {
   _networkPrefixValidation(bytes, networkPrefix: networkPrefix);
   _lengthValidation(bytes);
   _checksumValidation(bytes);
-  return ToplAddress(bytes.sublist(0, 34),
-      networkId: bytes.first,
-      proposition: PropositionType.fromPrefix(bytes[1]));
+  return ToplAddress(bytes.sublist(0, 34), networkId: bytes.first, proposition: PropositionType.fromPrefix(bytes[1]));
 }
 
-void _networkPrefixValidation(Uint8List bytes,
-    {NetworkId networkPrefix = valhallaPrefix}) {
+void _networkPrefixValidation(Uint8List bytes, {NetworkId networkPrefix = valhallaPrefix}) {
   final prefix = bytes.first;
   try {
     NetworkType.pickNetworkTypeByPrefix(prefix);

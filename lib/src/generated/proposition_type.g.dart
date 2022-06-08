@@ -6,8 +6,7 @@ part of '../utils/proposition_type.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PropositionType _$PropositionTypeFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
+PropositionType _$PropositionTypeFromJson(Map<String, dynamic> json) => $checkedCreate(
       'PropositionType',
       json,
       ($checkedConvert) {
@@ -19,8 +18,7 @@ PropositionType _$PropositionTypeFromJson(Map<String, dynamic> json) =>
       },
     );
 
-Map<String, dynamic> _$PropositionTypeToJson(PropositionType instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$PropositionTypeToJson(PropositionType instance) => <String, dynamic>{
       'propositionPrefix': instance.propositionPrefix,
       'propositionName': instance.propositionName,
     };
