@@ -48,8 +48,7 @@ Future<void> main() async {
     do {
       connectionAttempts++;
       try {
-        await get(Uri.parse(
-            'https://staging.vertx.topl.services/valhalla/$baasProjectId'));
+        await get(Uri.parse('https://staging.vertx.topl.services/valhalla/$baasProjectId'));
         //await get(Uri.parse('http://localhost:9085'));
         successful = true;
       } on SocketException {
@@ -69,8 +68,7 @@ Future<void> main() async {
 
   setUp(() {
     client = BramblClient(
-      basePathOverride:
-          'https://staging.vertx.topl.services/valhalla/$baasProjectId',
+      basePathOverride: 'https://staging.vertx.topl.services/valhalla/$baasProjectId',
       interceptors: [
         TestApiKeyAuthInterceptor(),
         RetryInterceptor(
@@ -84,14 +82,10 @@ Future<void> main() async {
       ],
     );
 
-    first = ToplSigningKey(
-        Bip32SigningKey.decode(_privateKey1, coder: HexCoder.instance),
-        0x10,
-        PropositionType.ed25519());
-    second = ToplSigningKey(
-        Bip32SigningKey.decode(_privateKey2, coder: HexCoder.instance),
-        0x10,
-        PropositionType.ed25519());
+    first =
+        ToplSigningKey(Bip32SigningKey.decode(_privateKey1, coder: HexCoder.instance), 0x10, PropositionType.ed25519());
+    second =
+        ToplSigningKey(Bip32SigningKey.decode(_privateKey2, coder: HexCoder.instance), 0x10, PropositionType.ed25519());
   });
 
   group(BramblClient, () {
@@ -147,8 +141,7 @@ Future<void> main() async {
 
     test('get block information from height', () async {
       try {
-        final response =
-            await client.getBlockFromHeight(const BlockNum.current());
+        final response = await client.getBlockFromHeight(const BlockNum.current());
         print(response);
       } on Exception catch (e) {
         print(e);
@@ -166,14 +159,11 @@ Future<void> main() async {
       print(balanceOfRecipient);
       const value = 1;
 
-      final assetCode =
-          AssetCode.initialize(1, senderAddress, 'testy', 'valhalla');
+      final assetCode = AssetCode.initialize(1, senderAddress, 'testy', 'valhalla');
 
-      final securityRoot = SecurityRoot.fromBase58(
-          Base58Data.validated('11111111111111111111111111111111'));
+      final securityRoot = SecurityRoot.fromBase58(Base58Data.validated('11111111111111111111111111111111'));
 
-      final assetValue = AssetValue(
-          value.toString(), assetCode, securityRoot, 'metadata', 'Asset');
+      final assetValue = AssetValue(value.toString(), assetCode, securityRoot, 'metadata', 'Asset');
 
       final recipient = AssetRecipient(senderAddress, assetValue);
 
@@ -189,22 +179,18 @@ Future<void> main() async {
           assetCode: assetCode,
           data: data);
 
-      final rawTransaction =
-          await client.sendRawAssetTransfer(assetTransaction: assetTransaction);
+      final rawTransaction = await client.sendRawAssetTransfer(assetTransaction: assetTransaction);
 
       expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
 
       print(rawTransaction);
 
       final txId = await client.sendTransaction(
-          [first],
-          rawTransaction['rawTx'] as TransactionReceipt,
-          rawTransaction['messageToSign'] as Uint8List);
+          [first], rawTransaction['rawTx'] as TransactionReceipt, rawTransaction['messageToSign'] as Uint8List);
 
       print(txId);
 
-      final nonMintingAssetRecipient =
-          AssetRecipient(recipientAddress, assetValue);
+      final nonMintingAssetRecipient = AssetRecipient(recipientAddress, assetValue);
 
       final nonMintingAssetTransaction = AssetTransaction(
           recipients: [nonMintingAssetRecipient],
@@ -216,17 +202,14 @@ Future<void> main() async {
           assetCode: assetCode,
           data: data);
 
-      final nonMintingRawTransaction = await client.sendRawAssetTransfer(
-          assetTransaction: nonMintingAssetTransaction);
+      final nonMintingRawTransaction = await client.sendRawAssetTransfer(assetTransaction: nonMintingAssetTransaction);
 
       expect(nonMintingRawTransaction['rawTx'], isA<TransactionReceipt>());
 
       print(nonMintingRawTransaction);
 
       final nonMintingAssetTxId = await client.sendTransaction(
-          [first],
-          rawTransaction['rawTx'] as TransactionReceipt,
-          rawTransaction['messageToSign'] as Uint8List);
+          [first], rawTransaction['rawTx'] as TransactionReceipt, rawTransaction['messageToSign'] as Uint8List);
 
       print(nonMintingAssetTxId);
     });
@@ -249,15 +232,12 @@ Future<void> main() async {
           propositionType: PropositionType.ed25519().propositionName,
           data: data);
 
-      final rawTransaction =
-          await client.sendRawPolyTransfer(polyTransaction: polyTransaction);
+      final rawTransaction = await client.sendRawPolyTransfer(polyTransaction: polyTransaction);
 
       expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
 
       final txId = await client.sendTransaction(
-          [first],
-          rawTransaction['rawTx'] as TransactionReceipt,
-          rawTransaction['messageToSign'] as Uint8List);
+          [first], rawTransaction['rawTx'] as TransactionReceipt, rawTransaction['messageToSign'] as Uint8List);
 
       final senderBalance = await client.getBalance(senderAddress);
       print(senderBalance);
@@ -275,8 +255,7 @@ Future<void> main() async {
     });
 
     test('get transaction from Mempool throws exception', () {
-      expect(client.getTransactionFromMempool('0123'),
-          throwsA(const TypeMatcher<RPCError>()));
+      expect(client.getTransactionFromMempool('0123'), throwsA(const TypeMatcher<RPCError>()));
     });
 
     test('getMempool test', () async {
@@ -315,8 +294,5 @@ Future<void> main() async {
 
     //   print(rawTransaction);
     // });
-  },
-      skip: baasProjectId == '' || baasProjectId.length != 24
-          ? 'Tests require a valid BaaS projectId'
-          : null);
+  }, skip: baasProjectId == '' || baasProjectId.length != 24 ? 'Tests require a valid BaaS projectId' : null);
 }
