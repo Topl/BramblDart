@@ -19,16 +19,14 @@ Future<void> main() async {
   final list10 = List<int>.generate(10, (i) => i + 1);
   final list100 = List<int>.generate(100, (i) => i + 1);
   final list1000 = List<int>.generate(1000, (i) => i + 1);
-  const testEntropy =
-      'bcfa7e43752d19eabb38fa22bf6bc3622af9ed1cc4b6f645b833c7a5a8be2ce3';
+  const testEntropy = 'bcfa7e43752d19eabb38fa22bf6bc3622af9ed1cc4b6f645b833c7a5a8be2ce3';
 
   var connectionAttempts = 0;
   var successful = false;
   do {
     connectionAttempts++;
     try {
-      await get(Uri.parse(
-          'https://staging.vertx.topl.services/valhalla/$baasProjectId'));
+      await get(Uri.parse('https://staging.vertx.topl.services/valhalla/$baasProjectId'));
       //await get(Uri.parse('http://localhost:9085'));
       successful = true;
     } on SocketException {
@@ -42,14 +40,12 @@ Future<void> main() async {
 
   setUp(() {
     client = BramblClient(
-      basePathOverride:
-          'https://staging.vertx.topl.services/valhalla/$baasProjectId',
+      basePathOverride: 'https://staging.vertx.topl.services/valhalla/$baasProjectId',
       interceptors: [
         TestApiKeyAuthInterceptor(),
         RetryInterceptor(
             dio: Dio(BaseOptions(
-                baseUrl:
-                    'https://staging.vertx.topl.services/valhalla/$baasProjectId',
+                baseUrl: 'https://staging.vertx.topl.services/valhalla/$baasProjectId',
                 contentType: 'application/json',
                 connectTimeout: 5000,
                 receiveTimeout: 3000)),
@@ -65,8 +61,8 @@ Future<void> main() async {
 
   test('it correctly checks a single Topl address balance', () async {
     try {
-      final balance = await client.getBalance(ToplAddress.fromBase58(
-          '3NLPFnbA7i1UjkFn1yvgPCpYvN3MNtLSQrdd7QKgNGL1YPgVaY4t'));
+      final balance =
+          await client.getBalance(ToplAddress.fromBase58('3NLPFnbA7i1UjkFn1yvgPCpYvN3MNtLSQrdd7QKgNGL1YPgVaY4t'));
       print(balance);
     } on Exception catch (e) {
       print(e);
@@ -76,8 +72,7 @@ Future<void> main() async {
 
   test('it correctly checks 10 Topl addresses balances', () async {
     try {
-      final balances = await client
-          .getAllAddressBalances(addressChain10.addresses.addresses);
+      final balances = await client.getAllAddressBalances(addressChain10.addresses.addresses);
       expect(balances.length, 10);
     } on Exception catch (e) {
       print(e);
@@ -87,8 +82,7 @@ Future<void> main() async {
 
   test('it correctly checks 100 Topl addresses balances', () async {
     try {
-      final balances = await client
-          .getAllAddressBalances(addressChain100.addresses.addresses);
+      final balances = await client.getAllAddressBalances(addressChain100.addresses.addresses);
       expect(balances.length, 100);
     } on Exception catch (e) {
       print(e);
@@ -98,8 +92,7 @@ Future<void> main() async {
 
   test('it correctly checks 1000 Topl addresses balances', () async {
     try {
-      final balances = await client
-          .getAllAddressBalances(addressChain1000.addresses.addresses);
+      final balances = await client.getAllAddressBalances(addressChain1000.addresses.addresses);
       expect(balances.length, 1000);
     } on Exception catch (e) {
       print(e);

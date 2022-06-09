@@ -9,8 +9,8 @@ class Sender {
   /// A necessary factory constructor for creating a new Sender instance
   /// from a map. Pass the map to the generated `_$SenderFromJson()` constructor.
   /// The constructor is named after the source class, in this case, Sender.
-  factory Sender.fromJson(List<dynamic> jsonList) => Sender(
-      ToplAddress.fromBase58(jsonList[0] as String), jsonList[1] as String);
+  factory Sender.fromJson(List<dynamic> jsonList) =>
+      Sender(ToplAddress.fromBase58(jsonList[0] as String), jsonList[1] as String);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -21,10 +21,7 @@ class Sender {
   int get hashCode => senderAddress.hashCode ^ nonce.hashCode;
 
   @override
-  bool operator ==(Object other) =>
-      other is Sender &&
-      other.senderAddress == senderAddress &&
-      other.nonce == nonce;
+  bool operator ==(Object other) => other is Sender && other.senderAddress == senderAddress && other.nonce == nonce;
 
   @override
   String toString() => '${senderAddress.toBase58()}';

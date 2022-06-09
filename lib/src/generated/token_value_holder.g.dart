@@ -6,8 +6,7 @@ part of '../model/box/token_value_holder.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-TokenValueHolder _$TokenValueHolderFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
+TokenValueHolder _$TokenValueHolderFromJson(Map<String, dynamic> json) => $checkedCreate(
       'TokenValueHolder',
       json,
       ($checkedConvert) {
@@ -18,8 +17,7 @@ TokenValueHolder _$TokenValueHolderFromJson(Map<String, dynamic> json) =>
       },
     );
 
-Map<String, dynamic> _$TokenValueHolderToJson(TokenValueHolder instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$TokenValueHolderToJson(TokenValueHolder instance) => <String, dynamic>{
       'quantity': instance.quantity,
     };
 
@@ -35,8 +33,7 @@ SimpleValue _$SimpleValueFromJson(Map<String, dynamic> json) => $checkedCreate(
       },
     );
 
-Map<String, dynamic> _$SimpleValueToJson(SimpleValue instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$SimpleValueToJson(SimpleValue instance) => <String, dynamic>{
       'quantity': instance.quantity,
       'type': instance.type,
     };
@@ -48,8 +45,7 @@ AssetValue _$AssetValueFromJson(Map<String, dynamic> json) => $checkedCreate(
         final val = AssetValue(
           $checkedConvert('quantity', (v) => v as String),
           $checkedConvert('assetCode', (v) => AssetCode.fromJson(v as String)),
-          $checkedConvert('securityRoot',
-              (v) => v == null ? null : SecurityRoot.fromJson(v as String)),
+          $checkedConvert('securityRoot', (v) => v == null ? null : SecurityRoot.fromJson(v as String)),
           $checkedConvert('metadata', (v) => v as String?),
           $checkedConvert('type', (v) => v as String),
         );
@@ -57,8 +53,7 @@ AssetValue _$AssetValueFromJson(Map<String, dynamic> json) => $checkedCreate(
       },
     );
 
-Map<String, dynamic> _$AssetValueToJson(AssetValue instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$AssetValueToJson(AssetValue instance) => <String, dynamic>{
       'quantity': instance.quantity,
       'assetCode': instance.assetCode.toJson(),
       'securityRoot': instance.securityRoot?.toJson(),

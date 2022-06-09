@@ -52,17 +52,13 @@ class Block {
   }
 
   @override
-  String toString() =>
-      'Block(header: $header, body: $body, blockSize: $blockSize)';
+  String toString() => 'Block(header: $header, body: $body, blockSize: $blockSize)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Block &&
-        other.header == header &&
-        other.body == body &&
-        other.blockSize == blockSize;
+    return other is Block && other.header == header && other.body == body && other.blockSize == blockSize;
   }
 
   @override

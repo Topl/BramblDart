@@ -29,12 +29,7 @@ class Transaction {
   @Latin1NullableConverter()
   final Latin1Data? data;
 
-  Transaction(
-      {required this.propositionType,
-      required this.sender,
-      this.fee,
-      this.changeAddress,
-      this.data});
+  Transaction({required this.propositionType, required this.sender, this.fee, this.changeAddress, this.data});
 
   Transaction copyWith(
       {List<ToplAddress>? sender,
@@ -65,12 +60,7 @@ class PolyTransaction extends Transaction {
       ToplAddress? changeAddress,
       PolyAmount? fee,
       Latin1Data? data})
-      : super(
-            sender: sender,
-            propositionType: propositionType,
-            changeAddress: changeAddress,
-            fee: fee,
-            data: data);
+      : super(sender: sender, propositionType: propositionType, changeAddress: changeAddress, fee: fee, data: data);
 
   PolyTransaction copy(
       {List<SimpleRecipient>? recipients,
@@ -91,8 +81,7 @@ class PolyTransaction extends Transaction {
   /// A necessary factory constructor for creating a new PolyTransaction instance
   /// from a map. Pass the map to the generated `_$PolyTransactionFromJson()` constructor.
   /// The constructor is named after the source class, in this case, PolyTransaction.
-  factory PolyTransaction.fromJson(Map<String, dynamic> json) =>
-      _$PolyTransactionFromJson(json);
+  factory PolyTransaction.fromJson(Map<String, dynamic> json) => _$PolyTransactionFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -129,12 +118,7 @@ class AssetTransaction extends Transaction {
       required this.minting,
       this.consolidationAddress,
       required this.assetCode})
-      : super(
-            sender: sender,
-            propositionType: propositionType,
-            changeAddress: changeAddress,
-            fee: fee,
-            data: data);
+      : super(sender: sender, propositionType: propositionType, changeAddress: changeAddress, fee: fee, data: data);
 
   AssetTransaction copy(
       {List<AssetRecipient>? recipients,
@@ -161,8 +145,7 @@ class AssetTransaction extends Transaction {
   /// A necessary factory constructor for creating a new AssetTransaction instance
   /// from a map. Pass the map to the generated `_$AssetTransactionFromJson()` constructor.
   /// The constructor is named after the source class, in this case, AssetTransaction.
-  factory AssetTransaction.fromJson(Map<String, dynamic> json) =>
-      _$AssetTransactionFromJson(json);
+  factory AssetTransaction.fromJson(Map<String, dynamic> json) => _$AssetTransactionFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -191,12 +174,7 @@ class ArbitTransaction extends Transaction {
       PolyAmount? fee,
       Latin1Data? data,
       this.consolidationAddress})
-      : super(
-            sender: sender,
-            propositionType: propositionType,
-            changeAddress: changeAddress,
-            fee: fee,
-            data: data);
+      : super(sender: sender, propositionType: propositionType, changeAddress: changeAddress, fee: fee, data: data);
 
   ArbitTransaction copy(
       {List<SimpleRecipient>? recipients,
@@ -214,15 +192,13 @@ class ArbitTransaction extends Transaction {
         changeAddress: changeAddress ?? this.changeAddress,
         fee: fee ?? this.fee,
         data: data ?? this.data,
-        consolidationAddress:
-            consolidationAddress ?? this.consolidationAddress);
+        consolidationAddress: consolidationAddress ?? this.consolidationAddress);
   }
 
   /// A necessary factory constructor for creating a new ArbitTransaction instance
   /// from a map. Pass the map to the generated `_$ArbitTransactionFromJson()` constructor.
   /// The constructor is named after the source class, in this case, ArbitTransaction.
-  factory ArbitTransaction.fromJson(Map<String, dynamic> json) =>
-      _$ArbitTransactionFromJson(json);
+  factory ArbitTransaction.fromJson(Map<String, dynamic> json) => _$ArbitTransactionFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated

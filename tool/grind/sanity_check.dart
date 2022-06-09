@@ -15,8 +15,7 @@ void sanityCheckBeforeRelease() {
     fail('${pkg.version} is a dev release.');
   }
 
-  final versionHeader =
-      RegExp('^## ${RegExp.escape(pkg.version.toString())}\$', multiLine: true);
+  final versionHeader = RegExp('^## ${RegExp.escape(pkg.version.toString())}\$', multiLine: true);
   if (!File('CHANGELOG.md').readAsStringSync().contains(versionHeader)) {
     fail("There's no CHANGELOG entry for ${pkg.version}.");
   }

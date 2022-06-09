@@ -35,8 +35,7 @@ class BramblClient {
                     receiveTimeout: 3000))) {
     if (interceptors == null) {
       jsonRpc.dio.interceptors.add(ApiKeyAuthInterceptor());
-      jsonRpc.dio.interceptors
-          .add(RetryInterceptor(dio: jsonRpc.dio, logger: log));
+      jsonRpc.dio.interceptors.add(RetryInterceptor(dio: jsonRpc.dio, logger: log));
     } else {
       jsonRpc.dio.interceptors.addAll(interceptors);
     }
@@ -44,9 +43,8 @@ class BramblClient {
 
   void setApiKey(String name, String apiKey) {
     if (jsonRpc.dio.interceptors.any((i) => i is ApiKeyAuthInterceptor)) {
-      (jsonRpc.dio.interceptors.firstWhere((i) => i is ApiKeyAuthInterceptor)
-              as ApiKeyAuthInterceptor)
-          .apiKeys[name] = apiKey;
+      (jsonRpc.dio.interceptors.firstWhere((i) => i is ApiKeyAuthInterceptor) as ApiKeyAuthInterceptor).apiKeys[name] =
+          apiKey;
     }
   }
 
@@ -83,14 +81,12 @@ class BramblClient {
   /// a [ToplSigningKey].
   Future<ToplSigningKey> credentialsFromPrivateKey(
       String privateKey, NetworkId network, PropositionType propositionType) {
-    return _operations.privateKeyFromString(
-        network, propositionType, privateKey);
+    return _operations.privateKeyFromString(network, propositionType, privateKey);
   }
 
   /// Returns the version of the client we're sending requests to.
   Future<String> getClientVersion() {
-    return _makeRPCCall('topl_info', params: [{}])
-        .then((value) => value['version'] as String);
+    return _makeRPCCall('topl_info', params: [{}]).then((value) => value['version'] as String);
   }
 
   /// Returns the network that the client is currently connected to.
@@ -99,14 +95,12 @@ class BramblClient {
   /// 1.) Mainnet
   /// 2.) Valhalla
   Future<String> getNetwork() {
-    return _makeRPCCall('topl_info', params: [{}])
-        .then((value) => value['network'] as String);
+    return _makeRPCCall('topl_info', params: [{}]).then((value) => value['network'] as String);
   }
 
   /// Returns the number of the most recent block on the chain
   Future<String> getBlockNumber() {
-    return _makeRPCCall('topl_head', params: [{}])
-        .then((s) => s['height'].toString());
+    return _makeRPCCall('topl_head', params: [{}]).then((s) => s['height'].toString());
   }
 
   /// Returns the balance object of the address
@@ -122,8 +116,7 @@ class BramblClient {
 
   // Returns the block information of the most recent block on the chain
   Future<BlockResponse> getBlockFromHead() {
-    return _makeRPCCall<Map<String, dynamic>>('topl_head', params: [{}])
-        .then((value) => BlockResponse.fromJson(value));
+    return _makeRPCCall<Map<String, dynamic>>('topl_head', params: [{}]).then((value) => BlockResponse.fromJson(value));
   }
 
   // Returns the block information of the most recent block on the chain
@@ -162,11 +155,9 @@ class BramblClient {
 
   ///Retrieves balances for multiple addresses. If there are more than [batchSize] addresses to process
   /// this method will process via chunks of [batchSize] addresses
-  Future<List<Balance>> getAllAddressBalances(List<ToplAddress> addresses,
-      {int batchSize = 50}) async {
+  Future<List<Balance>> getAllAddressBalances(List<ToplAddress> addresses, {int batchSize = 50}) async {
     final result = <Balance>[];
-    await Future.forEach(_splitArray(addresses, batchSize),
-        (List<ToplAddress> batch) async {
+    await Future.forEach(_splitArray(addresses, batchSize), (List<ToplAddress> batch) async {
       final balances = await _getBalances(batch);
       if (balances.isEmpty) return;
       result.addAll(balances);
@@ -178,60 +169,45 @@ class BramblClient {
   ///
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction]. As no data will be written, you can use the sender inside the transaction to specify any Topl address that would call the above method.
   ///
-  Future<Map<String, dynamic>> sendRawAssetTransfer(
-      {required AssetTransaction assetTransaction}) async {
+  Future<Map<String, dynamic>> sendRawAssetTransfer({required AssetTransaction assetTransaction}) async {
     final tx = await _fillMissingDataRawAsset(transaction: assetTransaction);
-    return _makeRPCCall('topl_rawAssetTransfer', params: [tx.toJson()])
-        .then((value) => {
-              'rawTx': TransactionReceipt.fromJson(
-                  value['rawTx'] as Map<String, dynamic>),
-              'messageToSign':
-                  Base58Data.validated(value['messageToSign'] as String).value
-            });
+    return _makeRPCCall('topl_rawAssetTransfer', params: [tx.toJson()]).then((value) => {
+          'rawTx': TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>),
+          'messageToSign': Base58Data.validated(value['messageToSign'] as String).value
+        });
   }
 
   /// Sends a raw poly transfer call to a node
   ///
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction].  As no data will be written, you can use the sender inside the transaction to specify any Topl address that would call the above method.
   ///
-  Future<Map<String, dynamic>> sendRawPolyTransfer(
-      {required PolyTransaction polyTransaction}) async {
+  Future<Map<String, dynamic>> sendRawPolyTransfer({required PolyTransaction polyTransaction}) async {
     final tx = await _fillMissingDataRawPoly(transaction: polyTransaction);
-    return _makeRPCCall('topl_rawPolyTransfer', params: [tx.toJson()])
-        .then((value) => {
-              'rawTx': TransactionReceipt.fromJson(
-                  value['rawTx'] as Map<String, dynamic>),
-              'messageToSign':
-                  Base58Data.validated(value['messageToSign'] as String).value
-            });
+    return _makeRPCCall('topl_rawPolyTransfer', params: [tx.toJson()]).then((value) => {
+          'rawTx': TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>),
+          'messageToSign': Base58Data.validated(value['messageToSign'] as String).value
+        });
   }
 
   /// Sends a raw arbit transfer call to a node
   ///
   /// The connected node must be able to calculate the result locally, which means that the call won't write any data to the blockchain. Doing that would require sending a transaction which can be sent via [sendTransaction].  As no data will be written, you can use the sender inside the transaction to specify any Topl address that would call the above method.
   ///
-  Future<Map<String, dynamic>> sendRawArbitTransfer(
-      {required ArbitTransaction arbitTransaction}) async {
+  Future<Map<String, dynamic>> sendRawArbitTransfer({required ArbitTransaction arbitTransaction}) async {
     final tx = await _fillMissingDataRawArbit(transaction: arbitTransaction);
-    return _makeRPCCall('topl_rawArbitTransfer', params: [tx.toJson()])
-        .then((value) => {
-              'rawTx': TransactionReceipt.fromJson(
-                  value['rawTx'] as Map<String, dynamic>),
-              'messageToSign':
-                  Base58Data.validated(value['messageToSign'] as String).value
-            });
+    return _makeRPCCall('topl_rawArbitTransfer', params: [tx.toJson()]).then((value) => {
+          'rawTx': TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>),
+          'messageToSign': Base58Data.validated(value['messageToSign'] as String).value
+        });
   }
 
   /// Signs the [transactionReceipt] with the credentials [cred]. The transaction will
   /// not be sent.
   ///
-  Future<TransactionReceipt> signTransaction(List<Credentials> cred,
-      TransactionReceipt transactionReceipt, Uint8List messageToSign) async {
+  Future<TransactionReceipt> signTransaction(
+      List<Credentials> cred, TransactionReceipt transactionReceipt, Uint8List messageToSign) async {
     final signatures = await _genSig(cred, messageToSign);
-    return _fillMissingData(
-        credentials: cred,
-        transactionReceipt: transactionReceipt,
-        signatures: signatures);
+    return _fillMissingData(credentials: cred, transactionReceipt: transactionReceipt, signatures: signatures);
   }
 
   /// Returns the information about a transaction requested by a transactionId [transactionId]
@@ -244,22 +220,18 @@ class BramblClient {
   /// Returns a receipt of a transaction that has not yet been forged into a block
   /// and is still present in the mempool
   Future<TransactionReceipt?> getTransactionFromMempool(String id) {
-    return _makeRPCCall<Map<String, dynamic>>('topl_transactionFromMempool',
-        params: [
-          {'transactionId': id}
-        ]).then((value) => TransactionReceipt.fromJson(value));
+    return _makeRPCCall<Map<String, dynamic>>('topl_transactionFromMempool', params: [
+      {'transactionId': id}
+    ]).then((value) => TransactionReceipt.fromJson(value));
   }
 
   /// Returns a list of pending transactions.
   Future<List<TransactionReceipt>> getMempool() {
-    return _makeRPCCall<List<dynamic>>('topl_mempool', params: [{}]).then(
-        (mempool) => mempool
-            .map((e) => TransactionReceipt.fromJson(e as Map<String, dynamic>))
-            .toList());
+    return _makeRPCCall<List<dynamic>>('topl_mempool', params: [{}])
+        .then((mempool) => mempool.map((e) => TransactionReceipt.fromJson(e as Map<String, dynamic>)).toList());
   }
 
-  Future<List<SignatureContainer>> _genSig(
-      List<Credentials> keys, Uint8List msgToSign) async {
+  Future<List<SignatureContainer>> _genSig(List<Credentials> keys, Uint8List msgToSign) async {
     return Future.wait(keys.map((key) async {
       final proposition = key.proposition;
       final signature = await key.signToSignature(msgToSign);
@@ -281,8 +253,7 @@ class BramblClient {
     );
   }
 
-  Future<PolyTransaction> _fillMissingDataRawPoly(
-      {required PolyTransaction transaction}) async {
+  Future<PolyTransaction> _fillMissingDataRawPoly({required PolyTransaction transaction}) async {
     final changeAddress = transaction.changeAddress ?? transaction.sender.first;
     final fee = transaction.fee ?? await getFee();
 
@@ -290,32 +261,22 @@ class BramblClient {
     return transaction.copy(fee: fee, changeAddress: changeAddress);
   }
 
-  Future<AssetTransaction> _fillMissingDataRawAsset(
-      {required AssetTransaction transaction}) async {
+  Future<AssetTransaction> _fillMissingDataRawAsset({required AssetTransaction transaction}) async {
     final changeAddress = transaction.changeAddress ?? transaction.sender.first;
     final fee = transaction.fee ?? await getFee();
-    final consolidationAddress =
-        transaction.consolidationAddress ?? transaction.sender.first;
+    final consolidationAddress = transaction.consolidationAddress ?? transaction.sender.first;
 
     /// apply default values to null fields
-    return transaction.copy(
-        fee: fee,
-        changeAddress: changeAddress,
-        consolidationAddress: consolidationAddress);
+    return transaction.copy(fee: fee, changeAddress: changeAddress, consolidationAddress: consolidationAddress);
   }
 
-  Future<ArbitTransaction> _fillMissingDataRawArbit(
-      {required ArbitTransaction transaction}) async {
+  Future<ArbitTransaction> _fillMissingDataRawArbit({required ArbitTransaction transaction}) async {
     final changeAddress = transaction.changeAddress ?? transaction.sender.first;
     final fee = transaction.fee ?? await getFee();
-    final consolidationAddress =
-        transaction.consolidationAddress ?? transaction.sender.first;
+    final consolidationAddress = transaction.consolidationAddress ?? transaction.sender.first;
 
     /// apply default values to null fields
-    return transaction.copy(
-        fee: fee,
-        changeAddress: changeAddress,
-        consolidationAddress: consolidationAddress);
+    return transaction.copy(fee: fee, changeAddress: changeAddress, consolidationAddress: consolidationAddress);
   }
 
   Future<PolyAmount> getFee() async {
@@ -335,8 +296,8 @@ class BramblClient {
   /// Returns a hash of the messageToSign of the transaction which, after the transaction has been
   /// included in a mined block, can be used to obtain detailed information
   /// about the transaction.
-  Future<String> sendTransaction(List<Credentials> cred,
-      TransactionReceipt transaction, Uint8List messageToSign) async {
+  Future<String> sendTransaction(
+      List<Credentials> cred, TransactionReceipt transaction, Uint8List messageToSign) async {
     final signed = await signTransaction(cred, transaction, messageToSign);
     return sendSignedTransaction(signed);
   }

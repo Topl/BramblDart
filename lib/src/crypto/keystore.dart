@@ -74,8 +74,7 @@ class KeyStore {
 
   final Uint8List _id;
 
-  const KeyStore._(
-      this.privateKey, this._derivator, this._password, this._iv, this._id);
+  const KeyStore._(this.privateKey, this._derivator, this._password, this._iv, this._id);
 
   /// Gets the random uuid assigned to this key store file
   String get uuid => formatUuid(_id);
@@ -87,18 +86,12 @@ class KeyStore {
   /// The default value for [scryptN] is 8192. Be aware that this N must be a
   /// power of two.
 
-  factory KeyStore.createNew(String credentials, String password, Random random,
-      {int scryptN = 262144, int p = 1}) {
-    final passwordBytes =
-        Uint8List.fromList(str2ByteArray(password, enc: 'latin1'));
+  factory KeyStore.createNew(String credentials, String password, Random random, {int scryptN = 262144, int p = 1}) {
+    final passwordBytes = Uint8List.fromList(str2ByteArray(password, enc: 'latin1'));
     final dartRandom = RandomBridge(random);
     final salt = dartRandom.nextBytes(32);
     final derivator = _ScryptKeyDerivator(
-        defaultOptions['kdfParams']['dkLen'] as int,
-        scryptN,
-        defaultOptions['kdfParams']['r'] as int,
-        p,
-        salt);
+        defaultOptions['kdfParams']['dkLen'] as int, scryptN, defaultOptions['kdfParams']['r'] as int, p, salt);
     final uuid = generateUuidV4();
     final iv = dartRandom.nextBytes(128 ~/ 8);
     return KeyStore._(credentials, derivator, passwordBytes, iv, uuid);
@@ -139,21 +132,15 @@ class KeyStore {
     switch (kdf) {
       case 'scrypt':
         final derParams = crypto['kdfparams'] as Map<String, dynamic>;
-        derivator = _ScryptKeyDerivator(
-            derParams['dkLen'] as int,
-            derParams['n'] as int,
-            derParams['r'] as int,
-            derParams['p'] as int,
-            Uint8List.fromList(str2ByteArray(derParams['salt'] as String)));
+        derivator = _ScryptKeyDerivator(derParams['dkLen'] as int, derParams['n'] as int, derParams['r'] as int,
+            derParams['p'] as int, Uint8List.fromList(str2ByteArray(derParams['salt'] as String)));
         break;
       default:
-        throw ArgumentError(
-            'Wallet file uses $kdf as key derivation function which is currently not supported');
+        throw ArgumentError('Wallet file uses $kdf as key derivation function which is currently not supported');
     }
 
     // Now that we have the derivator, let's obtain the aes key:
-    final encodedPassword =
-        Uint8List.fromList(str2ByteArray(password, enc: 'latin1'));
+    final encodedPassword = Uint8List.fromList(str2ByteArray(password, enc: 'latin1'));
     final derivedKey = derivator.deriveKey(encodedPassword);
     final encryptedPrivateKey = str2ByteArray(crypto['cipherText'] as String);
 
@@ -174,8 +161,7 @@ class KeyStore {
 
     final aes = _initCipher(false, derivedKey, iv);
 
-    final privateKey =
-        Base58Encoder.instance.encode(aes.process(encryptedPrivateKey));
+    final privateKey = Base58Encoder.instance.encode(aes.process(encryptedPrivateKey));
 
     final id = parseUuid(data['id'] as String);
 
@@ -188,14 +174,11 @@ class KeyStore {
   // Please read more about our HMAC implementation here: https://en.wikipedia.org/wiki/HMAC
   static String _getMac(List<int> derivedKey, List<int> cipherText) {
     final macBody = <int>[...derivedKey.sublist(16, 32), ...cipherText];
-    return Base58Encoder.instance
-        .encode(createHash(Uint8List.fromList(macBody)));
+    return Base58Encoder.instance.encode(createHash(Uint8List.fromList(macBody)));
   }
 
-  static CTRStreamCipher _initCipher(
-      bool forEncryption, Uint8List key, Uint8List iv) {
-    return CTRStreamCipher(AESEngine())
-      ..init(forEncryption, ParametersWithIV(KeyParameter(key), iv));
+  static CTRStreamCipher _initCipher(bool forEncryption, Uint8List key, Uint8List iv) {
+    return CTRStreamCipher(AESEngine())..init(forEncryption, ParametersWithIV(KeyParameter(key), iv));
   }
 
   List<int> _encryptPrivateKey(Uint8List derived) {
@@ -213,8 +196,7 @@ class KeyStore {
       'crypto': {
         'cipher': 'aes-256-ctr',
         'cipherParams': {'iv': Base58Encoder.instance.encode(_iv)},
-        'cipherText':
-            Base58Encoder.instance.encode(Uint8List.fromList(cipherTextBytes)),
+        'cipherText': Base58Encoder.instance.encode(Uint8List.fromList(cipherTextBytes)),
         'kdf': _derivator.name,
         'kdfparams': _derivator.encode(),
         'mac': _getMac(derivedKey, cipherTextBytes),

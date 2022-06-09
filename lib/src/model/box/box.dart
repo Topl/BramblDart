@@ -76,14 +76,10 @@ class _Converter<T> implements JsonConverter<T, Object> {
 
   @override
   T fromJson(Object json) {
-    if (json is Map<String, dynamic> &&
-        json.containsKey('type') &&
-        json['type'] == 'Simple') {
+    if (json is Map<String, dynamic> && json.containsKey('type') && json['type'] == 'Simple') {
       return SimpleValue.fromJson(json) as T;
     }
-    if (json is Map<String, dynamic> &&
-        json.containsKey('type') &&
-        json['type'] == 'Asset') {
+    if (json is Map<String, dynamic> && json.containsKey('type') && json['type'] == 'Asset') {
       return AssetValue.fromJson(json) as T;
     }
     // This will only work if `json` is a native JSON type:
@@ -116,17 +112,13 @@ class TokenBox extends Box {
   ) : super(evidence, value, nonce, type);
 
   @override
-  String toString() =>
-      'TokenBox(tokenValueHolder: $value, evidence: $evidence, nonce: $nonce)';
+  String toString() => 'TokenBox(tokenValueHolder: $value, evidence: $evidence, nonce: $nonce)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is TokenBox &&
-        other.value == value &&
-        other.evidence == evidence &&
-        other.nonce == nonce;
+    return other is TokenBox && other.value == value && other.evidence == evidence && other.nonce == nonce;
   }
 
   @override
@@ -135,8 +127,7 @@ class TokenBox extends Box {
   /// A necessary factory constructor for creating a new TokenBox instance
   /// from a map. Pass the map to the generated `_$TokenBoxFromJson()` constructor.
   /// The constructor is named after the source class, in this case, TokenBox.
-  factory TokenBox.fromJson(Map<String, dynamic> json) =>
-      _$TokenBoxFromJson(json);
+  factory TokenBox.fromJson(Map<String, dynamic> json) => _$TokenBoxFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated

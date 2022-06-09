@@ -24,8 +24,7 @@ const addressLength = 38;
 /// The second parameter is the prefix of the network where the address will be used
 /// Third is the type of proposition used
 /// Returns the address and whether or not the operation was successful
-ToplAddress generatePubKeyHashAddress(
-    Bip32PublicKey publicKey, NetworkId networkPrefix, String propositionType) {
+ToplAddress generatePubKeyHashAddress(Bip32PublicKey publicKey, NetworkId networkPrefix, String propositionType) {
   final b = BytesBuilder();
 
   // validate propositionType
@@ -46,9 +45,7 @@ ToplAddress generatePubKeyHashAddress(
   b.clear();
   b.add(concatEvidence);
   final address = b.toBytes().sublist(0, ToplAddress.addressSize);
-  return ToplAddress(address,
-      networkId: networkPrefix,
-      proposition: PropositionType.fromName(propositionType));
+  return ToplAddress(address, networkId: networkPrefix, proposition: PropositionType.fromName(propositionType));
 }
 
 /// Returns the networkPrefix for a valid address
@@ -60,14 +57,12 @@ Map<String, dynamic> getAddressNetwork(String address) {
 
   if (decodedAddress.isNotEmpty) {
     validNetworks.forEach((prefix) {
-      if ((networksDefault[prefix] ?? const {})['decimal'] ==
-          decodedAddress.first) {
+      if ((networksDefault[prefix] ?? const {})['decimal'] == decodedAddress.first) {
         result['networkPrefixString'] = prefix;
         result['networkPrefix'] = (networksDefault[prefix] ?? const {})['hex'];
       }
     });
-    if (result['networkPrefix'] == null ||
-        !isValidNetwork(result['networkPrefixString'] as String)) {
+    if (result['networkPrefix'] == null || !isValidNetwork(result['networkPrefixString'] as String)) {
       result['error'] = 'invalid network prefix found';
     } else {
       result['success'] = true;
@@ -83,8 +78,7 @@ Map<String, dynamic> getAddressNetwork(String address) {
 /// 4. Verify that the hash matches the checksum
 /// The first argument is the prefix to validate against and the second argument is the address to run the validation on.
 /// Result object with whether or not the operation was successful and whether or not the address is valid for a given network
-Map<String, dynamic> validateAddressByNetwork(
-    String networkPrefix, String address) {
+Map<String, dynamic> validateAddressByNetwork(String networkPrefix, String address) {
 // response on completion of the validation
   final result = <String, dynamic>{};
   result['success'] = false;
@@ -99,8 +93,7 @@ Map<String, dynamic> validateAddressByNetwork(
   }
 
 // get the decimal of the network prefix. It should always be a valid network prefix due to the first conditional, but the language constraint requires us to check if it is null first.
-  final networkDecimal =
-      (networksDefault[networkPrefix] ?? const {})['decimal'];
+  final networkDecimal = (networksDefault[networkPrefix] ?? const {})['decimal'];
 
 // run validation on the address
 
@@ -108,8 +101,7 @@ Map<String, dynamic> validateAddressByNetwork(
 
 // validation: base58 38 byte obj that matches the networkPrefix hex value
 
-  if (decodedAddress.length != addressLength ||
-      decodedAddress.first != networkDecimal) {
+  if (decodedAddress.length != addressLength || decodedAddress.first != networkDecimal) {
     result['errorMsg'] = 'Invalid address for network: $networkPrefix';
     return result;
   } else {
@@ -128,8 +120,7 @@ Map<String, dynamic> validateAddressByNetwork(
 /// Verify that the payload has not been corrupted by checking that the checksum is valid
 bool validChecksum(List<int> payload) {
   final msgBuffer = Uint8List.fromList(payload).sublist(0, 34);
-  final checksumBuffer =
-      Uint8List.fromList(payload).sublist(34, payload.length);
+  final checksumBuffer = Uint8List.fromList(payload).sublist(34, payload.length);
 // hash message (bytes 0-33)
   final hashChecksumBuffer = createHash(msgBuffer).sublist(0, 4);
 
@@ -170,24 +161,7 @@ String toHex(Uint8List bArr) {
   var i = 0;
   for (var i2 = 0; i2 < length; i2++) {
     final i3 = i + 1;
-    final cArr2 = [
-      '0',
-      '1',
-      '2',
-      '3',
-      '4',
-      '5',
-      '6',
-      '7',
-      '8',
-      '9',
-      'a',
-      'b',
-      'c',
-      'd',
-      'e',
-      'f'
-    ];
+    final cArr2 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
 
     final index = (bArr[i2] >> 4) & 15;
     cArr[i] = cArr2[index].codeUnitAt(0);
@@ -234,16 +208,14 @@ num parseValue(amount) {
     try {
       parsedAmount = num.parse(amount);
     } on FormatException {
-      throw ArgumentError(
-          'Invalid poly value, unable to parse value into a numerical type');
+      throw ArgumentError('Invalid poly value, unable to parse value into a numerical type');
     }
   } else {
     throw ArgumentError('Invalid type, must be string or a numerical value');
   }
 
   if (parsedAmount > pow(2, 53) - 1 || parsedAmount < 0) {
-    throw ArgumentError(
-        'Invalid value, value is outside of valid range for transactions with this library');
+    throw ArgumentError('Invalid value, value is outside of valid range for transactions with this library');
   }
   return parsedAmount;
 }

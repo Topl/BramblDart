@@ -20,8 +20,7 @@ void main() {
     ]);
 
     final request = client.request!;
-    expect(request.headers,
-        containsPair('Content-Type', startsWith('application/json')));
+    expect(request.headers, containsPair('Content-Type', startsWith('application/json')));
   });
 
   test('increments request id', () async {
@@ -34,8 +33,7 @@ void main() {
     ]);
 
     final lastRequest = client.request!;
-    expect(
-        lastRequest.finalize().bytesToString(), completion(contains('"id":2')));
+    expect(lastRequest.finalize().bytesToString(), completion(contains('"id":2')));
   });
 
   test('throws errors', () {
@@ -58,9 +56,6 @@ class MockClient extends BaseClient {
   Future<StreamedResponse> send(BaseRequest request) {
     this.request = request;
     return Future.value(nextResponse ??
-        StreamedResponse(
-            Stream.value(
-                utf8.encode('{"id": 1, "jsonrpc": "2.0", "result": "0x1"}')),
-            200));
+        StreamedResponse(Stream.value(utf8.encode('{"id": 1, "jsonrpc": "2.0", "result": "0x1"}')), 200));
   }
 }

@@ -12,10 +12,7 @@ abstract class GenericBox<T> {
 
   @override
   bool operator ==(Object other) =>
-      other is GenericBox &&
-      other.boxId == boxId &&
-      other.value == value &&
-      other.evidence == evidence;
+      other is GenericBox && other.boxId == boxId && other.value == value && other.evidence == evidence;
 
   @override
   int get hashCode => evidence.hashCode ^ boxId.hashCode;

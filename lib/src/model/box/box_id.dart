@@ -14,8 +14,7 @@ class BoxId<T> {
   }
 
   factory BoxId.fromEvidence(Evidence? evidence) {
-    return BoxId(evidence?.evBytes ??
-        Digest(blake2b256DigestSize, Uint8List(blake2b256DigestSize)));
+    return BoxId(evidence?.evBytes ?? Digest(blake2b256DigestSize, Uint8List(blake2b256DigestSize)));
   }
 
   factory BoxId.fromJson(String json) {

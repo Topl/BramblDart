@@ -8,8 +8,7 @@ class Seed {
   /// create a Seed by taking ownership of the given array
   factory Seed.fromBytes(Uint8List buffer) {
     if (buffer.length != SEED_SIZE) {
-      throw InvalidSeedSize(
-          'Invalid Seed Size, expected $SEED_SIZE bytes, but received ${buffer.length} bytes.');
+      throw InvalidSeedSize('Invalid Seed Size, expected $SEED_SIZE bytes, but received ${buffer.length} bytes.');
     }
     return Seed(buffer);
   }

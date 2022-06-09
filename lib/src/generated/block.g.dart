@@ -11,10 +11,8 @@ Block _$BlockFromJson(Map<String, dynamic> json) => $checkedCreate(
       json,
       ($checkedConvert) {
         final val = Block(
-          $checkedConvert(
-              'header', (v) => BlockHeader.fromJson(v as Map<String, dynamic>)),
-          $checkedConvert(
-              'body', (v) => BlockBody.fromJson(v as Map<String, dynamic>)),
+          $checkedConvert('header', (v) => BlockHeader.fromJson(v as Map<String, dynamic>)),
+          $checkedConvert('body', (v) => BlockBody.fromJson(v as Map<String, dynamic>)),
           $checkedConvert('blockSize', (v) => v as int),
         );
         return val;

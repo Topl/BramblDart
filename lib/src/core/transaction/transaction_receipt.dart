@@ -116,8 +116,7 @@ class TransactionReceipt {
   }
 
   static void _validateFields(Map<String, dynamic> map) {
-    if (map['propositionType'] == null ||
-        !validPropositionTypes.contains(map['propositionType'])) {
+    if (map['propositionType'] == null || !validPropositionTypes.contains(map['propositionType'])) {
       throw ArgumentError(
           'A valid propositionType must be provided: <PublicKeyCurve25519, ThresholdCurve25519, PublicKeyEd25519');
     }
@@ -131,13 +130,10 @@ class TransactionReceipt {
     }
   }
 
-  factory TransactionReceipt.fromJson(Map<String, dynamic> map,
-      {NetworkId networkPrefix = valhallaPrefix}) {
+  factory TransactionReceipt.fromJson(Map<String, dynamic> map, {NetworkId networkPrefix = valhallaPrefix}) {
     _validateFields(map);
 
-    final data = map['data'] != null
-        ? const Latin1Converter().fromJson(map['data'] as String)
-        : null;
+    final data = map['data'] != null ? const Latin1Converter().fromJson(map['data'] as String) : null;
 
     // ignore: unnecessary_null_comparison
     if (!isValidMetadata(data)) {
@@ -145,35 +141,23 @@ class TransactionReceipt {
     }
 
     return TransactionReceipt(
-        from: (map['from'] as List)
-            .map((i) => Sender.fromJson(i as List))
-            .toList(),
+        from: (map['from'] as List).map((i) => Sender.fromJson(i as List)).toList(),
         to: decodeTo(map['to'] as List, networkPrefix: networkPrefix),
-        fee: PolyAmount.fromUnitAndValue(
-            PolyUnit.nanopoly, map['fee'] as String),
+        fee: PolyAmount.fromUnitAndValue(PolyUnit.nanopoly, map['fee'] as String),
         timestamp: map['timestamp'] as int,
-        propositionType: PropositionType(
-            map['propositionType'] as String,
-            propositionMap[map['propositionType'] as String] ??
-                PropositionType.curve25519().propositionPrefix),
-        id: ModifierId.create(
-            Base58Data.validated(map['txId'] as String).value),
+        propositionType: PropositionType(map['propositionType'] as String,
+            propositionMap[map['propositionType'] as String] ?? PropositionType.curve25519().propositionPrefix),
+        id: ModifierId.create(Base58Data.validated(map['txId'] as String).value),
         txType: map['txType'] as String,
-        messageToSign:
-            Uint8List.fromList(map['messageToSign'] as List<int>? ?? []),
+        messageToSign: Uint8List.fromList(map['messageToSign'] as List<int>? ?? []),
         data: data,
         newBoxes: decodeBoxes(map['newBoxes'] as List<dynamic>),
-        boxesToRemove: (map['boxesToRemove'] as List)
-            .map((boxId) => const BoxIdConverter().fromJson(boxId as String))
-            .toList(),
+        boxesToRemove:
+            (map['boxesToRemove'] as List).map((boxId) => const BoxIdConverter().fromJson(boxId as String)).toList(),
         signatures: decodeSignatures(map['signatures'] as Map<String, dynamic>),
-        blockId: map.containsKey('blockId')
-            ? ModifierId.create(
-                Base58Data.validated(map['blockId'] as String).value)
-            : null,
-        blockNumber: map['blockNumber'] != null
-            ? BlockNum.exact(map['blockNumber'] as int)
-            : const BlockNum.pending(),
+        blockId:
+            map.containsKey('blockId') ? ModifierId.create(Base58Data.validated(map['blockId'] as String).value) : null,
+        blockNumber: map['blockNumber'] != null ? BlockNum.exact(map['blockNumber'] as int) : const BlockNum.pending(),
         minting: map['minting'] != null ? map['minting'] as bool : null);
   }
 
@@ -213,16 +197,13 @@ class TransactionReceipt {
         blockNumber: blockNumber ?? this.blockNumber);
   }
 
-  static List<Object> decodeTo(List to,
-      {NetworkId networkPrefix = valhallaPrefix}) {
+  static List<Object> decodeTo(List to, {NetworkId networkPrefix = valhallaPrefix}) {
     return to.map((i) {
       switch (i[1]['type']) {
         case 'Simple':
-          return SimpleRecipient.fromJson(i as List,
-              networkPrefix: networkPrefix);
+          return SimpleRecipient.fromJson(i as List, networkPrefix: networkPrefix);
         case 'Asset':
-          return AssetRecipient.fromJson(i as List,
-              networkPrefix: networkPrefix);
+          return AssetRecipient.fromJson(i as List, networkPrefix: networkPrefix);
         default:
           throw ArgumentError('Transaction type currently not supported');
       }
@@ -261,27 +242,22 @@ class TransactionReceipt {
     }).toList();
   }
 
-  static List<SignatureContainer> decodeSignatures(
-      Map<String, dynamic> signatures) {
+  static List<SignatureContainer> decodeSignatures(Map<String, dynamic> signatures) {
     final formattedSignatures = <SignatureContainer>[];
     signatures.forEach((k, v) {
       final proposition = Proposition.fromString(k);
-      final value =
-          Signature(Base58Data.validated(v as String).value.sublist(1));
+      final value = Signature(Base58Data.validated(v as String).value.sublist(1));
       final signatureContainer = SignatureContainer(proposition, value);
       formattedSignatures.add(signatureContainer);
     });
     return formattedSignatures;
   }
 
-  static Map<String, String> encodeSignatures(
-      List<SignatureContainer> signatures, PropositionType proposition) {
+  static Map<String, String> encodeSignatures(List<SignatureContainer> signatures, PropositionType proposition) {
     final encodedSignatures = <String, String>{};
     signatures.forEach((value) {
-      final newKey = Base58Data(Uint8List.fromList(
-          [pubKeyHashByte, ...value.proposition.buffer.asUint8List()])).show;
-      final outputValue = Uint8List.fromList(
-          [pubKeyHashByte, ...value.proof.buffer.asUint8List()]);
+      final newKey = Base58Data(Uint8List.fromList([pubKeyHashByte, ...value.proposition.buffer.asUint8List()])).show;
+      final outputValue = Uint8List.fromList([pubKeyHashByte, ...value.proof.buffer.asUint8List()]);
       final newValue = Base58Data(outputValue).show;
       encodedSignatures[newKey] = newValue;
     });
@@ -301,8 +277,7 @@ class TransactionReceipt {
           const ListEquality().equals(signatures, other.signatures) &&
           fee == other.fee &&
           timestamp == other.timestamp &&
-          const ListEquality()
-              .equals(messageToSign ?? [], other.messageToSign ?? []) &&
+          const ListEquality().equals(messageToSign ?? [], other.messageToSign ?? []) &&
           const ListEquality().equals(boxesToRemove, other.boxesToRemove);
   @override
   int get hashCode =>

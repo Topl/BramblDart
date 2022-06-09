@@ -21,26 +21,20 @@ class HdWallet {
   final Bip32SigningKey _rootSigningKey;
   final _derivator = Bip32Ed25519KeyDerivation.instance;
 
-  HdWallet({required Bip32SigningKey rootSigningKey, this.password = ''})
-      : _rootSigningKey = rootSigningKey;
+  HdWallet({required Bip32SigningKey rootSigningKey, this.password = ''}) : _rootSigningKey = rootSigningKey;
 
   HdWallet.fromEntropy({required this.entropy, this.password = ''})
       : _rootSigningKey = _bip32signingKey(entropy, password: password);
 
   factory HdWallet.fromHexEntropy(String hexEntropy, {String password = ''}) =>
-      HdWallet.fromEntropy(
-          entropy: Uint8List.fromList(HexCoder.instance.decode(hexEntropy)),
-          password: password);
+      HdWallet.fromEntropy(entropy: Uint8List.fromList(HexCoder.instance.decode(hexEntropy)), password: password);
 
-  factory HdWallet.fromMnemonic(String mnemonic,
-          {String language = 'english', String password = ''}) =>
-      HdWallet.fromHexEntropy(mnemonicToEntropy(mnemonic, language),
-          password: password);
+  factory HdWallet.fromMnemonic(String mnemonic, {String language = 'english', String password = ''}) =>
+      HdWallet.fromHexEntropy(mnemonicToEntropy(mnemonic, language), password: password);
 
   Bip32VerifyKey get rootVerifyKey => _rootSigningKey.verifyKey;
 
-  static Bip32SigningKey _bip32signingKey(Uint8List entropy,
-      {String password = ''}) {
+  static Bip32SigningKey _bip32signingKey(Uint8List entropy, {String password = ''}) {
     final salt = Uint8List.fromList(utf8.encode(password));
     final rawMaster = PBKDF2.hmac_sha512(salt, entropy, 4096, xprvSize);
     final rootXsk = Bip32SigningKey.normalizeBytes(rawMaster);
@@ -105,13 +99,10 @@ class HdWallet {
     if (keys != null) {
       keys = keys;
     } else {
-      keys =
-          Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
+      keys = Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
     }
 
-    final privateKey = keys.privateKey != null
-        ? _derivator.ckdPriv(keys.privateKey!, index)
-        : null;
+    final privateKey = keys.privateKey != null ? _derivator.ckdPriv(keys.privateKey!, index) : null;
     final publicKey = isHardened(index)
         ? null
         : keys.publicKey != null
@@ -126,8 +117,7 @@ class HdWallet {
       int account = defaultAccountIndex,
       int change = defaultChange,
       int address = defaultAddressIndex}) {
-    final rootKeys =
-        Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
+    final rootKeys = Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
     final pair0 = derive(keys: rootKeys, index: purpose);
     final pair1 = derive(keys: pair0, index: coinType);
     final pair2 = derive(keys: pair1, index: account);
@@ -136,27 +126,21 @@ class HdWallet {
     return pair4;
   }
 
-  Bip32KeyPair deriveBaseAddress(
-      {int purpose = defaultPurpose, int coinType = defaultCoinType}) {
-    final rootKeys =
-        Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
+  Bip32KeyPair deriveBaseAddress({int purpose = defaultPurpose, int coinType = defaultCoinType}) {
+    final rootKeys = Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
     final pair0 = derive(keys: rootKeys, index: purpose);
     return derive(keys: pair0, index: coinType);
   }
 
   Bip32KeyPair deriveLastThreeLayers(
-      {int account = defaultAccountIndex,
-      int change = defaultChange,
-      int address = defaultAddressIndex}) {
-    final rootKeys =
-        Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
+      {int account = defaultAccountIndex, int change = defaultChange, int address = defaultAddressIndex}) {
+    final rootKeys = Bip32KeyPair(privateKey: _rootSigningKey, publicKey: rootVerifyKey);
     final pair0 = derive(keys: rootKeys, index: account);
     final pair1 = derive(keys: pair0, index: change);
     return derive(keys: pair1, index: address);
   }
 
-  ToplAddress toBaseAddress(
-          {required Bip32PublicKey spend, NetworkId networkId = 0x10}) =>
+  ToplAddress toBaseAddress({required Bip32PublicKey spend, NetworkId networkId = 0x10}) =>
       ToplAddress.toAddress(spendCredential: spend, networkId: networkId);
 }
 
