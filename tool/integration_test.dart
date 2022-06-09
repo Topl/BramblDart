@@ -48,7 +48,7 @@ Future<void> main() async {
     do {
       connectionAttempts++;
       try {
-        await get(Uri.parse('https://staging.vertx.topl.services/valhalla/$baasProjectId'));
+        await get(Uri.parse('https://vertx.topl.services/valhalla/$baasProjectId'));
         //await get(Uri.parse('http://localhost:9085'));
         successful = true;
       } on SocketException {
@@ -66,26 +66,26 @@ Future<void> main() async {
     // await bifrost.kill();
   });
 
-  setUp(() {
+  setUp(() async {
     client = BramblClient(
-      basePathOverride: 'https://staging.vertx.topl.services/valhalla/$baasProjectId',
+      basePathOverride: 'https://vertx.topl.services/valhalla/$baasProjectId',
       interceptors: [
         TestApiKeyAuthInterceptor(),
         RetryInterceptor(
             dio: Dio(BaseOptions(
                 baseUrl: //'http://localhost:9085',
-                    'https://staging.vertx.topl.services/valhalla/$baasProjectId',
+                    'https://vertx.topl.services/valhalla/$baasProjectId',
                 contentType: 'application/json',
                 connectTimeout: 5000,
                 receiveTimeout: 3000)),
             logger: log)
       ],
     );
-
     first =
         ToplSigningKey(Bip32SigningKey.decode(_privateKey1, coder: HexCoder.instance), 0x10, PropositionType.ed25519());
     second =
         ToplSigningKey(Bip32SigningKey.decode(_privateKey2, coder: HexCoder.instance), 0x10, PropositionType.ed25519());
+    await Future.delayed(const Duration(seconds: 2));
   });
 
   group(BramblClient, () {
@@ -231,17 +231,17 @@ Future<void> main() async {
           changeAddress: senderAddress,
           propositionType: PropositionType.ed25519().propositionName,
           data: data);
-
       final rawTransaction = await client.sendRawPolyTransfer(polyTransaction: polyTransaction);
-
       expect(rawTransaction['rawTx'], isA<TransactionReceipt>());
-
-      final txId = await client.sendTransaction(
-          [first], rawTransaction['rawTx'] as TransactionReceipt, rawTransaction['messageToSign'] as Uint8List);
-
+      final signedTx = await client.signTransaction(
+        [first],
+        rawTransaction['rawTx'] as TransactionReceipt,
+        rawTransaction['messageToSign'] as Uint8List,
+      );
+      print(signedTx.toJson());
+      expect(signedTx.signatures, isNotEmpty);
       final senderBalance = await client.getBalance(senderAddress);
       print(senderBalance);
-      print(txId);
     });
 
     test('get Transaction receipt', () async {
@@ -254,8 +254,8 @@ Future<void> main() async {
       expect(receipt, isA<TransactionReceipt>());
     });
 
-    test('get transaction from Mempool throws exception', () {
-      expect(client.getTransactionFromMempool('0123'), throwsA(const TypeMatcher<RPCError>()));
+    test('get transaction from Mempool throws exception', () async {
+      await expectLater(client.getTransactionFromMempool('0123'), throwsA(const TypeMatcher<RPCError>()));
     });
 
     test('getMempool test', () async {
