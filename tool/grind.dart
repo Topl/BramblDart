@@ -15,8 +15,7 @@ void main(List<String> args) {
   pkg.githubUser.fn = () => Platform.environment['GH_USER']!;
   pkg.githubPassword.fn = () => Platform.environment['GH_TOKEN']!;
   pkg.standaloneName.value = 'brambldart';
-  pkg.githubReleaseNotes.fn = () =>
-      'To install brambldart ${pkg.version}, download one of the packages below '
+  pkg.githubReleaseNotes.fn = () => 'To install brambldart ${pkg.version}, download one of the packages below '
       'and [add it to your PATH][], or see [the Developer Hub website][] for full '
       'installation instructions.\n'
       '\n'
@@ -26,9 +25,7 @@ void main(List<String> args) {
       '# Changes\n'
       '\n'
       '${pkg.githubReleaseNotes.defaultValue}';
-  pkg.npmPackageJson.fn = () =>
-      json.decode(File('package/package.json').readAsStringSync())
-          as Map<String, dynamic>;
+  pkg.npmPackageJson.fn = () => json.decode(File('package/package.json').readAsStringSync()) as Map<String, dynamic>;
   pkg.npmReadme.fn = () => _readAndResolveMarkdown('package/README.npm.md');
   pkg.addAllTasks();
   grind(args);
@@ -40,13 +37,11 @@ void all() {}
 
 @Task('Run the Dart formatter.')
 void format() {
-  Pub.run('dart_style',
-      script: 'format', arguments: ['--overwrite', '--fix', '.']);
+  Pub.run('dart_style', script: 'format', arguments: ['--overwrite', '--fix', '.']);
 }
 
 @Task('Installs dependencies from npm.')
-void npmInstall() =>
-    run(Platform.isWindows ? 'npm.cmd' : 'npm', arguments: ['install']);
+void npmInstall() => run(Platform.isWindows ? 'npm.cmd' : 'npm', arguments: ['install']);
 
 @Task('Runs the tasks that are required for running tests.')
 @Depends(format, 'pkg-standalone-dev', 'pkg-npm-dev', npmInstall)
@@ -64,13 +59,11 @@ final _readAndResolveRegExp = RegExp(
 /// which must appear on its own line. PATH is a relative file: URL to another
 /// Markdown file, and HEADER is the name of a header in that file whose
 /// contents should be included as-is.
-String _readAndResolveMarkdown(String path) => File(path)
-        .readAsStringSync()
-        .replaceAllMapped(_readAndResolveRegExp, (match) {
+String _readAndResolveMarkdown(String path) =>
+    File(path).readAsStringSync().replaceAllMapped(_readAndResolveRegExp, (match) {
       late String included;
       try {
-        included = File(p.join(p.dirname(path), p.fromUri(match[1])))
-            .readAsStringSync();
+        included = File(p.join(p.dirname(path), p.fromUri(match[1]))).readAsStringSync();
       } on Exception catch (error) {
         _matchError(match, error.toString(), url: p.toUri(path));
       }

@@ -39,15 +39,12 @@ class ToplAddress extends ByteList {
   /// A Topl address from the raw address bytes
   ToplAddress(List<int> bytes,
       {this.networkId = valhallaPrefix,
-      this.proposition =
-          const PropositionType('PublicKeyEd25519', defaultPropositionPrefix)})
+      this.proposition = const PropositionType('PublicKeyEd25519', defaultPropositionPrefix)})
       : super(bytes);
 
   /// Human readable address
   String toBase58() {
-    return Uint8List.fromList(asTypedList + asTypedList.checksum())
-        .encodeAsBase58()
-        .show;
+    return Uint8List.fromList(asTypedList + asTypedList.checksum()).encodeAsBase58().show;
   }
 
   /// Note that this give much more detail than toBase58, designed for developers who want to inspect addresses in detail.
@@ -56,20 +53,17 @@ class ToplAddress extends ByteList {
     return '${addressTypeString(addressType)} ${networkIdString(networkId)} ${proposition.propositionName}${toBase58()}';
   }
 
-  factory ToplAddress.fromBase58(String address,
-      {NetworkId networkPrefix = valhallaPrefix}) {
+  factory ToplAddress.fromBase58(String address, {NetworkId networkPrefix = valhallaPrefix}) {
     final decoded = str2ByteArray(address);
     return addressFromBytes(bytes: decoded, networkPrefix: networkPrefix);
   }
 
   factory ToplAddress.toAddress({
     required Bip32PublicKey spendCredential,
-    PropositionType propositionType =
-        const PropositionType('PublicKeyEd25519', 0x03),
+    PropositionType propositionType = const PropositionType('PublicKeyEd25519', 0x03),
     NetworkId networkId = 0x10,
   }) =>
-      generatePubKeyHashAddress(
-          spendCredential, networkId, propositionType.propositionName);
+      generatePubKeyHashAddress(spendCredential, networkId, propositionType.propositionName);
 
   AddressType get addressType {
     final addrType = this[1];
@@ -83,8 +77,7 @@ class ToplAddress extends ByteList {
       case 3:
         return AddressType.dionType3;
       default:
-        throw InvalidAddressTypeError(
-            'addressType: $addressType is not defined. Containing address ${toBase58()}');
+        throw InvalidAddressTypeError('addressType: $addressType is not defined. Containing address ${toBase58()}');
     }
   }
 }
@@ -96,8 +89,7 @@ class InvalidAddressTypeError extends Error {
   String toString() => message;
 }
 
-class ToplAddressNullableConverter
-    implements JsonConverter<ToplAddress?, String> {
+class ToplAddressNullableConverter implements JsonConverter<ToplAddress?, String> {
   const ToplAddressNullableConverter();
 
   @override

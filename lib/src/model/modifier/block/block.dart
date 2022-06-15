@@ -1,7 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-
-import 'block_body.dart';
-import 'block_header.dart';
+part of 'package:brambldart/model.dart';
 
 ///
 ///A block is an atomic piece of data network participates are agreed on.
@@ -19,7 +16,6 @@ import 'block_header.dart';
 ///- additional data: block structure version no, timestamp etc
 ///
 ///
-part '../../../generated/block.g.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class Block {
@@ -56,17 +52,13 @@ class Block {
   }
 
   @override
-  String toString() =>
-      'Block(header: $header, body: $body, blockSize: $blockSize)';
+  String toString() => 'Block(header: $header, body: $body, blockSize: $blockSize)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Block &&
-        other.header == header &&
-        other.body == body &&
-        other.blockSize == blockSize;
+    return other is Block && other.header == header && other.body == body && other.blockSize == blockSize;
   }
 
   @override

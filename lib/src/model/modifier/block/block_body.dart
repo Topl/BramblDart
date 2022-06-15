@@ -1,8 +1,4 @@
-import 'package:collection/collection.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/model.dart';
-
-part '../../../generated/block_body.g.dart';
+part of 'package:brambldart/model.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class BlockBody {
@@ -24,8 +20,7 @@ class BlockBody {
   /// A necessary factory constructor for creating a new BlockBody instance
   /// from a map. Pass the map to the generated `_$BlockBodyFromJson()` constructor.
   /// The constructor is named after the source class, in this case, BlockBody.
-  factory BlockBody.fromJson(Map<String, dynamic> json) =>
-      _$BlockBodyFromJson(json);
+  factory BlockBody.fromJson(Map<String, dynamic> json) => _$BlockBodyFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -67,9 +62,6 @@ class BlockBody {
 
   @override
   int get hashCode {
-    return id.hashCode ^
-        parentId.hashCode ^
-        transactions.hashCode ^
-        version.hashCode;
+    return id.hashCode ^ parentId.hashCode ^ transactions.hashCode ^ version.hashCode;
   }
 }

@@ -18,8 +18,7 @@ class AddressGenerator {
   List<ToplAddress> generate(List<int> idxs) {
     return idxs.map((idx) {
       final addrKey = _derivator.deriveAddress(address: idx);
-      return generatePubKeyHashAddress(
-          addrKey.publicKey!, network, propositionType.propositionName);
+      return generatePubKeyHashAddress(addrKey.publicKey!, network, propositionType.propositionName);
     }).toList();
   }
 
@@ -33,14 +32,10 @@ class AddressChain {
   final Addresses _addresses;
   final AddressGenerator _addressGenerator;
   AddressChain(this._addressGenerator, List<int> indexes)
-      : _addresses = AddressesImpl(_addressGenerator.generate(indexes), indexes,
-            _addressGenerator.rootKey.toString());
+      : _addresses = AddressesImpl(_addressGenerator.generate(indexes), indexes, _addressGenerator.rootKey.toString());
 
   String toJson() {
-    return json.encode({
-      'addresses': _addresses,
-      'addressGenerator': _addressGenerator.toJson()
-    });
+    return json.encode({'addresses': _addresses, 'addressGenerator': _addressGenerator.toJson()});
   }
 
   Addresses get addresses => _addresses;

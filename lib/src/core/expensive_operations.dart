@@ -6,8 +6,7 @@ part of 'package:brambldart/client.dart';
 class ExpensiveOperations {
   ExpensiveOperations();
 
-  Future<ToplSigningKey> privateKeyFromString(
-      NetworkId network, PropositionType propositionType, String privateKey) {
+  Future<ToplSigningKey> privateKeyFromString(NetworkId network, PropositionType propositionType, String privateKey) {
     return _internalCreatePrivateKey(privateKey, network, propositionType);
   }
 }

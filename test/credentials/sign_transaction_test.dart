@@ -2,7 +2,6 @@ import 'package:bip_topl/bip_topl.dart';
 import 'package:brambldart/client.dart';
 import 'package:brambldart/credentials.dart';
 import 'package:brambldart/model.dart';
-import 'package:brambldart/src/model/box/token_value_holder.dart';
 import 'package:brambldart/utils.dart';
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/encoding.dart';
@@ -31,15 +30,10 @@ void main() {
         timestamp: 0,
         boxesToRemove: [BoxId.applyByteArray(Uint8List(blake2b256DigestSize))],
         from: [
-          Sender(
-              ToplAddress.fromBase58(
-                  '3NKBoNgMRpKahSi8tC8XPetDom9bdh3NXxSpfZ8fkvDMYwFcgnK1'),
-              '3945781279437276569')
+          Sender(ToplAddress.fromBase58('3NKBoNgMRpKahSi8tC8XPetDom9bdh3NXxSpfZ8fkvDMYwFcgnK1'), '3945781279437276569')
         ],
         to: [
-          SimpleRecipient(
-              ToplAddress.fromBase58(
-                  '3NKBoNgMRpKahSi8tC8XPetDom9bdh3NXxSpfZ8fkvDMYwFcgnK1'),
+          SimpleRecipient(ToplAddress.fromBase58('3NKBoNgMRpKahSi8tC8XPetDom9bdh3NXxSpfZ8fkvDMYwFcgnK1'),
               SimpleValue(quantity: '0'))
         ],
         propositionType: PropositionType.ed25519());
@@ -54,13 +48,10 @@ void main() {
       Base58Encoder.instance.decode(messageToSign),
     );
 
-    expect(
-        TransactionReceipt.encodeSignatures(
-            signature.signatures, signature.propositionType),
-        {
-          'KVAveekFcodVt7bUCMK6jCAqRbHTsS7gAzVMLu1ZkrrcPdorhDVRWhTZCHaAdV1vgAZ37VR1oS1RByQvtzu5DtgR':
-              'Lqon4qk4kwfZkfvS73bqSySxPXY6Ff7U61rYo7f5fQYtz2C78vnXFdXrMBd9LmQZQUG6UYthwnXXwtysmiUxMdro'
-        });
+    expect(TransactionReceipt.encodeSignatures(signature.signatures, signature.propositionType), {
+      'KVAveekFcodVt7bUCMK6jCAqRbHTsS7gAzVMLu1ZkrrcPdorhDVRWhTZCHaAdV1vgAZ37VR1oS1RByQvtzu5DtgR':
+          'Lqon4qk4kwfZkfvS73bqSySxPXY6Ff7U61rYo7f5fQYtz2C78vnXFdXrMBd9LmQZQUG6UYthwnXXwtysmiUxMdro'
+    });
   });
 
   test('extract address', () async {
@@ -70,7 +61,6 @@ void main() {
         0x01,
         PropositionType.ed25519());
     final from = await key.extractAddress();
-    expect(
-        from.toBase58(), '9hdk9U5NpuQaikjRroHTY9CBREL3t6dU9muL8QJRnJ4qzjmh1mu');
+    expect(from.toBase58(), '9hdk9U5NpuQaikjRroHTY9CBREL3t6dU9muL8QJRnJ4qzjmh1mu');
   });
 }

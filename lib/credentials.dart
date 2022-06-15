@@ -3,7 +3,6 @@
 library credentials;
 
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:bip_topl/bip_topl.dart';
 import 'package:collection/collection.dart';
@@ -13,7 +12,6 @@ import 'package:brambldart/model.dart';
 import 'package:brambldart/utils.dart';
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/api/signatures.dart';
-import 'package:pinenacl/encoding.dart';
 import 'package:pinenacl/key_derivation.dart';
 
 part 'src/credentials/address.dart';

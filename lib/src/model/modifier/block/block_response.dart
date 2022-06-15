@@ -1,7 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/brambldart.dart';
-
-part '../../../generated/block_response.g.dart';
+part of 'package:brambldart/model.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class BlockResponse {
@@ -20,8 +17,7 @@ class BlockResponse {
   /// A necessary factory constructor for creating a new BlockResponse instance
   /// from a map. Pass the map to the generated `_$EvidenceFromJson()` constructor.
   /// The constructor is named after the source class, in this case, BlockResponse.
-  factory BlockResponse.fromJson(Map<String, dynamic> json) =>
-      _$BlockResponseFromJson(json);
+  factory BlockResponse.fromJson(Map<String, dynamic> json) => _$BlockResponseFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -60,9 +56,6 @@ class BlockResponse {
 
   @override
   int get hashCode {
-    return height.hashCode ^
-        score.hashCode ^
-        bestBlockId.hashCode ^
-        bestBlock.hashCode;
+    return height.hashCode ^ score.hashCode ^ bestBlockId.hashCode ^ bestBlock.hashCode;
   }
 }

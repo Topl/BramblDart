@@ -12,13 +12,11 @@ Box<T> _$BoxFromJson<T>(Map<String, dynamic> json) => $checkedCreate(
       ($checkedConvert) {
         final val = Box<T>(
           $checkedConvert('evidence', (v) => Evidence.fromJson(v as String)),
-          $checkedConvert(
-              'value', (v) => _Converter<T>().fromJson(v as Object)),
+          $checkedConvert('value', (v) => _Converter<T>().fromJson(v as Object)),
           $checkedConvert('nonce', (v) => v as String),
           $checkedConvert('type', (v) => v as String),
         );
-        $checkedConvert('id',
-            (v) => val.boxId = const BoxIdConverter().fromJson(v as String));
+        $checkedConvert('id', (v) => val.boxId = const BoxIdConverter().fromJson(v as String));
         return val;
       },
       fieldKeyMap: const {'boxId': 'id'},
@@ -37,14 +35,12 @@ TokenBox _$TokenBoxFromJson(Map<String, dynamic> json) => $checkedCreate(
       json,
       ($checkedConvert) {
         final val = TokenBox(
-          $checkedConvert('value',
-              (v) => TokenValueHolder.fromJson(v as Map<String, dynamic>)),
+          $checkedConvert('value', (v) => TokenValueHolder.fromJson(v as Map<String, dynamic>)),
           $checkedConvert('evidence', (v) => Evidence.fromJson(v as String)),
           $checkedConvert('nonce', (v) => v as String),
           $checkedConvert('type', (v) => v as String),
         );
-        $checkedConvert('id',
-            (v) => val.boxId = const BoxIdConverter().fromJson(v as String));
+        $checkedConvert('id', (v) => val.boxId = const BoxIdConverter().fromJson(v as String));
         return val;
       },
       fieldKeyMap: const {'boxId': 'id'},

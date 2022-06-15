@@ -11,16 +11,10 @@ BlockBody _$BlockBodyFromJson(Map<String, dynamic> json) => $checkedCreate(
       json,
       ($checkedConvert) {
         final val = BlockBody(
-          $checkedConvert(
-              'id', (v) => const ModifierIdConverter().fromJson(v as String)),
-          $checkedConvert('parentId',
-              (v) => const ModifierIdConverter().fromJson(v as String)),
-          $checkedConvert(
-              'txs',
-              (v) => (v as List<dynamic>)
-                  .map((e) =>
-                      TransactionReceipt.fromJson(e as Map<String, dynamic>))
-                  .toList()),
+          $checkedConvert('id', (v) => const ModifierIdConverter().fromJson(v as String)),
+          $checkedConvert('parentId', (v) => const ModifierIdConverter().fromJson(v as String)),
+          $checkedConvert('txs',
+              (v) => (v as List<dynamic>).map((e) => TransactionReceipt.fromJson(e as Map<String, dynamic>)).toList()),
           $checkedConvert('version', (v) => v as int),
         );
         return val;

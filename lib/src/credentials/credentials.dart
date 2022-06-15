@@ -49,12 +49,10 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
 
   /// Parses a private key from the a hexadecimal representation
   ToplSigningKey.fromHex(String hex, this.network, this.propositionType)
-      : privateKey =
-            Bip32SigningKey.fromValidBytes(HexCoder.instance.decode(hex));
+      : privateKey = Bip32SigningKey.fromValidBytes(HexCoder.instance.decode(hex));
 
   ToplSigningKey.fromString(String base58, this.network, this.propositionType)
-      : privateKey = Bip32SigningKey.fromValidBytes(
-            Base58Encoder.instance.decode(base58));
+      : privateKey = Bip32SigningKey.fromValidBytes(Base58Encoder.instance.decode(base58));
 
   @override
   Proposition get proposition => Proposition(privateKey.verifyKey.asTypedList);
@@ -75,16 +73,12 @@ class ToplSigningKey extends CredentialsWithKnownAddress {
 
   @override
   ToplAddress get address {
-    return _cachedAddress ??
-        generatePubKeyHashAddress(
-            privateKey.publicKey, network, propositionType.propositionName);
+    return _cachedAddress ?? generatePubKeyHashAddress(privateKey.publicKey, network, propositionType.propositionName);
   }
 
   @override
   Future<SignatureBase> signToSignature(List<int> payload) async {
-    return Bip32SigningKey(Uint8List.fromList(privateKey))
-        .sign(payload)
-        .signature;
+    return Bip32SigningKey(Uint8List.fromList(privateKey)).sign(payload).signature;
   }
 
   @override

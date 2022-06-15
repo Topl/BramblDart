@@ -1,9 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:brambldart/model.dart';
-import 'package:brambldart/utils.dart';
-import 'package:pinenacl/ed25519.dart';
-
-part '../../generated/signature_container.g.dart';
+part of 'package:brambldart/model.dart';
 
 @JsonSerializable(checked: true, explicitToJson: true)
 class SignatureContainer {
@@ -17,8 +12,7 @@ class SignatureContainer {
   /// A necessary factory constructor for creating a new SignatureContainer instance
   /// from a map. Pass the map to the generated `_$EvidenceFromJson()` constructor.
   /// The constructor is named after the source class, in this case, SignatureContainer.
-  factory SignatureContainer.fromJson(Map<String, dynamic> json) =>
-      _$SignatureContainerFromJson(json);
+  factory SignatureContainer.fromJson(Map<String, dynamic> json) => _$SignatureContainerFromJson(json);
 
   /// `toJson` is the convention for a class to declare support for serialization
   /// to JSON. The implementation simply calls the private, generated
@@ -30,11 +24,8 @@ class SignatureContainer {
 
   @override
   bool operator ==(Object other) =>
-      other is SignatureContainer &&
-      other.proposition == proposition &&
-      other.proof == proof;
+      other is SignatureContainer && other.proposition == proposition && other.proof == proof;
 
   @override
-  String toString() =>
-      'Proposition: ${proposition.toString()}, Evidence: ${proof.toString()}';
+  String toString() => 'Proposition: ${proposition.toString()}, Evidence: ${proof.toString()}';
 }
