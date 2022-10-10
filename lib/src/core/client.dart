@@ -171,7 +171,7 @@ class BramblClient {
   ///
   Future<Map<String, dynamic>> sendRawAssetTransfer({required AssetTransaction assetTransaction}) async {
     final tx = await _fillMissingDataRawAsset(transaction: assetTransaction);
-    return _makeRPCCall('topl_rawAssetTransfer', params: [tx.toJson()]).then((value) => {
+    return _makeRPCCall('topl_rawAssetTransfer', params: [_fillBoxSelection(tx.toJson())]).then((value) => {
           'rawTx': TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>),
           'messageToSign': Base58Data.validated(value['messageToSign'] as String).value
         });
@@ -183,7 +183,7 @@ class BramblClient {
   ///
   Future<Map<String, dynamic>> sendRawPolyTransfer({required PolyTransaction polyTransaction}) async {
     final tx = await _fillMissingDataRawPoly(transaction: polyTransaction);
-    return _makeRPCCall('topl_rawPolyTransfer', params: [tx.toJson()]).then((value) => {
+    return _makeRPCCall('topl_rawPolyTransfer', params: [_fillBoxSelection(tx.toJson())]).then((value) => {
           'rawTx': TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>),
           'messageToSign': Base58Data.validated(value['messageToSign'] as String).value
         });
@@ -195,7 +195,7 @@ class BramblClient {
   ///
   Future<Map<String, dynamic>> sendRawArbitTransfer({required ArbitTransaction arbitTransaction}) async {
     final tx = await _fillMissingDataRawArbit(transaction: arbitTransaction);
-    return _makeRPCCall('topl_rawArbitTransfer', params: [tx.toJson()]).then((value) => {
+    return _makeRPCCall('topl_rawArbitTransfer', params: [_fillBoxSelection(tx.toJson())]).then((value) => {
           'rawTx': TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>),
           'messageToSign': Base58Data.validated(value['messageToSign'] as String).value
         });
@@ -300,6 +300,16 @@ class BramblClient {
       List<Credentials> cred, TransactionReceipt transaction, Uint8List messageToSign) async {
     final signed = await signTransaction(cred, transaction, messageToSign);
     return sendSignedTransaction(signed);
+  }
+
+  // TODO: Reevaluate this helper function when boxSelection Parameter is no longer required
+  /// Adds the default BoxSelectionParameter to a json object
+  ///
+  /// Returns a Map<String, dynamic>  with ["boxSelectionAlgorithm"] = "All"; added to it
+  Map<String, dynamic> _fillBoxSelection(Map<String, dynamic> transaction) {
+    final tx = transaction;
+    tx.addAll({'boxSelectionAlgorithm': 'All'});
+    return tx;
   }
 
   /// Sends a signed transaction.
