@@ -47,7 +47,6 @@ class Latin1Data {
   }
 
   String get show {
-    print('QQQQ latin1 ${latin1.decode(value!)}');
     return latin1.decode(value!).replaceAll('\x00', '');
   }
 }
