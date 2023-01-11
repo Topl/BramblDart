@@ -9,7 +9,8 @@ class Latin1Data {
   final Uint8List? value;
 
   @override
-  bool operator ==(Object other) => other is Latin1Data && const ListEquality().equals(value, other.value);
+  bool operator ==(Object other) =>
+      other is Latin1Data && const ListEquality().equals(value, other.value);
 
   @override
   int get hashCode => value.hashCode;
@@ -45,7 +46,8 @@ class Latin1Data {
     }
   }
 
-  String get show => latin1.decode(value!);
+  /// Shows the decoded laten data and removes HEX bytes with bits at 0
+  String get show => latin1.decode(value!).replaceAll('\x00', '');
 }
 
 ///
