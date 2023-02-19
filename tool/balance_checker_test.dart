@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:dio/dio.dart';
-import 'package:http/http.dart';
 import 'package:brambldart/client.dart';
 import 'package:brambldart/credentials.dart';
+import 'package:dio/dio.dart';
+import 'package:http/http.dart';
+import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 
 import 'test_api_key_auth.dart';
@@ -44,12 +45,14 @@ Future<void> main() async {
       interceptors: [
         TestApiKeyAuthInterceptor(),
         RetryInterceptor(
-            dio: Dio(BaseOptions(
-                baseUrl: 'https://staging.vertx.topl.services/valhalla/$baasProjectId',
-                contentType: 'application/json',
-                connectTimeout: 5000,
-                receiveTimeout: 3000)),
-            logger: log)
+            dio: Dio(
+              BaseOptions(
+                  baseUrl: 'https://staging.vertx.topl.services/valhalla/$baasProjectId',
+                  contentType: 'application/json',
+                  connectTimeout: const Duration(seconds: 5),
+                  receiveTimeout: const Duration(seconds: 3)),
+            ),
+            logger: Logger('dioLogger')),
       ],
     );
     hdWallet = HdWallet.fromHexEntropy(testEntropy);

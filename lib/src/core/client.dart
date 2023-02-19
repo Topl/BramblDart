@@ -31,8 +31,8 @@ class BramblClient {
                 Dio(BaseOptions(
                     baseUrl: basePathOverride ?? basePath,
                     contentType: 'application/json',
-                    connectTimeout: 5000,
-                    receiveTimeout: 3000))) {
+                    connectTimeout: const Duration(seconds: 5),
+                    receiveTimeout: const Duration(seconds: 3)))) {
     if (interceptors == null) {
       jsonRpc.dio.interceptors.add(ApiKeyAuthInterceptor());
       jsonRpc.dio.interceptors.add(RetryInterceptor(dio: jsonRpc.dio, logger: log));

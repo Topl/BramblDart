@@ -76,8 +76,8 @@ Future<void> main() async {
                 baseUrl: //'http://localhost:9085',
                     'https://vertx.topl.services/valhalla/$baasProjectId',
                 contentType: 'application/json',
-                connectTimeout: 5000,
-                receiveTimeout: 3000)),
+                connectTimeout: const Duration(seconds: 5),
+                receiveTimeout: const Duration(seconds: 3))),
             logger: log)
       ],
     );
