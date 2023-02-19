@@ -68,7 +68,6 @@ class ToplAddress extends ByteList {
   AddressType get addressType {
     final addrType = this[1];
     switch (addrType) {
-
       /// Base Address
       case 0:
       case 1:
