@@ -72,6 +72,7 @@ class BramblClient {
       // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       if (printErrors) print(e);
+      log.warning(e);
 
       rethrow;
     }
@@ -331,5 +332,4 @@ class BramblClient {
   /// ensure that the transaction is pending. The parameter [numFailedQueries] specifies the number of consecutive
   /// failures (when resorting to querying the mempool) before ending the polling operation prematurely.
   ///
-
 }

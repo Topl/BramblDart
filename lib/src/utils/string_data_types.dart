@@ -9,8 +9,7 @@ class Latin1Data {
   final Uint8List? value;
 
   @override
-  bool operator ==(Object other) =>
-      other is Latin1Data && const ListEquality().equals(value, other.value);
+  bool operator ==(Object other) => other is Latin1Data && const ListEquality().equals(value, other.value);
 
   @override
   int get hashCode => value.hashCode;
