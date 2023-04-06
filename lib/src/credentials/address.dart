@@ -76,7 +76,7 @@ class ToplAddress extends ByteList {
       case 3:
         return AddressType.dionType3;
       default:
-        throw InvalidAddressTypeError('addressType: $addressType is not defined. Containing address ${toBase58()}');
+        throw InvalidAddressTypeError('addressType: is not defined. Containing address ${toBase58()}');
     }
   }
 }
