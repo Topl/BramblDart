@@ -50,55 +50,55 @@ jobs:
       - uses: dart-lang/setup-dart@v1
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: dart analyze --fatal-infos
-  
- vm_tests:
-   name: "Unit Tests (Dart VM)"
-   needs: get_dependencies
-   runs-on: ubuntu-latest
-   steps:
-     - uses: actions/checkout@v2
-     - uses: actions/cache@v2
-       with:
-         path: .dart_tool
-         key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
-     - uses: dart-lang/setup-dart@v1
-     - run: dart run build_runner build --delete-conflicting-outputs
-     - run: dart test --coverage test_coverage
-     - run: dart run tool/format_coverage.dart
-     - uses: codecov/codecov-action@v1
-       with:
-         token: ${{secrets.CODECOV_TOKEN}}
-         file: lcov.info
+    
+  vm_tests:
+    name: "Unit Tests (Dart VM)"
+    needs: get_dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: .dart_tool
+          key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
+      - uses: dart-lang/setup-dart@v1
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: dart test --coverage test_coverage
+      - run: dart run tool/format_coverage.dart
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          file: lcov.info
 
- browser_tests:
-   name: "Unit Tests (Browser)"
-   needs: get_dependencies
-   runs-on: ubuntu-latest
-   steps:
-     - uses: actions/checkout@v2
-     - uses: actions/cache@v2
-       with:
-         path: .dart_tool
-         key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
-     - uses: dart-lang/setup-dart@v1
-     - uses: browser-actions/setup-firefox@latest
-     - run: dart run build_runner build --delete-conflicting-outputs
-     - run: dart test -x expensive --platform chrome,firefox
-  
- integration_tests:
-   name: "Integration Tests"
-   needs: [get_dependencies]
-   runs-on: ubuntu-latest
-   steps:
-     - uses: actions/checkout@v2
-     - uses: actions/cache@v2
-       with:
-         path: .dart_tool
-         key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
-     - uses: sliteteam/github-action-git-crypt-unlock@1.2.0
-       env:
-         GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
-     - uses: dart-lang/setup-dart@v1
-     - run: dart run build_runner build --delete-conflicting-outputs
-     - run: dart run tool/integration_test.dart
+  browser_tests:
+    name: "Unit Tests (Browser)"
+    needs: get_dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: .dart_tool
+          key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
+      - uses: dart-lang/setup-dart@v1
+      - uses: browser-actions/setup-firefox@latest
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: dart test -x expensive --platform chrome,firefox
+    
+  integration_tests:
+    name: "Integration Tests"
+    needs: [get_dependencies]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: .dart_tool
+          key: dart-dependencies-${{ hashFiles('pubspec.yaml') }}
+      - uses: sliteteam/github-action-git-crypt-unlock@1.2.0
+        env:
+          GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
+      - uses: dart-lang/setup-dart@v1
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: dart run tool/integration_test.dart
   
