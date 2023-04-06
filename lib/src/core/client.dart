@@ -31,8 +31,8 @@ class BramblClient {
                 Dio(BaseOptions(
                     baseUrl: basePathOverride ?? basePath,
                     contentType: 'application/json',
-                    connectTimeout: 5000,
-                    receiveTimeout: 3000))) {
+                    connectTimeout: const Duration(seconds: 5),
+                    receiveTimeout: const Duration(seconds: 3)))) {
     if (interceptors == null) {
       jsonRpc.dio.interceptors.add(ApiKeyAuthInterceptor());
       jsonRpc.dio.interceptors.add(RetryInterceptor(dio: jsonRpc.dio, logger: log));
@@ -72,6 +72,7 @@ class BramblClient {
       // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       if (printErrors) print(e);
+      log.warning(e);
 
       rethrow;
     }
@@ -171,7 +172,7 @@ class BramblClient {
   ///
   Future<Map<String, dynamic>> sendRawAssetTransfer({required AssetTransaction assetTransaction}) async {
     final tx = await _fillMissingDataRawAsset(transaction: assetTransaction);
-    return _makeRPCCall('topl_rawAssetTransfer', params: [tx.toJson()]).then((value) => {
+    return _makeRPCCall('topl_rawAssetTransfer', params: [_fillBoxSelection(tx.toJson())]).then((value) => {
           'rawTx': TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>),
           'messageToSign': Base58Data.validated(value['messageToSign'] as String).value
         });
@@ -183,7 +184,7 @@ class BramblClient {
   ///
   Future<Map<String, dynamic>> sendRawPolyTransfer({required PolyTransaction polyTransaction}) async {
     final tx = await _fillMissingDataRawPoly(transaction: polyTransaction);
-    return _makeRPCCall('topl_rawPolyTransfer', params: [tx.toJson()]).then((value) => {
+    return _makeRPCCall('topl_rawPolyTransfer', params: [_fillBoxSelection(tx.toJson())]).then((value) => {
           'rawTx': TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>),
           'messageToSign': Base58Data.validated(value['messageToSign'] as String).value
         });
@@ -195,7 +196,7 @@ class BramblClient {
   ///
   Future<Map<String, dynamic>> sendRawArbitTransfer({required ArbitTransaction arbitTransaction}) async {
     final tx = await _fillMissingDataRawArbit(transaction: arbitTransaction);
-    return _makeRPCCall('topl_rawArbitTransfer', params: [tx.toJson()]).then((value) => {
+    return _makeRPCCall('topl_rawArbitTransfer', params: [_fillBoxSelection(tx.toJson())]).then((value) => {
           'rawTx': TransactionReceipt.fromJson(value['rawTx'] as Map<String, dynamic>),
           'messageToSign': Base58Data.validated(value['messageToSign'] as String).value
         });
@@ -302,6 +303,16 @@ class BramblClient {
     return sendSignedTransaction(signed);
   }
 
+  // TODO: Reevaluate this helper function when boxSelection Parameter is no longer required
+  /// Adds the default BoxSelectionParameter to a json object
+  ///
+  /// Returns a Map<String, dynamic>  with ["boxSelectionAlgorithm"] = "All"; added to it
+  Map<String, dynamic> _fillBoxSelection(Map<String, dynamic> transaction) {
+    final tx = transaction;
+    tx.addAll({'boxSelectionAlgorithm': 'All'});
+    return tx;
+  }
+
   /// Sends a signed transaction.
   ///
   /// To obtain a transaction in a signed form, use [signTransaction].
@@ -321,5 +332,4 @@ class BramblClient {
   /// ensure that the transaction is pending. The parameter [numFailedQueries] specifies the number of consecutive
   /// failures (when resorting to querying the mempool) before ending the polling operation prematurely.
   ///
-
 }

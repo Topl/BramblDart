@@ -154,7 +154,7 @@ class TransactionReceipt {
         newBoxes: decodeBoxes(map['newBoxes'] as List<dynamic>),
         boxesToRemove:
             (map['boxesToRemove'] as List).map((boxId) => const BoxIdConverter().fromJson(boxId as String)).toList(),
-        signatures: decodeSignatures(map['signatures'] as Map<String, dynamic>),
+        signatures: decodeSignatures(map['signatures'] as Map<String, dynamic>? ?? {}),
         blockId:
             map.containsKey('blockId') ? ModifierId.create(Base58Data.validated(map['blockId'] as String).value) : null,
         blockNumber: map['blockNumber'] != null ? BlockNum.exact(map['blockNumber'] as int) : const BlockNum.pending(),

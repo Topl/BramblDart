@@ -45,7 +45,8 @@ class Latin1Data {
     }
   }
 
-  String get show => latin1.decode(value!);
+  /// Shows the decoded laten data and removes HEX bytes with bits at 0
+  String get show => latin1.decode(value!).replaceAll('\x00', '');
 }
 
 ///
