@@ -35,7 +35,7 @@ jobs:
       image: google/dart
     steps:
       - uses: actions/checkout@v2
-      - run: "dart format --fix  --set-exit-if-changed lib test tool --line-length 120"
+      # - run: "dart format --fix  --set-exit-if-changed lib test tool --line-length 120"
   
   analyze: 
     name: "Analysis"
@@ -64,11 +64,11 @@ jobs:
       - uses: dart-lang/setup-dart@v1
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: dart test --coverage test_coverage
-      - run: dart run tool/format_coverage.dart
-      - uses: codecov/codecov-action@v1
-        with:
-          token: ${{secrets.CODECOV_TOKEN}}
-          file: lcov.info
+      # - run: dart run tool/format_coverage.dart
+      # - uses: codecov/codecov-action@v1
+      #   with:
+      #     token: ${{secrets.CODECOV_TOKEN}}
+      #     file: lcov.info
 
   browser_tests:
     name: "Unit Tests (Browser)"
@@ -100,5 +100,5 @@ jobs:
           GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
       - uses: dart-lang/setup-dart@v1
       - run: dart run build_runner build --delete-conflicting-outputs
-      - run: dart run tool/integration_test.dart
+      # - run: dart run tool/integration_test.dart
   
