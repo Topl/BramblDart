@@ -8,7 +8,7 @@ void main() {
 
   final input = "Foobar";
 
-  final byteArray = Blake2b256().hash([input.toUint8List()]);
+  final byteArray = Blake2b256().hash([input.toUtf8Uint8List()]);
   print(byteArray.toHexString());
 
 }

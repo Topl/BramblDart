@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 ///
 /// returns the resulting digest as a [String].
 String _doHashCheck(String input, Blake2b blake) {
-  final byteArray = blake.hash([input.toUint8List()]);
+  final byteArray = blake.hash([input.toUtf8Uint8List()]);
   return byteArray.toHexString();
 }
 
