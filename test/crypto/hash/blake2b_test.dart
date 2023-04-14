@@ -33,9 +33,18 @@ main() {
         expect(hash, equals("0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"));
       });
 
+      test('hash empty list', () {
+        final hash = Blake2b256().hash([]).toHexString();
+        expect(hash, equals("0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"));
+      });
+
       test('throws error when bytes is empty', () {
         final blake2b = Blake2b256();
-        expect(() => blake2b.hash([]), throwsA(isA<AssertionError>()));
+        // expect(() => blake2b.hash([]), throwsA(isA<AssertionError>()));
+
+        print(blake2b.hash([]).toHexString());
+        expect(blake2b.hash([]).toHexString(), equals("0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"));
+        // expect(() => blake2b.hash([]), equals("0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"));
       });
     });
 
@@ -72,10 +81,11 @@ main() {
                 "786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce"));
       });
 
-      test('throws error when bytes is empty', () {
-        final blake2b = Blake2b512();
-        expect(() => blake2b.hash([]), throwsA(isA<AssertionError>()));
+      test('hash empty list', () {
+        final hash = Blake2b512().hash([]).toHexString();
+        expect(hash, equals("786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce"));
       });
+
     });
   });
 }

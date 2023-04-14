@@ -18,7 +18,6 @@ class Blake2b256 implements Blake2b {
   /// Returns the resulting digest as a 32-byte [Uint8List].
   @override
   Uint8List hash(List<Uint8List> bytes) {
-    assert(bytes.isNotEmpty, 'bytes must not be empty');
     final out = Uint8List(32);
     for (final b in bytes) {
       _digest.update(b, 0, b.length);
@@ -42,7 +41,6 @@ class Blake2b512 implements Blake2b {
   /// Returns the resulting digest as a 64-byte [Uint8List].
   @override
   Uint8List hash(List<Uint8List> bytes) {
-    assert(bytes.isNotEmpty, 'bytes must not be empty');
     final out = Uint8List(64);
     for (final b in bytes) {
       _digest.update(b, 0, b.length);
