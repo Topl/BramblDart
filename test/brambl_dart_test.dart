@@ -1,16 +1,14 @@
 import 'package:brambl_dart/brambl_dart.dart';
-import 'package:test/test.dart';
+import 'package:brambl_dart/src/utils/extensions.dart';
 
 void main() {
-  group('A group of tests', () {
-    final awesome = Awesome();
 
-    setUp(() {
-      // Additional setup goes here.
-    });
+  /// encode String to blake2b256
+  ///
 
-    test('First Test', () {
-      expect(awesome.isAwesome, isTrue);
-    });
-  });
+  final input = "Foobar";
+
+  final byteArray = Blake2b256().hash([input.toUint8List()]);
+  print(byteArray.toHexString());
+
 }
