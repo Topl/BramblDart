@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/quivr/algebras/signature_verifier.dart';
-import 'package:brambl_dart/src/quivr/common/parsable_data.dart';
+import 'package:brambl_dart/src/quivr/common/parsable_data_interface.dart';
 import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
 import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
