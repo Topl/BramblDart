@@ -1,7 +1,6 @@
 
 // **************************************************************************
 // Basic Functional Logic Types that allow us to use simple functional programming concepts
-// @Author: Selby Baidjnath
 // **************************************************************************
 
 
