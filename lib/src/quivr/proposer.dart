@@ -5,7 +5,7 @@ import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 /// A class representing proposers for creating [Proposition]s from various arguments.
-class Proposers {
+class Proposer {
   /// Returns a [Proposition] with the [Proposition_Locked] field set using the provided [data].
   static Proposition lockedProposer(Data? data) =>
       Proposition()..locked = Proposition_Locked(data: data);
@@ -50,6 +50,10 @@ class Proposers {
       Proposition()
         ..threshold =
             Proposition_Threshold(challenges: challenges, threshold: threshold);
+
+  /// Returns a [Proposition] with the [Proposition_Not] field set using the provided [not].
+  static Proposition notProposer(Proposition not) =>
+      Proposition()..not = Proposition_Not(proposition: not);
 
   /// Returns a [Proposition] with the [Proposition_And] field set using the provided [left] and [right].
   static Proposition andProposer(Proposition left, Proposition right) =>

@@ -1,7 +1,13 @@
 
 import 'package:brambl_dart/src/quivr/common/validation.dart';
 
+import '../common/quivr_result.dart';
+
 class DigestVerifier<T> implements Validation<T> {
+  final Function(T) definedFunction;
+
+  DigestVerifier(this.definedFunction);
+
   @override
-  T? validate(t) => t;
+  QuivrResult<T> validate(t) => definedFunction(t);
 }

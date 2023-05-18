@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
 import 'package:brambl_dart/src/quivr/runtime/dynamic_context.dart';
 import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
 import 'package:brambl_dart/src/quivr/tokens.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:hashlib/hashlib.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
@@ -22,13 +22,12 @@ class Verifier {
     DynamicContext context,
   ) {
     final sb = context.signableBytes;
-    final merge = utf8.encode(tag) + sb;
+    final merge = utf8.encode(tag) + sb.value.toUint8List();
     final verifierTxBind = blake2b256.convert(merge).bytes;
 
-    final result = (verifierTxBind == proofTxBind.value.toUint8List());
+    final result = ListEquality().equals(verifierTxBind, proofTxBind.value.toUint8List());
 
-    /// If the result is false, then the proof is invalid.
-    return !result ? QuivrResult.left(ValidationError.messageAuthorizationFailure()) : QuivrResult.right(result);
+    return result ? QuivrResult.right(result) : QuivrResult.left(ValidationError.messageAuthorizationFailure());
   }
 
   static QuivrResult<bool> evaluateResult(
@@ -72,7 +71,9 @@ class Verifier {
 
     final signedMessage = context.signableBytes;
     final verification = SignatureVerification(
-        verificationKey: proposition.verificationKey, signature: proof.witness, message: Message(value: signedMessage));
+        verificationKey: proposition.verificationKey,
+        signature: proof.witness,
+        message: Message(value: signedMessage.value.toList()));
 
     final evalResult = context.signatureVerify(proposition.routine, verification);
 
@@ -87,13 +88,11 @@ class Verifier {
 
     if (messageResult.isLeft) return messageResult;
 
-    final QuivrResult<Int64> chainHeight = Maybe(context.heightOf(proposition.chain)).fold(
-        (value) => QuivrResult<Int64>.right(value),
-        () => quivrEvaluationAuthorizationFailure<Int64>(proof, proposition));
+    final x = context.heightOf("height");
+    final QuivrResult<Int64> chainHeight =
+        x != null ? QuivrResult<Int64>.right(x) : quivrEvaluationAuthorizationFailure<Int64>(proof, proposition);
 
-    // second condition is redundant,
-    // but we want to make sure that the chain height is not null because of forced promotion
-    if (chainHeight.isLeft && chainHeight.right == null) return QuivrResult<bool>.left(chainHeight.left);
+    if (chainHeight.isLeft) return QuivrResult<bool>.left(chainHeight.left);
 
     final height = chainHeight.right!;
 
@@ -112,7 +111,7 @@ class Verifier {
 
     if (messageResult.isLeft) return messageResult;
 
-    if (context.currentTick < proposition || context.currentTick > proposition.max) {
+    if (context.currentTick < proposition.min || context.currentTick > proposition.max) {
       return quivrEvaluationAuthorizationFailure(proof, proposition);
     }
     final tick = context.currentTick;
@@ -218,9 +217,13 @@ class Verifier {
     if (messageResult.isLeft) return messageResult;
 
     final evalResult = await verify(proposition.proposition, proof.proof, context);
-    if (evalResult.isLeft) return evalResult;
 
-    return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
+    final beforeReturn =
+        evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
+
+    return beforeReturn.isRight
+        ? quivrEvaluationAuthorizationFailure(proof, proposition)
+        : QuivrResult.right(true);
   }
 
   static Future<QuivrResult<bool>> verifyAnd(
@@ -249,15 +252,10 @@ class Verifier {
     if (messageResult.isLeft) return messageResult;
 
     final leftResult = await verify(proposition.left, proof.left, context);
-    if (leftResult.isLeft) return leftResult;
+    if (leftResult.isRight) return QuivrResult.right(true);
 
     final rightResult = await verify(proposition.right, proof.right, context);
-    if (rightResult.isLeft) return rightResult;
-
-    // We're not checking the value of right as it's existence is enough to satisfy this condition
-    if (leftResult.isRight && rightResult.isRight) return QuivrResult.right(true);
-
-    return quivrEvaluationAuthorizationFailure(wrappedProposition, wrappedProof);
+    return rightResult;
   }
 
   static Future<QuivrResult<bool>> verify(Proposition proposition, Proof proof, DynamicContext context) async {
@@ -269,6 +267,8 @@ class Verifier {
       return verifySignature(proposition.digitalSignature, proof.digitalSignature, context);
     } else if (proposition.hasHeightRange() && proof.hasHeightRange()) {
       return verifyHeightRange(proposition.heightRange, proof.heightRange, context);
+    } else if (proposition.hasTickRange() && proof.hasTickRange()) {
+      return verifyTickRange(proposition.tickRange, proof.tickRange, context);
     } else if (proposition.hasLessThan() && proof.hasLessThan()) {
       return verifyLessThan(proposition.lessThan, proof.lessThan, context);
     } else if (proposition.hasGreaterThan() && proof.hasGreaterThan()) {

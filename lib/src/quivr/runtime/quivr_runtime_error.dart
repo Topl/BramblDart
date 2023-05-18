@@ -14,6 +14,11 @@ class ValidationError implements QuivrRunTimeError{
   factory ValidationError.messageAuthorizationFailure({String? context}) => ValidationError(ValidationErrorType.messageAuthorizationFailure, context);
   factory ValidationError.lockedPropositionIsUnsatisfiable({String? context}) => ValidationError(ValidationErrorType.lockedPropositionIsUnsatisfiable, context);
   factory ValidationError.userProvidedInterfaceFailure({String? context}) => ValidationError(ValidationErrorType.userProvidedInterfaceFailure, context);
+
+  @override
+  String toString() {
+    return 'ContextError{message: $message, type: $type}';
+  }
 }
 
 enum ValidationErrorType {
@@ -37,6 +42,11 @@ class ContextError implements QuivrRunTimeError {
   factory ContextError.failedToFindSignatureVerifier({String? context}) => ContextError(ContextErrorType.failedToFindSignatureVerifier, context);
   factory ContextError.failedToFindDatum({String? context}) => ContextError(ContextErrorType.failedToFindDatum, context);
   factory ContextError.failedToFindInterface({String? context}) => ContextError(ContextErrorType.failedToFindInterface, context);
+
+  @override
+  String toString() {
+    return 'ContextError{message: $message, type: $type}';
+  }
 }
 
 enum ContextErrorType {

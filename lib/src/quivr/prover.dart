@@ -23,6 +23,8 @@ class Prover {
     return TxBind()..value = h;
   }
 
+  static Proof lockedProver() => Proof()..locked = Proof_Locked();
+
   static Proof digestProver(Preimage preimage, SignableBytes message) => Proof()
     ..digest = Proof_Digest(
         transactionBind: _blake2b56ToTxBind(Tokens.digest, message),

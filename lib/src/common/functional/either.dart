@@ -80,33 +80,14 @@ class Either<L, R> {
 
   /// Converts the Either to an Option, returning the value on the left of the Either if it exists, otherwise None
   Option<L> toOptionLeft() => isLeft ? Some(left as L) : None();
+
+  @override
+  String toString() {
+    return 'Either{_left: $_left, _right: $_right}';
+  }
 }
 
 
-/// A container class that represents a value that may or may not exist.
-class Maybe<T> extends Option<T> {
-  final T? _value;
-
-  Option<T> get value => _value == null ? None() : Some<T>(_value as T);
-
-  Maybe(this._value);
-
-  @override
-  T getOrElse(T defaultValue) {
-    // TODO: implement getOrElse
-    throw UnimplementedError();
-  }
-
-  @override
-  T getOrThrow(Object exception) {
-    // TODO: implement getOrThrow
-    throw UnimplementedError();
-  }
-
-  @override
-  // TODO: implement isDefined
-  bool get isDefined => throw UnimplementedError();
-}
 
 
 class Some<T> extends Option<T> {
@@ -149,6 +130,7 @@ abstract class Option<T> {
 
   Option<U> flatMap<U>(Option<U> Function(T) f) =>
       isDefined ? f(getOrElse(null as T)) : None();
+
 
   U fold<U>(U Function(T) onDefined, U Function() onUndefined) =>
       isDefined ? onDefined(getOrElse(null as T)) : onUndefined();
