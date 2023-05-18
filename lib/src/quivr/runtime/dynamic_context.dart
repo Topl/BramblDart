@@ -29,7 +29,7 @@ class DynamicContext {
 
   Int64? Function(String) heightOf;
 
-  /// can return [ContextError.FailedToFindSignatureVerifier]
+  /// can return wrapped[ContextError.failedToFindDigestVerifier]
   QuivrResult<DigestVerification> digestVerify(String routine, DigestVerification verification) {
     var verifier = hashingRoutines.containsKey(routine) ? hashingRoutines[routine] : null;
 
@@ -42,7 +42,7 @@ class DynamicContext {
     return QuivrResult<DigestVerification>.right(result.right);
   }
 
-  /// can return [ContextError.failedToFindSignatureVerifier]
+  /// can return wrapped [ContextError.failedToFindSignatureVerifier]
   QuivrResult<SignatureVerification> signatureVerify(String routine, SignatureVerification verification) {
     var verifier = signingRoutines.containsKey(routine) ? signingRoutines[routine] : null;
 
@@ -55,7 +55,7 @@ class DynamicContext {
     return QuivrResult<SignatureVerification>.right(result.right);
   }
 
-  /// can return [ContextError.failedToFindInterface]
+  /// can return wrapped [ContextError.failedToFindInterface]
   QuivrResult<Data> useInterface(String label) {
     var interface = interfaces.containsKey(label) ? interfaces[label] : null;
 
