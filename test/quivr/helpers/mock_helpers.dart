@@ -1,4 +1,3 @@
-import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:brambl_dart/brambl_dart.dart';

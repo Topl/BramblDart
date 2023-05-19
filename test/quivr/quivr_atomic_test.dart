@@ -1,10 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:brambl_dart/brambl_dart.dart';
-import 'package:brambl_dart/src/quivr/proposer.dart';
-import 'package:brambl_dart/src/quivr/prover.dart';
 import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
-import 'package:brambl_dart/src/quivr/verifier.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:test/test.dart';
@@ -12,8 +9,8 @@ import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
-import 'mock_helpers.dart';
-import 'very_secure_signature_routine.dart';
+import 'helpers/mock_helpers.dart';
+import 'helpers/very_secure_signature_routine.dart';
 
 main() {
   group('Quivr Atomic', () {

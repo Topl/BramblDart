@@ -7,8 +7,9 @@ import 'package:fixnum/fixnum.dart';
 import 'package:test/test.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
-import 'mock_helpers.dart';
-import 'very_secure_signature_routine.dart';
+import 'helpers/mock_helpers.dart';
+import 'helpers/very_secure_signature_routine.dart';
+
 
 main() {
   group('Quivr Composite', () {
