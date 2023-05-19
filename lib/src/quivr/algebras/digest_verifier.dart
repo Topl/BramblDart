@@ -1,9 +1,9 @@
 
-import 'package:brambl_dart/src/quivr/common/validation.dart';
+import 'package:brambl_dart/src/quivr/common/contextless_validation.dart';
 
 import '../common/quivr_result.dart';
 
-class DigestVerifier<T> implements Validation<T> {
+class DigestVerifier<T> implements ContextlessValidation<T> {
   final Function(T) definedFunction;
 
   DigestVerifier(this.definedFunction);

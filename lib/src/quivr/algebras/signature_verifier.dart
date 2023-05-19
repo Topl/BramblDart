@@ -1,9 +1,9 @@
 
 
+import 'package:brambl_dart/src/quivr/common/contextless_validation.dart';
 import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
-import 'package:brambl_dart/src/quivr/common/validation.dart';
 
-class SignatureVerifier<T> implements Validation<T> {
+class SignatureVerifier<T> implements ContextlessValidation<T> {
 
   final Function(T) definedFunction;
 
