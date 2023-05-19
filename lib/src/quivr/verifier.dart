@@ -88,7 +88,7 @@ class Verifier {
 
     if (messageResult.isLeft) return messageResult;
 
-    final x = context.heightOf("height");
+    final x = context.heightOf(proposition.chain);
     final QuivrResult<Int64> chainHeight =
         x != null ? QuivrResult<Int64>.right(x) : quivrEvaluationAuthorizationFailure<Int64>(proof, proposition);
 
