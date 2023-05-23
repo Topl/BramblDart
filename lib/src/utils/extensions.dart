@@ -21,6 +21,8 @@ extension StringListExtension on List<String> {
   }
 }
 
+
+
 extension Uint8ListExtension on Uint8List {
 
   /// Converts a [Uint8List] to a hex string.
@@ -28,3 +30,23 @@ extension Uint8ListExtension on Uint8List {
     return hex.encode(this);
   }
 }
+
+extension IntList on List<int> {
+
+  /// Converts a List<int> to a [Uint8List].
+  Uint8List toUint8List() {
+    return Uint8List.fromList(this);
+  }
+
+  BigInt get toBigInt {
+    final data = Int8List.fromList(this).buffer.asByteData();
+    BigInt bigInt = BigInt.zero;
+
+    for (var i = 0; i < data.lengthInBytes; i++) {
+      bigInt = (bigInt << 8) | BigInt.from(data.getUint8(i));
+    }
+    return bigInt;
+  }
+}
+
+

@@ -1,12 +1,13 @@
-import 'package:pointycastle/digests/blake2b.dart';
 import 'dart:typed_data';
+
+import 'package:pointycastle/digests/blake2b.dart';
 
 /// An interface for Blake2b hash functions.
 abstract class Blake2b {
   /// Computes the digest of the specified [bytes].
   ///
   /// Returns the resulting digest as a [Uint8List].
-  Uint8List hash(List<Uint8List> bytes);
+  Uint8List hash(Uint8List bytes);
 }
 
 /// A 256 bit (32 byte) implementation of Blake2b
@@ -17,12 +18,11 @@ class Blake2b256 implements Blake2b {
   ///
   /// Returns the resulting digest as a 32-byte [Uint8List].
   @override
-  Uint8List hash(List<Uint8List> bytes) {
+  Uint8List hash(Uint8List bytes) {
     final out = Uint8List(32);
-    for (final b in bytes) {
-      _digest.update(b, 0, b.length);
-    }
-    _digest.doFinal(out, 0);
+    _digest
+      ..update(bytes, 0, bytes.length)
+      ..doFinal(out, 0);
     return out;
   }
 
@@ -40,12 +40,11 @@ class Blake2b512 implements Blake2b {
   ///
   /// Returns the resulting digest as a 64-byte [Uint8List].
   @override
-  Uint8List hash(List<Uint8List> bytes) {
+  Uint8List hash(Uint8List bytes) {
     final out = Uint8List(64);
-    for (final b in bytes) {
-      _digest.update(b, 0, b.length);
-    }
-    _digest.doFinal(out, 0);
+    _digest
+      ..update(bytes, 0, bytes.length)
+      ..doFinal(out, 0);
     return out;
   }
 }
