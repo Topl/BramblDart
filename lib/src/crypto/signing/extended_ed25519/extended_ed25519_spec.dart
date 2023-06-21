@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart' as spec;
 import 'package:brambl_dart/src/crypto/signing/signing.dart';
+import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
+import 'package:pointycastle/export.dart';
 
 mixin ExtendedEd25519Spec {
   static const int signatureLength = 64;
@@ -23,6 +25,38 @@ mixin ExtendedEd25519Spec {
       seed.sublist(32, 64),
       seed.sublist(64, 96),
     );
+  }
+
+  /// ED-25519 Base Order N
+  ///
+  /// Equivalent to `2^252 + 27742317777372353535851937790883648493`
+  static final BigInt edBaseN = BigInt.parse(
+    '7237005577332262213973186563042994240857116359379907606001950938285454250989',
+  );
+
+  static Either<InvalidDerivedKey, SecretKey> validate(SecretKey value) {
+    return Either.conditional(
+      leftNumber(value) % edBaseN != BigInt.zero,
+      right: value,
+      left: InvalidDerivedKey(),
+    );
+  }
+
+  static BigInt leftNumber(SecretKey secretKey) {
+    return secretKey.leftKey.fromLittleEndian();
+  }
+
+  static BigInt rightNumber(SecretKey secretKey) {
+    return secretKey.rightKey.fromLittleEndian();
+  }
+
+  static Uint8List hmac512WithKey(Uint8List key, Uint8List data) {
+    final mac = HMac(SHA512Digest(), 64);
+    mac.init(KeyParameter(key));
+    mac.update(data, 0, data.length);
+    final out = Uint8List(64);
+    mac.doFinal(out, 0);
+    return out;
   }
 }
 
@@ -83,40 +117,6 @@ class PublicKey extends VerificationKey with ExtendedEd25519Spec {
 
   @override
   int get hashCode => vk.hashCode ^ const ListEquality().hash(chainCode);
-}
-
-/// ED-25519 Base Order N
-///
-/// Equivalent to `2^252 + 27742317777372353535851937790883648493`
-final BigInt edBaseN = BigInt.parse(
-  '7237005577332262213973186563042994240857116359379907606001950938285454250989',
-);
-
-Either<InvalidDerivedKey, SecretKey> validate(SecretKey value) {
-  return Either.conditional(
-    leftNumber(value) % edBaseN != BigInt.zero,
-    right: value,
-    left: InvalidDerivedKey(),
-  );
-}
-
-BigInt leftNumber(SecretKey secretKey) {
-  throw UnimplementedError();
-  // return BigInt.from(secretKey.leftKey.reversed.toList());
-}
-
-BigInt rightNumber(SecretKey secretKey) {
-  throw UnimplementedError();
-  // return BigInt.from(secretKey.rightKey.reversed.toList());
-}
-
-Uint8List hmac512WithKey(Uint8List key, Uint8List data) {
-  throw UnimplementedError();
-  // final mac = HMac(SHA512Digest(), 64);
-  // mac.update(data, 0, data.length);
-  // final out = Uint8List(64);
-  // mac.doFinal(out, 0);
-  // return out;
 }
 
 class InvalidDerivedKey implements Exception {}

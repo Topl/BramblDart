@@ -19,22 +19,22 @@ abstract class EllipticCurveSignatureScheme<SK extends SigningKey, VK extends Ve
   }
 
   /// Derive a key pair from a seed.
-  Future<KeyPair<SK, VK>> deriveKeyPairFromSeed(Uint8List seed) async {
-    final secretKey = await deriveSecretKeyFromSeed(seed);
-    final verificationKey = await getVerificationKey(secretKey);
+  KeyPair<SK, VK> deriveKeyPairFromSeed(Uint8List seed)  {
+    final secretKey =  deriveSecretKeyFromSeed(seed);
+    final verificationKey =  getVerificationKey(secretKey);
     return KeyPair(secretKey, verificationKey);
   }
 
   /// Derive a secret key from a seed.
-  Future<SK> deriveSecretKeyFromSeed(Uint8List seed);
+  SK deriveSecretKeyFromSeed(Uint8List seed);
 
 
   /// Sign a given message with a given signing key.
-  Future<Uint8List> sign(SK privateKey, Uint8List message);
+  Uint8List sign(SK privateKey, Uint8List message);
 
   /// Verify a signature against a message using the public verification key.
-  Future<bool> verify(Uint8List signature, Uint8List message, VK verifyKey);
+  bool verify(Uint8List signature, Uint8List message, VK verifyKey);
 
   /// Get the public key from the secret key
-  Future<VK> getVerificationKey(SK privateKey);
+  VK getVerificationKey(SK privateKey);
 }

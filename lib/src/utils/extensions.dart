@@ -29,6 +29,12 @@ extension Uint8ListExtension on Uint8List {
   String toHexString() {
     return hex.encode(this);
   }
+
+  BigInt fromLittleEndian() {
+    final reversed = this.reversed.toList();
+    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    return BigInt.parse(hex, radix: 16);
+  }
 }
 
 extension IntExtension on int {

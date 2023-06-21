@@ -8,9 +8,11 @@ import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
 
 class Ed25519 extends EC {
-  final _digest = SHA512();
+  final defaultDigest = SHA512();
   final _random = Random.secure();
 
+  /// Updates a SHA512 hash with the domain separation constant [DOM2_PREFIX],
+  /// a flag indicating whether the message is prehashed [phflag], and a context value [context].
   void _dom2(SHA512 d, int phflag, Uint8List ctx) {
     if (ctx.isNotEmpty) {
       d.update(DOM2_PREFIX.toUtf8Uint8List(), 0, DOM2_PREFIX.length);
@@ -28,7 +30,7 @@ class Ed25519 extends EC {
   }
 
   void generatePublicKey(Uint8List sk, int skOff, Uint8List pk, int pkOff, {SHA512? digest}) {
-    final d = digest ?? _digest;
+    final d = digest ?? defaultDigest;
 
     final h = Uint8List(d.digestSize);
     d.update(sk, skOff, SECRET_KEY_SIZE);
@@ -50,7 +52,7 @@ class Ed25519 extends EC {
   /// 5. Update the hash context with the point `R`, the public key, and the message hash.
   /// 6. Compute the scalar `k` and the signature scalar `S` using the `calculateS` function.
   /// 7. Copy the values of `R` and `S` into the signature buffer.
-  void _implSignWithDigestAndPublicKey(
+  void implSignWithDigestAndPublicKey(
       SHA512 digest,
       Uint8List h,
       Uint8List s,
@@ -108,7 +110,7 @@ class Ed25519 extends EC {
   /// 4. Call the `implSignWithDigestAndPublicKey` function with the computed values and the remaining arguments.
   ///
   /// Throws an [ArgumentError] if the context variable is invalid.
-  void _implSignWithPrivateKey(
+  void implSignWithPrivateKey(
     Uint8List sk,
     int skOffset,
     Uint8List context,
@@ -124,9 +126,9 @@ class Ed25519 extends EC {
     }
 
     // Compute the SHA-512 hash of the private key.
-    final h = Uint8List(_digest.digestSize);
-    _digest.update(sk, skOffset, SECRET_KEY_SIZE);
-    _digest.doFinal(h, 0);
+    final h = Uint8List(defaultDigest.digestSize);
+    defaultDigest.update(sk, skOffset, SECRET_KEY_SIZE);
+    defaultDigest.doFinal(h, 0);
 
     // Prune the hash to obtain a 32-byte scalar value.
     final s = Uint8List(SCALAR_BYTES);
@@ -137,8 +139,8 @@ class Ed25519 extends EC {
     scalarMultBaseEncoded(s, pk, 0);
 
     // Call the `implSignWithDigestAndPublicKey` function with the computed values and the remaining arguments.
-    _implSignWithDigestAndPublicKey(
-      _digest,
+    implSignWithDigestAndPublicKey(
+      defaultDigest,
       h,
       s,
       pk,
@@ -161,7 +163,7 @@ class Ed25519 extends EC {
   /// 2. Prune the hash to obtain a 32-byte scalar value.
   /// 3. Call the `implSignWithDigestAndPublicKey` function with the computed scalar value and the remaining arguments.
   ///
-  void _implSignWithPrivateKeyAndPublicKey(
+  void implSignWithPrivateKeyAndPublicKey(
     Uint8List sk,
     int skOffset,
     Uint8List pk,
@@ -180,17 +182,17 @@ class Ed25519 extends EC {
     }
 
     // Compute the SHA-512 hash of the private key.
-    final h = Uint8List(_digest.digestSize);
-    _digest.update(sk, skOffset, SECRET_KEY_SIZE);
-    _digest.doFinal(h, 0);
+    final h = Uint8List(defaultDigest.digestSize);
+    defaultDigest.update(sk, skOffset, SECRET_KEY_SIZE);
+    defaultDigest.doFinal(h, 0);
 
     // Prune the hash to obtain a 32-byte scalar value.
     final s = Uint8List(SCALAR_BYTES);
     pruneScalar(h, 0, s);
 
     // Call the `implSignWithDigestAndPublicKey` function with the computed values and the remaining arguments.
-    _implSignWithDigestAndPublicKey(
-      _digest,
+    implSignWithDigestAndPublicKey(
+      defaultDigest,
       h,
       s,
       pk,
@@ -234,12 +236,12 @@ class Ed25519 extends EC {
     if (!decodePointVar(pk, pkOffset, negate: true, r: pA)) return false;
 
     // Compute the SHA-512 hash of the message and the other parameters.
-    final h = Uint8List(_digest.digestSize);
-    _dom2(_digest, phflag, context);
-    _digest.update(R, 0, POINT_BYTES);
-    _digest.update(pk, pkOffset, POINT_BYTES);
-    _digest.update(message, messageOffset, messageLength);
-    _digest.doFinal(h, 0);
+    final h = Uint8List(defaultDigest.digestSize);
+    _dom2(defaultDigest, phflag, context);
+    defaultDigest.update(R, 0, POINT_BYTES);
+    defaultDigest.update(pk, pkOffset, POINT_BYTES);
+    defaultDigest.update(message, messageOffset, messageLength);
+    defaultDigest.doFinal(h, 0);
 
     // Reduce the hash to obtain a scalar value.
     final k = reduceScalar(h);
@@ -303,7 +305,7 @@ class Ed25519 extends EC {
 
     if (pk != null && pkOffset != null) {
       // do signing with pk and context
-      _implSignWithPrivateKeyAndPublicKey(
+      implSignWithPrivateKeyAndPublicKey(
         sk,
         skOffset,
         pk,
@@ -317,7 +319,7 @@ class Ed25519 extends EC {
         signatureOffset,
       );
     } else {
-      _implSignWithPrivateKey(
+      implSignWithPrivateKey(
         sk,
         skOffset,
         ctx,
