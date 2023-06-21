@@ -1,8 +1,6 @@
-
 // **************************************************************************
 // Basic Functional Logic Types that allow us to use simple functional programming concepts
 // **************************************************************************
-
 
 /// A container class that represents one of two possible values.
 /// An `Either` instance is either a `Left` value, or a `Right` value.
@@ -80,14 +78,17 @@ class Either<L, R> {
   /// Converts the Either to an Option, returning the value on the left of the Either if it exists, otherwise None
   Option<L> toOptionLeft() => isLeft ? Some(left as L) : None();
 
+  /// Returns the value on the right of the Either if it exists, otherwise returns the result of the provided function
+  static Either<L, R> conditional<L, R>(bool condition,
+      {required L left, required R right}) {
+    return condition ? Either.right(right) : Either.left(left);
+  }
+
   @override
   String toString() {
     return 'Either{_left: $_left, _right: $_right}';
   }
 }
-
-
-
 
 class Some<T> extends Option<T> {
   final T value;
@@ -130,8 +131,6 @@ abstract class Option<T> {
   Option<U> flatMap<U>(Option<U> Function(T) f) =>
       isDefined ? f(getOrElse(null as T)) : None();
 
-
   U fold<U>(U Function(T) onDefined, U Function() onUndefined) =>
       isDefined ? onDefined(getOrElse(null as T)) : onUndefined();
-
 }

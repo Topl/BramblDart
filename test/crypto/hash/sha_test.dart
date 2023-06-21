@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 ///
 /// returns the resulting digest as a [String].
 String _doHashCheck(String input, SHA sha) {
-  final byteArray = sha.hash([input.toUtf8Uint8List()]);
+  final byteArray = sha.hash(input.toUtf8Uint8List());
   return byteArray.toHexString();
 }
 
