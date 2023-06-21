@@ -1,13 +1,12 @@
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
 import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart';
 import 'package:brambl_dart/src/crypto/signing/elliptic_curve_signature_scheme.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:cryptography/cryptography.dart' as eddsa; // as wrapped
 
 /// Implementation of Ed25519 elliptic curve signature
-class Ed25519 extends EllipticCurveSignatureScheme<SecretKey, PublicKey> {
+class Ed25519 extends EllipticCurveSignatureSchemeAsync<SecretKey, PublicKey> {
   final ed25519 = eddsa.Ed25519();
 
   Ed25519() : super(seedLength: Ed25519Spec.seedLength);
