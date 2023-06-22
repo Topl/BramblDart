@@ -4,7 +4,6 @@ import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/generation/key_initializer/initialization_failure.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/language.dart';
-import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_brambl.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart' as spec;
 import 'package:brambl_dart/src/crypto/signing/signing.dart';

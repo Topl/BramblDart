@@ -1,4 +1,3 @@
-import 'dart:js_interop';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -12,7 +11,8 @@ class Ed25519 extends EC {
   final _random = Random.secure();
 
   /// Updates a SHA512 hash with the domain separation constant [DOM2_PREFIX],
-  /// a flag indicating whether the message is prehashed [phflag], and a context value [context].
+  /// a flag indicating whether the message is prehashed [phflag], and a context value [context].'
+  /// todo: seems to resolve
   void _dom2(SHA512 d, int phflag, Uint8List ctx) {
     if (ctx.isNotEmpty) {
       d.update(DOM2_PREFIX.toUtf8Uint8List(), 0, DOM2_PREFIX.length);
@@ -29,6 +29,7 @@ class Ed25519 extends EC {
     throw UnimplementedError("Not checked");
   }
 
+  // Todo: resolves
   void generatePublicKey(Uint8List sk, int skOff, Uint8List pk, int pkOff, {SHA512? digest}) {
     final d = digest ?? defaultDigest;
 
@@ -137,6 +138,7 @@ class Ed25519 extends EC {
     // Compute the public key by scalar multiplication of the base point with the scalar value.
     final pk = Uint8List(POINT_BYTES);
     scalarMultBaseEncoded(s, pk, 0);
+    print(pk);
 
     // Call the `implSignWithDigestAndPublicKey` function with the computed values and the remaining arguments.
     implSignWithDigestAndPublicKey(
@@ -284,14 +286,14 @@ class Ed25519 extends EC {
     Uint8List? context,
     int? phflag,
   }) {
-    assert(sk.isEmpty, 'Secret key must not be empty');
+    assert(sk.isNotEmpty, 'Secret key must not be empty');
     assert(skOffset >= 0, 'Secret key offset must be non-negative');
     assert(skOffset + SECRET_KEY_SIZE <= sk.length, 'Secret key offset and length exceed the bounds of the secret key');
     // assert(message.isEmpty, 'Message must not be empty');
     assert(messageOffset >= 0, 'Message offset must be non-negative');
     assert(messageLength >= 0, 'Message length must be non-negative');
     assert(messageOffset + messageLength <= message.length, 'Offset and Length exceed the bounds of the message');
-    assert(signature.isEmpty, 'Signature must not be Empty');
+    assert(signature.isNotEmpty, 'Signature must not be Empty');
     assert(signatureOffset >= 0, 'Signature offset must be non-negative');
     assert(
         signatureOffset + SIGNATURE_SIZE <= signature.length, 'Offset and length exceed the bounds of the signature');
@@ -356,7 +358,7 @@ class Ed25519 extends EC {
     final phOff = phOffset ?? 0;
 
     if (phSha == null && ph == null) throw ArgumentError('Prehash is null');
-    if (phSha.isNull && ph != null) {
+    if (phSha == null && ph != null) {
       sign(
           sk: sk,
           skOffset: skOffset,
@@ -369,7 +371,7 @@ class Ed25519 extends EC {
           messageLength: PREHASH_SIZE,
           signature: signature,
           signatureOffset: signatureOffset);
-    } else if (phSha != null && ph.isNull) {
+    } else if (phSha != null && ph == null) {
       final m = Uint8List(PREHASH_SIZE);
       if (PREHASH_SIZE != phSha.doFinal(m, 0)) {
         throw ArgumentError('Prehash Invalid');
@@ -442,7 +444,7 @@ class Ed25519 extends EC {
     final phflag = 0x01;
 
     if (phSha == null && ph == null) throw ArgumentError('Prehash is null');
-    if (phSha.isNull && ph != null) {
+    if (phSha == null && ph != null) {
       return _implVerify(
         signature,
         signatureOffset,
@@ -454,7 +456,7 @@ class Ed25519 extends EC {
         phOff,
         PREHASH_SIZE,
       );
-    } else if (phSha != null && ph.isNull) {
+    } else if (phSha != null && ph == null) {
       final m = Uint8List(PREHASH_SIZE);
       if (PREHASH_SIZE != phSha.doFinal(m, 0)) {
         throw ArgumentError('Prehash as Sha Invalid');

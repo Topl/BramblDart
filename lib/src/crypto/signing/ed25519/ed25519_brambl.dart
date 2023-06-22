@@ -1,12 +1,16 @@
 import 'dart:typed_data';
 
+import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart';
 import 'package:brambl_dart/src/crypto/signing/eddsa/ed25519.dart' as eddsa;
+import 'package:brambl_dart/src/crypto/signing/elliptic_curve_signature_scheme.dart';
 
 import 'ed25519_spec.dart' as spec;
 
 /// Ed25519 native implementation ported from BramblSC Scala.
-class Ed25519Bramble {
+class Ed25519Bramble extends EllipticCurveSignatureScheme<spec.SecretKey, spec.PublicKey> {
   final impl = eddsa.Ed25519();
+
+  Ed25519Bramble() : super(seedLength: Ed25519Spec.seedLength);
 
   /// Signs a given message with a given signing key.
   ///
@@ -14,6 +18,7 @@ class Ed25519Bramble {
   /// Postconditions: the signature must be a valid Ed25519 signature - thus having a length of 64 bytes
   ///
   /// Returns the signature.
+  @override
   Uint8List sign(spec.SecretKey privateKey, Uint8List message) {
     final sig = Uint8List(spec.Ed25519Spec.signatureLength);
     impl.sign(
@@ -34,6 +39,7 @@ class Ed25519Bramble {
   /// Preconditions: the signature must be a valid Ed25519 signature
   ///
   /// Returns `true` if the signature is verified; otherwise `false`.
+  @override
   bool verify(Uint8List signature, Uint8List message, spec.PublicKey publicKey) {
     final sigByteArray = signature;
     final vkByteArray = publicKey.bytes;
@@ -60,6 +66,8 @@ class Ed25519Bramble {
   /// The `secretKey` parameter is the secret key.
   ///
   /// Returns the public verification key.
+  /// TODO: resolves
+  @override
   spec.PublicKey getVerificationKey(spec.SecretKey secretKey) {
     final pkBytes = Uint8List(spec.Ed25519Spec.publicKeyLength);
     impl.generatePublicKey(
@@ -81,6 +89,8 @@ class Ed25519Bramble {
   /// The `seed` parameter is the seed.
   ///
   /// Returns the secret signing key.
+  /// TODO: resolves
+  @override
   spec.SecretKey deriveSecretKeyFromSeed(Uint8List seed) {
     if (seed.length < spec.Ed25519Spec.seedLength) {
       throw ArgumentError(

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/crypto/signing/eddsa/x25519_field.dart' as x25519_field;
@@ -191,6 +193,7 @@ class EC {
     return !gte256(n, L);
   }
 
+  /// Decodes a 24-bit integer from a byte array starting at the specified offset.
   int decode24(Uint8List bs, int off) {
     var n = (bs[off] & 0xff);
     n |= ((bs[off + 1] & 0xff) << 8);
@@ -198,6 +201,7 @@ class EC {
     return n;
   }
 
+/// Decodes a 32-bit integer from the given byte array starting at the specified offset.
   int decode32v(Uint8List bs, int off) {
     var n = (bs[off].toByte & 0xff);
     n |= ((bs[off + 1].toByte & 0xff) << 8);
@@ -252,6 +256,7 @@ class EC {
     encode24((n.shiftRightUnsigned(32)).toInt32().toInt(), bs, off + 4);
   }
 
+  // todo: resolves
   void encodePoint(PointAccum p, Uint8List r, int rOff) {
     final x = x25519_field.create;
     final y = x25519_field.create;
@@ -574,6 +579,7 @@ class EC {
     return (precompBaseTable, precompBase);
   }
 
+  // todo: resolves
   void pruneScalar(Uint8List n, int nOff, Uint8List r) {
     for (int i = 0; i < SCALAR_BYTES; i++) {
       r[i] = n[nOff + i].toByte;
@@ -584,6 +590,15 @@ class EC {
   }
 
   Uint8List reduceScalar(Uint8List n) {
+    final L0 = Int32(0xfcf5d3ed); // L0:26/--
+    final L1 = Int32(0x012631a6); // L1:24/22
+    final L2 = Int32(0x079cd658); // L2:27/--
+    final L3 = Int32(0xff9dea2f); // L3:23/--
+    final L4 = Int32(0x000014df); // L4:12/11
+
+    final M28L = Int64(0x0fffffff);
+    final M32L = Int64(0xffffffff);
+
     var x00 = Int64(decode32v(n, 0)) & M32L; // x00:32/--
     var x01 = Int64((decode24(n, 4)) << 4) & M32L; // x01:28/--
     var x02 = Int64(decode32v(n, 7)) & M32L; // x02:32/--
@@ -602,7 +617,7 @@ class EC {
     var x15 = Int64((decode24(n, 53)) << 4) & M32L; // x15:28/--
     var x16 = Int64(decode32v(n, 56)) & M32L; // x16:32/--
     var x17 = Int64((decode24(n, 60)) << 4) & M32L; // x17:28/--
-    final x18 = Int64(n[63]) & Int64(0xff); // x18:08/-- TODO?
+    final x18 = Int64(n[63]) & Int64(0xff); // x18:08/--
     var t = Int64(0);
     x09 -= x18 * L0; // x09:34/28
     x10 -= x18 * L1; // x10:33/30
@@ -721,6 +736,7 @@ class EC {
     return r;
   }
 
+  // todo: resolves
   void scalarMultBase(Uint8List k, PointAccum r) {
     pointSetNeutralAccum(r);
     final n = Int32List(SCALAR_INTS);
@@ -755,6 +771,7 @@ class EC {
     return r;
   }
 
+  // todo: resolves
   void scalarMultBaseEncoded(Uint8List k, Uint8List r, int rOff) {
     final p = PointAccum.create();
     scalarMultBase(k, p);
@@ -798,17 +815,10 @@ const PUBLIC_KEY_SIZE = POINT_BYTES;
 const SECRET_KEY_SIZE = 32;
 const SIGNATURE_SIZE = POINT_BYTES + SCALAR_BYTES;
 const DOM2_PREFIX = "SigEd25519 no Ed25519 collisions";
-final M28L = Int64(0x0fffffff);
-final M32L = Int64(0xffffffff);
 final P = Int32List.fromList(
     [0xffffffed, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0x7fffffff]);
 final L = Int32List.fromList(
     [0x5cf5d3ed, 0x5812631a, 0xa2f79cd6, 0x14def9de, 0x00000000, 0x00000000, 0x00000000, 0x10000000]);
-final L0 = Int32(0xfcf5d3ed);
-final L1 = Int32(0x012631a6);
-final L2 = Int32(0x079cd658);
-final L3 = Int32(0xff9dea2f);
-final L4 = Int32(0x000014df);
 
 final B_x = Int32List.fromList([
   0x0325d51a,

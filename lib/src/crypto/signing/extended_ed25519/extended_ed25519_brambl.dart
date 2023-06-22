@@ -8,7 +8,6 @@ import 'package:brambl_dart/src/crypto/signing/elliptic_curve_signature_scheme.d
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
 import 'package:brambl_dart/src/crypto/signing/signing.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
-// import 'package:cryptography/cryptography.dart' as eddsa; // as wrapped
 
 class ExtendedEd25519 extends EllipticCurveSignatureScheme<SecretKey, PublicKey> {
   final impl = eddsa.Ed25519();
@@ -120,15 +119,22 @@ class ExtendedEd25519 extends EllipticCurveSignatureScheme<SecretKey, PublicKey>
   ///
   /// Returns an extended secret key.
   SecretKey deriveChildSecretKey(SecretKey secretKey, Bip32Index index) {
+    // Get the left and right numbers from the secret key
     final lNum = ExtendedEd25519Spec.leftNumber(secretKey);
     final rNum = ExtendedEd25519Spec.rightNumber(secretKey);
+
+    // Get the public key from the secret key
     final public = getVerificationKey(secretKey);
 
+    // Construct the HMAC data for z
     final zHmacData = index is SoftIndex
         ? Uint8List.fromList([0x02, ...public.vk.bytes, ...index.bytes])
         : Uint8List.fromList([0x00, ...secretKey.leftKey, ...secretKey.rightKey, ...index.bytes]);
+
+    // Compute z using HMAC-SHA-512 with the chain code as the key
     final z = ExtendedEd25519Spec.hmac512WithKey(secretKey.chainCode, zHmacData);
 
+    // Parse the left and right halves of z as big integers
     final zLeft = BigInt.parse(
         z.sublist(0, 28).reversed.toList().map((e) => e.toRadixString(16).padLeft(2, '0')).join(),
         radix: 16);
@@ -137,21 +143,26 @@ class ExtendedEd25519 extends EllipticCurveSignatureScheme<SecretKey, PublicKey>
         z.sublist(32, 64).reversed.toList().map((e) => e.toRadixString(16).padLeft(2, '0')).join(),
         radix: 16);
 
+    // Compute the next left key by adding zLeft * 8 to the current left key
     final nextLeftPre = (ByteData(8).buffer.asByteData());
-    nextLeftPre.setInt64(0, (zLeft * BigInt.from(8) + lNum).toSigned(64).toInt());
+    final nextLeftBigInt = zLeft * BigInt.from(8) + lNum;
+    nextLeftPre.setInt64(0, nextLeftBigInt.toSigned(64).toInt());
     final nextLeft = nextLeftPre.buffer.asUint8List().reversed.toList().take(32).toList().toUint8List();
 
+    // Compute the next right key by adding zRight to the current right key
     final nextRightPre = (ByteData(8).buffer.asByteData());
     final nextRightBigInt = (zRight + rNum) % BigInt.two.pow(256);
     nextRightPre.setInt64(0, nextRightBigInt.toSigned(64).toInt());
     final nextRight = nextRightPre.buffer.asUint8List().reversed.toList().take(32).toList().toUint8List();
 
+    // Compute the next chain code using HMAC-SHA-512 with the chain code as the key
     final chaincodeHmacData = index is SoftIndex
         ? Uint8List.fromList([0x03, ...public.vk.bytes, ...index.bytes])
         : Uint8List.fromList([0x01, ...secretKey.leftKey, ...secretKey.rightKey, ...index.bytes]);
 
     final nextChainCode = ExtendedEd25519Spec.hmac512WithKey(secretKey.chainCode, chaincodeHmacData).sublist(32, 64);
 
+    // Return the new secret key
     return SecretKey(nextLeft, nextRight, nextChainCode);
   }
 
@@ -162,28 +173,39 @@ class ExtendedEd25519 extends EllipticCurveSignatureScheme<SecretKey, PublicKey>
   /// Returns:
   /// A new `PublicKey` object representing the derived child public key.
   PublicKey deriveChildVerificationKey(PublicKey verificationKey, SoftIndex index) {
+    // Compute the HMAC-SHA-512 of the parent chain code
     final z = ExtendedEd25519Spec.hmac512WithKey(
       verificationKey.chainCode,
       ([0x02] + verificationKey.vk.bytes.toList() + index.bytes.toList()).toUint8List(),
     );
 
+    // Extract the first 28 bytes of the HMAC-SHA-512 output as zL.
     final zL = z.sublist(0, 28);
 
+    // Multiply zL by 8 and convert the result to a little-endian byte array of length 8.
     final zLMult8Pre = ByteData(8).buffer.asByteData();
     zLMult8Pre.setInt64(0, (zL.fromLittleEndian() * BigInt.from(8)).toSigned(64).toInt());
     final zLMult8 = zLMult8Pre.buffer.asUint8List().reversed.toList().take(32).toList();
 
+    // Compute the scalar multiplication of the base point by zL*8 to obtain scaledZL.
     final scaledZL = PointAccum.create();
     impl.scalarMultBase(zLMult8.toUint8List(), scaledZL);
+
+    // Decode the parent public key into a point and add scaledZL to it to obtain the next public key point.
     final publicKeyPoint = PointExt.create();
     impl.decodePointVar(verificationKey.vk.bytes, 0, negate: false, r: publicKeyPoint);
     impl.pointAddVar1(false, publicKeyPoint, scaledZL);
+
+    // Encode the next public key point as a byte array and compute the HMAC-SHA-512 of the parent chain code
     final nextPublicKeyBytes = Uint8List(ExtendedEd25519Spec.publicKeyLength);
     impl.encodePoint(scaledZL, nextPublicKeyBytes.toUint8List(), 0);
+
     final nextChainCode = ExtendedEd25519Spec.hmac512WithKey(
       verificationKey.chainCode,
       ([0x03] + verificationKey.vk.bytes.toList() + index.bytes.toList()).toUint8List(),
     ).sublist(32, 64);
+
+    // Return the next public key and chain code as a PublicKey object.
     return PublicKey(
       ed25519_spec.PublicKey(nextPublicKeyBytes),
       nextChainCode,

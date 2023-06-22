@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/crypto/generation/key_initializer/ed25519_initializer.dart';
 import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519.dart';
+import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_brambl.dart';
+import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart';
+import 'package:brambl_dart/src/crypto/signing/eddsa/ed25519.dart' as eddsa;
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
@@ -33,6 +35,25 @@ main() {
         expect(ListEquality().equals(keyPair.verificationKey.bytes, vk), true);
 
         final resultSignature = await ed25519.sign(keyPair.signingKey, m);
+        expect(ListEquality().equals(resultSignature, sig), true);
+      });
+    }
+  });
+
+  group('Ed25519 Brambl Topl test vectors', () {
+    final ed25519 = Ed25519Bramble();
+    for (final v in ed25519TestVectors) {
+      final vector = parseVector(v);
+      test(vector.description, () {
+        final (sk, m, vk, sig) = hexConvert(vector.secretKey, vector.message, vector.verificationKey, vector.signature);
+        print(sk);
+
+        final signingKey = SecretKey(sk);
+        final verifyKey = ed25519.getVerificationKey(signingKey);
+
+        expect(ListEquality().equals(verifyKey.bytes, vk), true);
+
+        final resultSignature = ed25519.sign(signingKey, m);
         expect(ListEquality().equals(resultSignature, sig), true);
       });
     }
