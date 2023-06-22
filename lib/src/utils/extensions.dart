@@ -37,6 +37,19 @@ extension Uint8ListExtension on Uint8List {
   }
 }
 
+extension Int8ListExtension on Int8List {
+  /// Converts a [Int8List] to a hex string.
+  String toHexString() {
+    return hex.encode(this);
+  }
+
+  BigInt fromLittleEndian() {
+    final reversed = this.reversed.toList();
+    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    return BigInt.parse(hex, radix: 16);
+  }
+}
+
 extension IntExtension on int {
   /// converts an Int from Bytes to bits
   int get toBits => this * 8;
@@ -46,6 +59,10 @@ extension IntList on List<int> {
   /// Converts a List<int> to a [Uint8List].
   Uint8List toUint8List() {
     return Uint8List.fromList(this);
+  }
+
+  Int8List toInt8List() {
+    return Int8List.fromList(this);
   }
 
   toHexString() {

@@ -94,11 +94,12 @@ class Ed25519 extends EC {
 
     // Compute scalar k and signature scalar S
     final k = reduceScalar(h);
-    final S = calculateS(r, k, signature);
+    final S = calculateS(r, k, s);
 
     // Copy R and S values into signature array
     signature.setRange(signatureOffset, signatureOffset + POINT_BYTES, R);
     signature.setRange(signatureOffset + POINT_BYTES, signatureOffset + POINT_BYTES + SCALAR_BYTES, S);
+    print("x"); // TODO: RESOLVE
   }
 
   /// Computes the Ed25519 signature of a message using a private key.

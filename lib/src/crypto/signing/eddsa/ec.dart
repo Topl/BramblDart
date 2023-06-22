@@ -201,7 +201,7 @@ class EC {
     return n;
   }
 
-/// Decodes a 32-bit integer from the given byte array starting at the specified offset.
+  /// Decodes a 32-bit integer from the given byte array starting at the specified offset.
   int decode32v(Uint8List bs, int off) {
     var n = (bs[off].toByte & 0xff);
     n |= ((bs[off + 1].toByte & 0xff) << 8);

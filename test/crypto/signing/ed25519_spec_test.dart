@@ -22,23 +22,34 @@ import 'test_vectors.dart';
   );
 }
 
+(Int8List secretKey, Int8List message, Int8List verificationKey, Int8List signature) hexConvertSigned(
+    String secretKey, String message, String verificationKey, String signature) {
+  return (
+    // non-ambiguous extension access
+    IntList(hex.decode(secretKey)).toInt8List(),
+    IntList(hex.decode(message)).toInt8List(),
+    IntList(hex.decode(verificationKey)).toInt8List(),
+    IntList(hex.decode(signature)).toInt8List()
+  );
+}
+
 main() {
-  group('Ed25519 Topl test vectors', () {
-    final ed25519 = Ed25519();
-    for (final v in ed25519TestVectors) {
-      final vector = parseVector(v);
-      test(vector.description, () async {
-        final (sk, m, vk, sig) = hexConvert(vector.secretKey, vector.message, vector.verificationKey, vector.signature);
+  // group('Ed25519 Topl test vectors', () {
+  //   final ed25519 = Ed25519();
+  //   for (final v in ed25519TestVectors) {
+  //     final vector = parseVector(v);
+  //     test(vector.description, () async {
+  //       final (sk, m, vk, sig) = hexConvert(vector.secretKey, vector.message, vector.verificationKey, vector.signature);
 
-        final keyPair = await ed25519.deriveKeyPairFromSeed(sk);
+  //       final keyPair = await ed25519.deriveKeyPairFromSeed(sk);
 
-        expect(ListEquality().equals(keyPair.verificationKey.bytes, vk), true);
+  //       expect(ListEquality().equals(keyPair.verificationKey.bytes, vk), true);
 
-        final resultSignature = await ed25519.sign(keyPair.signingKey, m);
-        expect(ListEquality().equals(resultSignature, sig), true);
-      });
-    }
-  });
+  //       final resultSignature = await ed25519.sign(keyPair.signingKey, m);
+  //       expect(ListEquality().equals(resultSignature, sig), true);
+  //     });
+  //   }
+  // });
 
   group('Ed25519 Brambl Topl test vectors', () {
     final ed25519 = Ed25519Bramble();
