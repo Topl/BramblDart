@@ -778,27 +778,45 @@ class EC {
     encodePoint(p, r, rOff);
   }
 
+  // This function performs scalar multiplication of a point on an elliptic curve using the Strauss algorithm with variable-time windowing.
   void scalarMultStraussVar(Int32List nb, Int32List np, PointExt p, PointAccum r) {
+    // Set the window size to 5.
     final width = 5;
+
+    // Compute the WNAF of the scalar values nb and np.
     final wsB = getWNAF(nb, WNAF_WIDTH_BASE);
     final wsP = getWNAF(np, width);
+
+    // Compute a precomputed table of points based on the input point p.
     final tp = pointPrecompVar(p, 1 << (width - 2));
+
+    // Initialize the result to the neutral element of the elliptic curve.
     pointSetNeutralAccum(r);
+
+    // Start from the most significant bit and skip over any leading zero bits in both scalar values.
     var bit = 255;
     while (bit > 0 && (wsB[bit] | wsP[bit]) == 0) {
       bit -= 1;
     }
     while (true) {
+      // Get the current bit of the scalar value nb.
       final wb = wsB[bit];
+
+      // If the bit is non-zero,
+      // perform a point addition operation using the corresponding point from the precomputed table.
       if (wb != 0) {
         final sign = wb >> 31;
-        final index = Int32(wb ^ sign).shiftRightUnsigned(1).toInt32().toInt();
+        final index = (wb ^ sign) >> 1;
         pointAddVar1(sign != 0, _precompBaseTable[index], r);
       }
+      // Get the current bit of the scalar value np.
       final wp = wsP[bit];
+
+      // If the bit is non-zero,
+      // perform a point addition operation using the corresponding point from the precomputed table.
       if (wp != 0) {
         final sign = wp >> 31;
-        final index = Int32(wp ^ sign).shiftRightUnsigned(1).toInt32().toInt();
+        final index = (wp ^ sign) >> 1;
         pointAddVar1(sign != 0, tp[index], r);
       }
       if (--bit < 0) break;

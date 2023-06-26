@@ -11,12 +11,10 @@ import 'package:cryptography/cryptography.dart';
 abstract class EntropyToSeed {
   const EntropyToSeed();
 
-  Future<Uint8List> toSeed(Entropy entropy, String? password,
-      {required int seedLength}) async {
+  Future<Uint8List> toSeed(Entropy entropy, String? password, {required int seedLength}) async {
     final kdf = Pbkdf2Sha512();
     // Defaulting to String value of "None", KDF will not accept blank values.
-    return await kdf.generateKey(
-        password ?? "None", entropy.value, seedLength, 4096);
+    return await kdf.generateKey(password ?? "None", entropy.value, seedLength, 4096);
   }
 }
 
@@ -31,22 +29,37 @@ class Pbkdf2Sha512 extends EntropyToSeed {
   /// Applies the [keySizeBytes] to the key and runs [iterations] times.
   ///
   /// Will return a [Uint8List] of the generated key.
-  Future<Uint8List> generateKey(
-      String password, Uint8List salt, int keySizeBytes, int iterations) async {
-    // Uint8List password, Uint8List salt, int keySizeBytes, int iterations) async {
-    // final generator = PBKDF2KeyDerivator(HMac.sha512());
-    // final params = Pbkdf2Parameters(salt, iterations, keySizeBytes.toBits);
-    // generator.init(params);
-    // return generator.process(password);
-
-    final kdf = Pbkdf2(
-      macAlgorithm: Hmac.sha512(),
+  Future<Uint8List> generateKey(String password, Uint8List salt, int keySizeBytes, int iterations) async {
+    
+    final kdf = Pkcs5S2ParametersGenerator(
+      hmac: Hmac.sha512(),
       iterations: iterations,
-      bits: keySizeBytes.toBits,
+      keyLengthBytes: keySizeBytes,
     );
 
-    final key =
-        await kdf.deriveKeyFromPassword(password: password, nonce: salt);
-    return (await key.extractBytes()).toUint8List();
+    return await kdf.generateParameters(password, salt);
+  }
+}
+
+class Pkcs5S2ParametersGenerator {
+  final Hmac hmac;
+  final int keyLengthBytes;
+  final int iterations;
+
+  Pkcs5S2ParametersGenerator({required this.hmac, required this.keyLengthBytes, required this.iterations});
+
+  Future<Uint8List> generateParameters(String password, Uint8List salt) async {
+    // Create a PBKDF2 instance with the given parameters.
+    final pbkdf2 = Pbkdf2(
+      macAlgorithm: hmac,
+      iterations: iterations,
+      bits: keyLengthBytes * 8,
+    );
+
+    // Generate the derived key using the password and salt.
+    final derivedKey = await pbkdf2.deriveKeyFromPassword(password: password, nonce: salt);
+
+    // Return the derived key as the PKCS5S2 parameters.
+    return (await derivedKey.extractBytes()).toUint8List();
   }
 }

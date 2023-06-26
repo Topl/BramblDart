@@ -5,7 +5,7 @@ import 'package:pointycastle/digests/sha256.dart';
 import 'package:pointycastle/digests/sha512.dart';
 
 /// An interface for Sha hash functions.
-sealed class SHA {
+abstract class SHA {
   late final Digest _digest;
 
   /// Computes the digest of the specified [bytes].
