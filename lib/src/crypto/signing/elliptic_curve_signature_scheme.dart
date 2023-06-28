@@ -9,12 +9,12 @@ abstract class EllipticCurveSignatureScheme<SK extends SigningKey, VK extends Ve
 
   EllipticCurveSignatureScheme({required this.seedLength});
   /// Generate a key pair from a given entropy and password.
-  Future<KeyPair<SK, VK>> deriveKeyPairFromEntropy(
+  KeyPair<SK, VK> deriveKeyPairFromEntropy(
     Entropy entropy,
     String? passphrase, {
     EntropyToSeed entropyToSeed = const Pbkdf2Sha512(),
-  }) async {
-    final seed = await entropyToSeed.toSeed(entropy, passphrase, seedLength: seedLength);
+  })  {
+    final seed = entropyToSeed.toSeed(entropy, passphrase, seedLength: seedLength);
     return deriveKeyPairFromSeed(seed);
   }
 
@@ -37,40 +37,4 @@ abstract class EllipticCurveSignatureScheme<SK extends SigningKey, VK extends Ve
 
   /// Get the public key from the secret key
   VK getVerificationKey(SK privateKey);
-}
-
-
-abstract class EllipticCurveSignatureSchemeAsync<SK extends SigningKey, VK extends VerificationKey> {
-  final int seedLength;
-
-  EllipticCurveSignatureSchemeAsync({required this.seedLength});
-  /// Generate a key pair from a given entropy and password.
-  Future<KeyPair<SK, VK>> deriveKeyPairFromEntropy(
-    Entropy entropy,
-    String? passphrase, {
-    EntropyToSeed entropyToSeed = const Pbkdf2Sha512(),
-  }) async {
-    final seed = await entropyToSeed.toSeed(entropy, passphrase, seedLength: seedLength);
-    return deriveKeyPairFromSeed(seed);
-  }
-
-  /// Derive a key pair from a seed.
-  Future<KeyPair<SK, VK>> deriveKeyPairFromSeed(Uint8List seed)  async {
-    final secretKey =  await deriveSecretKeyFromSeed(seed);
-    final verificationKey =  await getVerificationKey(secretKey);
-    return KeyPair(secretKey, verificationKey);
-  }
-
-  /// Derive a secret key from a seed.
-  Future<SK> deriveSecretKeyFromSeed(Uint8List seed);
-
-
-  /// Sign a given message with a given signing key.
-  Future<Uint8List> sign(SK privateKey, Uint8List message);
-
-  /// Verify a signature against a message using the public verification key.
-  Future<bool> verify(Uint8List signature, Uint8List message, VK verifyKey);
-
-  /// Get the public key from the secret key
-  Future<VK> getVerificationKey(SK privateKey);
 }

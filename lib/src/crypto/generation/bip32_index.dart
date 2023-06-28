@@ -1,13 +1,17 @@
 import 'dart:typed_data';
 
+import 'package:brambl_dart/src/utils/extensions.dart';
+
 sealed class Bip32Index {
   final int value;
 
   Bip32Index(this.value);
 
   Uint8List get bytes {
-    final buffer = ByteData(8)..setInt64(0, value);
-    return buffer.buffer.asUint8List().sublist(0, 4);
+    final buffer = ByteData(4)..setInt32(0, value);
+    final bufList = buffer.buffer.asUint8List();
+    final rev = bufList.reversed.toList();
+    return rev.sublist(0, 4).toUint8List();
   }
 }
 

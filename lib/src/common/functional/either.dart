@@ -45,20 +45,16 @@ class Either<L, R> {
   }
 
   /// Maps the value on the right of the Either using a provided function
-  Either<L, T> map<T>(T Function(R) f) =>
-      isRight ? Either.right(f(right as R)) : Either.left(left);
+  Either<L, T> map<T>(T Function(R) f) => isRight ? Either.right(f(right as R)) : Either.left(left);
 
   /// Applies a function to the value on the right of the Either if it exists, otherwise returns the current Either
-  Either<L, T> flatMap<T>(Either<L, T> Function(R) f) =>
-      isRight ? f(right as R) : Either.left(left!);
+  Either<L, T> flatMap<T>(Either<L, T> Function(R) f) => isRight ? f(right as R) : Either.left(left);
 
   /// Maps the value on the left of the Either using a provided function
-  Either<T, R> mapLeft<T>(T Function(L) f) =>
-      isLeft ? Either.left(f(left as L)) : Either.right(right);
+  Either<T, R> mapLeft<T>(T Function(L) f) => isLeft ? Either.left(f(left as L)) : Either.right(right);
 
   /// Applies a function to the value on the left of the Either if it exists, otherwise returns the current Either
-  Either<T, R> flatMapLeft<T>(Either<T, R> Function(L) f) =>
-      isLeft ? f(left as L) : Either.right(right!);
+  Either<T, R> flatMapLeft<T>(Either<T, R> Function(L) f) => isLeft ? f(left as L) : Either.right(right);
 
   /// Returns the value on the right of the Either if it exists, otherwise returns the provided default value
   R getOrElse(R defaultValue) => isRight ? right! : defaultValue;
@@ -79,8 +75,7 @@ class Either<L, R> {
   Option<L> toOptionLeft() => isLeft ? Some(left as L) : None();
 
   /// Returns the value on the right of the Either if it exists, otherwise returns the result of the provided function
-  static Either<L, R> conditional<L, R>(bool condition,
-      {required L left, required R right}) {
+  static Either<L, R> conditional<L, R>(bool condition, {required L left, required R right}) {
     return condition ? Either.right(right) : Either.left(left);
   }
 
@@ -103,6 +98,16 @@ class Some<T> extends Option<T> {
 
   @override
   T getOrThrow(Exception exception) => value;
+
+  @override
+  Option<U> map<U>(U Function(T) f) {
+    return Some(f(value));
+  }
+
+  @override
+  void forEach(void Function(T p1) f) {
+    f(value);
+  }
 }
 
 class None<T> extends Option<T> {
@@ -116,6 +121,12 @@ class None<T> extends Option<T> {
 
   @override
   T getOrThrow(Exception exception) => throw exception;
+
+  @override
+  Option<U> map<U>(U Function(T t) f) => None();
+
+  @override
+  void forEach(void Function(T p1) f) => None();
 }
 
 abstract class Option<T> {
@@ -125,11 +136,11 @@ abstract class Option<T> {
 
   T getOrThrow(Exception exception);
 
-  Option<U> map<U>(U Function(T) f) =>
-      isDefined ? Some(f(getOrElse(null as T))) : None();
+  void forEach(void Function(T) f);
 
-  Option<U> flatMap<U>(Option<U> Function(T) f) =>
-      isDefined ? f(getOrElse(null as T)) : None();
+  Option<U> map<U>(U Function(T t) f);
+
+  Option<U> flatMap<U>(Option<U> Function(T) f) => isDefined ? f(getOrElse(null as T)) : None();
 
   U fold<U>(U Function(T) onDefined, U Function() onUndefined) =>
       isDefined ? onDefined(getOrElse(null as T)) : onUndefined();

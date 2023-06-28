@@ -1,11 +1,11 @@
-class TestVector {
+class Ed25519TestVector {
   final String description;
   final String secretKey;
   final String message;
   final String verificationKey;
   final String signature;
 
-  TestVector({
+  Ed25519TestVector({
     required this.description,
     required this.secretKey,
     required this.message,
@@ -19,11 +19,11 @@ class TestVector {
   }
 }
 
-TestVector parseVector(Map<String, Object> vector) {
+Ed25519TestVector parseVector(Map<String, Object> vector) {
   final input = vector['inputs'] as Map<String, Object>;
   final output = vector['outputs'] as Map<String, Object>;
 
-  return TestVector(
+  return Ed25519TestVector(
     description: vector['description'] as String,
     secretKey: input['secretKey'] as String,
     message: input['message'] as String,

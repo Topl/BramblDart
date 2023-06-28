@@ -4,7 +4,7 @@ import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:pointycastle/api.dart';
 
 /// super class for all Password Based Encryption (PBE) parameter generator classes.
-/// Port from Java Bouncy Castle
+/// Port from Bouncy Castle Java
 abstract class PBEParametersGenerator {
   late Uint8List password;
   late Uint8List salt;

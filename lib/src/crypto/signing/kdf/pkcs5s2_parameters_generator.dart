@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:brambl_dart/src/crypto/signing/kdf/pbe_parameters_generator.dart' as brambl;
 import 'package:pointycastle/api.dart';
-import 'package:pointycastle/key_derivators/api.dart';
 import 'package:pointycastle/macs/hmac.dart';
 
 /// Generator for PBE derived keys and ivs as defined by PKCS 5 V2.0 Scheme 2.
@@ -11,13 +10,13 @@ import 'package:pointycastle/macs/hmac.dart';
 /// The document this implementation is based on can be found at
 /// <a href=https://www.rsasecurity.com/rsalabs/pkcs/pkcs-5/index.html>
 /// RSA's PKCS5 Page</a>
-/// 
+///
 /// Ported from Bouncy Castle Java
 
 class PKCS5S2ParametersGenerator extends brambl.PBEParametersGenerator {
   /// construct a PKCS5 Scheme 2 Parameters generator.
-  PKCS5S2ParametersGenerator(hmac) {
-    _hmac = HMac.withDigest(hmac);
+  PKCS5S2ParametersGenerator(Digest digest) {
+    _hmac = HMac.withDigest(digest);
     _state = Uint8List(_hmac.macSize);
   }
   late Mac _hmac;
@@ -54,7 +53,7 @@ class PKCS5S2ParametersGenerator extends brambl.PBEParametersGenerator {
     final outBytes = Uint8List(l * hLen);
     var outPos = 0;
 
-    final param = Pbkdf2Parameters(salt, iterationCount, hLen);
+    final param = KeyParameter(password);
 
     _hmac.init(param);
 

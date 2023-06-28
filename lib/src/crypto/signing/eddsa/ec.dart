@@ -1,8 +1,9 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names
 
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/crypto/signing/eddsa/x25519_field.dart' as x25519_field;
+import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 
 /*
@@ -46,7 +47,6 @@ class EC {
   late final Int32List _precompBase;
 
   EC() {
-    // print('EC');
     final precompute = _precompute();
     _precompBaseTable = precompute.$1;
     _precompBase = precompute.$2;
@@ -784,8 +784,11 @@ class EC {
     final width = 5;
 
     // Compute the WNAF of the scalar values nb and np.
-    final wsB = getWNAF(nb, WNAF_WIDTH_BASE);
-    final wsP = getWNAF(np, width);
+    // NOTE: We're converting to signed here because signed bits
+    // operations don't work the same as unsigned bit operations
+    // In the scala code we use Signed bits everywhere while we use Unsigned bits in the dart code.
+    final wsB = getWNAF(nb, WNAF_WIDTH_BASE).toSigned();
+    final wsP = getWNAF(np, width).toSigned();
 
     // Compute a precomputed table of points based on the input point p.
     final tp = pointPrecompVar(p, 1 << (width - 2));
@@ -806,7 +809,7 @@ class EC {
       // perform a point addition operation using the corresponding point from the precomputed table.
       if (wb != 0) {
         final sign = wb >> 31;
-        final index = (wb ^ sign) >> 1;
+        final index = (wb ^ sign) >>> 1;
         pointAddVar1(sign != 0, _precompBaseTable[index], r);
       }
       // Get the current bit of the scalar value np.
@@ -816,7 +819,7 @@ class EC {
       // perform a point addition operation using the corresponding point from the precomputed table.
       if (wp != 0) {
         final sign = wp >> 31;
-        final index = (wp ^ sign) >> 1;
+        final index = (wp ^ sign) >>> 1;
         pointAddVar1(sign != 0, tp[index], r);
       }
       if (--bit < 0) break;

@@ -38,7 +38,8 @@ abstract class SHA {
 ///
 /// Returns the hash as a [Uint8List].
 class SHA256 extends SHA {
-  @override
+  
+  // ignore: overridden_fields, annotate_overrides
   final SHA256Digest _digest = SHA256Digest();
 
   @override
@@ -58,6 +59,7 @@ class SHA512 extends SHA {
   @override
   final digestSize = SHA512Digest().digestSize;
 
+  // ignore: overridden_fields, annotate_overrides
   final SHA512Digest _digest = SHA512Digest();
 
   @override
@@ -69,3 +71,4 @@ class SHA512 extends SHA {
     return out;
   }
 }
+

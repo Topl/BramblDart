@@ -67,11 +67,7 @@ class Ed25519 extends EC {
       Uint8List signature,
       int signatureOffset) {
     // Add domain separator to hash context
-    _dom2(
-      digest,
-      phflag,
-      context,
-    );
+    _dom2(digest, phflag, context);
 
     // Update hash context with message hash
     digest.update(h, SCALAR_BYTES, SCALAR_BYTES);
@@ -99,7 +95,7 @@ class Ed25519 extends EC {
     // Copy R and S values into signature array
     signature.setRange(signatureOffset, signatureOffset + POINT_BYTES, R);
     signature.setRange(signatureOffset + POINT_BYTES, signatureOffset + POINT_BYTES + SCALAR_BYTES, S);
-    print("x"); // TODO: RESOLVE
+    print("hello world");
   }
 
   /// Computes the Ed25519 signature of a message using a private key.
@@ -139,7 +135,6 @@ class Ed25519 extends EC {
     // Compute the public key by scalar multiplication of the base point with the scalar value.
     final pk = Uint8List(POINT_BYTES);
     scalarMultBaseEncoded(s, pk, 0);
-    print(pk);
 
     // Call the `implSignWithDigestAndPublicKey` function with the computed values and the remaining arguments.
     implSignWithDigestAndPublicKey(

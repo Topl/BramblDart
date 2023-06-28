@@ -10,10 +10,10 @@ import 'package:brambl_dart/src/crypto/generation/mnemonic/language.dart';
 /// Provides functionality for creating secret keys
 abstract class KeyInitializer<SK extends SigningKey> {
   /// creates a random secret key
-  Future<SK> random();
+  SK random();
 
   /// creates a secret key from the given seed
-  Future<SK> fromEntropy(Entropy entropy, {String? password});
+  SK fromEntropy(Entropy entropy, {String? password});
 
   /// creates an instance of a secret key given a byte array
   SK fromBytes(Uint8List bytes);

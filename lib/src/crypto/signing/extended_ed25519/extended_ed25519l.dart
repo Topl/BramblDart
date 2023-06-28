@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:brambl_dart/brambl_dart.dart';
 import 'package:brambl_dart/src/crypto/generation/bip32_index.dart';
 import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart' as ed25519_spec;
 import 'package:brambl_dart/src/crypto/signing/eddsa/ec.dart';
@@ -35,7 +36,7 @@ class ExtendedEd25519 extends EllipticCurveSignatureScheme<SecretKey, PublicKey>
 
     impl.scalarMultBaseEncoded(privateKey.leftKey, pk, 0);
     impl.implSignWithDigestAndPublicKey(
-      impl.defaultDigest,
+      SHA512(),
       h,
       s,
       pk,
@@ -133,27 +134,20 @@ class ExtendedEd25519 extends EllipticCurveSignatureScheme<SecretKey, PublicKey>
 
     // Compute z using HMAC-SHA-512 with the chain code as the key
     final z = ExtendedEd25519Spec.hmac512WithKey(secretKey.chainCode, zHmacData);
-
     // Parse the left and right halves of z as big integers
-    final zLeft = BigInt.parse(
-        z.sublist(0, 28).reversed.toList().map((e) => e.toRadixString(16).padLeft(2, '0')).join(),
-        radix: 16);
+    final zLeft = z.sublist(0, 28).fromLittleEndian();
 
-    final zRight = BigInt.parse(
-        z.sublist(32, 64).reversed.toList().map((e) => e.toRadixString(16).padLeft(2, '0')).join(),
-        radix: 16);
+    final zRight = z.sublist(32, 64).fromLittleEndian();
 
     // Compute the next left key by adding zLeft * 8 to the current left key
-    final nextLeftPre = (ByteData(8).buffer.asByteData());
     final nextLeftBigInt = zLeft * BigInt.from(8) + lNum;
-    nextLeftPre.setInt64(0, nextLeftBigInt.toSigned(64).toInt());
-    final nextLeft = nextLeftPre.buffer.asUint8List().reversed.toList().take(32).toList().toUint8List();
+    final nextLeftPre = nextLeftBigInt.toUint8List();
+    final nextLeft = nextLeftPre.reversed.toList().sublist(0, 32).toUint8List();
 
     // Compute the next right key by adding zRight to the current right key
-    final nextRightPre = (ByteData(8).buffer.asByteData());
     final nextRightBigInt = (zRight + rNum) % BigInt.two.pow(256);
-    nextRightPre.setInt64(0, nextRightBigInt.toSigned(64).toInt());
-    final nextRight = nextRightPre.buffer.asUint8List().reversed.toList().take(32).toList().toUint8List();
+    final nextRightPre = nextRightBigInt.toUint8List();
+    final nextRight = nextRightPre.reversed.toList().sublist(0, 32).toUint8List();
 
     // Compute the next chain code using HMAC-SHA-512 with the chain code as the key
     final chaincodeHmacData = index is SoftIndex
@@ -183,9 +177,10 @@ class ExtendedEd25519 extends EllipticCurveSignatureScheme<SecretKey, PublicKey>
     final zL = z.sublist(0, 28);
 
     // Multiply zL by 8 and convert the result to a little-endian byte array of length 8.
-    final zLMult8Pre = ByteData(8).buffer.asByteData();
-    zLMult8Pre.setInt64(0, (zL.fromLittleEndian() * BigInt.from(8)).toSigned(64).toInt());
-    final zLMult8 = zLMult8Pre.buffer.asUint8List().reversed.toList().take(32).toList();
+    final zLMult8BigInt = zL.fromLittleEndian() * BigInt.from(8);
+    final zLMult8Pre = zLMult8BigInt.toUint8List();
+    final zLMult8Rev = zLMult8Pre.reversed.toList().toUint8List();
+    final zLMult8 = zLMult8Rev.pad(32).sublist(0, 32).toUint8List();
 
     // Compute the scalar multiplication of the base point by zL*8 to obtain scaledZL.
     final scaledZL = PointAccum.create();
@@ -198,7 +193,7 @@ class ExtendedEd25519 extends EllipticCurveSignatureScheme<SecretKey, PublicKey>
 
     // Encode the next public key point as a byte array and compute the HMAC-SHA-512 of the parent chain code
     final nextPublicKeyBytes = Uint8List(ExtendedEd25519Spec.publicKeyLength);
-    impl.encodePoint(scaledZL, nextPublicKeyBytes.toUint8List(), 0);
+    impl.encodePoint(scaledZL, nextPublicKeyBytes, 0);
 
     final nextChainCode = ExtendedEd25519Spec.hmac512WithKey(
       verificationKey.chainCode,
@@ -271,8 +266,7 @@ class ExtendedEd25519 extends EllipticCurveSignatureScheme<SecretKey, PublicKey>
   /// [secretKey] - the secret key to derive the child key pair from
   /// [indices] - list of indices representing the path of the key pair to derive
   /// Returns the key pair
-  Future<KeyPair<SecretKey, PublicKey>> deriveKeyPairFromChildPath(
-      SecretKey secretKey, List<Bip32Index> indices) async {
+  KeyPair<SecretKey, PublicKey> deriveKeyPairFromChildPath(SecretKey secretKey, List<Bip32Index> indices) {
     var derivedSecretKey = deriveSecretKeyFromChildPath(secretKey, indices);
     return KeyPair(derivedSecretKey, getVerificationKey(derivedSecretKey));
   }

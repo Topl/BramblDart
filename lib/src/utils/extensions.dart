@@ -24,6 +24,24 @@ extension StringListExtension on List<String> {
   }
 }
 
+extension BigIntExtensions on BigInt {
+  /// Converts a [BigInt] to a [Uint8List]
+  Uint8List toUint8List() => toByteData().buffer.asUint8List();
+
+  /// Converts a [BigInt] to a [ByteData]
+  ByteData toByteData() {
+    final data = ByteData((bitLength / 8).ceil());
+    var bigInt = this;
+
+    for (var i = 1; i <= data.lengthInBytes; i++) {
+      data.setUint8(data.lengthInBytes - i, bigInt.toUnsigned(8).toInt());
+      bigInt = bigInt >> 8;
+    }
+
+    return data;
+  }
+}
+
 extension Uint8ListExtension on Uint8List {
   /// Converts a [Uint8List] to a hex string.
   String toHexString() {
@@ -35,6 +53,24 @@ extension Uint8ListExtension on Uint8List {
     final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
+
+  BigInt fromBigEndian() {
+    final hex = map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    return BigInt.parse(hex, radix: 16);
+  }
+
+  Int8List toSigned() {
+    return Int8List.fromList(this);
+  }
+
+  Uint8List pad(int targetSize) {
+  if (length >= targetSize) {
+    return this;
+  }
+  final paddingSize = targetSize - length;
+  final padding = Uint8List(paddingSize);
+  return Uint8List.fromList([...this, ...padding]);
+}
 }
 
 extension Int8ListExtension on Int8List {

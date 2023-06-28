@@ -5,6 +5,7 @@ import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart' as spe
 import 'package:brambl_dart/src/crypto/signing/signing.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
+import 'package:cryptography/cryptography.dart';
 import 'package:pointycastle/export.dart';
 
 mixin ExtendedEd25519Spec {
@@ -51,7 +52,7 @@ mixin ExtendedEd25519Spec {
   }
 
   static Uint8List hmac512WithKey(Uint8List key, Uint8List data) {
-    final mac = HMac(SHA512Digest(), 64);
+    final mac = HMac.withDigest(SHA512Digest());
     mac.init(KeyParameter(key));
     mac.update(data, 0, data.length);
     final out = Uint8List(64);
@@ -101,6 +102,8 @@ class SecretKey extends SigningKey with ExtendedEd25519Spec {
 class PublicKey extends VerificationKey with ExtendedEd25519Spec {
   final spec.PublicKey vk;
   final Uint8List chainCode;
+
+  Uint8List get verificationBytes => vk.bytes;
 
   PublicKey(this.vk, this.chainCode) {
     if (chainCode.length != ExtendedEd25519Spec.keyLength) {
