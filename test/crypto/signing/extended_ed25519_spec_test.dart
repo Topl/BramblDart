@@ -12,7 +12,7 @@ import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:test/test.dart';
 
-import 'helpers/generators.dart';
+import '../helpers/generators.dart';
 import 'test_vectors/ckd_ed25519_vectors.dart';
 import 'test_vectors/ed25519_vectors.dart';
 
@@ -36,7 +36,7 @@ main() {
 
       for (final v in extendedEd25519TestVectors) {
         final vector = parseVector(v);
-        test(vector.description, () {
+        test("Extended Ed25519: ${vector.description}", () {
           final (sk, m, vk, sig) =
               hexConvert(vector.secretKey, vector.message, vector.verificationKey, vector.signature);
 
@@ -130,7 +130,7 @@ main() {
     group('ed25519 Child Key Derivation tests', () {
       for (final x in ckdEd25519Vectors) {
         final vector = CkdEd25519TestVector.fromJson(x);
-        test(vector.description, () {
+        test("Child Key Derivation: ${vector.description}", () {
           final xEd25519 = ExtendedEd25519();
 
           /// Derive child key pair from root key pair and path

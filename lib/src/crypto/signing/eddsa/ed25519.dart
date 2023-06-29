@@ -95,7 +95,6 @@ class Ed25519 extends EC {
     // Copy R and S values into signature array
     signature.setRange(signatureOffset, signatureOffset + POINT_BYTES, R);
     signature.setRange(signatureOffset + POINT_BYTES, signatureOffset + POINT_BYTES + SCALAR_BYTES, S);
-    print("hello world");
   }
 
   /// Computes the Ed25519 signature of a message using a private key.

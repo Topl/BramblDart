@@ -37,11 +37,7 @@ class Phrase {
     final size = sizeResult.right!;
 
     final phrase = Phrase(
-      value: words
-          .toLowerCase()
-          .split(RegExp('\\s+'))
-          .map((w) => w.trim())
-          .toList(),
+      value: words.toLowerCase().split(RegExp('\\s+')).map((w) => w.trim()).toList(),
       size: size,
       languageWords: wordList,
     );
@@ -61,6 +57,31 @@ class Phrase {
         left: PhraseFailure.invalidChecksum(context: words), right: phrase);
   }
 
+  static String _calculateChecksum(String entropyBinaryString, MnemonicSize size) {
+    // Get the first `entropyLength` number of bits from the entropy binary string
+    final entropyBits = entropyBinaryString.substring(0, size.entropyLength);
+
+    // split the bits into groups of 8 bits
+    final entropyBytes = <int>[];
+    for (var i = 0; i < entropyBits.length; i += byteLength) {
+      final byte = entropyBits.substring(i, i + byteLength);
+      entropyBytes.add(int.parse(byte, radix: 2));
+    }
+
+    // hash the entropy bytes
+    final sha256Digest = SHA256().hash(Uint8List.fromList(entropyBytes));
+    final hashBytes = sha256Digest.toUint8List();
+
+    final hashBits = <String>[];
+    for (final byte in hashBytes) {
+      hashBits.add(_byteTo8BitString(byte));
+    }
+
+    final hashBinaryString = hashBits.join();
+    final checksumBinaryString = hashBinaryString.substring(0, size.checksumLength);
+    return checksumBinaryString;
+  }
+
   static Future<Either<PhraseFailure, Phrase>> fromEntropy({
     required Entropy entropy,
     required MnemonicSize size,
@@ -70,8 +91,8 @@ class Phrase {
       return Either.left(PhraseFailure.invalidEntropyLength());
     }
 
-    final wordListResult = (await LanguageWordList.validated(language))
-        .flatMapLeft((p0) => Either.left(PhraseFailure.wordListFailure()));
+    final wordListResult =
+        (await LanguageWordList.validated(language)).flatMapLeft((p0) => Either.left(PhraseFailure.wordListFailure()));
 
     if (wordListResult.isLeft && wordListResult.left != null) {
       return Either.left(wordListResult.left);
@@ -86,8 +107,7 @@ class Phrase {
     final phraseBinaryString = entropyBinaryString + checksum;
     final phraseWords = <String>[];
     for (var i = 0; i < phraseBinaryString.length; i += 11) {
-      final index =
-          int.parse(phraseBinaryString.substring(i, i + 11), radix: 2);
+      final index = int.parse(phraseBinaryString.substring(i, i + 11), radix: 2);
       phraseWords.add(wordList.value[index]);
     }
     return Either.right(Phrase(
@@ -105,20 +125,6 @@ class Phrase {
         .join()
         .splitAt(phrase.size.entropyLength);
     return binaryString;
-  }
-
-  static String _calculateChecksum(
-      String entropyBinaryString, MnemonicSize size) {
-    final entropyBytes = entropyBinaryString
-        .substring(0, size.entropyLength)
-        .split('')
-        .buffered(size.entropyLength ~/ byteLength)
-        .map((bits) => int.parse(bits.join(), radix: 2))
-        .toList();
-    final sha256Digest = SHA256().hash(Uint8List.fromList(entropyBytes));
-    final checksumBytes = sha256Digest.sublist(0, size.checksumLength ~/ 8);
-    final checksumBinaryString = checksumBytes.map(_byteTo8BitString).join();
-    return checksumBinaryString;
   }
 
   static String _byteTo8BitString(int byte) {
@@ -140,11 +146,9 @@ class PhraseFailure implements Exception {
   factory PhraseFailure.invalidWordLength({String? context}) =>
       PhraseFailure(PhraseFailureType.invalidWordLength, context);
 
-  factory PhraseFailure.invalidWords({String? context}) =>
-      PhraseFailure(PhraseFailureType.invalidWords, context);
+  factory PhraseFailure.invalidWords({String? context}) => PhraseFailure(PhraseFailureType.invalidWords, context);
 
-  factory PhraseFailure.invalidChecksum({String? context}) =>
-      PhraseFailure(PhraseFailureType.invalidChecksum, context);
+  factory PhraseFailure.invalidChecksum({String? context}) => PhraseFailure(PhraseFailureType.invalidChecksum, context);
 
   factory PhraseFailure.invalidEntropyLength({String? context}) =>
       PhraseFailure(PhraseFailureType.invalidEntropyLength, context);

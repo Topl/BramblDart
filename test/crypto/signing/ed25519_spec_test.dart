@@ -9,7 +9,7 @@ import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:test/test.dart';
 
-import 'helpers/generators.dart';
+import '../helpers/generators.dart';
 import 'test_vectors/ed25519_vectors.dart';
 
 main() {
@@ -29,7 +29,7 @@ main() {
       final ed25519 = Ed25519();
       for (final v in ed25519TestVectors) {
         final vector = parseVector(v);
-        test(vector.description, () {
+        test("ed25519: ${vector.description}", () {
           final (sk, m, vk, sig) =
               hexConvert(vector.secretKey, vector.message, vector.verificationKey, vector.signature);
 
