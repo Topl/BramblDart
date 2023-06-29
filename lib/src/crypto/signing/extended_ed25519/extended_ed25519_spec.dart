@@ -5,7 +5,6 @@ import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart' as spe
 import 'package:brambl_dart/src/crypto/signing/signing.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
-import 'package:cryptography/cryptography.dart';
 import 'package:pointycastle/export.dart';
 
 mixin ExtendedEd25519Spec {
