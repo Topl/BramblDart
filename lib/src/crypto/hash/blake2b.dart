@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:pointycastle/digests/blake2b.dart';
 
 /// An interface for Blake2b hash functions.
-abstract class Blake2b {
+abstract class Blake2b<Digest> {
   /// Computes the digest of the specified [bytes].
   ///
   /// Returns the resulting digest as a [Uint8List].
@@ -11,7 +11,7 @@ abstract class Blake2b {
 }
 
 /// A 256 bit (32 byte) implementation of Blake2b
-class Blake2b256 implements Blake2b {
+class Blake2b256<Digest> implements Blake2b<Digest> {
   final Blake2bDigest _digest = Blake2bDigest(digestSize: 32);
 
   /// Computes the digest of the specified [bytes].
