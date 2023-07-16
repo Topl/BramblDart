@@ -1,50 +1,105 @@
 import 'dart:typed_data';
 
+import 'package:brambl_dart/src/common/functional/either.dart';
+import 'package:brambl_dart/src/crypto/hash/digest/digest.dart';
+import 'package:brambl_dart/src/crypto/hash/hash.dart';
+import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:pointycastle/digests/blake2b.dart';
 
 /// An interface for Blake2b hash functions.
-abstract class Blake2b<Digest> {
+sealed class Blake2b extends Hash {
   /// Computes the digest of the specified [bytes].
   ///
   /// Returns the resulting digest as a [Uint8List].
+  @override
   Uint8List hash(Uint8List bytes);
+
+  /// Hashes a set of messages with an optional prefix.
+  ///
+  /// [prefix] the optional prefix byte of the hashed message
+  /// [messages] the set of messages to iteratively hash
+  /// Returns the hash digest
+  @override
+  Digest hashComplex({int? prefix, required List<Message> messages});
 }
 
 /// A 256 bit (32 byte) implementation of Blake2b
-class Blake2b256<Digest> implements Blake2b<Digest> {
-  final Blake2bDigest _digest = Blake2bDigest(digestSize: 32);
+class Blake2b256 extends Blake2b {
+  final Blake2bDigest _digest = Blake2bDigest(digestSize: Digest32.size);
 
   /// Computes the digest of the specified [bytes].
   ///
   /// Returns the resulting digest as a 32-byte [Uint8List].
   @override
   Uint8List hash(Uint8List bytes) {
-    final out = Uint8List(32);
+    final out = Uint8List(_digest.digestSize);
     _digest
       ..update(bytes, 0, bytes.length)
       ..doFinal(out, 0);
     return out;
   }
 
-  Uint8List toHash(Uint8List data) {
-    final digest = Blake2bDigest(digestSize: 32);
-    return digest.process(data);
+  @override
+  Digest hashComplex({int? prefix, required List<Message> messages}) {
+    // update digest with prefix and messages
+    if (prefix != null) {
+      for (final byte in prefix.toBytes) {
+        _digest.updateByte(byte);
+      }
+    }
+    
+    for (var m in messages) {
+      _digest.update(m, 0, m.length);
+    }
+
+    final res = Message(_digest.digestSize);
+
+    // calling .doFinal resets to a default state
+    _digest.doFinal(res, 0);
+
+    final Either<InvalidDigestFailure, Digest> x = Digest32.from(res);
+    if (x.isLeft) {
+      throw (Exception(x.left!.message));
+    }
+    return x.right!;
   }
 }
 
 /// A 512 bit (64 byte) implementation of Blake2b
-class Blake2b512 implements Blake2b {
-  final Blake2bDigest _digest = Blake2bDigest(digestSize: 64);
+class Blake2b512 extends Blake2b {
+  final Blake2bDigest _digest = Blake2bDigest(digestSize: Digest64.size);
 
   /// Computes the digest of the specified [bytes].
   ///
   /// Returns the resulting digest as a 64-byte [Uint8List].
   @override
   Uint8List hash(Uint8List bytes) {
-    final out = Uint8List(64);
+    final out = Uint8List(_digest.digestSize);
     _digest
       ..update(bytes, 0, bytes.length)
       ..doFinal(out, 0);
     return out;
+  }
+
+  @override
+  Digest hashComplex({int? prefix, required List<Message> messages}) {
+    // update digest with prefix and messages
+    if (prefix != null) {
+      _digest.update(prefix.toBytes, 0, 1);
+    }
+    for (var m in messages) {
+      _digest.update(m, 0, m.length);
+    }
+
+    final res = Message(_digest.digestSize);
+
+    // calling .doFinal resets to a default state
+    _digest.doFinal(res, 0);
+
+    final Either<InvalidDigestFailure, Digest> x = Digest64.from(res);
+    if (x.isLeft) {
+      throw (Exception(x.left!.message));
+    }
+    return x.right!;
   }
 }

@@ -17,4 +17,10 @@ class Side {
   final int value;
 
   const Side(this.value);
+
+  @override
+  bool operator ==(Object other) => identical(this, other) || other is Side && value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
 }

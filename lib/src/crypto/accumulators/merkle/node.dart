@@ -1,52 +1,47 @@
+import 'dart:typed_data';
 
+import 'package:brambl_dart/src/crypto/accumulators/accumulators.dart';
+import 'package:brambl_dart/src/crypto/accumulators/merkle/merkle_tree.dart';
+import 'package:brambl_dart/src/crypto/hash/digest/digest.dart';
+import 'package:brambl_dart/src/crypto/hash/hash.dart';
+import 'package:brambl_dart/src/utils/extensions.dart';
 
+sealed class Node {
+  Digest get hash;
+}
 
-// abstract class Node<D extends Digest> {
-//   D get hash;
-// }
+/// Internal node in Merkle tree
+///
+/// @param left  - left child. always non-empty
+/// @param right - right child. can be emptyNode
+class InternalNode extends Node {
+  final Node left;
+  final Node? right;
+  final Hash h;
 
-// class InternalNode<H, D extends Digest> extends Node<D> {
-//   final Node<D> left;
-//   final Node<D>? right;
-//   final Hash<H, D> h;
+  InternalNode(this.left, this.right, this.h);
 
-//   InternalNode(this.left, this.right, this.h);
+  @override
+  Digest get hash {
+    final prefix = MerkleTree.internalNodePrefix;
+    final leftBytes = left.hash.bytes;
+    final rightBytes = right?.hash.bytes ?? Uint8List(0);
+    return h.hashWithPrefix(prefix, [leftBytes, rightBytes]);
+  }
+}
 
-//   @override
-//   D get hash {
-//     final rightHashBytes = right?.hash.bytes ?? Uint8List(0);
-//     final hashBytes = Uint8List.fromList([
-//       ...MerkleTree.InternalNodePrefix,
-//       ...left.hash.bytes,
-//       ...rightHashBytes,
-//     ]);
-//     return h.hash(hashBytes);
-//   }
-// }
+class Leaf extends Node {
+  final LeafData data;
+  final Hash h;
 
-// class Leaf<H, D extends Digest> extends Node<D> {
-//   final LeafData data;
-//   final Hash<H, D> h;
+  Leaf({
+    required this.data,
+    required this.h,
+  });
 
-//   Leaf(this.data, this.h);
-
-//   @override
-//   D get hash {
-//     final hashBytes = Uint8List.fromList([
-//       ...MerkleTree.LeafPrefix,
-//       ...data.value,
-//     ]);
-//     return h.hash(hashBytes);
-//   }
-// }
-
-// class LeafData {
-//   final Uint8List value;
-
-//   LeafData(this.value);
-// }
-
-// class MerkleTree {
-//   static const InternalNodePrefix = 0x01;
-//   static const LeafPrefix = 0x00;
-// }
+  @override
+  Digest get hash {
+    final prefix = MerkleTree.leafPrefix;
+    return h.hashWithPrefix(prefix, [data.value.toUint8List()]);
+  }
+}
