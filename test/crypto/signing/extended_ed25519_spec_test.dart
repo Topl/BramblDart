@@ -8,7 +8,6 @@ import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519l.dart';
 import 'package:brambl_dart/src/crypto/signing/signing.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
-import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:test/test.dart';
 
@@ -90,9 +89,7 @@ main() {
           final keyPair1 = xEd25519.deriveKeyPairFromEntropy(entropy, null);
           final keyPair2 = xEd25519.deriveKeyPairFromEntropy(entropy, null);
 
-          expect(ListEquality().equals(keyPair1.signingKey.leftKey, keyPair2.signingKey.leftKey), true);
-          expect(ListEquality().equals(keyPair1.signingKey.chainCode, keyPair2.signingKey.chainCode), true);
-          expect(ListEquality().equals(keyPair1.signingKey.rightKey, keyPair2.signingKey.rightKey), true);
+          expect(keyPair1, keyPair2);
         }
       });
     });
@@ -118,13 +115,7 @@ main() {
 
       final keys = xEd25519.deriveKeyPairFromEntropy(e, p);
 
-      expect(ListEquality().equals(keys.signingKey.leftKey, specOut.signingKey.leftKey), true);
-      expect(ListEquality().equals(keys.signingKey.chainCode, specOut.signingKey.chainCode), true);
-      expect(ListEquality().equals(keys.signingKey.rightKey, specOut.signingKey.rightKey), true);
-
-      expect(ListEquality().equals(keys.verificationKey.chainCode, specOut.verificationKey.chainCode), true);
-      expect(ListEquality().equals(keys.verificationKey.verificationBytes, specOut.verificationKey.verificationBytes),
-          true);
+      expect(keys, specOut);
     });
 
     group('ed25519 Child Key Derivation tests', () {
@@ -147,36 +138,17 @@ main() {
                   ? xEd25519.deriveChildVerificationKey(xvk, ind)
                   : throw Exception('Received hardened index when soft index was expected')));
 
-          expect(ListEquality().equals(dChildXSK.leftKey, vector.childSecretKey.leftKey), true);
-          expect(ListEquality().equals(dChildXSK.chainCode, vector.childSecretKey.chainCode), true);
-          expect(ListEquality().equals(dChildXSK.rightKey, vector.childSecretKey.rightKey), true);
+          expect(dChildXSK, vector.childSecretKey);
+          expect(fromDerivedChildSkXVK, vector.childVerificationKey);
 
-          expect(ListEquality().equals(fromDerivedChildSkXVK.chainCode, vector.childVerificationKey.chainCode), true);
-          expect(
-              ListEquality()
-                  .equals(fromDerivedChildSkXVK.verificationBytes, vector.childVerificationKey.verificationBytes),
-              true);
-
-          expect(ListEquality().equals(dChildKeyPair.signingKey.leftKey, vector.childSecretKey.leftKey), true);
-          expect(ListEquality().equals(dChildKeyPair.signingKey.chainCode, vector.childSecretKey.chainCode), true);
-          expect(ListEquality().equals(dChildKeyPair.signingKey.rightKey, vector.childSecretKey.rightKey), true);
+          expect(dChildKeyPair.signingKey, vector.childSecretKey);
 
           dChildXVK.forEach((inputXVK) {
-            expect(ListEquality().equals(inputXVK.chainCode, vector.childVerificationKey.chainCode), true);
-            expect(
-                ListEquality().equals(inputXVK.verificationBytes, vector.childVerificationKey.verificationBytes), true);
-
-            expect(inputXVK, equals(fromDerivedChildSkXVK));
-            expect(ListEquality().equals(inputXVK.chainCode, fromDerivedChildSkXVK.chainCode), true);
-            expect(ListEquality().equals(inputXVK.verificationBytes, fromDerivedChildSkXVK.verificationBytes), true);
+            expect(inputXVK, vector.childVerificationKey);
+            expect(inputXVK, fromDerivedChildSkXVK);
           });
 
-          expect(ListEquality().equals(dChildKeyPair.verificationKey.chainCode, vector.childVerificationKey.chainCode),
-              true);
-          expect(
-              ListEquality().equals(
-                  dChildKeyPair.verificationKey.verificationBytes, vector.childVerificationKey.verificationBytes),
-              true);
+          expect(dChildKeyPair.verificationKey, vector.childVerificationKey);
         });
       }
     });
@@ -203,13 +175,7 @@ main() {
 
       final keys = xEd25519.deriveKeyPairFromEntropy(e, p);
 
-      expect(ListEquality().equals(keys.signingKey.leftKey, specOut.signingKey.leftKey), true);
-      expect(ListEquality().equals(keys.signingKey.chainCode, specOut.signingKey.chainCode), true);
-      expect(ListEquality().equals(keys.signingKey.rightKey, specOut.signingKey.rightKey), true);
-
-      expect(ListEquality().equals(keys.verificationKey.chainCode, specOut.verificationKey.chainCode), true);
-      expect(ListEquality().equals(keys.verificationKey.verificationBytes, specOut.verificationKey.verificationBytes),
-          true);
+      expect(keys, specOut);
     });
   });
 }
