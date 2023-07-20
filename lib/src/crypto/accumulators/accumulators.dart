@@ -10,6 +10,13 @@ class LeafData {
   final List<int> value;
 
   const LeafData(this.value);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is LeafData && runtimeType == other.runtimeType && value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
 }
 
 @immutable

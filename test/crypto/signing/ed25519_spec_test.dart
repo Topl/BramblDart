@@ -89,8 +89,7 @@ main() {
           final keyPair1 = ed25519.deriveKeyPairFromEntropy(entropy, null);
           final keyPair2 = ed25519.deriveKeyPairFromEntropy(entropy, null);
 
-          expect(ListEquality().equals(keyPair1.signingKey.bytes, keyPair2.signingKey.bytes), true);
-          expect(ListEquality().equals(keyPair1.verificationKey.bytes, keyPair2.verificationKey.bytes), true);
+          expect(keyPair1, keyPair2);
         }
       });
     });
@@ -108,8 +107,7 @@ main() {
 
       final keys = ed25519.deriveKeyPairFromEntropy(e, p);
 
-      expect(ListEquality().equals(keys.signingKey.bytes, specOut.signingKey.bytes), true);
-      expect(ListEquality().equals(keys.verificationKey.bytes, specOut.verificationKey.bytes), true);
+      expect(keys, specOut);
     });
   });
 }

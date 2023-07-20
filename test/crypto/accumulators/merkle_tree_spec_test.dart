@@ -24,7 +24,8 @@ void main() {
         for (final l in leafs) {
           final proof = tree.proofByElement(l).getOrThrow(Exception("Proof is invalid"));
 
-          expect(const ListEquality().equals(proof.leafData.value, l.data.value), isTrue);
+          expect(proof.leafData, l.data);
+
           expect(proof.valid(treeRootHash), isTrue);
         }
       }
@@ -99,6 +100,7 @@ void main() {
         final h0x1 = hf.hashWithPrefix(MerkleTree.leafPrefix, [d1]);
         final h0x2 = hf.hashWithPrefix(MerkleTree.leafPrefix, [d2]);
         final h10 = hf.hashWithPrefix(MerkleTree.internalNodePrefix, [h0x1.bytes, h0x2.bytes]);
+
         expect(tree.rootHash, h10);
       }
     });
@@ -109,6 +111,7 @@ void main() {
         if (d.isNotEmpty) {
           final leafs = d.map((a) => LeafData(a)).toList();
           final tree = MerkleTree.fromLeafs(leafs, hf);
+
           expect(tree.rootHash, isNotNull);
         }
       }
