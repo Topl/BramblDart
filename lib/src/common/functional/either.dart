@@ -127,13 +127,25 @@ class None<T> extends Option<T> {
 
   @override
   void forEach(void Function(T p1) f) => None();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is None<T>;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
 }
 
 abstract class Option<T> {
   bool get isDefined;
 
+  /// Returns the value if it exists, otherwise throws an exception
+  T get value => getOrThrow(Exception('Option is not defined'));
+
+  /// Returns the value if it exists, otherwise returns the provided default value
   T getOrElse(T defaultValue);
 
+  /// Returns the value if it exists, otherwise throws the provided exception
   T getOrThrow(Exception exception);
 
   void forEach(void Function(T) f);
@@ -142,6 +154,7 @@ abstract class Option<T> {
 
   Option<U> flatMap<U>(Option<U> Function(T) f) => isDefined ? f(getOrElse(null as T)) : None();
 
+
   U fold<U>(U Function(T) onDefined, U Function() onUndefined) =>
-      isDefined ? onDefined(getOrElse(null as T)) : onUndefined();
+      isDefined ? onDefined(value) : onUndefined();
 }

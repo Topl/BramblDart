@@ -1,16 +1,21 @@
 import 'dart:typed_data';
 
-import 'package:pointycastle/api.dart';
+import 'package:brambl_dart/src/common/functional/either.dart';
+import 'package:brambl_dart/src/crypto/hash/digest/digest.dart';
+import 'package:brambl_dart/src/crypto/hash/hash.dart';
+import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:pointycastle/api.dart' as pc;
 import 'package:pointycastle/digests/sha256.dart';
 import 'package:pointycastle/digests/sha512.dart';
 
 /// An interface for Sha hash functions.
-abstract class SHA {
-  late final Digest _digest;
+sealed class SHA extends Hash {
+  late final pc.Digest _digest;
 
   /// Computes the digest of the specified [bytes].
   ///
   /// Returns the resulting digest as a [Uint8List].
+  @override
   Uint8List hash(Uint8List bytes);
 
   /// Get this algorithm's standard name.
@@ -38,7 +43,6 @@ abstract class SHA {
 ///
 /// Returns the hash as a [Uint8List].
 class SHA256 extends SHA {
-  
   // ignore: overridden_fields, annotate_overrides
   final SHA256Digest _digest = SHA256Digest();
 
@@ -49,6 +53,28 @@ class SHA256 extends SHA {
       ..update(bytes, 0, bytes.length)
       ..doFinal(out, 0);
     return out;
+  }
+
+  @override
+  Digest hashComplex({int? prefix, required List<Message> messages}) {
+    // update digest with prefix and messages
+    if (prefix != null) {
+      _digest.update(prefix.toBytes, 0, 1);
+    }
+    for (var m in messages) {
+      _digest.update(m, 0, m.length);
+    }
+
+    final res = Message(_digest.digestSize);
+
+    // calling .doFinal resets to a default state
+    _digest.doFinal(res, 0);
+
+    final Either<InvalidDigestFailure, Digest> x = Digest32.from(res);
+    if (x.isLeft) {
+      throw (Exception(x.left!.message));
+    }
+    return x.right!;
   }
 }
 
@@ -70,5 +96,26 @@ class SHA512 extends SHA {
       ..doFinal(out, 0);
     return out;
   }
-}
 
+  @override
+  Digest hashComplex({int? prefix, required List<Message> messages}) {
+    // update digest with prefix and messages
+    if (prefix != null) {
+      _digest.update(prefix.toBytes, 0, 1);
+    }
+    for (var m in messages) {
+      _digest.update(m, 0, m.length);
+    }
+
+    final res = Message(_digest.digestSize);
+
+    // calling .doFinal resets to a default state
+    _digest.doFinal(res, 0);
+
+    final Either<InvalidDigestFailure, Digest> x = Digest64.from(res);
+    if (x.isLeft) {
+      throw (Exception(x.left!.message));
+    }
+    return x.right!;
+  }
+}

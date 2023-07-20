@@ -12,6 +12,12 @@ class Generators {
     return Uint8List.fromList(list);
   }
 
+  /// Generate a byte array of size [length] filled with [mod] * 3.
+  Uint8List genPredictableByteArray(int length, int mod) {
+    final value = List.filled(length, mod * 3);
+    return Uint8List.fromList(value);
+  }
+
   /// Generate a random byte array of size between [minSize] and [maxSize].
   static Uint8List genByteArrayWithBoundedSize(int minSize, int maxSize) {
     final size = _random.nextInt(maxSize - minSize + 1) + minSize;
