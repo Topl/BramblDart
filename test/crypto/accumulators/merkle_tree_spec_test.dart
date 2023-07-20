@@ -25,6 +25,7 @@ void main() {
           final proof = tree.proofByElement(l).getOrThrow(Exception("Proof is invalid"));
 
           expect(proof.leafData, l.data);
+
           expect(proof.valid(treeRootHash), isTrue);
         }
       }
@@ -110,7 +111,7 @@ void main() {
         if (d.isNotEmpty) {
           final leafs = d.map((a) => LeafData(a)).toList();
           final tree = MerkleTree.fromLeafs(leafs, hf);
-          
+
           expect(tree.rootHash, isNotNull);
         }
       }
