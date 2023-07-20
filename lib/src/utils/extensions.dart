@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:collection/equality.dart';
 import 'package:convert/convert.dart';
 
 extension StringExtension on String {
@@ -14,6 +15,9 @@ extension StringExtension on String {
 
   /// Converts List<string> to a hex encoded [Uint8List].
   Uint8List toHexUint8List() => Uint8List.fromList(hex.decode(this));
+
+  /// Converts string to a UTF-16 [Uint8List].
+  Uint8List toCodeUnitUint8List() => Uint8List.fromList(codeUnits);
 }
 
 extension StringListExtension on List<String> {
@@ -42,11 +46,9 @@ extension BigIntExtensions on BigInt {
   }
 }
 
-
 extension IntExtensions on int {
   Uint8List get toBytes => Uint8List.fromList([this]);
 }
-
 
 extension Uint8ListExtension on Uint8List {
   /// Converts a [Uint8List] to a hex string.
@@ -70,13 +72,17 @@ extension Uint8ListExtension on Uint8List {
   }
 
   Uint8List pad(int targetSize) {
-  if (length >= targetSize) {
-    return this;
+    if (length >= targetSize) {
+      return this;
+    }
+    final paddingSize = targetSize - length;
+    final padding = Uint8List(paddingSize);
+    return Uint8List.fromList([...this, ...padding]);
   }
-  final paddingSize = targetSize - length;
-  final padding = Uint8List(paddingSize);
-  return Uint8List.fromList([...this, ...padding]);
-}
+
+  bool equals(Uint8List other) {
+    return (identical(this, other) || const ListEquality().equals(this, other));
+  }
 }
 
 extension Int8ListExtension on Int8List {
@@ -99,17 +105,11 @@ extension IntExtension on int {
 
 extension IntList on List<int> {
   /// Converts a List<int> to a [Uint8List].
-  Uint8List toUint8List() {
-    return Uint8List.fromList(this);
-  }
+  Uint8List toUint8List() => Uint8List.fromList(this);
 
-  Int8List toInt8List() {
-    return Int8List.fromList(this);
-  }
+  Int8List toInt8List() => Int8List.fromList(this);
 
-  toHexString() {
-    return hex.encode(this);
-  }
+  toHexString() => hex.encode(this);
 
   BigInt get toBigInt {
     final data = Int8List.fromList(this).buffer.asByteData();
@@ -150,9 +150,26 @@ extension IterableExtensions<T> on Iterable<T> {
 }
 
 extension ListExtensions<T> on List<T> {
+  /// Splits the list into two lists at the given [index], and returns a tuple
+  /// containing the two resulting lists. The [index] is inclusive for the first
+  /// list and exclusive for the second list. If the [index] is greater than or
+  /// equal to the length of the list, then the second list will be empty.
   (List<T>, List<T>) splitAt(int index) {
     final first = sublist(0, index);
     final second = sublist(index);
     return (first, second);
+  }
+
+  // Returns a new list containing the elements between the [start] and [end]
+  /// indices, where [start] is inclusive and [end] is exclusive. If [end] is
+  /// greater than the length of the list, then the actual end index is set to
+  /// the length of the list.
+  List<T> sublistSafe(int start, int end) {
+    final actualEnd = end < 0
+        ? (start)
+        : end > length
+            ? length
+            : end;
+    return sublist(start, actualEnd);
   }
 }
