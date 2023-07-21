@@ -12,7 +12,6 @@ class Ed25519 extends EC {
 
   /// Updates a SHA512 hash with the domain separation constant [DOM2_PREFIX],
   /// a flag indicating whether the message is prehashed [phflag], and a context value [context].'
-  /// todo: seems to resolve
   void _dom2(SHA512 d, int phflag, Uint8List ctx) {
     if (ctx.isNotEmpty) {
       d.update(DOM2_PREFIX.toUtf8Uint8List(), 0, DOM2_PREFIX.length);
@@ -29,7 +28,6 @@ class Ed25519 extends EC {
     throw UnimplementedError("Not checked");
   }
 
-  // Todo: resolves
   void generatePublicKey(Uint8List sk, int skOff, Uint8List pk, int pkOff, {SHA512? digest}) {
     final d = digest ?? defaultDigest;
 

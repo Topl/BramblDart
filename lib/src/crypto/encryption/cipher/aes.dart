@@ -37,7 +37,7 @@ class Aes implements Cipher {
   @override
   Uint8List encrypt(Uint8List plainText, Uint8List key) {
     final amountPadded = (Aes.blockSize - ((plainText.length + 1) % Aes.blockSize)) % Aes.blockSize;
-    final paddedBytes = Uint8List.fromList([amountPadded, ...plainText, ...Uint8List(amountPadded)]); // todo check math
+    final paddedBytes = Uint8List.fromList([amountPadded, ...plainText, ...Uint8List(amountPadded)]);
     return processAes(paddedBytes, key, params.iv, encrypt: true);
   }
 
