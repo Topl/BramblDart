@@ -256,7 +256,6 @@ class EC {
     encode24((n.shiftRightUnsigned(32)).toInt32().toInt(), bs, off + 4);
   }
 
-  // todo: resolves
   void encodePoint(PointAccum p, Uint8List r, int rOff) {
     final x = x25519_field.create;
     final y = x25519_field.create;
@@ -579,7 +578,6 @@ class EC {
     return (precompBaseTable, precompBase);
   }
 
-  // todo: resolves
   void pruneScalar(Uint8List n, int nOff, Uint8List r) {
     for (int i = 0; i < SCALAR_BYTES; i++) {
       r[i] = n[nOff + i].toByte;
@@ -736,7 +734,6 @@ class EC {
     return r;
   }
 
-  // todo: resolves
   void scalarMultBase(Uint8List k, PointAccum r) {
     pointSetNeutralAccum(r);
     final n = Int32List(SCALAR_INTS);
@@ -771,7 +768,6 @@ class EC {
     return r;
   }
 
-  // todo: resolves
   void scalarMultBaseEncoded(Uint8List k, Uint8List r, int rOff) {
     final p = PointAccum.create();
     scalarMultBase(k, p);
