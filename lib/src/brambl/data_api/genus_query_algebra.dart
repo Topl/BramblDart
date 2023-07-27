@@ -16,8 +16,8 @@ class GenusQueryAlgebra {
   /// returns A sequence of UTXOs.
   Future<List<Txo>> queryUtxo({required LockAddress fromAddress, TxoState txoState = TxoState.UNSPENT}) async {
     final blockingStub = TransactionServiceClient(channel);
-    final response = await blockingStub.getTxosByAddress(
-      QueryByAddressRequest(address: fromAddress, confidenceFactor: null, state: txoState),
+    final response = await blockingStub.getTxosByLockAddress(
+      QueryByLockAddressRequest(address: fromAddress, confidenceFactor: null, state: txoState),
     );
     return response.txos;
   }
