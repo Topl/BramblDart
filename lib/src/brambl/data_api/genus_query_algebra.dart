@@ -5,9 +5,15 @@ import 'package:topl_common/proto/genus/genus_rpc.pbgrpc.dart';
 
 /// Defines a Genus Query API for interacting with a Genus node.
 class GenusQueryAlgebra {
+  /// The gRPC channel to the node.
   final ClientChannel channel;
 
-  GenusQueryAlgebra(this.channel);
+  /// The client stub for the transaction rpc service
+  late TransactionServiceClient client;
+
+  GenusQueryAlgebra(this.channel) {
+    client = TransactionServiceClient(channel);
+  }
 
   /// Query and retrieve a set of UTXOs encumbered by the given LockAddress.
   ///
@@ -15,9 +21,8 @@ class GenusQueryAlgebra {
   /// [txoState] The state of the UTXOs to query. By default, only unspent UTXOs are returned.
   /// returns A sequence of UTXOs.
   Future<List<Txo>> queryUtxo({required LockAddress fromAddress, TxoState txoState = TxoState.UNSPENT}) async {
-    final blockingStub = TransactionServiceClient(channel);
-    final response = await blockingStub.getTxosByAddress(
-      QueryByAddressRequest(address: fromAddress, confidenceFactor: null, state: txoState),
+    final response = await client.getTxosByLockAddress(
+      QueryByLockAddressRequest(address: fromAddress, confidenceFactor: null, state: txoState),
     );
     return response.txos;
   }
