@@ -2,6 +2,8 @@
 // Basic Functional Logic Types that allow us to use simple functional programming concepts
 // **************************************************************************
 
+
+
 /// A container class that represents one of two possible values.
 /// An `Either` instance is either a `Left` value, or a `Right` value.
 ///
@@ -62,11 +64,18 @@ class Either<L, R> {
   /// Returns the value on the left of the Either if it exists, otherwise returns the provided default value
   L getOrElseLeft(L defaultValue) => isLeft ? left! : defaultValue;
 
-  /// Returns the value on the right of the Either if it exists, otherwise throws the provided exception
-  R getOrThrow(Object exception) => isRight ? right! : throw exception;
+  /// Returns the value on the right of the Either if it exists, otherwise throws the left value unless an exception is provided
+  R getOrThrow({Object? exception}) => exception == null ? getRightOrThrowLeft() : (isRight ? right! : throw exception);
+
+  /// Shorthand for [getOrThrow]
+  /// Returns the value on the right of the Either if it exists, otherwise throws [EitherException]
+  R get() => getOrThrow(exception: EitherException.rightIsUndefined());
 
   /// Returns the value on the left of the Either if it exists, otherwise throws the provided exception
   L getOrThrowLeft(Object exception) => isLeft ? left! : throw exception;
+
+  /// Attempts to get R but will throw left value as an error if the right value does not exist
+  R getRightOrThrowLeft() => isRight ? right! : throw left! as Exception;
 
   /// Converts the Either to an Option, returning the value on the right of the Either if it exists, otherwise None
   Option<R> toOption() => isRight ? Some(right as R) : None();
@@ -129,8 +138,7 @@ class None<T> extends Option<T> {
   void forEach(void Function(T p1) f) => None();
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) || other is None<T>;
+  bool operator ==(Object other) => identical(this, other) || other is None<T>;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -138,6 +146,8 @@ class None<T> extends Option<T> {
 
 abstract class Option<T> {
   bool get isDefined;
+
+  bool get isUndefined => !isDefined;
 
   /// Returns the value if it exists, otherwise throws an exception
   T get value => getOrThrow(Exception('Option is not defined'));
@@ -154,7 +164,18 @@ abstract class Option<T> {
 
   Option<U> flatMap<U>(Option<U> Function(T) f) => isDefined ? f(getOrElse(null as T)) : None();
 
+  U fold<U>(U Function(T) onDefined, U Function() onUndefined) => isDefined ? onDefined(value) : onUndefined();
+}
 
-  U fold<U>(U Function(T) onDefined, U Function() onUndefined) =>
-      isDefined ? onDefined(value) : onUndefined();
+class EitherException implements Exception {
+  final String message;
+
+  const EitherException(this.message);
+
+  factory EitherException.rightIsUndefined() => EitherException("Right value is undefined!");
+
+  @override
+  String toString() {
+    return 'EitherException{message: $message}';
+  }
 }

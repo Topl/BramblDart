@@ -14,7 +14,6 @@ class DynamicContext {
   Map<String, Datum?> datum;
 
   Map<String, ParsableDataInterface> interfaces;
-
   Map<String, SignatureVerifier> signingRoutines;
   Map<String, DigestVerifier> hashingRoutines;
 

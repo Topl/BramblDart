@@ -27,6 +27,8 @@ dependencies:
   grpc: ^3.0.2
   topl_common: ^2.0.2
   fixnum: ^1.1.0
+  characters: ^1.3.0
+  fast_base58: ^0.2.1
 
 assets:
   - lib/assets/bip-0039/
