@@ -24,13 +24,13 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
   }
 
   @override
-  Future<Either<WalletKeyException, VaultStore>> getMainKeyVaultStore(String? name) async {
+  Either<WalletKeyException, VaultStore> getMainKeyVaultStore(String? name) {
     final n = name ?? defaultName;
     final json = mainKeyVaultStoreInstance[n];
     if (json == null) {
       return Either.left(WalletKeyException.vaultStoreNotInitialized());
     } else {
-      return (await VaultStore.fromJson(jsonDecode(json)))
+      return (VaultStore.fromJson(jsonDecode(json)))
           .toOption()
           .fold((p0) => Either.right(p0), () => Either.left(WalletKeyException.decodeVaultStore()));
     }
@@ -48,7 +48,7 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
   }
 
   @override
-  Future<Either<WalletKeyException, void>> deleteMainKeyVaultStore(String? name) async {
+  Either<WalletKeyException, void> deleteMainKeyVaultStore(String? name) {
     final n = name ?? defaultName;
     final json = mainKeyVaultStoreInstance[n];
     if (json == null) {

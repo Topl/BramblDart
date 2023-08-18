@@ -45,7 +45,7 @@ sealed class WalletApiDefinition {
   ///          the wallet identities if multiple will be used.
   ///
   /// Returns an [Either] with a [WalletApiFailure] on the left if unsuccessful, or the wallet's [VaultStore] on the right.
-  Future<Either<WalletApiFailure, VaultStore>> loadWallet({String name = defaultName});
+  Either<WalletApiFailure, VaultStore> loadWallet({String name = defaultName});
 
   /// Updates a wallet.
   ///
@@ -64,7 +64,7 @@ sealed class WalletApiDefinition {
   ///          the wallet identities if multiple will be used.
   ///
   /// Returns an [Either] with a [WalletApiFailure] on the left if unsuccessful, or [void] on the right.
-  Future<Either<WalletApiFailure, void>> deleteWallet({String name = defaultName});
+  Either<WalletApiFailure, void> deleteWallet({String name = defaultName});
 
   /// Builds a [VaultStore] for the wallet from a main key encrypted with a password.
   ///
@@ -118,7 +118,7 @@ sealed class WalletApiDefinition {
   /// [password] - The password to decrypt the wallet with.
   ///
   /// Returns an [Either] with a [WalletApiFailure] on the left if unsuccessful, or a [KeyPair] on the right.
-  Future<Either<WalletApiFailure, KeyPair>> extractMainKey(VaultStore vaultStore, List<int> password);
+  Either<WalletApiFailure, KeyPair> extractMainKey(VaultStore vaultStore, List<int> password);
 
   /// Derives a child key pair from a Main Key Pair.
   ///
@@ -154,11 +154,10 @@ sealed class WalletApiDefinition {
   ///          the wallet identities if multiple will be used.
   ///
   /// Returns an [Either] with a [WalletApiFailure] on the left if unsuccessful, or a [KeyPair] on the right.
-  Future<Either<WalletApiFailure, KeyPair>> loadAndExtractMainKey(List<int> password,
-      {String name = defaultName}) async {
+  Either<WalletApiFailure, KeyPair> loadAndExtractMainKey(List<int> password, {String name = defaultName}) {
     try {
-      final walletRes = (await loadWallet(name: name)).getOrThrow();
-      final keyPair = (await extractMainKey(walletRes, password)).getOrThrow();
+      final walletRes = (loadWallet(name: name)).getOrThrow();
+      final keyPair = (extractMainKey(walletRes, password)).getOrThrow();
       return Either.right(keyPair);
     } on WalletApiFailure catch (f) {
       return Either.left(f);
@@ -176,13 +175,13 @@ sealed class WalletApiDefinition {
   ///          the wallet identities if multiple will be used.
   ///
   /// Returns the wallet's new [VaultStore] if creation and save was successful. An error if unsuccessful.
-  Future<Either<WalletApiFailure, VaultStore>> updateWalletPassword(List<int> oldPassword, List<int> newPassword,
-      {String name = defaultName}) async {
+  Either<WalletApiFailure, VaultStore> updateWalletPassword(List<int> oldPassword, List<int> newPassword,
+      {String name = defaultName}) {
     try {
-      final oldWallet = (await loadWallet(name: name)).getOrThrow();
-      final mainKey = (await extractMainKey(oldWallet, oldPassword)).getOrThrow();
+      final oldWallet = (loadWallet(name: name)).getOrThrow();
+      final mainKey = (extractMainKey(oldWallet, oldPassword)).getOrThrow();
       final newWallet = (buildMainKeyVaultStore(mainKey.writeToBuffer(), newPassword));
-      (await updateWallet(newWallet, name: name));
+      (updateWallet(newWallet, name: name));
       return Either.right(newWallet);
     } on WalletApiFailure catch (f) {
       return Either.left(f);
@@ -234,6 +233,7 @@ class WalletApi extends WalletApiDefinition {
   final purpose = 1852;
   final coinType = 7091;
 
+  // TODO replace
   final kdf = SCrypt.withGeneratedSalt(); //generates salt
   final cipher = Aes(); // generates IV
   final WalletKeyApiAlgebra walletKeyApi;
@@ -252,7 +252,7 @@ class WalletApi extends WalletApiDefinition {
   }
 
   @override
-  Future<Either<WalletApiFailure, KeyPair>> extractMainKey(VaultStore vaultStore, List<int> password) async {
+  Either<WalletApiFailure, KeyPair> extractMainKey(VaultStore vaultStore, List<int> password) {
     try {
       final decoded = VaultStore.decodeCipher(vaultStore, password.toUint8List())
           .getOrThrow(exception: WalletApiFailure.failedToDecodeWallet());
@@ -304,7 +304,11 @@ class WalletApi extends WalletApiDefinition {
   Future<Either<WalletApiFailure, NewWalletResult>> createNewWallet(List<int> password,
       {String? passphrase, MnemonicSize mLen = const MnemonicSize.words12()}) async {
     try {
-      final entropy = Entropy.generate(size: mLen);
+      // final entropy = Entropy.generate(size: mLen);
+      // todo: remove
+      final entropy = (await Entropy.fromMnemonicString(
+              "legal winner thank year wave sausage worth useful legal winner thank yellow"))
+          .get();
       final mainkey = entropyToMainKey(entropy, passphrase: passphrase).writeToBuffer();
       final vaultStore = buildMainKeyVaultStore(mainkey, password);
       final mnemonic =
@@ -338,7 +342,6 @@ class WalletApi extends WalletApiDefinition {
       {String name = WalletApiDefinition.defaultName}) async {
     final x = (await walletKeyApi.saveMainKeyVaultStore(vaultStore, name));
     return x.mapLeftVoid((p0) => WalletApiFailure.failedToSaveWallet());
-    // return x.isLeft ? Either.left(WalletApiFailure.failedToSaveWallet()) : Either.right(null);
   }
 
   @override
@@ -348,8 +351,8 @@ class WalletApi extends WalletApiDefinition {
           .mapLeftVoid((p0) => WalletApiFailure.failedToSaveMnemonic());
 
   @override
-  Future<Either<WalletApiFailure, VaultStore>> loadWallet({String name = WalletApiDefinition.defaultName}) async =>
-      (await walletKeyApi.getMainKeyVaultStore(name)).mapLeft((p0) => WalletApiFailure.failedToLoadWallet());
+  Either<WalletApiFailure, VaultStore> loadWallet({String name = WalletApiDefinition.defaultName}) =>
+      (walletKeyApi.getMainKeyVaultStore(name)).mapLeft((p0) => WalletApiFailure.failedToLoadWallet());
 
   @override
   Future<Either<WalletApiFailure, void>> updateWallet(VaultStore newWallet,
@@ -358,8 +361,8 @@ class WalletApi extends WalletApiDefinition {
           .mapLeftVoid((p0) => WalletApiFailure.failedToUpdateWallet());
 
   @override
-  Future<Either<WalletApiFailure, void>> deleteWallet({String name = WalletApiDefinition.defaultName}) async =>
-      (await walletKeyApi.deleteMainKeyVaultStore(name)).mapLeftVoid((p0) => WalletApiFailure.failedToDeleteWallet());
+  Either<WalletApiFailure, void> deleteWallet({String name = WalletApiDefinition.defaultName}) =>
+      (walletKeyApi.deleteMainKeyVaultStore(name)).mapLeftVoid((p0) => WalletApiFailure.failedToDeleteWallet());
 
   @override
   VaultStore buildMainKeyVaultStore(List<int> mainKey, List<int> password) {
@@ -413,6 +416,14 @@ class WalletApiFailure implements Exception {
       WalletApiFailure(WalletApiFailureType.failedToDecodeWallet, context);
   factory WalletApiFailure.failureDefault({String? context}) =>
       WalletApiFailure(WalletApiFailureType.failureDefault, context);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is WalletApiFailure && runtimeType == other.runtimeType && type == other.type && message == other.message;
+
+  @override
+  int get hashCode => type.hashCode ^ message.hashCode;
 }
 
 enum WalletApiFailureType {
