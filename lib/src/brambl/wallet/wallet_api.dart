@@ -102,8 +102,8 @@ sealed class WalletApiDefinition {
       String mnemonicName = 'mnemonic'}) async {
     try {
       final walletRes = (await createNewWallet(password, passphrase: passphrase, mLen: mLen)).getOrThrow();
-      (await saveWallet(walletRes.mainKeyVaultStore, name: name)).getOrThrow();
-      (await saveMnemonic(walletRes.mnemonic, mnemonicName: mnemonicName)).getOrThrow();
+      (await saveWallet(walletRes.mainKeyVaultStore, name: name)).throwIfLeft();
+      (await saveMnemonic(walletRes.mnemonic, mnemonicName: mnemonicName)).throwIfLeft();
       return Either.right(walletRes);
     } on WalletApiFailure catch (f) {
       return Either.left(f);
@@ -335,15 +335,17 @@ class WalletApi extends WalletApiDefinition {
 
   @override
   Future<Either<WalletApiFailure, void>> saveWallet(VaultStore vaultStore,
-          {String name = WalletApiDefinition.defaultName}) async =>
-      ((await walletKeyApi.saveMainKeyVaultStore(vaultStore, name))
-          .mapLeft((p0) => WalletApiFailure.failedToSaveWallet()));
+      {String name = WalletApiDefinition.defaultName}) async {
+    final x = (await walletKeyApi.saveMainKeyVaultStore(vaultStore, name));
+    return x.mapLeftVoid((p0) => WalletApiFailure.failedToSaveWallet());
+    // return x.isLeft ? Either.left(WalletApiFailure.failedToSaveWallet()) : Either.right(null);
+  }
 
   @override
   Future<Either<WalletApiFailure, void>> saveMnemonic(List<String> mnemonic,
           {String mnemonicName = 'mnemonic'}) async =>
       (await walletKeyApi.saveMnemonic(mnemonic, mnemonicName))
-          .mapLeft((p0) => WalletApiFailure.failedToSaveMnemonic());
+          .mapLeftVoid((p0) => WalletApiFailure.failedToSaveMnemonic());
 
   @override
   Future<Either<WalletApiFailure, VaultStore>> loadWallet({String name = WalletApiDefinition.defaultName}) async =>
@@ -353,11 +355,11 @@ class WalletApi extends WalletApiDefinition {
   Future<Either<WalletApiFailure, void>> updateWallet(VaultStore newWallet,
           {String name = WalletApiDefinition.defaultName}) async =>
       (await walletKeyApi.updateMainKeyVaultStore(newWallet, name))
-          .mapLeft((p0) => WalletApiFailure.failedToUpdateWallet());
+          .mapLeftVoid((p0) => WalletApiFailure.failedToUpdateWallet());
 
   @override
   Future<Either<WalletApiFailure, void>> deleteWallet({String name = WalletApiDefinition.defaultName}) async =>
-      (await walletKeyApi.deleteMainKeyVaultStore(name)).mapLeft((p0) => WalletApiFailure.failedToDeleteWallet());
+      (await walletKeyApi.deleteMainKeyVaultStore(name)).mapLeftVoid((p0) => WalletApiFailure.failedToDeleteWallet());
 
   @override
   VaultStore buildMainKeyVaultStore(List<int> mainKey, List<int> password) {

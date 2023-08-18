@@ -50,15 +50,36 @@ abstract class WalletKeyApiAlgebra {
   Future<Either<WalletKeyException, void>> deleteMainKeyVaultStore(String name);
 }
 
-/// Defines a custom exception for the WalletKeyApiAlgebra.
 class WalletKeyException implements Exception {
-  final String message;
-  final dynamic cause;
+  final String? message;
+  final WalletKeyExceptionType type;
 
-  WalletKeyException(this.message, [this.cause]);
+  const WalletKeyException(this.type, this.message);
 
-  @override
-  String toString() {
-    return 'WalletKeyException: $message';
-  }
+  factory WalletKeyException.decodeVaultStore({String? context}) =>
+      WalletKeyException(WalletKeyExceptionType.decodeVaultStoreException, context);
+  factory WalletKeyException.vaultStoreDoesNotExist({String? context}) =>
+      WalletKeyException(WalletKeyExceptionType.vaultStoreDoesNotExistException, context);
+  factory WalletKeyException.mnemonicDoesNotExist({String? context}) =>
+      WalletKeyException(WalletKeyExceptionType.mnemonicDoesNotExistException, context);
+
+  factory WalletKeyException.vaultStoreSave({String? context}) =>
+      WalletKeyException(WalletKeyExceptionType.vaultStoreSaveException, context);
+  factory WalletKeyException.vaultStoreInvalid({String? context}) =>
+      WalletKeyException(WalletKeyExceptionType.vaultStoreInvalidException, context);
+  factory WalletKeyException.vaultStoreDelete({String? context}) =>
+      WalletKeyException(WalletKeyExceptionType.vaultStoreDeleteException, context);
+  factory WalletKeyException.vaultStoreNotInitialized({String? context}) =>
+      WalletKeyException(WalletKeyExceptionType.vaultStoreNotInitialized, context);
+}
+
+enum WalletKeyExceptionType {
+  decodeVaultStoreException,
+  vaultStoreDoesNotExistException,
+  mnemonicDoesNotExistException,
+
+  vaultStoreSaveException,
+  vaultStoreInvalidException,
+  vaultStoreDeleteException,
+  vaultStoreNotInitialized,
 }

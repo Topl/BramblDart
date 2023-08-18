@@ -2,8 +2,6 @@
 // Basic Functional Logic Types that allow us to use simple functional programming concepts
 // **************************************************************************
 
-
-
 /// A container class that represents one of two possible values.
 /// An `Either` instance is either a `Left` value, or a `Right` value.
 ///
@@ -53,6 +51,8 @@ class Either<L, R> {
   Either<L, T> flatMap<T>(Either<L, T> Function(R) f) => isRight ? f(right as R) : Either.left(left);
 
   /// Maps the value on the left of the Either using a provided function
+  /// 
+  /// Incompatible with right [void] values
   Either<T, R> mapLeft<T>(T Function(L) f) => isLeft ? Either.left(f(left as L)) : Either.right(right);
 
   /// Applies a function to the value on the left of the Either if it exists, otherwise returns the current Either
@@ -65,10 +65,30 @@ class Either<L, R> {
   L getOrElseLeft(L defaultValue) => isLeft ? left! : defaultValue;
 
   /// Returns the value on the right of the Either if it exists, otherwise throws the left value unless an exception is provided
+  ///
+  /// Don't use this on Right of [void]
   R getOrThrow({Object? exception}) => exception == null ? getRightOrThrowLeft() : (isRight ? right! : throw exception);
+
+  /// Throws if value is of type left, otherwise does nothing
+  ///
+  /// `Either<Exception, void>` is the ideal use case as this is incompatible with [get] or [getOrThrow]
+  void throwIfLeft({Object? exception}) {
+    if (isLeft) {
+      throw exception ??
+          (left is Exception
+              ? left as Exception
+              : throw StateError('Left value was raised intentionally ${left.toString()}'));
+    }
+  }
+
+  /// Maps the value on the left of the Either using a provided function when right is a void type
+  /// 
+  /// `Either<Exception, void>` is the ideal use case as this is incompatible with [right] 
+  Either<T, R> mapLeftVoid<T>(T Function(L) f) => isLeft ? Either.left(f(left as L)) : Either.right(null);
 
   /// Shorthand for [getOrThrow]
   /// Returns the value on the right of the Either if it exists, otherwise throws [EitherException]
+  /// Don't use this on Right of [void]
   R get() => getOrThrow(exception: EitherException.rightIsUndefined());
 
   /// Returns the value on the left of the Either if it exists, otherwise throws the provided exception
