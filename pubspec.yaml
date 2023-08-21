@@ -20,7 +20,7 @@ dependencies:
   cryptography: ^2.5.0
   convert: ^3.1.1
   hashlib: ^1.9.0
-  collection: ^1.17.2
+  collection: ^1.17.1
   uuid: ^3.0.7
   meta: ^1.9.1
   protobuf: ^2.0.1
