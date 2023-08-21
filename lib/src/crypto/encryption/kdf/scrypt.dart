@@ -4,10 +4,57 @@ import 'dart:typed_data';
 
 import 'package:brambl_dart/src/crypto/encryption/kdf/kdf.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambl_dart/src/utils/json.dart';
+import 'package:convert/convert.dart';
 import 'package:pointycastle/export.dart';
 
 /// SCrypt is a key derivation function.
 /// @see [[https://en.wikipedia.org/wiki/Scrypt]]
+class SCrypt implements Kdf {
+  @override
+  final SCryptParams params;
+
+  SCrypt(this.params);
+
+  /// Create a SCrypt with generated salt.
+  SCrypt.withGeneratedSalt() : this(SCryptParams.withGeneratedSalt());
+
+  /// Derive a key from a secret.
+  ///
+  /// [secret] secret to derive key from
+  /// returns derived key
+  @override
+  Uint8List deriveKey(Uint8List secret) {
+    final scrypt = Scrypt();
+    scrypt.init(ScryptParameters(params.n, params.r, params.p, params.dkLen, params.salt));
+    return scrypt.process(secret);
+  }
+
+  /// Generate a random initialization vector.
+  static Uint8List generateSalt() {
+    final rand = Random.secure();
+    return List.generate(32, (_) => rand.nextInt(256)).toUint8List();
+  }
+
+  factory SCrypt.fromJson(Map<String, dynamic> json) {
+    final params = SCryptParams.fromJson(json);
+    return SCrypt(params);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> json = {'kdf': params.kdf, ...params.toJson()};
+    return json;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is SCrypt && runtimeType == other.runtimeType && params == other.params;
+
+  @override
+  int get hashCode => params.hashCode;
+}
+
 class SCryptParams extends Params {
   final Uint8List salt;
   final int n;
@@ -37,59 +84,42 @@ class SCryptParams extends Params {
   });
 
   /// Create SCryptParameters with generated salt.
-  SCryptParams.withGeneratedSalt(): this(salt: SCrypt.generateSalt());
+  SCryptParams.withGeneratedSalt() : this(salt: SCrypt.generateSalt());
 
   @override
   String get kdf => "scrypt";
-}
 
-class SCrypt extends Kdf {
-  @override
-  final  SCryptParams params;
-
-  SCrypt(this.params) : super(params);
-
-  /// Create a SCrypt with generated salt.
-  SCrypt.withGeneratedSalt(): this(SCryptParams.withGeneratedSalt());
-
-  /// Derive a key from a secret.
-  ///
-  /// [secret] secret to derive key from
-  /// returns derived key
-  @override
-  Uint8List deriveKey(Uint8List secret) {
-    final scrypt = Scrypt();
-    scrypt.init(ScryptParameters(params.n, params.r, params.p, params.dkLen, params.salt));
-    return scrypt.process(secret);
-  }
-
-  /// Generate a random initialization vector.
-  static Uint8List generateSalt() {
-    final rand = Random.secure();
-    return List.generate(32, (_) => rand.nextInt(256)).toUint8List();
-  }
-}
-
-/// JSON codecs for SCrypt parameters
-class JsonCodecs {
-  /// JSON decoder for SCrypt parameters
-  static SCryptParams sCryptParamsFromJson(Map<String, dynamic> json) {
-    final salt = jsonDecode(json['salt']);
-    final n = json['n'];
-    final r = json['r'];
-    final p = json['p'];
-    final dkLen = json['dkLen'];
+  factory SCryptParams.fromJson(Map<String, dynamic> json) {
+    final salt = Json.decodeUint8List(json['salt']);
+    final n = jsonDecode(json['n']);
+    final r = jsonDecode(json['r']);
+    final p = jsonDecode(json['p']);
+    final dkLen = jsonDecode(json['dkLen']);
     return SCryptParams(salt: salt, n: n, r: r, p: p, dkLen: dkLen);
   }
 
   /// JSON encoder for SCrypt parameters
-  Map<String, dynamic> toJson(SCryptParams sc) {
+  Map<String, dynamic> toJson() {
     return {
-      'salt': jsonEncode(sc.salt),
-      'n': sc.n,
-      'r': sc.r,
-      'p': sc.p,
-      'dkLen': sc.dkLen,
+      'salt': Json.encodeUint8List(salt),
+      'n': jsonEncode(n),
+      'r': jsonEncode(r),
+      'p': jsonEncode(p),
+      'dkLen': jsonEncode(dkLen),
     };
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SCryptParams &&
+          runtimeType == other.runtimeType &&
+          salt.equals(other.salt) &&
+          n == other.n &&
+          r == other.r &&
+          p == other.p &&
+          dkLen == other.dkLen;
+
+  @override
+  int get hashCode => hex.encode(salt).hashCode ^ n.hashCode ^ r.hashCode ^ p.hashCode ^ dkLen.hashCode;
 }

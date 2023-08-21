@@ -27,23 +27,17 @@ abstract class Cipher {
   int get hashCode => params.hashCode;
 
   /// JSON encoder for a Cipher
-  Map<String, dynamic> toJson() {
-    final json = {'cipher': params.cipher};
-    if (params is AesParams) {
-      json.addAll(Aes.paramsToJson(params as AesParams) as Map<String, String>);
-    }
-    return json;
-  }
+  Map<String, dynamic> toJson();
 
   /// JSON decoder for a Cipher
-  static Future<Cipher> fromJson(Map<String, dynamic> json) async {
-    final cipherType = json['cipher'] as String;
-    switch (cipherType) {
+  factory Cipher.fromJson(Map<String, dynamic> json) {
+    final cipher = json['cipher'] as String;
+    switch (cipher) {
       case 'aes':
-        final aesParams = await Aes.paramsFromJson(json);
+        final aesParams = AesParams.fromJson(json);
         return Aes(params: aesParams);
       default:
-        throw Exception('Unknown Cipher');
+        throw UnknownCipherException();
     }
   }
 }
@@ -52,3 +46,5 @@ abstract class Cipher {
 abstract class Params {
   String get cipher;
 }
+
+class UnknownCipherException implements Exception {}

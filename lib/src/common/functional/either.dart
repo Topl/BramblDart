@@ -51,6 +51,8 @@ class Either<L, R> {
   Either<L, T> flatMap<T>(Either<L, T> Function(R) f) => isRight ? f(right as R) : Either.left(left);
 
   /// Maps the value on the left of the Either using a provided function
+  /// 
+  /// Incompatible with right [void] values
   Either<T, R> mapLeft<T>(T Function(L) f) => isLeft ? Either.left(f(left as L)) : Either.right(right);
 
   /// Applies a function to the value on the left of the Either if it exists, otherwise returns the current Either
@@ -62,11 +64,38 @@ class Either<L, R> {
   /// Returns the value on the left of the Either if it exists, otherwise returns the provided default value
   L getOrElseLeft(L defaultValue) => isLeft ? left! : defaultValue;
 
-  /// Returns the value on the right of the Either if it exists, otherwise throws the provided exception
-  R getOrThrow(Object exception) => isRight ? right! : throw exception;
+  /// Returns the value on the right of the Either if it exists, otherwise throws the left value unless an exception is provided
+  ///
+  /// Don't use this on Right of [void]
+  R getOrThrow({Object? exception}) => exception == null ? getRightOrThrowLeft() : (isRight ? right! : throw exception);
+
+  /// Throws if value is of type left, otherwise does nothing
+  ///
+  /// `Either<Exception, void>` is the ideal use case as this is incompatible with [get] or [getOrThrow]
+  void throwIfLeft({Object? exception}) {
+    if (isLeft) {
+      throw exception ??
+          (left is Exception
+              ? left as Exception
+              : throw StateError('Left value was raised intentionally ${left.toString()}'));
+    }
+  }
+
+  /// Maps the value on the left of the Either using a provided function when right is a void type
+  /// 
+  /// `Either<Exception, void>` is the ideal use case as this is incompatible with [right] 
+  Either<T, R> mapLeftVoid<T>(T Function(L) f) => isLeft ? Either.left(f(left as L)) : Either.right(null);
+
+  /// Shorthand for [getOrThrow]
+  /// Returns the value on the right of the Either if it exists, otherwise throws [EitherException]
+  /// Don't use this on Right of [void]
+  R get() => getOrThrow(exception: EitherException.rightIsUndefined());
 
   /// Returns the value on the left of the Either if it exists, otherwise throws the provided exception
   L getOrThrowLeft(Object exception) => isLeft ? left! : throw exception;
+
+  /// Attempts to get R but will throw left value as an error if the right value does not exist
+  R getRightOrThrowLeft() => isRight ? right! : throw left! as Exception;
 
   /// Converts the Either to an Option, returning the value on the right of the Either if it exists, otherwise None
   Option<R> toOption() => isRight ? Some(right as R) : None();
@@ -129,8 +158,7 @@ class None<T> extends Option<T> {
   void forEach(void Function(T p1) f) => None();
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) || other is None<T>;
+  bool operator ==(Object other) => identical(this, other) || other is None<T>;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -138,6 +166,8 @@ class None<T> extends Option<T> {
 
 abstract class Option<T> {
   bool get isDefined;
+
+  bool get isUndefined => !isDefined;
 
   /// Returns the value if it exists, otherwise throws an exception
   T get value => getOrThrow(Exception('Option is not defined'));
@@ -154,7 +184,18 @@ abstract class Option<T> {
 
   Option<U> flatMap<U>(Option<U> Function(T) f) => isDefined ? f(getOrElse(null as T)) : None();
 
+  U fold<U>(U Function(T) onDefined, U Function() onUndefined) => isDefined ? onDefined(value) : onUndefined();
+}
 
-  U fold<U>(U Function(T) onDefined, U Function() onUndefined) =>
-      isDefined ? onDefined(value) : onUndefined();
+class EitherException implements Exception {
+  final String message;
+
+  const EitherException(this.message);
+
+  factory EitherException.rightIsUndefined() => EitherException("Right value is undefined!");
+
+  @override
+  String toString() {
+    return 'EitherException{message: $message}';
+  }
 }

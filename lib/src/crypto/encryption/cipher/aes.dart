@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/crypto/encryption/cipher/cipher.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambl_dart/src/utils/json.dart';
 import 'package:convert/convert.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/export.dart';
@@ -74,18 +74,22 @@ class Aes implements Cipher {
   @override
   late AesParams params;
 
-  static Map<String, dynamic> paramsToJson(AesParams aesParams) {
-    return {'iv': jsonEncode(aesParams.iv)};
-  }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Aes && runtimeType == other.runtimeType && params == other.params;
 
-  static Future<AesParams> paramsFromJson(Map<String, dynamic> json) async {
-    final iv = jsonDecode(json['iv']);
-    return AesParams(iv);
+  @override
+  int get hashCode => params.hashCode;
+
+  factory Aes.fromJson(Map<String, dynamic> json) {
+    final params = AesParams.fromJson(json);
+    return Aes(params: params);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return Aes.paramsToJson(params);
+    final Map<String, dynamic> json = {'cipher': params.cipher, ...params.toJson()};
+    return json;
   }
 }
 
@@ -109,4 +113,13 @@ class AesParams extends Params {
 
   @override
   int get hashCode => hex.encode(iv).hashCode;
+
+  Map<String, dynamic> toJson() {
+    return {'iv': Json.encodeUint8List(iv)};
+  }
+
+  factory AesParams.fromJson(Map<String, dynamic> json) {
+    final iv = Json.decodeUint8List(json['iv']);
+    return AesParams(iv);
+  }
 }
