@@ -19,7 +19,7 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
     } else {
       final json = jsonEncode(mainKeyVaultStore.toJson());
       mainKeyVaultStoreInstance[n] = json;
-      return unit();
+      return Either.unit();
     }
   }
 
@@ -55,7 +55,7 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
       return Either.left(WalletKeyException.vaultStoreDelete());
     } else {
       mainKeyVaultStoreInstance.remove(name);
-      return unit();
+      return Either.unit();
     }
   }
 
@@ -65,6 +65,6 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
     String mnemonicName,
   ) async {
     mnemonicInstance[mnemonicName] = mnemonic;
-    return unit();
+    return Either.unit();
   }
 }

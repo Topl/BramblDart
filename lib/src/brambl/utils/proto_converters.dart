@@ -1,4 +1,3 @@
-import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart' as xspec;
 import 'package:brambl_dart/src/crypto/signing/signing.dart' as s;
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
@@ -30,5 +29,4 @@ class ProtoConverters {
       ),
     );
   }
-
 }

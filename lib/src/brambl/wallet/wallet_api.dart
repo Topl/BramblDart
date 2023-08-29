@@ -304,11 +304,7 @@ class WalletApi extends WalletApiDefinition {
   Future<Either<WalletApiFailure, NewWalletResult>> createNewWallet(List<int> password,
       {String? passphrase, MnemonicSize mLen = const MnemonicSize.words12()}) async {
     try {
-      // final entropy = Entropy.generate(size: mLen);
-      // todo: remove
-      final entropy = (await Entropy.fromMnemonicString(
-              "legal winner thank year wave sausage worth useful legal winner thank yellow"))
-          .get();
+      final entropy = Entropy.generate(size: mLen);
       final mainkey = entropyToMainKey(entropy, passphrase: passphrase).writeToBuffer();
       final vaultStore = buildMainKeyVaultStore(mainkey, password);
       final mnemonic =

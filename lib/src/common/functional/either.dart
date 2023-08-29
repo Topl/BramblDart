@@ -3,15 +3,6 @@
 // **************************************************************************
 
 
-/// Constructs an `Either` instance with a left value.
-left(left) => Either.left(left);
-
-/// Constructs an `Either` instance with a right value.
-right(right) => Either.right(right);
-
-/// Constructs an `Either` instance with a right generic value of `Unit`.
-unit() => Either.unit();
-
 
 /// A container class that represents one of two possible values.
 /// An `Either` instance is either a `Left` value, or a `Right` value.
