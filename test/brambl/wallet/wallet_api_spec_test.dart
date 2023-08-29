@@ -169,5 +169,28 @@ main() {
       final signature = signingInstance.sign(SecretKey.proto(childKey.sk.extendedEd25519), testMsg);
       expect(signingInstance.verify(signature, testMsg, PublicKey.proto(childKey.vk.extendedEd25519)), isTrue);
     });
+
+    // TODO: Does not resolve
+    test("deriveChildVerificationKey: Verify deriving path '4' produces a valid child verification key", () async {
+      final (_, walletApi) = getWalletApi();
+      final signingInstance = ExtendedEd25519();
+
+      final vaultStore = (await walletApi.createNewWallet(password)).get().mainKeyVaultStore;
+      final mainKey = walletApi.extractMainKey(vaultStore, password).get();
+      final childKeyExpected = walletApi.deriveChildKeys(mainKey, Indices(x: 4, y: 4, z: 4));
+      final childKeyPartial = walletApi.deriveChildKeysPartial(mainKey, 4, 4);
+      final childVerificationKeyTest = walletApi.deriveChildVerificationKey(childKeyPartial.vk, 4);
+
+      (await walletApi.createAndSaveNewWallet(password));
+
+      final x = print("");
+
+
+
+      expect(childVerificationKeyTest, childKeyExpected.vk);
+      final signature = signingInstance.sign(SecretKey.proto(childKeyExpected.sk.extendedEd25519), testMsg);
+      expect(signingInstance.verify(signature, testMsg, PublicKey.proto(childVerificationKeyTest.extendedEd25519)),
+          isTrue);
+    });
   });
 }

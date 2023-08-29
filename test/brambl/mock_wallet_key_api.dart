@@ -12,14 +12,14 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
   static const defaultName = "default";
 
   @override
-  Future<Either<WalletKeyException, void>> saveMainKeyVaultStore(VaultStore mainKeyVaultStore, String? name) async {
+  Future<Either<WalletKeyException, Unit>> saveMainKeyVaultStore(VaultStore mainKeyVaultStore, String? name) async {
     final n = name ?? defaultName;
     if (n == 'error') {
       return Either.left(WalletKeyException.vaultStoreSave());
     } else {
       final json = jsonEncode(mainKeyVaultStore.toJson());
       mainKeyVaultStoreInstance[n] = json;
-      return Either.right(null);
+      return unit();
     }
   }
 
@@ -37,7 +37,7 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
   }
 
   @override
-  Future<Either<WalletKeyException, void>> updateMainKeyVaultStore(VaultStore mainKeyVaultStore, String? name) async {
+  Future<Either<WalletKeyException, Unit>> updateMainKeyVaultStore(VaultStore mainKeyVaultStore, String? name) async {
     final n = name ?? defaultName;
     final json = mainKeyVaultStoreInstance[n];
     if (json == null) {
@@ -48,23 +48,23 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
   }
 
   @override
-  Either<WalletKeyException, void> deleteMainKeyVaultStore(String? name) {
+  Either<WalletKeyException, Unit> deleteMainKeyVaultStore(String? name) {
     final n = name ?? defaultName;
     final json = mainKeyVaultStoreInstance[n];
     if (json == null) {
       return Either.left(WalletKeyException.vaultStoreDelete());
     } else {
       mainKeyVaultStoreInstance.remove(name);
-      return Either.right(null);
+      return unit();
     }
   }
 
   @override
-  Future<Either<WalletKeyException, void>> saveMnemonic(
+  Future<Either<WalletKeyException, Unit>> saveMnemonic(
     List<String> mnemonic,
     String mnemonicName,
   ) async {
     mnemonicInstance[mnemonicName] = mnemonic;
-    return Either.right(null);
+    return unit();
   }
 }

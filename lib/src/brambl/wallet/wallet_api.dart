@@ -28,7 +28,7 @@ sealed class WalletApiDefinition {
   ///          the wallet identities if multiple will be used.
   ///
   /// Returns an [Either] with a [WalletApiFailure] on the left if unsuccessful, or [void] on the right.
-  Future<Either<WalletApiFailure, void>> saveWallet(VaultStore vaultStore, {String name = defaultName});
+  Future<Either<WalletApiFailure, Unit>> saveWallet(VaultStore vaultStore, {String name = defaultName});
 
   /// Saves a mnemonic.
   ///
@@ -36,7 +36,7 @@ sealed class WalletApiDefinition {
   /// [mnemonicName] - A name used to identify the mnemonic. Defaults to "mnemonic".
   ///
   /// Returns an [Either] with a [WalletApiFailure] on the left if unsuccessful, or [void] on the right.
-  Future<Either<WalletApiFailure, void>> saveMnemonic(List<String> mnemonic, {String mnemonicName = 'mnemonic'});
+  Future<Either<WalletApiFailure, Unit>> saveMnemonic(List<String> mnemonic, {String mnemonicName = 'mnemonic'});
 
   /// Loads a wallet.
   ///
@@ -55,7 +55,7 @@ sealed class WalletApiDefinition {
   ///          the wallet identities if multiple will be used.
   ///
   /// Returns an [Either] with a [WalletApiFailure] on the left if unsuccessful, or [void] on the right.
-  Future<Either<WalletApiFailure, void>> updateWallet(VaultStore newWallet, {String name = defaultName});
+  Future<Either<WalletApiFailure, Unit>> updateWallet(VaultStore newWallet, {String name = defaultName});
 
   /// Deletes a wallet.
   ///
@@ -64,7 +64,7 @@ sealed class WalletApiDefinition {
   ///          the wallet identities if multiple will be used.
   ///
   /// Returns an [Either] with a [WalletApiFailure] on the left if unsuccessful, or [void] on the right.
-  Either<WalletApiFailure, void> deleteWallet({String name = defaultName});
+  Either<WalletApiFailure, Unit> deleteWallet({String name = defaultName});
 
   /// Builds a [VaultStore] for the wallet from a main key encrypted with a password.
   ///
@@ -338,14 +338,14 @@ class WalletApi extends WalletApiDefinition {
   }
 
   @override
-  Future<Either<WalletApiFailure, void>> saveWallet(VaultStore vaultStore,
+  Future<Either<WalletApiFailure, Unit>> saveWallet(VaultStore vaultStore,
       {String name = WalletApiDefinition.defaultName}) async {
     final x = (await walletKeyApi.saveMainKeyVaultStore(vaultStore, name));
     return x.mapLeftVoid((p0) => WalletApiFailure.failedToSaveWallet());
   }
 
   @override
-  Future<Either<WalletApiFailure, void>> saveMnemonic(List<String> mnemonic,
+  Future<Either<WalletApiFailure, Unit>> saveMnemonic(List<String> mnemonic,
           {String mnemonicName = 'mnemonic'}) async =>
       (await walletKeyApi.saveMnemonic(mnemonic, mnemonicName))
           .mapLeftVoid((p0) => WalletApiFailure.failedToSaveMnemonic());
@@ -355,13 +355,13 @@ class WalletApi extends WalletApiDefinition {
       (walletKeyApi.getMainKeyVaultStore(name)).mapLeft((p0) => WalletApiFailure.failedToLoadWallet());
 
   @override
-  Future<Either<WalletApiFailure, void>> updateWallet(VaultStore newWallet,
+  Future<Either<WalletApiFailure, Unit>> updateWallet(VaultStore newWallet,
           {String name = WalletApiDefinition.defaultName}) async =>
       (await walletKeyApi.updateMainKeyVaultStore(newWallet, name))
           .mapLeftVoid((p0) => WalletApiFailure.failedToUpdateWallet());
 
   @override
-  Either<WalletApiFailure, void> deleteWallet({String name = WalletApiDefinition.defaultName}) =>
+  Either<WalletApiFailure, Unit> deleteWallet({String name = WalletApiDefinition.defaultName}) =>
       (walletKeyApi.deleteMainKeyVaultStore(name)).mapLeftVoid((p0) => WalletApiFailure.failedToDeleteWallet());
 
   @override

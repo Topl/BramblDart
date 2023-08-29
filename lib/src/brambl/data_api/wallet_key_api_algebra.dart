@@ -10,16 +10,16 @@ abstract class WalletKeyApiAlgebra {
   /// Most commonly, only one wallet identity will be used. It is the responsibility of the dApp
   /// to manage the names of the wallet identities if multiple will be used.
   ///
-  /// Returns nothing if successful. If persisting fails due to an underlying cause, return a [WalletKeyException].
-  Future<Either<WalletKeyException, void>> saveMainKeyVaultStore(VaultStore mainKeyVaultStore, String name);
+  /// Returns Unit if successful. If persisting fails due to an underlying cause, return a [WalletKeyException].
+  Future<Either<WalletKeyException, Unit>> saveMainKeyVaultStore(VaultStore mainKeyVaultStore, String name);
 
   /// Persist a mnemonic used to recover a Topl Main Secret Key.
   ///
   /// [mnemonic] - The mnemonic to persist.
   /// [mnemonicName] - The name identifier of the mnemonic.
   ///
-  /// Returns nothing if successful. If persisting fails due to an underlying cause, return a [WalletKeyException].
-  Future<Either<WalletKeyException, void>> saveMnemonic(List<String> mnemonic, String mnemonicName);
+  /// Returns Unit if successful. If persisting fails due to an underlying cause, return a [WalletKeyException].
+  Future<Either<WalletKeyException, Unit>> saveMnemonic(List<String> mnemonic, String mnemonicName);
 
   /// Return the [VaultStore] for the Topl Main Secret Key.
   ///
@@ -37,8 +37,8 @@ abstract class WalletKeyApiAlgebra {
   /// Most commonly, only one wallet identity will be used. It is the responsibility of the dApp
   /// to manage the names of the wallet identities if multiple will be used.
   ///
-  /// Returns nothing if successful. If the update fails due to an underlying cause (for ex does not exist), return a [WalletKeyException].
-  Future<Either<WalletKeyException, void>> updateMainKeyVaultStore(VaultStore mainKeyVaultStore, String name);
+  /// Returns Unit if successful. If the update fails due to an underlying cause (for ex does not exist), return a [WalletKeyException].
+  Future<Either<WalletKeyException, Unit>> updateMainKeyVaultStore(VaultStore mainKeyVaultStore, String name);
 
   /// Delete a persisted [VaultStore] for the Topl Main Secret Key.
   ///
@@ -46,8 +46,8 @@ abstract class WalletKeyApiAlgebra {
   /// Most commonly, only one wallet identity will be used. It is the responsibility of the dApp
   /// to manage the names of the wallet identities if multiple will be used.
   ///
-  /// Returns nothing if successful. If the deletion fails due to an underlying cause (for ex does not exist), return a [WalletKeyException].
-  Either<WalletKeyException, void> deleteMainKeyVaultStore(String name);
+  /// Returns Unit if successful. If the deletion fails due to an underlying cause (for ex does not exist), return a [WalletKeyException].
+  Either<WalletKeyException, Unit> deleteMainKeyVaultStore(String name);
 }
 
 class WalletKeyException implements Exception {
