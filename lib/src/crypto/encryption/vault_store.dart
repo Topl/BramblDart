@@ -5,6 +5,7 @@ import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/encryption/cipher/cipher.dart';
 import 'package:brambl_dart/src/crypto/encryption/kdf/kdf.dart';
 import 'package:brambl_dart/src/crypto/encryption/mac.dart';
+import 'package:brambl_dart/src/utils/json.dart';
 import 'package:collection/collection.dart';
 
 /// A VaultStore is a JSON encode-able object that contains the KDF and Cipher necessary to decrypt the cipher text.
@@ -70,10 +71,10 @@ class VaultStore {
 
   Map<String, dynamic> toJson() {
     return {
-      'kdf': kdf.toJson(),
-      'cipher': cipher.toJson(),
-      'cipherText': jsonEncode(cipherText),
-      'mac': jsonEncode(mac),
+      'kdf': jsonEncode(kdf.toJson()),
+      'cipher': jsonEncode(cipher.toJson()),
+      'cipherText': Json.encodeUint8List(cipherText),
+      'mac': Json.encodeUint8List(mac),
     };
   }
 
@@ -83,14 +84,12 @@ class VaultStore {
   /// returns a [VaultStore] instance
   static Either<Exception, VaultStore> fromJson(
     Map<String, dynamic> json,
-    Kdf Function() kdfFactory,
-    Cipher Function() cipherFactory,
   ) {
     try {
-      final kdf = kdfFactory();
-      final cipher = cipherFactory();
-      final cipherText = jsonDecode(json['cipherText']);
-      final mac = jsonDecode(json['mac']);
+      final kdf = Kdf.fromJson(jsonDecode(json["kdf"]));
+      final cipher = Cipher.fromJson(jsonDecode(json["cipher"]));
+      final cipherText = Json.decodeUint8List(json['cipherText']);
+      final mac = Json.decodeUint8List(json['mac']);
       return Either.right(VaultStore(kdf, cipher, cipherText, mac));
     } catch (e) {
       return Either.left(Exception(e));

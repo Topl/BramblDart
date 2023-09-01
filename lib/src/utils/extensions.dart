@@ -12,6 +12,12 @@ extension StringExtension on String {
     return Uint8List.fromList(encoder.convert(this));
   }
 
+  /// Converts string to a UTF-8 [Int8List].
+  Int8List toUtf8() {
+    final bytes = utf8.encode(this);
+    return Int8List.fromList(bytes);
+  }
+
   (String, String) splitAt(int index) => (substring(0, index), substring(index));
 
   /// Converts List<string> to a hex encoded [Uint8List].
@@ -84,6 +90,7 @@ extension Uint8ListExtension on Uint8List {
   /// Returns a [List<int>] representation of the [Uint8List].
   List<int> toIntList() => toList();
 
+
   /// Pads a [Uint8List] with zeros to a target size.
   ///
   /// [targetSize] - The desired size of the [Uint8List].
@@ -105,6 +112,12 @@ extension Uint8ListExtension on Uint8List {
   /// Returns `true` if the [Uint8List] is equal to [other], `false` otherwise.
   bool equals(Uint8List other) {
     return (identical(this, other) || const ListEquality().equals(this, other));
+  }
+
+  Uint8List overwriteBytes(int fillValue) {
+    final filledList = Uint8List(length);
+    filledList.fillRange(0, length, fillValue);
+    return filledList;
   }
 }
 
