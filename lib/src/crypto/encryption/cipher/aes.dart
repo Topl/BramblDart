@@ -36,6 +36,7 @@ class Aes implements Cipher {
   /// returns the encrypted data
   @override
   Uint8List encrypt(Uint8List plainText, Uint8List key) {
+    // + 1 to account for the byte storing the amount padded. This value is guaranteed to be <16
     final amountPadded = (Aes.blockSize - ((plainText.length + 1) % Aes.blockSize)) % Aes.blockSize;
     final paddedBytes = Uint8List.fromList([amountPadded, ...plainText, ...Uint8List(amountPadded)]);
     return processAes(paddedBytes, key, params.iv, encrypt: true);
@@ -68,7 +69,8 @@ class Aes implements Cipher {
     final output = Uint8List.fromList(List.filled(input.length, 1));
 
     aesCtr.processBytes(input, 0, input.length, output, 0);
-    return aesCtr.process(output);
+    aesCtr.process(output);
+    return output;
   }
 
   @override

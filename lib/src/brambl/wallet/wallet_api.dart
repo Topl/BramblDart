@@ -175,14 +175,14 @@ sealed class WalletApiDefinition {
   ///          the wallet identities if multiple will be used.
   ///
   /// Returns the wallet's new [VaultStore] if creation and save was successful. An error if unsuccessful.
-  Either<WalletApiFailure, VaultStore> updateWalletPassword(List<int> oldPassword, List<int> newPassword,
-      {String name = defaultName}) {
+  Future<Either<WalletApiFailure, VaultStore>> updateWalletPassword(List<int> oldPassword, List<int> newPassword,
+      {String name = defaultName}) async {
     try {
       final oldWallet = (loadWallet(name: name)).getOrThrow();
       final mainKey = (extractMainKey(oldWallet, oldPassword)).getOrThrow();
       final newWallet = (buildMainKeyVaultStore(mainKey.writeToBuffer(), newPassword));
-      (updateWallet(newWallet, name: name));
-      return Either.right(newWallet);
+      final result = (await updateWallet(newWallet, name: name));
+      return result.isRight ? Either.right(newWallet) : Either.left(WalletApiFailure.failedToUpdateWallet());
     } on WalletApiFailure catch (f) {
       return Either.left(f);
     } catch (e) {
@@ -271,8 +271,8 @@ class WalletApi extends WalletApiDefinition {
     assert(keyPair.vk.hasExtendedEd25519(), "keyPair must be an extended Ed25519 key");
 
     final xCoordinate = HardenedIndex(idx.x);
-    final yCoordinate = HardenedIndex(idx.y);
-    final zCoordinate = HardenedIndex(idx.z);
+    final yCoordinate = SoftIndex(idx.y);
+    final zCoordinate = SoftIndex(idx.z);
 
     final sk = x_spec.SecretKey.proto(keyPair.sk.extendedEd25519);
     final kp = instance.deriveKeyPairFromChildPath(sk, [xCoordinate, yCoordinate, zCoordinate]);
@@ -285,7 +285,7 @@ class WalletApi extends WalletApiDefinition {
     assert(keyPair.vk.hasExtendedEd25519(), "keyPair must be an extended Ed25519 key");
 
     final xCoordinate = HardenedIndex(xParty);
-    final yCoordinate = HardenedIndex(yContract);
+    final yCoordinate = SoftIndex(yContract);
 
     final sk = x_spec.SecretKey.proto(keyPair.sk.extendedEd25519);
     final kp = instance.deriveKeyPairFromChildPath(sk, [xCoordinate, yCoordinate]);

@@ -16,7 +16,7 @@ import '../mock_wallet_key_api.dart';
 
 main() {
   final testMsg = "test message".toUtf8Uint8List();
-  final password = 'password'.toUtf8Uint8List();
+  final password = "password".toUtf8Uint8List();
 
   (MockWalletKeyApi, WalletApi) getWalletApi() {
     final mockApi = MockWalletKeyApi();
@@ -267,7 +267,7 @@ main() {
       final oldVaultStore = oldWallet.get().mainKeyVaultStore;
       final mainKey = walletApi.extractMainKey(oldVaultStore, oldPassword).get();
       expect(walletApi.loadWallet().get(), oldVaultStore);
-      final updateRes = walletApi.updateWalletPassword(oldPassword, newPassword);
+      final updateRes = await walletApi.updateWalletPassword(oldPassword, newPassword);
       expect(updateRes.isRight, isTrue);
       final newVaultStore = updateRes.get();
       final loadedWallet = walletApi.loadWallet().get();
@@ -284,13 +284,15 @@ main() {
     test("updateWalletPassword: Failure saving > Wallet is accessible with the old password", () async {
       final (mockWalletKeyApi, walletApi) = getWalletApi();
 
+      final newPassword = "newPassword".toUtf8Uint8List();
       final oldVaultStore = (await walletApi.createNewWallet(password)).get().mainKeyVaultStore;
 
       // manually save the wallet to the mock data api with the error name
       mockWalletKeyApi.mainKeyVaultStoreInstance["error"] = jsonEncode(oldVaultStore.toJson());
-      final updateRes = walletApi.updateWalletPassword(password, "newPassword".toUtf8Uint8List(), name: "error");
+      final updateRes = await walletApi.updateWalletPassword(password, newPassword, name: "error");
       expect(updateRes.isLeft, isTrue);
       expect(updateRes.left, WalletApiFailure.failedToUpdateWallet());
+      // verify the wallet is still accessible with the old password
       final loadedWallet = walletApi.loadAndExtractMainKey(password, name: "error");
       expect(loadedWallet.isRight, isTrue);
     });

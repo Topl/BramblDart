@@ -175,7 +175,8 @@ void main() {
       final fields = {"kdf": jsonEncode(invalidKdfParams), ...expected.fields..remove("salt")};
       final invalidJson = jsonEncode(fields);
 
-      expect(() => VaultStore.fromJson(jsonDecode(invalidJson)).get(), throwsA(TypeMatcher<FormatException>()));
+      final result = VaultStore.fromJson(jsonDecode(invalidJson));
+      expect(result.isLeft, true);
     });
   });
 }
