@@ -6,6 +6,7 @@ import 'package:brambl_dart/src/crypto/signing/signing.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:pointycastle/export.dart';
+import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
 
 mixin ExtendedEd25519Spec {
   static const int signatureLength = 64;
@@ -85,6 +86,14 @@ class SecretKey extends SigningKey with ExtendedEd25519Spec {
     }
   }
 
+  factory SecretKey.proto(pb.SigningKey_ExtendedEd25519Sk sk) {
+    return SecretKey(
+      sk.leftKey.toUint8List(),
+      sk.rightKey.toUint8List(),
+      sk.chainCode.toUint8List(),
+    );
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -110,6 +119,13 @@ class PublicKey extends VerificationKey with ExtendedEd25519Spec {
         'Invalid chain code length. Expected: ${ExtendedEd25519Spec.keyLength}, Received: ${chainCode.length}',
       );
     }
+  }
+
+  factory PublicKey.proto(pb.VerificationKey_ExtendedEd25519Vk vk) {
+    return PublicKey(
+      spec.PublicKey(vk.vk.value.toUint8List()),
+      vk.chainCode.toUint8List(),
+    );
   }
 
   @override

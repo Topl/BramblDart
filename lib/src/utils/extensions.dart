@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:collection/equality.dart';
+import 'package:brambl_dart/src/common/functional/either.dart';
+import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 
 extension StringExtension on String {
@@ -9,6 +10,12 @@ extension StringExtension on String {
   Uint8List toUtf8Uint8List() {
     final encoder = Utf8Encoder();
     return Uint8List.fromList(encoder.convert(this));
+  }
+
+  /// Converts string to a UTF-8 [Int8List].
+  Int8List toUtf8() {
+    final bytes = utf8.encode(this);
+    return Int8List.fromList(bytes);
   }
 
   (String, String) splitAt(int index) => (substring(0, index), substring(index));
@@ -52,25 +59,42 @@ extension IntExtensions on int {
 
 extension Uint8ListExtension on Uint8List {
   /// Converts a [Uint8List] to a hex string.
-  String toHexString() {
-    return hex.encode(this);
-  }
+  ///
+  /// Returns a [String] representation of the [Uint8List] in hexadecimal format.
+  String toHexString() => hex.encode(this);
 
+  /// Converts a [Uint8List] from little-endian byte order to a [BigInt].
+  ///
+  /// Returns a [BigInt] representation of the [Uint8List] in little-endian byte order.
   BigInt fromLittleEndian() {
     final reversed = this.reversed.toList();
     final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 
+  /// Converts a [Uint8List] from big-endian byte order to a [BigInt].
+  ///
+  /// Returns a [BigInt] representation of the [Uint8List] in big-endian byte order.
   BigInt fromBigEndian() {
     final hex = map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 
-  Int8List toSigned() {
-    return Int8List.fromList(this);
-  }
+  /// Converts a [Uint8List] to a signed [Int8List].
+  ///
+  /// Returns a signed [Int8List] representation of the [Uint8List].
+  Int8List toSigned() => Int8List.fromList(this);
 
+  /// Converts a [Uint8List] to a [List<int>].
+  ///
+  /// Returns a [List<int>] representation of the [Uint8List].
+  List<int> toIntList() => toList();
+
+  /// Pads a [Uint8List] with zeros to a target size.
+  ///
+  /// [targetSize] - The desired size of the [Uint8List].
+  ///
+  /// Returns a [Uint8List] padded with zeros to the [targetSize].
   Uint8List pad(int targetSize) {
     if (length >= targetSize) {
       return this;
@@ -80,8 +104,19 @@ extension Uint8ListExtension on Uint8List {
     return Uint8List.fromList([...this, ...padding]);
   }
 
+  /// Compares a [Uint8List] to another [Uint8List] for equality.
+  ///
+  /// [other] - The [Uint8List] to compare to.
+  ///
+  /// Returns `true` if the [Uint8List] is equal to [other], `false` otherwise.
   bool equals(Uint8List other) {
     return (identical(this, other) || const ListEquality().equals(this, other));
+  }
+
+  Uint8List overwriteBytes(int fillValue) {
+    final filledList = Uint8List(length);
+    filledList.fillRange(0, length, fillValue);
+    return filledList;
   }
 }
 
@@ -171,5 +206,27 @@ extension ListExtensions<T> on List<T> {
             ? length
             : end;
     return sublist(start, actualEnd);
+  }
+
+  T head() {
+    if (isEmpty) {
+      throw StateError('Cannot get head of empty list');
+    } else {
+      return this[0];
+    }
+  }
+
+  List<T> tail() {
+    if (isEmpty) {
+      throw StateError('Cannot get tail of empty list');
+    } else {
+      return sublist(1);
+    }
+  }
+}
+
+extension EitherExceptionExtensions on Exception {
+  Either<Exception, T> asLeft<T>() {
+    return Either.left(this);
   }
 }

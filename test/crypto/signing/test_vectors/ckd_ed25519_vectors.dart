@@ -3,7 +3,7 @@ import 'package:brambl_dart/src/crypto/generation/bip32_index.dart';
 import 'package:brambl_dart/src/crypto/generation/key_initializer/extended_ed25519_initializer.dart';
 import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart' as spec;
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
-import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519l.dart';
+import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 class CkdEd25519TestVector {

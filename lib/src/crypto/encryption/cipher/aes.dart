@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/crypto/encryption/cipher/cipher.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambl_dart/src/utils/json.dart';
 import 'package:convert/convert.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/export.dart';
@@ -36,6 +36,7 @@ class Aes implements Cipher {
   /// returns the encrypted data
   @override
   Uint8List encrypt(Uint8List plainText, Uint8List key) {
+    // + 1 to account for the byte storing the amount padded. This value is guaranteed to be <16
     final amountPadded = (Aes.blockSize - ((plainText.length + 1) % Aes.blockSize)) % Aes.blockSize;
     final paddedBytes = Uint8List.fromList([amountPadded, ...plainText, ...Uint8List(amountPadded)]);
     return processAes(paddedBytes, key, params.iv, encrypt: true);
@@ -68,24 +69,29 @@ class Aes implements Cipher {
     final output = Uint8List.fromList(List.filled(input.length, 1));
 
     aesCtr.processBytes(input, 0, input.length, output, 0);
-    return aesCtr.process(output);
+    aesCtr.process(output);
+    return output;
   }
 
   @override
   late AesParams params;
 
-  static Map<String, dynamic> paramsToJson(AesParams aesParams) {
-    return {'iv': jsonEncode(aesParams.iv)};
-  }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Aes && runtimeType == other.runtimeType && params == other.params;
 
-  static Future<AesParams> paramsFromJson(Map<String, dynamic> json) async {
-    final iv = jsonDecode(json['iv']);
-    return AesParams(iv);
+  @override
+  int get hashCode => params.hashCode;
+
+  factory Aes.fromJson(Map<String, dynamic> json) {
+    final params = AesParams.fromJson(json);
+    return Aes(params: params);
   }
 
   @override
   Map<String, dynamic> toJson() {
-    return Aes.paramsToJson(params);
+    final Map<String, dynamic> json = {'cipher': params.cipher, ...params.toJson()};
+    return json;
   }
 }
 
@@ -109,4 +115,13 @@ class AesParams extends Params {
 
   @override
   int get hashCode => hex.encode(iv).hashCode;
+
+  Map<String, dynamic> toJson() {
+    return {'iv': Json.encodeUint8List(iv)};
+  }
+
+  factory AesParams.fromJson(Map<String, dynamic> json) {
+    final iv = Json.decodeUint8List(json['iv']);
+    return AesParams(iv);
+  }
 }

@@ -1,65 +1,266 @@
-import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:brambl_dart/src/crypto/encryption/cipher/aes.dart';
+import 'package:brambl_dart/src/crypto/encryption/cipher/cipher.dart';
+import 'package:brambl_dart/src/crypto/encryption/kdf/kdf.dart';
 import 'package:brambl_dart/src/crypto/encryption/kdf/scrypt.dart';
-import 'package:brambl_dart/src/crypto/encryption/mac.dart';
 import 'package:brambl_dart/src/crypto/encryption/vault_store.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambl_dart/src/utils/json.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Vault store Spec', () {
-    VaultStore generateVaultStore(Uint8List sensitiveInformation, Uint8List password) {
-      final kdf = SCrypt(SCryptParams(salt: SCrypt.generateSalt()));
-      final cipher = Aes();
+  group('Codec Spec', () {
+    test('AES Params > Encode and Decode', () {
+      final expected = Helpers.expectedAesParams();
+      // Decode test
+      final testParams = AesParams.fromJson(jsonDecode(expected.json));
+      expect(testParams, equals(expected.value));
 
-      final derivedKey = kdf.deriveKey(password);
+      // Encode test
+      final testJson = jsonEncode(testParams.toJson());
+      expect(testJson, equals(expected.json));
 
-      final cipherText = cipher.encrypt(sensitiveInformation, derivedKey);
-      final mac = Mac(derivedKey, cipherText);
+      // Decode then Encode test
+      final encodedFromDecoded = jsonEncode(testParams.toJson());
+      expect(encodedFromDecoded, equals(expected.json));
 
-      return VaultStore(kdf, cipher, cipherText, mac.value);
-    }
-
-    test('Verify decodeCipher produces the plain text secret', () {
-      final sensitiveInformation = "this is a secret".toCodeUnitUint8List();
-      final password = "this is a password".toCodeUnitUint8List();
-      final vaultStore = generateVaultStore(sensitiveInformation, password);
-
-      final decoded = VaultStore.decodeCipher(vaultStore, password);
-
-      expect(decoded.right, equals(sensitiveInformation));
+      // Encode then Decode test
+      final decodedFromEncoded = AesParams.fromJson(jsonDecode(testJson));
+      expect(decodedFromEncoded, expected.value);
     });
 
-    test('"Verify decodeCipher returns InvalidMac with a different password', () {
-      final sensitiveInformation = "this is a secret".toCodeUnitUint8List();
-      final password = "this is a password".toCodeUnitUint8List();
-      final vaultStore = generateVaultStore(sensitiveInformation, password);
-
-      final decoded = VaultStore.decodeCipher(vaultStore, "this is a different password".toCodeUnitUint8List());
-
-      expect(decoded.left is InvalidMac, true);
+    test('AES Params > Decode fails with invalid JSON', () {
+      final invalidJson = {'iv': 10}; // IV should be a string
+      expect(() => AesParams.fromJson(invalidJson), throwsA(TypeMatcher<TypeError>()));
     });
 
-    test('Verify decodeCipher returns InvalidMac with a corrupted VaultStore', () {
-      final sensitiveInformation = "this is a secret".toCodeUnitUint8List();
-      final password = "this is a password".toCodeUnitUint8List();
-      final vaultStore = generateVaultStore(sensitiveInformation, password);
+    test('SCrypt Params > Encode and Decode', () {
+      final expected = Helpers.expectedSCryptParams();
 
-      /// VaultStore is corrupted by changing the cipher text
-      final decoded1 = VaultStore.decodeCipher(
-          vaultStore.copyWith(cipherText: "this is an invalid cipher text".toCodeUnitUint8List()), password);
-      expect(decoded1.left is InvalidMac, true);
+      // Decode test
+      final testParams = SCryptParams.fromJson(jsonDecode(expected.json));
+      expect(testParams, expected.value);
 
-      /// VaultStore is corrupted by changing the mac
-      final decoded2 =
-          VaultStore.decodeCipher(vaultStore.copyWith(mac: "this is an invalid mac".toCodeUnitUint8List()), password);
-      expect(decoded2.left is InvalidMac, true);
+      // Encode test
+      final testJson = jsonEncode(expected.value.toJson());
+      expect(testJson, expected.json);
 
-      final kdfParams = SCryptParams(salt: "invalid salt".toCodeUnitUint8List());
-      final wrongKdf = SCrypt(kdfParams);
-      final decoded3 = VaultStore.decodeCipher(vaultStore.copyWith(kdf: wrongKdf), password);
-      expect(decoded3.left is InvalidMac, true);
+      // Decode then Encode test
+      final encodedFromDecoded = jsonEncode(testParams.toJson());
+      expect(encodedFromDecoded, expected.json);
+
+      // Encode then Decode test
+      final decodedFromEncoded = SCryptParams.fromJson(jsonDecode(testJson));
+      expect(decodedFromEncoded, expected.value);
+    });
+
+    test('SCrypt Params > Decode fails with invalid JSON', () {
+      // required field "n" is missing
+      final invalidJson = {
+        'salt': 'salt',
+        'r': 10,
+        'p': 10,
+        'dkLen': 10,
+      };
+      expect(() => SCryptParams.fromJson(invalidJson), throwsA(TypeMatcher<FormatException>()));
+    });
+
+    test('Cipher > AES > Encode and Decode', () {
+      final expected = Helpers.expectedCipher();
+
+      // Decode test
+      final testCipher = Cipher.fromJson(jsonDecode(expected.json));
+      expect(testCipher, expected.value);
+
+      // Encode test
+      final testJson = jsonEncode(expected.value.toJson());
+      expect(testJson, expected.json);
+
+      // Decode then Encode test
+      final encodedFromDecoded = jsonEncode(testCipher.toJson());
+      expect(encodedFromDecoded, expected.json);
+
+      // Encode then Decode test
+      final decodedFromEncoded = Cipher.fromJson(jsonDecode(testJson));
+      expect(decodedFromEncoded, expected.value);
+    });
+
+    test('Cipher > AES > Decode fails with invalid label', () {
+      final expected = Helpers.expectedAesParams();
+
+      final fields = Map<String, dynamic>.from(expected.fields)..['cipher'] = 'invalid-label';
+      final invalidJson = jsonEncode(fields);
+
+      expect(() => Cipher.fromJson(jsonDecode(invalidJson)), throwsA(TypeMatcher<UnknownCipherException>()));
+    });
+
+    test('Cipher > AES > Decode fails with invalid JSON', () {
+      final expected = Helpers.expectedAesParams();
+
+      // verify if underlying piece fails, the whole decode fails
+      final fields = {'cipher': expected.value.cipher}; // IV is missing
+      final invalidJson = jsonEncode(fields);
+
+      expect(() => Cipher.fromJson(jsonDecode(invalidJson)), throwsA(TypeMatcher<TypeError>()));
+    });
+
+    test('KDF > SCrypt > Encode and Decode', () {
+      final expected = Helpers.expectedKdf();
+
+      // Decode test
+      final testKdf = Kdf.fromJson(jsonDecode(expected.json));
+      expect(testKdf, expected.value);
+
+      // Encode test
+      final testJson = jsonEncode(expected.value.toJson());
+      expect(testJson, expected.json);
+
+      // Decode then Encode test
+      final encodedFromDecoded = jsonEncode(testKdf.toJson());
+      expect(encodedFromDecoded, expected.json);
+
+      // Encode then Decode test
+      final decodedFromEncoded = Kdf.fromJson(jsonDecode(testJson));
+      expect(decodedFromEncoded, expected.value);
+    });
+
+    test('KDF > SCrypt > Decode fails with invalid label', () {
+      final expected = Helpers.expectedSCryptParams();
+
+      final invalidJson = jsonEncode(expected.fields); // label is missing
+
+      expect(() => Kdf.fromJson(jsonDecode(invalidJson)), throwsA(TypeMatcher<TypeError>()));
+    });
+
+    test('KDF > SCrypt > Decode fails with invalid JSON', () {
+      final expected = Helpers.expectedSCryptParams();
+
+      // verify if underlying piece fails, the whole decode fails
+      final fields = expected.fields
+        ..addAll({'kdf': expected.value.kdf})
+        ..remove("salt"); // salt is missing
+      final invalidJson = jsonEncode(fields);
+
+      expect(() => Kdf.fromJson(jsonDecode(invalidJson)), throwsA(TypeMatcher<TypeError>()));
+    });
+
+    test('VaultStore > Encode and Decode', () {
+      final expected = Helpers.expectedVaultStore();
+
+      // Decode test
+      final testVaultStore = VaultStore.fromJson(jsonDecode(expected.json)).get();
+      expect(testVaultStore, expected.value);
+
+      // Encode test
+      final testJson = jsonEncode(expected.value.toJson());
+      expect(testJson, expected.json);
+
+      // Decode then Encode test
+      final encodedFromDecoded = jsonEncode(testVaultStore.toJson());
+      expect(encodedFromDecoded, expected.json);
+
+      // Encode then Decode test
+      final decodedFromEncoded = VaultStore.fromJson(jsonDecode(testJson)).get();
+      expect(decodedFromEncoded, expected.value);
+    });
+
+    test('VaultStore > Decode fails with invalid JSON', () {
+      final expected = Helpers.expectedSCryptParams();
+      // verify if underlying piece fails, the whole decode fails
+      final invalidKdfParams = expected.fields
+        ..remove('salt') // salt is mising
+        ..addAll({'kdf': 'invalid-kdf'});
+
+      final fields = {"kdf": jsonEncode(invalidKdfParams), ...expected.fields..remove("salt")};
+      final invalidJson = jsonEncode(fields);
+
+      final result = VaultStore.fromJson(jsonDecode(invalidJson));
+      expect(result.isLeft, true);
     });
   });
+}
+
+class Helpers {
+  static ({AesParams value, Map<String, String> fields, String json}) expectedAesParams() {
+    final iv = 'iv'.toCodeUnitUint8List();
+    final value = AesParams(iv);
+
+    final fields = {'iv': Json.encodeUint8List(iv)};
+    final json = jsonEncode(fields);
+
+    return (
+      value: value,
+      fields: fields,
+      json: json,
+    );
+  }
+
+  static ({SCryptParams value, Map<String, String> fields, String json}) expectedSCryptParams() {
+    final salt = 'salt'.toCodeUnitUint8List();
+    final value = SCryptParams(salt: salt);
+    final fields = {
+      'salt': Json.encodeUint8List(salt),
+      'n': jsonEncode(value.n),
+      'r': jsonEncode(value.r),
+      'p': jsonEncode(value.p),
+      'dkLen': jsonEncode(value.dkLen)
+    };
+    final json = jsonEncode(fields);
+    return (
+      value: value,
+      fields: fields,
+      json: json,
+    );
+  }
+
+  static ({Cipher value, Map<String, String> fields, String json}) expectedCipher() {
+    final e = Helpers.expectedAesParams();
+    final value = Aes(params: e.value);
+
+    final fields = {"cipher": e.value.cipher}..addAll(e.fields);
+
+    final json = jsonEncode(fields);
+    return (
+      value: value,
+      fields: fields,
+      json: json,
+    );
+  }
+
+  static ({Kdf value, Map<String, String> fields, String json}) expectedKdf() {
+    final s = Helpers.expectedSCryptParams();
+    final value = SCrypt(s.value);
+
+    final fields = {"kdf": s.value.kdf}..addAll(s.fields);
+
+    final json = jsonEncode(fields);
+    return (
+      value: value,
+      fields: fields,
+      json: json,
+    );
+  }
+
+  static ({VaultStore value, Map<String, String> fields, String json}) expectedVaultStore() {
+    final c = Helpers.expectedCipher();
+    final k = Helpers.expectedKdf();
+    final cipherText = 'cipherText'.toCodeUnitUint8List();
+    final mac = 'mac'.toCodeUnitUint8List();
+
+    final value = VaultStore(k.value, c.value, cipherText, mac);
+    final fields = {
+      'kdf': k.json,
+      'cipher': c.json,
+      'cipherText': Json.encodeUint8List(cipherText),
+      'mac': Json.encodeUint8List(mac)
+    };
+
+    final json = jsonEncode(fields);
+    return (
+      value: value,
+      fields: fields,
+      json: json,
+    );
+  }
 }
