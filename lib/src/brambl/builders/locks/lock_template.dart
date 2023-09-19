@@ -46,5 +46,17 @@ class PredicateTemplate implements LockTemplate {
 
   @override
   LockType get lockType => LockTypes.predicate;
-}
 
+  Map<String, dynamic> toJson() => {
+        'type': lockType.label,
+        'threshold': threshold,
+        'innerTemplates': innerTemplates.map((e) => e.toJson()).toList(),
+      };
+
+  factory PredicateTemplate.fromJson(Map<String, dynamic> json) {
+    final threshold = json['threshold'] as int;
+    final innerTemplates =
+        (json['innerTemplates'] as List<dynamic>).map((e) => PropositionTemplate.fromJson(e)).toList();
+    return PredicateTemplate(innerTemplates, threshold);
+  }
+}

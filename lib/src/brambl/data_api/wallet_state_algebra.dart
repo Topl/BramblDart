@@ -5,7 +5,7 @@ import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 /// Defines a data API for storing and retrieving wallet state.
-abstract class WalletStateAlgebraX {
+abstract class WalletStateAlgebra {
   /// Initialize the wallet state with the given verification key
   ///
   /// [networkId] The network id to initialize the wallet state with

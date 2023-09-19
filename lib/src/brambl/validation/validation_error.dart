@@ -1,1 +1,1 @@
-sealed class ValidationError {}
+abstract class ValidationError {}

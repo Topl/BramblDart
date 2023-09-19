@@ -113,9 +113,6 @@ class Either<L, R> {
   Either<T, R> mapLeftVoid<T>(T Function(L) f) => isLeft ? Either.left(f(left as L)) : Either.unit();
 
 
-  /// Attempts to get R but will throw left value as an error if the right value does not exist
-  R getRightOrThrowLeft() => isRight ? right! : throw left! as Exception;
-
   /// Converts the Either to an Option, returning the value on the right of the Either if it exists, otherwise None
   Option<R> toOption() => isRight ? Some(right as R) : None();
 

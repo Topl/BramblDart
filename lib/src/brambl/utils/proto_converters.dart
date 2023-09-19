@@ -1,9 +1,21 @@
-import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart' as xspec;
 import 'package:brambl_dart/src/crypto/signing/signing.dart' as s;
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 class ProtoConverters {
+  static VerificationKey publicKeyToProto(xspec.PublicKey pk) {
+    return VerificationKey(
+      extendedEd25519: VerificationKey_ExtendedEd25519Vk(
+        chainCode: pk.chainCode,
+        vk: VerificationKey_Ed25519Vk(value: pk.vk.bytes),
+      ),
+    );
+  }
+
+  static xspec.PublicKey publicKeyfromProto(VerificationKey_ExtendedEd25519Vk pbVk) {
+    return xspec.PublicKey.proto(pbVk);
+  }
+
   static KeyPair keyPairToProto(s.KeyPair<xspec.SecretKey, xspec.PublicKey> kp) {
     return KeyPair(
       vk: VerificationKey(
@@ -22,12 +34,9 @@ class ProtoConverters {
     );
   }
 
-  static VerificationKey publicKeyToProto(xspec.PublicKey pk) {
-    return VerificationKey(
-      extendedEd25519: VerificationKey_ExtendedEd25519Vk(
-        chainCode: pk.chainCode,
-        vk: VerificationKey_Ed25519Vk(value: pk.vk.bytes),
-      ),
-    );
+  static s.KeyPair<xspec.SecretKey, xspec.PublicKey> keyPairFromProto(KeyPair keyPair) {
+    var sk = xspec.SecretKey.proto(keyPair.sk.extendedEd25519);
+    var vk = xspec.PublicKey.proto(keyPair.vk.extendedEd25519);
+    return s.KeyPair(sk, vk);
   }
 }
