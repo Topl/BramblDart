@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:brambl_dart/brambl_dart.dart';
 import 'package:brambl_dart/src/crypto/generation/bip32_index.dart';
+import 'package:brambl_dart/src/crypto/hash/sha.dart';
 import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart' as ed25519_spec;
 import 'package:brambl_dart/src/crypto/signing/eddsa/ec.dart';
 import 'package:brambl_dart/src/crypto/signing/eddsa/ed25519.dart' as eddsa;
