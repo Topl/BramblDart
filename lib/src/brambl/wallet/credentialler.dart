@@ -2,14 +2,10 @@ import 'package:brambl_dart/brambl_dart.dart';
 import 'package:brambl_dart/src/brambl/common/contains_signable.dart';
 import 'package:brambl_dart/src/brambl/context.dart';
 import 'package:brambl_dart/src/brambl/data_api/wallet_state_algebra.dart';
-import 'package:brambl_dart/src/brambl/utils/proto_converters.dart';
 import 'package:brambl_dart/src/brambl/validation/transaction_authorization_interpreter.dart';
 import 'package:brambl_dart/src/brambl/validation/transaction_syntax_interpreter.dart';
 import 'package:brambl_dart/src/brambl/validation/validation_error.dart';
-import 'package:brambl_dart/src/brambl/wallet/wallet_api.dart';
-import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
@@ -79,18 +75,11 @@ class CredentiallerInterpreter implements Credentialler {
 
   @override
   Future<List<ValidationError>> validate(IoTransaction tx, Context ctx) async {
-    List<ValidationError> syntaxErrs = (await TransactionSyntaxInterpreter.validate(tx)).left;
-    ValidationError authErrs = (await TransactionAuthorizationInterpreter.validate(ctx, tx)).left;
-
-    if (syntaxErrs != null) {
-      if (authErrs != null) {
-        syntaxErrs.add(authErrs);
-      }
-    } else if (authErrs != null) {
-      syntaxErrs = authErrs;
-    }
-
-    syntaxErrs.add(authErrs);
+    var syntaxErrs =
+        await TransactionSyntaxInterpreter().validate(tx).swap.map((e) => e.toList()).valueOr(() => []);
+    var authErrs =
+        await TransactionAuthorizationInterpreter().validate(ctx)(tx).swap.map((e) => [e]).valueOr(() => []);
+    return syntaxErrs + authErrs;
   }
 
   @override

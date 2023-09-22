@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:brambl_dart/brambl_dart.dart' show Tokens, blake2b256;
+import 'package:brambl_dart/brambl_dart.dart' show Tokens;
+import 'package:brambl_dart/src/crypto/hash/hash.dart' show blake2b256;
 import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
 import 'package:brambl_dart/src/quivr/runtime/dynamic_context.dart';
 import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';

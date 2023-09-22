@@ -1,8 +1,8 @@
+import 'package:brambl_dart/brambl_dart.dart';
 import 'package:brambl_dart/src/quivr/algebras/signature_verifier.dart';
 import 'package:brambl_dart/src/quivr/common/parsable_data_interface.dart';
 import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
 import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/brambl/models/datum.pb.dart';
@@ -24,7 +24,7 @@ class DynamicContext {
 
   Int64 currentTick;
 
-  Int64? Function(String) heightOf;
+  Option<Int64> Function(String) heightOf;
 
   /// can return wrapped[ContextError.failedToFindDigestVerifier]
   QuivrResult<DigestVerification> digestVerify(String routine, DigestVerification verification) {

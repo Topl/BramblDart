@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:brambl_dart/brambl_dart.dart';
+
+import 'package:brambl_dart/src/crypto/hash/blake2b.dart';
+import 'package:brambl_dart/src/crypto/hash/sha.dart';
 
 import 'digest/digest.dart';
 

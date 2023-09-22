@@ -1,3 +1,5 @@
+import 'package:brambl_dart/src/brambl/validation/blake2b256_digest_interpreter.dart';
+import 'package:brambl_dart/src/brambl/validation/extended_ed25519_signature_interpreter.dart';
 import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/quivr/algebras/digest_verifier.dart';
 import 'package:brambl_dart/src/quivr/algebras/signature_verifier.dart';
@@ -24,7 +26,7 @@ class Context extends DynamicContext {
           _hashingRoutines,
           SignableBytes.fromBuffer(tx.writeToBuffer()),
           curTick,
-          _heightOf(),
+          _heightOf,
         );
 
    static const Map<String, DigestVerifier> _hashingRoutines = {'Blake2b256': Blake2b256DigestInterpreter()};
@@ -39,7 +41,7 @@ class Context extends DynamicContext {
   Option<Datum> Function(String) get datums => heightDatums;
 
   /// Returns the height of the specified label.
-  static Future<Option<Int64>> _heightOf(String label,  Option<Datum> Function(String) heightDatums) async {
+  static Option<Int64> _heightOf(String label,  Option<Datum> Function(String) heightDatums) {
     final datum = heightDatums(label);
     return datum.isDefined ? Some(datum.value.header.event.height) : None();
   }

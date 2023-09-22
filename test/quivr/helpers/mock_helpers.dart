@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:brambl_dart/brambl_dart.dart';
+import 'package:brambl_dart/src/crypto/hash/blake2b.dart';
 import 'package:brambl_dart/src/quivr/algebras/digest_verifier.dart';
 import 'package:brambl_dart/src/quivr/algebras/signature_verifier.dart';
 import 'package:brambl_dart/src/quivr/common/parsable_data_interface.dart';
