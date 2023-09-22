@@ -3,6 +3,8 @@ import 'package:brambl_dart/src/brambl/common/contains_signable.dart';
 import 'package:brambl_dart/src/brambl/context.dart';
 import 'package:brambl_dart/src/brambl/data_api/wallet_state_algebra.dart';
 import 'package:brambl_dart/src/brambl/utils/proto_converters.dart';
+import 'package:brambl_dart/src/brambl/validation/transaction_authorization_interpreter.dart';
+import 'package:brambl_dart/src/brambl/validation/transaction_syntax_interpreter.dart';
 import 'package:brambl_dart/src/brambl/validation/validation_error.dart';
 import 'package:brambl_dart/src/brambl/wallet/wallet_api.dart';
 import 'package:brambl_dart/src/common/functional/either.dart';
@@ -77,11 +79,18 @@ class CredentiallerInterpreter implements Credentialler {
 
   @override
   Future<List<ValidationError>> validate(IoTransaction tx, Context ctx) async {
-    var syntaxErrs =
-        await TransactionSyntaxInterpreter().make().validate(tx).swap.map((e) => e.toList()).valueOr(() => []);
-    var authErrs =
-        await TransactionAuthorizationInterpreter().make().validate(ctx)(tx).swap.map((e) => [e]).valueOr(() => []);
-    return syntaxErrs + authErrs;
+    List<ValidationError> syntaxErrs = (await TransactionSyntaxInterpreter.validate(tx)).left;
+    ValidationError authErrs = (await TransactionAuthorizationInterpreter.validate(ctx, tx)).left;
+
+    if (syntaxErrs != null) {
+      if (authErrs != null) {
+        syntaxErrs.add(authErrs);
+      }
+    } else if (authErrs != null) {
+      syntaxErrs = authErrs;
+    }
+
+    syntaxErrs.add(authErrs);
   }
 
   @override
