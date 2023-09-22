@@ -47,7 +47,7 @@ class Blake2b256 extends Blake2b {
         _digest.updateByte(byte);
       }
     }
-    
+
     for (var m in messages) {
       _digest.update(m, 0, m.length);
     }

@@ -233,7 +233,6 @@ class WalletApi extends WalletApiDefinition {
   final purpose = 1852;
   final coinType = 7091;
 
-  // TODO replace
   final kdf = SCrypt.withGeneratedSalt(); //generates salt
   final cipher = Aes(); // generates IV
   final WalletKeyApiAlgebra walletKeyApi;

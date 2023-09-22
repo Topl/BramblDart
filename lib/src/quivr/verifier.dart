@@ -1,13 +1,12 @@
 import 'dart:convert';
 
+import 'package:brambl_dart/brambl_dart.dart' show Tokens, blake2b256;
 import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
 import 'package:brambl_dart/src/quivr/runtime/dynamic_context.dart';
 import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
-import 'package:brambl_dart/src/quivr/tokens.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
-import 'package:hashlib/hashlib.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
@@ -23,7 +22,7 @@ class Verifier {
   ) {
     final sb = context.signableBytes;
     final merge = utf8.encode(tag) + sb.value.toUint8List();
-    final verifierTxBind = blake2b256.convert(merge).bytes;
+    final verifierTxBind = blake2b256.hash(merge.toUint8List());
 
     final result = ListEquality().equals(verifierTxBind, proofTxBind.value.toUint8List());
 
