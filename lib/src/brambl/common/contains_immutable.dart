@@ -7,6 +7,7 @@ import 'package:brambl_dart/src/quivr/tokens.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
+import 'package:topl_common/proto/brambl/models/box/asset.pbenum.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/box.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/challenge.pb.dart';
@@ -23,6 +24,7 @@ import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_ou
 import 'package:topl_common/proto/brambl/models/transaction/unspent_transaction_output.pb.dart';
 import 'package:topl_common/proto/consensus/models/operational_certificate.pb.dart';
 import 'package:topl_common/proto/consensus/models/staking.pb.dart';
+import 'package:topl_common/proto/google/protobuf/struct.pb.dart' as str;
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
@@ -51,11 +53,8 @@ class ContainsImmutable {
   /// Creates an ContainsImmutable object from a [String]
   factory ContainsImmutable.string(String string) => string.toUtf8Uint8List().immutable;
 
-  /// Creates an ContainsImmutable object from a [int]
-  factory ContainsImmutable.intImmutable(int i) => i.toBytes.immutable;
-
-  /// Creates an ContainsImmutable object from a [String]
-  factory ContainsImmutable.stringImmutable(String string) => string.toUtf8Uint8List().immutable;
+  /// Creates an ContainsImmutable object from a [Uint8List]
+  factory ContainsImmutable.struct(str.Struct struct) => struct.writeToBuffer().immutable;
 
   /// Wrapper object for ByteString
   factory ContainsImmutable.byteString(ByteString byteString) => byteString.bytes.immutable;
@@ -113,6 +112,10 @@ class ContainsImmutable {
       return ContainsImmutable.headerDatum(d.header);
     } else if (d.hasIoTransaction()) {
       return ContainsImmutable.ioTransactionDatum(d.ioTransaction);
+    } else if (d.hasGroupPolicy()) {
+      return ContainsImmutable.groupPolicyDatum(d.groupPolicy);
+    } else if (d.hasSeriesPolicy()) {
+      return ContainsImmutable.seriesPolicyDatum(d.seriesPolicy);
     } else {
       throw Exception('Invalid Datum type ${d.runtimeType}');
     }
@@ -124,6 +127,8 @@ class ContainsImmutable {
   factory ContainsImmutable.headerDatum(Datum_Header header) => ContainsImmutable.headerEvent(header.event);
   factory ContainsImmutable.ioTransactionDatum(Datum_IoTransaction ioTransaction) =>
       ContainsImmutable.iotxEventImmutable(ioTransaction.event);
+  factory ContainsImmutable.groupPolicyDatum(Datum_GroupPolicy gp) => ContainsImmutable.groupPolicyEvent(gp.event);
+  factory ContainsImmutable.seriesPolicyDatum(Datum_SeriesPolicy sp) => ContainsImmutable.seriesPolicyEvent(sp.event);
 
   factory ContainsImmutable.ioTransaction(IoTransaction iotx) =>
       ContainsImmutable.list(iotx.inputs) +
@@ -155,6 +160,40 @@ class ContainsImmutable {
     }
   }
 
+  factory ContainsImmutable.lvlValue(Value_LVL v) => ContainsImmutable.int128(v.quantity);
+
+  factory ContainsImmutable.toplValue(Value_TOPL v) =>
+      ContainsImmutable.int128(v.quantity) + ContainsImmutable.stakingRegistration(v.registration);
+
+  factory ContainsImmutable.assetValue(Value_Asset asset) =>
+      ContainsImmutable.groupIdentifier(asset.groupId) +
+      ContainsImmutable.seriesIdValue(asset.seriesId) +
+      ContainsImmutable.int128(asset.quantity) +
+      asset.groupAlloy.value.immutable +
+      asset.seriesAlloy.value.immutable +
+      ContainsImmutable.fungibility(asset.fungibility) +
+      ContainsImmutable.quantityDescriptor(asset.quantityDescriptor) +
+      ContainsImmutable.struct(asset.ephemeralMetadata) +
+      asset.commitment.value.immutable;
+
+  factory ContainsImmutable.seriesValue(Value_Series _) =>
+      ContainsImmutable.seriesIdValue(_.seriesId) +
+      ContainsImmutable.int128(_.quantity) +
+      ContainsImmutable.int(_.tokenSupply.value) +
+      ContainsImmutable.quantityDescriptor(_.quantityDescriptor) +
+      ContainsImmutable.fungibility(_.fungibility);
+
+  factory ContainsImmutable.groupValue(Value_Group _) =>
+      ContainsImmutable.groupIdentifier(_.groupId) +
+      ContainsImmutable.int128(_.quantity) +
+      ContainsImmutable.seriesIdValue(_.fixedSeries);
+
+  factory ContainsImmutable.fungibility(FungibilityType _) => ContainsImmutable.int(_.value);
+
+  factory ContainsImmutable.quantityDescriptor(QuantityDescriptorType _) => ContainsImmutable.int(_.value);
+
+  factory ContainsImmutable.stakingAddress(StakingAddress v) => v.value.immutable;
+
   factory ContainsImmutable.evidence(Evidence e) => ContainsImmutable.digest(e.digest);
 
   factory ContainsImmutable.digest(Digest d) => d.value.immutable;
@@ -170,6 +209,12 @@ class ContainsImmutable {
   factory ContainsImmutable.transactionIdentifier(TransactionId id) =>
       ContainsImmutable.string(Identifier.ioTransaction32) + id.value.immutable;
 
+  factory ContainsImmutable.groupIdentifier(GroupId id) =>
+      ContainsImmutable.string(Identifier.group32) + id.value.immutable;
+
+  factory ContainsImmutable.seriesIdValue(SeriesId sid) =>
+      ContainsImmutable.string(Tags.series32) + sid.value.immutable;
+
   factory ContainsImmutable.transactionOutputAddress(TransactionOutputAddress v) =>
       ContainsImmutable.int(v.network) +
       ContainsImmutable.int(v.ledger) +
@@ -178,18 +223,6 @@ class ContainsImmutable {
 
   factory ContainsImmutable.lockAddress(LockAddress v) =>
       ContainsImmutable.int(v.network) + ContainsImmutable.int(v.ledger) + ContainsImmutable.boxLock32Identifier(v.id);
-
-  factory ContainsImmutable.lvlValue(Value_LVL v) => ContainsImmutable.int128(v.quantity);
-
-  factory ContainsImmutable.stakingAddress(StakingAddress v) => v.value.immutable;
-
-  factory ContainsImmutable.toplValue(Value_TOPL v) =>
-      ContainsImmutable.int128(v.quantity) + ContainsImmutable.stakingRegistration(v.registration);
-
-  factory ContainsImmutable.assetValue(Value_Asset asset) =>
-      ContainsImmutable.string(asset.label) +
-      ContainsImmutable.int128(asset.quantity) +
-      ContainsImmutable.small(asset.metadata);
 
   // TODO: figure out why witness is List<List<Int>>
   factory ContainsImmutable.signatureKesSum(SignatureKesSum v) =>
@@ -284,6 +317,18 @@ class ContainsImmutable {
   factory ContainsImmutable.iotxEventImmutable(Event_IoTransaction event) =>
       ContainsImmutable.iotxSchedule(event.schedule) + ContainsImmutable.small(event.metadata);
 
+  factory ContainsImmutable.groupPolicyEvent(Event_GroupPolicy _) =>
+      ContainsImmutable.string(_.label) +
+      ContainsImmutable.seriesIdValue(_.fixedSeries) +
+      ContainsImmutable.transactionOutputAddress(_.registrationUtxo);
+
+  factory ContainsImmutable.seriesPolicyEvent(Event_SeriesPolicy _) =>
+      ContainsImmutable.string(_.label) +
+      ContainsImmutable.int(_.tokenSupply.value) +
+      ContainsImmutable.transactionOutputAddress(_.registrationUtxo) +
+      ContainsImmutable.fungibility(_.fungibility) +
+      ContainsImmutable.quantityDescriptor(_.quantityDescriptor);
+
   factory ContainsImmutable.eventImmutable(Event event) {
     if (event.hasEon()) {
       return ContainsImmutable.eonEvent(event.eon);
@@ -295,6 +340,10 @@ class ContainsImmutable {
       return ContainsImmutable.headerEvent(event.header);
     } else if (event.hasIoTransaction()) {
       return ContainsImmutable.iotxEventImmutable(event.ioTransaction);
+    } else if (event.hasGroupPolicy()) {
+      return ContainsImmutable.groupPolicyEvent(event.groupPolicy);
+    } else if (event.hasSeriesPolicy()) {
+      return ContainsImmutable.seriesPolicyEvent(event.seriesPolicy);
     } else {
       throw Exception('Invalid Event type ${event.runtimeType}');
     }
@@ -487,6 +536,8 @@ class ContainsImmutable {
       return ContainsImmutable.root(type);
     } else if (type is ByteString) {
       return ContainsImmutable.byteString(type);
+    } else if (type is str.Struct) {
+      return ContainsImmutable.struct(type);
     } else if (type is List) {
       return ContainsImmutable.list(type);
     }
@@ -516,6 +567,10 @@ class ContainsImmutable {
       return ContainsImmutable.headerDatum(type);
     } else if (type is Datum_IoTransaction) {
       return ContainsImmutable.ioTransactionDatum(type);
+    } else if (type is Datum_GroupPolicy) {
+      return ContainsImmutable.groupPolicyDatum(type);
+    } else if (type is Datum_SeriesPolicy) {
+      return ContainsImmutable.seriesPolicyDatum(type);
     }
 
     /// Io Transactions
@@ -540,6 +595,39 @@ class ContainsImmutable {
       return ContainsImmutable.toplValue(type);
     } else if (type is Value_Asset) {
       return ContainsImmutable.assetValue(type);
+    } else if (type is Value_Series) {
+      return ContainsImmutable.seriesValue(type);
+    } else if (type is Value_Group) {
+      return ContainsImmutable.groupValue(type);
+    }
+
+    // extra
+    else if (type is Evidence) {
+      return ContainsImmutable.evidence(type);
+    } else if (type is Digest) {
+      return ContainsImmutable.digest(type);
+    } else if (type is Preimage) {
+      return ContainsImmutable.preimage(type);
+    } else if (type is AccumulatorRootId) {
+      return ContainsImmutable.accumulatorRoot32Identifier(type);
+    } else if (type is LockId) {
+      return ContainsImmutable.boxLock32Identifier(type);
+    } else if (type is TransactionId) {
+      return ContainsImmutable.transactionIdentifier(type);
+    } else if (type is GroupId) {
+      return ContainsImmutable.groupIdentifier(type);
+    } else if (type is SeriesId) {
+      return ContainsImmutable.seriesIdValue(type);
+    } else if (type is TransactionOutputAddress) {
+      return ContainsImmutable.transactionOutputAddress(type);
+    } else if (type is LockAddress) {
+      return ContainsImmutable.lockAddress(type);
+    } else if (type is StakingAddress) {
+      return ContainsImmutable.stakingAddress(type);
+    } else if (type is FungibilityType) {
+      return ContainsImmutable.fungibility(type);
+    } else if (type is QuantityDescriptorType) {
+      return ContainsImmutable.quantityDescriptor(type);
     }
 
     /// signatures

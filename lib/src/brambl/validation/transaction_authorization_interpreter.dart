@@ -39,6 +39,17 @@ class TransactionAuthorizationInterpreter<F> {
     );
   }
 
+
+
+/// Verifies that at least threshold number of proofs satisfy their associated propositions.
+///
+/// [propositions] - The propositions to be verified.
+/// [proofs] - The proofs to be verified.
+/// [threshold] - The threshold of proofs that must be satisfied.
+/// [context] - The context in which the proofs are to be verified.
+/// [verifier] - The verifier to be used to verify the proofs.
+///
+/// Returns a Future of an Either of a TransactionAuthorizationError or a boolean.
   Future<Either<TransactionAuthorizationError, bool>> thresholdVerifier(
     List<Proposition> propositions,
     List<Proof> proofs,
@@ -97,4 +108,31 @@ class TransactionAuthorizationInterpreter<F> {
   ) async {
     return thresholdVerifier(known, responses, threshold, context);
   }
+}
+
+
+
+/// Partitions a list into a tuple of two lists, one containing the elements that satisfy a predicate
+/// and the other containing the elements that do not satisfy the predicate.
+///
+/// [list] - The list to partition.
+/// [f] - The predicate function.
+///
+/// Returns a tuple of two lists, one containing the elements that satisfy the predicate and the other
+/// containing the elements that do not satisfy the predicate.
+(List<A>, List<B>) partitionMap<A, B>(
+  List<dynamic> list,
+  Either<A, B> Function(dynamic) f,
+) {
+  final lefts = <A>[];
+  final rights = <B>[];
+  for (final x in list) {
+    final result = f(x);
+    if (result.isLeft) {
+      lefts.add(result.left!);
+    } else {
+      rights.add(result.right!);
+    }
+  }
+  return (lefts, rights);
 }
