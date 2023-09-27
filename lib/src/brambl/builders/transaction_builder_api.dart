@@ -1,6 +1,9 @@
 import 'package:brambl_dart/src/brambl/builders/builder_error.dart';
 import 'package:brambl_dart/src/brambl/codecs/address_codecs.dart';
+import 'package:brambl_dart/src/brambl/common/contains_evidence.dart';
+import 'package:brambl_dart/src/brambl/syntax/series_policy_syntax.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/genus/data_extensions.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
@@ -10,9 +13,11 @@ import 'package:topl_common/proto/brambl/models/datum.pb.dart';
 import 'package:topl_common/proto/brambl/models/event.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
+import 'package:topl_common/proto/brambl/models/transaction/schedule.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_output.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/unspent_transaction_output.pb.dart';
 import 'package:topl_common/proto/genus/genus_models.pb.dart';
+import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 import '../../common/functional/either.dart';
@@ -106,7 +111,7 @@ abstract class TransactionBuilderApiDefinition {
     Txo registrationTxo,
     Lock_Predicate registrationLock,
     Event_SeriesPolicy seriesPolicy,
-    int quantityToMint,
+    Int128 quantityToMint,
     LockAddress mintedConstructorLockAddress,
   );
 }
@@ -192,45 +197,45 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
       ],
       outputs: [utxoMinted],
       datum: d,
-      groupPolicies: [Datum.GroupPolicy(groupPolicy)],
+      groupPolicies: [Datum_GroupPolicy(event: groupPolicy)],
     ));
   }
 
-//   @override
-//   Future<Either<BuilderError, IoTransaction>> buildSimpleSeriesMintingTransaction(
-//     Txo registrationTxo,
-//     Lock_Predicate registrationLock,
-//     Event_SeriesPolicy seriesPolicy,
-//     Int128 quantityToMint,
-//     LockAddress mintedConstructorLockAddress,
-//   ) async {
-//     var registrationLockAddr = await lockAddress(Lock()..predicate = registrationLock);
-//     var validationResult = validateConstructorMintingParams(
-//       registrationTxo,
-//       registrationLockAddr,
-//       seriesPolicy.registrationUtxo,
-//       quantityToMint,
-//     );
-//     if (validationResult.isLeft) {
-//       return Either.left(UnableToBuildTransaction(
-//           "Unable to build transaction to mint series constructor tokens", validationResult.swap().getOrElse(null)));
-//     }
-//     var stxoAttestation = await unprovenAttestation(registrationLock);
-//     var d = await datum();
-//     var utxoMinted = await seriesOutput(mintedConstructorLockAddress, quantityToMint, seriesPolicy);
-//     return Either.right(IoTransaction(
-//       inputs: [
-//         SpentTransactionOutput(
-//           address: registrationTxo.outputAddress,
-//           attestation: stxoAttestation,
-//           value: registrationTxo.transactionOutput.value,
-//         ),
-//       ],
-//       outputs: [utxoMinted],
-//       datum: d,
-//       seriesPolicies: [Datum.SeriesPolicy(seriesPolicy)],
-//     ));
-//   }
+  @override
+  Future<Either<BuilderError, IoTransaction>> buildSimpleSeriesMintingTransaction(
+    Txo registrationTxo,
+    Lock_Predicate registrationLock,
+    Event_SeriesPolicy seriesPolicy,
+    Int128 quantityToMint,
+    LockAddress mintedConstructorLockAddress,
+  ) async {
+    var registrationLockAddr = await lockAddress(Lock()..predicate = registrationLock);
+    var validationResult = validateConstructorMintingParams(
+      registrationTxo,
+      registrationLockAddr,
+      seriesPolicy.registrationUtxo,
+      quantityToMint,
+    );
+    if (validationResult.isLeft) {
+      return Either.left(UnableToBuildTransaction(
+          "Unable to build transaction to mint series constructor tokens", validationResult.swap().getOrElse(null)));
+    }
+    var stxoAttestation = await unprovenAttestation(registrationLock);
+    var d = await datum();
+    var utxoMinted = await seriesOutput(mintedConstructorLockAddress, quantityToMint, seriesPolicy);
+    return Either.right(IoTransaction(
+      inputs: [
+        SpentTransactionOutput(
+          address: registrationTxo.outputAddress,
+          attestation: stxoAttestation,
+          value: registrationTxo.transactionOutput.value,
+        ),
+      ],
+      outputs: [utxoMinted],
+      datum: d,
+      seriesPolicies: [Datum_SeriesPolicy(event: seriesPolicy)],
+    ));
+  }
 
   Either<UserInputError, Unit> validateConstructorMintingParams(
     Txo registrationTxo,
@@ -281,81 +286,74 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
   ) async {
     final value = Value.getDefault()
       ..series = (Value_Series()
-        ..seriesId = policy.com
-        ..quantity = quantity.value.toInt()
-        ..tokenSupply = policy.tokenSupply.value.toInt()
+        ..seriesId = SeriesId(value: policy.computeId.value)
+        ..quantity = quantity
+        ..tokenSupply = policy.tokenSupply
         ..quantityDescriptor = policy.quantityDescriptor
         ..fungibility = policy.fungibility);
 
     return UnspentTransactionOutput(
       address: lockAddress,
-      value: Value()
-        ..series = (Value_Series()
-          ..seriesId = policy.computeId
-          ..quantity = quantity.value.toInt()
-          ..tokenSupply = policy.tokenSupply.value.toInt()
-          ..quantityDescriptor = policy.quantityDescriptor
-          ..fungibility = policy.fungibility),
+      value: value,
     );
   }
 
-//   @override
-//   Future<UnspentTransactionOutput> lvlOutputWithLockAddress(
-//     LockAddress lockAddress,
-//     Int128 amount,
-//   ) async {
-//     return UnspentTransactionOutput(
-//       address: lockAddress,
-//       value: Value()..lvl = Value_LVL(quantity: amount),
-//     );
-//   }
+  @override
+  Future<UnspentTransactionOutput> lvlOutputWithLockAddress(
+    LockAddress lockAddress,
+    Int128 amount,
+  ) async {
+    return UnspentTransactionOutput(
+      address: lockAddress,
+      value: Value()..lvl = Value_LVL(quantity: amount),
+    );
+  }
 
-//   @override
-//   Future<LockAddress> lockAddress(Lock lock) async {
-//     return LockAddress(
-//       id: networkId,
-//       ledger: ledgerId,
-//       network: LockId(value: lock.sizedEvidence.digest),
-//     );
-//   }
+  @override
+  Future<LockAddress> lockAddress(Lock lock) async {
+    return LockAddress(
+      network: networkId,
+      ledger: ledgerId,
+      id: LockId(value: lock.sizedEvidence.digest.value),
+    );
+  }
 
-//   @override
-//   Future<UnspentTransactionOutput> lvlOutput(
-//     Lock_Predicate predicate,
-//     Int128 amount,
-//   ) async {
-//     return UnspentTransactionOutput(
-//       address: LockAddress(id:
-//         networkId, ledger:
-//         ledgerId, network:
-//         LockId(value: (Lock(predicate: predicate).sizedEvidence.digest.value),
-//       ),
-//       value: Value(lvl: Value_LVL(quantity: amount)),
-//     );
-//   }
+  @override
+  Future<UnspentTransactionOutput> lvlOutput(
+    Lock_Predicate predicate,
+    Int128 amount,
+  ) async {
+    return UnspentTransactionOutput(
+      address: LockAddress(
+          network: networkId,
+          ledger: ledgerId,
+          id: LockId(
+            value: (Lock(predicate: predicate).sizedEvidence.digest.value),
+          )),
+      value: Value(lvl: Value_LVL(quantity: amount)),
+    );
+  }
 
-//   /// Creates a datum.
-//   ///
-//   /// Returns a Future of a Datum.IoTransaction.
-//   @override
-//   Future<Datum_IoTransaction> datum() async {
-//     return Datum_IoTransaction(event:
-//       Event_IoTransaction(schedule:
-//         Schedule(min: Int64.ZERO, max: Int64.MAX_VALUE, timestamp: Int64(DateTime.now().millisecondsSinceEpoch),
-//         metadata: SmallData(),
-//       ),
-//     );
-//   }
+  /// Creates a datum.
+  ///
+  /// Returns a Future of a Datum.IoTransaction.
+  @override
+  Future<Datum_IoTransaction> datum() async {
+    return Datum_IoTransaction(
+      event: Event_IoTransaction(
+        schedule:
+            Schedule(min: Int64.ZERO, max: Int64.MAX_VALUE, timestamp: Int64(DateTime.now().millisecondsSinceEpoch)),
+        metadata: SmallData(),
+      ),
+    );
+  }
 
-//   @override
-//   Future<Attestation> unprovenAttestation(Lock_Predicate predicate) async {
-//     return Attestation(
-//       value: Attestation_Value()
-//         ..predicate = (Attestation_Predicate()
-//           ..predicate = predicate
-//           ..challenges.addAll(List.generate(predicate.challenges.length, (_) => Proof()))),
-//     );
-//   }
+  @override
+  Future<Attestation> unprovenAttestation(Lock_Predicate predicate) async {
+    return Attestation(
+        predicate:
+            Attestation_Predicate(lock: predicate, responses: List.filled(predicate.challenges.length, Proof())));
+  }
 }
 
 class LockAddressOps {

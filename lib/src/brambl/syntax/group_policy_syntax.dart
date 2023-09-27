@@ -15,3 +15,8 @@ class GroupPolicySyntax {
     return GroupId(value: sha256);
   }
 }
+
+extension GroupPolicySyntaxExtension on GroupPolicy {
+  /// Computes the [GroupId] of the [GroupPolicy].
+  GroupId get computeId => GroupPolicySyntax.computeId(this);
+}

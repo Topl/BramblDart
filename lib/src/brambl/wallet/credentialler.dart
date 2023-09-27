@@ -75,11 +75,16 @@ class CredentiallerInterpreter implements Credentialler {
 
   @override
   Future<List<ValidationError>> validate(IoTransaction tx, Context ctx) async {
-    var syntaxErrs =
-        await TransactionSyntaxInterpreter().validate(tx).swap.map((e) => e.toList()).valueOr(() => []);
-    var authErrs =
-        await TransactionAuthorizationInterpreter().validate(ctx)(tx).swap.map((e) => [e]).valueOr(() => []);
-    return syntaxErrs + authErrs;
+    final List<ValidationError> errors = [];
+    var syntaxErrs = await TransactionSyntaxInterpreter.validate(tx);
+    if (syntaxErrs.isLeft) {
+      errors.addAll(syntaxErrs.left as Iterable<ValidationError>);
+    }
+    var authErrs = await TransactionAuthorizationInterpreter.validate(ctx, tx);
+    if (authErrs.isLeft) {
+      errors.addAll(authErrs.left as Iterable<ValidationError>);
+    }
+    return errors;
   }
 
   @override

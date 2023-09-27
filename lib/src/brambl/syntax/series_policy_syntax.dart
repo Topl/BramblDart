@@ -17,3 +17,8 @@ class SeriesPolicySyntax {
     return GroupId(value: sha256);
   }
 }
+
+extension SeriesPolicySyntaxExtension on SeriesPolicy {
+  /// Computes the [GroupId] of the [GroupPolicy].
+  GroupId get computeId => SeriesPolicySyntax.computeId(this);
+}
