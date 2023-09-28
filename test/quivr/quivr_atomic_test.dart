@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:brambl_dart/brambl_dart.dart';
+import 'package:brambl_dart/src/crypto/hash/blake2b.dart';
 import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:test/test.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';

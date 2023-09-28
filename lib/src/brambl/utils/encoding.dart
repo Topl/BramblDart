@@ -1,8 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:brambl_dart/brambl_dart.dart';
-import 'package:brambl_dart/src/common/functional/either.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambl_dart/src/crypto/hash/hash.dart';
 import 'package:collection/collection.dart';
 import 'package:fast_base58/fast_base58.dart';
 
@@ -25,7 +24,7 @@ sealed class EncodingDefinition {
 
 class Encoding implements EncodingDefinition {
   @override
-   String encodeToBase58(Uint8List array) => Base58Encode(array);
+  String encodeToBase58(Uint8List array) => Base58Encode(array);
 
   @override
   String encodeToBase58Check(Uint8List payload) {

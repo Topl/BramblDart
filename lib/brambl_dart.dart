@@ -4,6 +4,10 @@
 library brambl_dart;
 
 
+// TODO: Export any libraries intended for clients of this package.
+// export 'src/crypto/hash/hash.dart';
+
+
 /// common
 export 'src/common/functional/either.dart';
 
@@ -26,3 +30,4 @@ export 'src/quivr/verifier.dart';
 export 'src/utils/constants.dart';
 export 'src/utils/extensions.dart';
 export 'src/utils/json.dart';
+

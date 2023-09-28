@@ -10,4 +10,8 @@ class Identifier {
   static const String ioTransaction64 = 'io_transaction_64';
   static const String accumulatorRoot32 = 'acc_root_32';
   static const String accumulatorRoot64 = 'acc_root_64';
+  static const String group32 = 'group_32';
+  static const String group64 = 'group_64';
+  static const String series32 = 'series_32';
+  static const String series64 = 'series_64';
 }

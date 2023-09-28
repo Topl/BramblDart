@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:brambl_dart/brambl_dart.dart';
+import 'package:brambl_dart/src/crypto/hash/blake2b.dart';
 import 'package:brambl_dart/src/quivr/algebras/digest_verifier.dart';
 import 'package:brambl_dart/src/quivr/algebras/signature_verifier.dart';
 import 'package:brambl_dart/src/quivr/common/parsable_data_interface.dart';
@@ -18,7 +19,6 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 import 'very_secure_signature_routine.dart';
 
 class MockHelpers {
-
   static const heightString = "height";
   static const signatureString = "verySecure";
   static const hashString = "blake2b256";
@@ -36,13 +36,13 @@ class MockHelpers {
 
     final Map<String, SignatureVerifier> mapOfSigningRoutines = {
       signatureString: SignatureVerifier<SignatureVerification>((v) {
-          if (VerySecureSignatureRoutine.verify(v.signature.value.toUint8List(), v.message.value.toUint8List(),
-              v.verificationKey.ed25519.value.toUint8List())) {
-            return QuivrResult<SignatureVerification>.right(v);
-          } else {
-            return QuivrResult<SignatureVerification>.left(
-                ValidationError.messageAuthorizationFailure(context: proof.toString()));
-          }
+        if (VerySecureSignatureRoutine.verify(v.signature.value.toUint8List(), v.message.value.toUint8List(),
+            v.verificationKey.ed25519.value.toUint8List())) {
+          return QuivrResult<SignatureVerification>.right(v);
+        } else {
+          return QuivrResult<SignatureVerification>.left(
+              ValidationError.messageAuthorizationFailure(context: proof.toString()));
+        }
       })
     };
 
@@ -58,17 +58,16 @@ class MockHelpers {
       })
     };
 
-
     final currentTick = Int64(999);
 
-    Int64? heightOf(String label) {
+    Option<Int64> heightOf(String label) {
       final datum = mapOfDatums[label];
       if (datum != null) {
         final header = (datum).header;
         final eventHeader = header.event;
-        return eventHeader.height;
+        return Some(eventHeader.height);
       }
-      return null;
+      return None();
     }
 
     return DynamicContext(

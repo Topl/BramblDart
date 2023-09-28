@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:brambl_dart/brambl_dart.dart' show Tokens, blake2b256;
+import 'package:brambl_dart/brambl_dart.dart' show Tokens;
+import 'package:brambl_dart/src/crypto/hash/hash.dart' show blake2b256;
 import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
 import 'package:brambl_dart/src/quivr/runtime/dynamic_context.dart';
 import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
@@ -89,7 +90,7 @@ class Verifier {
 
     final x = context.heightOf(proposition.chain);
     final QuivrResult<Int64> chainHeight =
-        x != null ? QuivrResult<Int64>.right(x) : quivrEvaluationAuthorizationFailure<Int64>(proof, proposition);
+        x.isDefined ? QuivrResult<Int64>.right(x.value) : quivrEvaluationAuthorizationFailure<Int64>(proof, proposition);
 
     if (chainHeight.isLeft) return QuivrResult<bool>.left(chainHeight.left);
 

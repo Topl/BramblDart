@@ -1,12 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:brambl_dart/brambl_dart.dart';
-import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/language.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/mnemonic.dart';
-import 'package:brambl_dart/src/utils/constants.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambl_dart/src/crypto/hash/sha.dart';
 
 class Phrase {
   final List<String> value;
