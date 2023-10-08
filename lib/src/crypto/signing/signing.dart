@@ -2,9 +2,9 @@ abstract class SigningKey {}
 
 abstract class VerificationKey {}
 
-class KeyPair<SK extends SigningKey, VK extends VerificationKey> {
-  SK signingKey;
-  VK verificationKey;
+class KeyPair<SigningKey, VerificationKey> {
+  SigningKey signingKey;
+  VerificationKey verificationKey;
   KeyPair(this.signingKey, this.verificationKey);
 
   @override

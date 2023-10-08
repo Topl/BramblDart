@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
+import 'package:fixnum/fixnum.dart';
 
 extension StringExtension on String {
   /// Converts string  to a UTF-8 [Uint8List].
@@ -56,7 +57,7 @@ extension BigIntExtensions on BigInt {
 extension IntExtensions on int {
   Uint8List get toBytes => Uint8List.fromList([this]);
 
-  BigInt get toBigInt=> BigInt.from(this);
+  BigInt get toBigInt => BigInt.from(this);
 }
 
 extension Uint8ListExtension on Uint8List {
@@ -92,7 +93,6 @@ extension Uint8ListExtension on Uint8List {
   /// Returns a [List<int>] representation of the [Uint8List].
   List<int> toIntList() => toList();
 
-
   /// Pads a [Uint8List] with zeros to a target size.
   ///
   /// [targetSize] - The desired size of the [Uint8List].
@@ -121,6 +121,16 @@ extension Uint8ListExtension on Uint8List {
     filledList.fillRange(0, length, fillValue);
     return filledList;
   }
+
+  /// Concatenates a [Uint8List] with another [Uint8List].
+  /// Made for Uint8List, that is non growable by default
+  Uint8List concat(Uint8List other) {
+    var builder = BytesBuilder();
+    builder
+      ..add(this)
+      ..add(other);
+    return builder.toBytes();
+  }
 }
 
 extension Int8ListExtension on Int8List {
@@ -139,6 +149,8 @@ extension Int8ListExtension on Int8List {
 extension IntExtension on int {
   /// converts an Int from Bytes to bits
   int get toBits => this * 8;
+
+  Int64 get toInt64 => Int64(this);
 }
 
 extension IntList on List<int> {
@@ -233,5 +245,3 @@ extension EitherExceptionExtensions on Exception {
     return Either.left(this);
   }
 }
-
-

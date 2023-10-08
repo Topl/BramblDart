@@ -28,8 +28,8 @@ class Encoding implements EncodingDefinition {
 
   @override
   String encodeToBase58Check(Uint8List payload) {
-    final checksum = SHA256().hash(payload).sublist(0, 4);
-    return encodeToBase58(payload..addAll(checksum));
+    final checksum = SHA256().hash(SHA256().hash(payload)).sublist(0, 4);
+    return encodeToBase58(payload.concat(checksum));
   }
 
   @override

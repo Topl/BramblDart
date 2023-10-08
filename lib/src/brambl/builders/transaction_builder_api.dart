@@ -1,6 +1,7 @@
 import 'package:brambl_dart/src/brambl/builders/builder_error.dart';
 import 'package:brambl_dart/src/brambl/codecs/address_codecs.dart';
 import 'package:brambl_dart/src/brambl/common/contains_evidence.dart';
+import 'package:brambl_dart/src/brambl/syntax/group_policy_syntax.dart';
 import 'package:brambl_dart/src/brambl/syntax/series_policy_syntax.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
@@ -186,7 +187,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     var stxoAttestation = await unprovenAttestation(registrationLock);
     var d = await datum();
 
-    var utxoMinted = await groupOutput(mintedConstructorLockAddress, quantityToMint, groupPolicy.com);
+    var utxoMinted = await groupOutput(mintedConstructorLockAddress, quantityToMint, groupPolicy.computeId);
     return Either.right(IoTransaction(
       inputs: [
         SpentTransactionOutput(
@@ -218,7 +219,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     );
     if (validationResult.isLeft) {
       return Either.left(UnableToBuildTransaction(
-          "Unable to build transaction to mint series constructor tokens", validationResult.swap().getOrElse(null)));
+          "Unable to build transaction to mint series constructor tokens", validationResult.left!));
     }
     var stxoAttestation = await unprovenAttestation(registrationLock);
     var d = await datum();

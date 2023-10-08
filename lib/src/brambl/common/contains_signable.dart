@@ -47,11 +47,12 @@ class ContainsSignable {
     }
 
     final inputs = iotx.inputs.map(stripInput).toList();
-
+    // freeze for rebuild
+    iotx.freeze();
     final strippedTransaction = iotx.rebuild((p0) {
-      p0.inputs.clear();
-      p0.inputs.addAll(inputs);
-    });
+        p0.inputs.clear();
+        p0.inputs.addAll(inputs);
+      });
 
     return ContainsSignable.immutable(ContainsImmutable.apply(strippedTransaction).immutableBytes);
   }
