@@ -1,5 +1,4 @@
 import 'package:brambl_dart/src/brambl/common/contains_immutable.dart';
-import 'package:protobuf/protobuf.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
 import 'package:topl_common/proto/brambl/models/common.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
@@ -33,27 +32,30 @@ class ContainsSignable {
       final attestation = stxo.attestation;
       if (attestation.hasPredicate()) {
         final predicate = attestation.predicate;
-        return stxo
-            .rebuild((p0) => p0.attestation.predicate = Attestation_Predicate(responses: [], lock: predicate.lock));
+        return stxo..attestation.predicate = Attestation_Predicate(responses: [], lock: predicate.lock);
       } else if (attestation.hasImage()) {
         final image = attestation.image;
-        return stxo.rebuild((p0) => p0.attestation.image = Attestation_Image(responses: [], lock: image.lock));
+        return stxo..attestation.image = Attestation_Image(responses: [], lock: image.lock);
       } else if (attestation.hasCommitment()) {
         final commitment = attestation.image;
-        return stxo.rebuild((p0) => p0.attestation.image = Attestation_Image(responses: [], lock: commitment.lock));
+        return stxo..attestation.image = Attestation_Image(responses: [], lock: commitment.lock);
       } else {
         return stxo;
       }
     }
 
     final inputs = iotx.inputs.map(stripInput).toList();
-    // freeze for rebuild
-    iotx.freeze();
-    final strippedTransaction = iotx.rebuild((p0) {
-        p0.inputs.clear();
-        p0.inputs.addAll(inputs);
-      });
+    (iotx..clear()).inputs.addAll(inputs);
+    final strippedTransaction = iotx;
 
     return ContainsSignable.immutable(ContainsImmutable.apply(strippedTransaction).immutableBytes);
   }
+}
+
+extension IoTransactionContainsSignableExtensions on IoTransaction {
+  SignableBytes get signable => ContainsSignable.ioTransaction(this).signableBytes;
+}
+
+extension ImmutableBytesContainsSignableExtension on ImmutableBytes {
+  SignableBytes get signable => ContainsSignable.immutable(this).signableBytes;
 }

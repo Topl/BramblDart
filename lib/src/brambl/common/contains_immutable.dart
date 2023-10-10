@@ -473,6 +473,25 @@ class ContainsImmutable {
   }
 
   factory ContainsImmutable.proof(Proof p) {
+    print(p.whichValue());
+    print(p.hasLocked());
+    print(p.hasDigest());
+    print(p.hasDigitalSignature());
+    print(p.hasHeightRange());
+
+    print(p.hasTickRange());
+    print(p.hasExactMatch());
+    print(p.hasLessThan());
+
+    print(p.hasGreaterThan());
+    print(p.hasEqualTo());
+    print(p.hasThreshold());
+
+    print(p.hasNot());
+    print(p.hasAnd());
+    print(p.hasOr());
+
+
     if (p.hasLocked()) {
       return ContainsImmutable.lockedProof(p.locked);
     } else if (p.hasDigest()) {
@@ -763,4 +782,8 @@ extension ImmutableByteIntListExtensions on List<int> {
 
   /// Creates an ContainsImmutable object from a [int] list
   ContainsImmutable get immutable => ContainsImmutable(immutableBytes);
+}
+
+extension IoTransactionContainsImmutableExtensions on IoTransaction {
+  ImmutableBytes get immutable => ContainsImmutable.ioTransaction(this).immutableBytes;
 }

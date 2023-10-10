@@ -43,6 +43,6 @@ class AddressCodecs {
       ...idBytes,
     ]);
 
-    return Encoding().encodeToBase58(encoded);
+    return Encoding().encodeToBase58Check(encoded);
   }
 }

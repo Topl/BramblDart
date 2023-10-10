@@ -24,7 +24,8 @@ class DynamicContext {
 
   Int64 currentTick;
 
-  Option<Int64> Function(String) heightOf;
+  // Option<Int64> Function(String) heightOf;
+  Int64? Function(String, Datum? Function(String) heightDatums) heightOf;
 
   /// can return wrapped[ContextError.failedToFindDigestVerifier]
   QuivrResult<DigestVerification> digestVerify(String routine, DigestVerification verification) {
@@ -33,7 +34,7 @@ class DynamicContext {
     // uses equality operator instead of .isNull for type promotion
     if (verifier == null) return QuivrResult.left(ContextError.failedToFindDigestVerifier());
 
-    final result =verifier.validate(verification) as QuivrResult<DigestVerification>;
+    final result = verifier.validate(verification) as QuivrResult<DigestVerification>;
     if (result.isLeft) return result;
 
     return QuivrResult<DigestVerification>.right(result.right);
@@ -46,7 +47,7 @@ class DynamicContext {
     // uses equality operator instead of .isNull for type promotion
     if (verifier == null) return QuivrResult.left(ContextError.failedToFindSignatureVerifier());
 
-    final result =verifier.validate(verification) as QuivrResult<SignatureVerification>;
+    final result = verifier.validate(verification) as QuivrResult<SignatureVerification>;
     if (result.isLeft) return result;
 
     return QuivrResult<SignatureVerification>.right(result.right);

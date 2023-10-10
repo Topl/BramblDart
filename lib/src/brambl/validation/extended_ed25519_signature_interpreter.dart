@@ -1,19 +1,21 @@
+import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
+import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
 import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
-import 'package:brambl_dart/src/common/functional/either.dart';
+import '../../quivr/algebras/signature_verifier.dart';
 
 /// Validates that an Ed25519 signature is valid.
-class ExtendedEd25519SignatureInterpreter {
+class ExtendedEd25519SignatureInterpreter implements SignatureVerifier {
   /// Validates that an Ed25519 signature is valid.
   ///
   /// [t] SignatureVerification object containing the message, verification key, and signature.
   ///
   /// Returns the SignatureVerification object if the signature is valid, otherwise an error.
-  static Future<Either<QuivrRunTimeError, SignatureVerification>> validate(SignatureVerification t) async {
+  @override
+  QuivrResult<SignatureVerification> validate(t) {
     if (t.verificationKey.hasExtendedEd25519()) {
       final extendedVk = PublicKey.proto(t.verificationKey.extendedEd25519);
       if (ExtendedEd25519().verify(
@@ -31,4 +33,7 @@ class ExtendedEd25519SignatureInterpreter {
       return Either.left(ValidationError.lockedPropositionIsUnsatisfiable());
     }
   }
+  
+  @override
+  Function(dynamic p1) get definedFunction => throw UnimplementedError();
 }

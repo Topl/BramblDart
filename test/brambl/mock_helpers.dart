@@ -42,7 +42,7 @@ final mockChildKeyPair = ExtendedEd25519().deriveKeyPairFromChildPath(
 final mockSigningRoutine = 'ExtendedEd25519';
 
 final mockSignatureProposition =
-    Proposer.signatureProposer(mockSigningRoutine, mockChildKeyPair.verificationKey as VerificationKey);
+    Proposer.signatureProposer(mockSigningRoutine, ProtoConverters.keyPairToProto(mockChildKeyPair).vk);
 
 final mockSignature = Witness(
   value: ExtendedEd25519().sign(mockChildKeyPair.signingKey, fakeMsgBind.value.toUint8List()),

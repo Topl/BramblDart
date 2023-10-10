@@ -8,6 +8,7 @@ import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
+import 'package:topl_common/proto/brambl/models/datum.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
@@ -88,9 +89,9 @@ class Verifier {
 
     if (messageResult.isLeft) return messageResult;
 
-    final x = context.heightOf(proposition.chain);
+    final x = context.heightOf(proposition.chain, (test) => Datum());
     final QuivrResult<Int64> chainHeight =
-        x.isDefined ? QuivrResult<Int64>.right(x.value) : quivrEvaluationAuthorizationFailure<Int64>(proof, proposition);
+        x != null ? QuivrResult<Int64>.right(x) : quivrEvaluationAuthorizationFailure<Int64>(proof, proposition);
 
     if (chainHeight.isLeft) return QuivrResult<bool>.left(chainHeight.left);
 
@@ -221,9 +222,7 @@ class Verifier {
     final beforeReturn =
         evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
 
-    return beforeReturn.isRight
-        ? quivrEvaluationAuthorizationFailure(proof, proposition)
-        : QuivrResult.right(true);
+    return beforeReturn.isRight ? quivrEvaluationAuthorizationFailure(proof, proposition) : QuivrResult.right(true);
   }
 
   static Future<QuivrResult<bool>> verifyAnd(

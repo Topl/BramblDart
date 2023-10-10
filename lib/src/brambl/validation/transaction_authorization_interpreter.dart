@@ -13,10 +13,10 @@ class TransactionAuthorizationInterpreter<F> {
 
   TransactionAuthorizationInterpreter(this.verifier);
 
-  static Future<Either<TransactionAuthorizationError, IoTransaction>> validate(
+  static Either<TransactionAuthorizationError, IoTransaction> validate(
     DynamicContext context,
     IoTransaction transaction,
-  ) async {
+  ) {
     final acc = Either.right(transaction);
     return acc as Either<TransactionAuthorizationError, IoTransaction>;
 
