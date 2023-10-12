@@ -11,13 +11,12 @@ import 'mock_helpers.dart';
 /// Mock Implementation of the WalletStateAlgebra for testing
 class MockWalletStateApi extends WalletStateAlgebra {
   final propEvidenceToIdx = {
-    mockSignatureProposition.digitalSignature.sizedEvidence,
+    mockSignatureProposition.digitalSignature.sizedEvidence:
     mockIndices,
   };
 
   final propEvidenceToPreimage = {
-    mockDigestProposition.digest.sizedEvidence,
-    mockIndices,
+    mockDigestProposition.digest.sizedEvidence: mockPreimage,
   };
 
   @override
@@ -57,7 +56,7 @@ class MockWalletStateApi extends WalletStateAlgebra {
 
   @override
   Indices? getIndicesBySignature(Proposition_DigitalSignature signatureProposition) {
-    throw UnimplementedError();
+    return propEvidenceToIdx[signatureProposition.sizedEvidence];
   }
 
   @override
@@ -82,7 +81,7 @@ class MockWalletStateApi extends WalletStateAlgebra {
 
   @override
   Preimage? getPreimage(Proposition_Digest digestProposition) {
-    throw UnimplementedError();
+    return propEvidenceToPreimage[digestProposition.sizedEvidence];
   }
 
   @override

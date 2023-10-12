@@ -19,6 +19,7 @@ class Either<L, R> {
 
   /// Constructs an `Either` instance with a right value.
   Either.right(this._right) : _left = null;
+  
 
   /// Constructs an `Either` instance with a right generic value of `Unit`.
   Either.unit({val = const Unit()}) : _left = null, _right = val;

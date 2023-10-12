@@ -1,13 +1,12 @@
-import 'dart:math';
-
 import 'package:brambl_dart/brambl_dart.dart';
 import 'package:brambl_dart/src/brambl/common/contains_signable.dart';
 import 'package:brambl_dart/src/brambl/context.dart';
 import 'package:brambl_dart/src/brambl/data_api/wallet_state_algebra.dart';
 import 'package:brambl_dart/src/brambl/validation/transaction_authorization_interpreter.dart';
 import 'package:brambl_dart/src/brambl/validation/transaction_syntax_interpreter.dart';
+import 'package:brambl_dart/src/brambl/validation/validation_error.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
-import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
@@ -62,34 +61,25 @@ class CredentiallerInterpreter implements Credentialler {
   @override
   IoTransaction prove(IoTransaction unprovenTx) {
     final signable = unprovenTx.signable;
-    return unprovenTx..inputs.map((_) => proveInput(_, signable)).map((e) => unprovenTx.inputs.add(e));
-    // var signable = ContainsSignable.ioTransaction(unprovenTx);
-    // var inputs = unprovenTx.inputs;
-    // var provenInputs = <SpentTransactionOutput>[];
-    // for (var input in inputs) {
-    //   var provenInput = proveInput(input, signable.signableBytes);
-    //   provenInputs.add(provenInput);
-    // }
-    // // final proof = IoTransaction()..mergeFromProto3Json(unprovenTx.writeToJson());
-    // final proof = unprovenTx.deepCopy();
-    // proof.inputs.clear();
-    // proof.inputs.addAll(provenInputs.map((e) => e));
+    final provenTx = unprovenTx.deepCopy()..inputs.clear();
 
-    // return proof;
+    // referring to origin object to get around concurrent modification during iteration
+    for (var input in unprovenTx.inputs) {
+      final x = proveInput(input, signable);
+      provenTx.inputs.add(x);
+    }
+
+    return provenTx;
   }
 
   @override
   List<ValidationError> validate(IoTransaction tx, Context ctx) {
-    final List<ValidationError> errors = [];
-    var syntaxErrs = TransactionSyntaxInterpreter.validate(tx);
-    if (syntaxErrs.isLeft) {
-      errors.addAll(syntaxErrs.left as Iterable<ValidationError>);
-    }
-    var authErrs = TransactionAuthorizationInterpreter.validate(ctx, tx);
-    if (authErrs.isLeft) {
-      errors.addAll(authErrs.left as Iterable<ValidationError>);
-    }
-    return errors;
+    var syntaxErrs = TransactionSyntaxInterpreter.validate(tx).swap().map((p0) => p0.toList()).getOrElse([]);
+    var authErrs = TransactionAuthorizationInterpreter.validate(ctx, tx).swap().map((p0) => [p0]).getOrElse([]);
+    return [
+      ...syntaxErrs,
+      ...authErrs,  //TODO: figure out why this is failing for ever proof
+    ];
   }
 
   @override
@@ -99,24 +89,23 @@ class CredentiallerInterpreter implements Credentialler {
     return vErrs.isEmpty ? Either.right(provenTx) : Either.left(vErrs);
   }
 
-  /// TODO: Going to be completely honest, i have no clue how this works;
-  /// review before publishing
   SpentTransactionOutput proveInput(SpentTransactionOutput input, SignableBytes msg) {
-    var attestation = input.attestation;
+    Attestation attestation = input.attestation.deepCopy();
+
     switch (attestation.whichValue()) {
       case Attestation_Value.predicate:
         var pred = attestation.predicate;
         var challenges = pred.lock.challenges;
         var proofs = pred.responses;
         var revealed = challenges.map((e) => e.revealed).toList();
-        final pairs = zip(revealed, proofs);
+        final pairs = revealed.zip(proofs);
 
         var newProofs = <Proof>[];
         for (var pair in pairs) {
           var proof = getProof(msg, pair.$1, pair.$2);
           newProofs.add(proof);
         }
-        attestation = Attestation(predicate: Attestation_Predicate(lock: pred.lock, responses: proofs));
+        attestation = Attestation(predicate: Attestation_Predicate(lock: pred.lock, responses: newProofs));
       default:
         throw UnimplementedError();
     }
@@ -225,7 +214,7 @@ class CredentiallerInterpreter implements Credentialler {
   Proof getSignatureProofForRoutine(String routine, Indices idx, SignableBytes msg) {
     if (routine == "ExtendedEd25519") {
       final kp = ProtoConverters.keyPairFromProto(walletApi.deriveChildKeys(mainKey, idx));
-      var witness = Witness.fromBuffer(ExtendedEd25519().sign(kp.signingKey, msg.value.toUint8List()));
+      final witness = Witness(value: ExtendedEd25519().sign(kp.signingKey, msg.value.toUint8List()));
       return Prover.signatureProver(witness, msg);
     } else {
       return Proof();
@@ -326,9 +315,4 @@ class CredentiallerInterpreter implements Credentialler {
     }
     return Prover.thresholdProver(proofs, msg);
   }
-}
-
-List<(A, B)> zip<A, B>(List<A> list1, List<B> list2) {
-  final length = min(list1.length, list2.length);
-  return List.generate(length, (i) => (list1[i], list2[i]));
 }

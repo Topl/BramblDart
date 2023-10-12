@@ -1,5 +1,6 @@
+import 'package:brambl_dart/brambl_dart.dart';
 import 'package:brambl_dart/src/brambl/common/contains_immutable.dart';
-import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:topl_common/proto/brambl/models/common.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_output.pb.dart';
@@ -29,26 +30,25 @@ class ContainsSignable {
     /// Strips the proofs from a SpentTransactionOutput.
     /// This is needed because the proofs are not part of the transaction's signable bytes
     SpentTransactionOutput stripInput(SpentTransactionOutput stxo) {
+      final stripped = stxo.deepCopy();
+
       final attestation = stxo.attestation;
       if (attestation.hasPredicate()) {
-        final predicate = attestation.predicate;
-        return stxo..attestation.predicate = Attestation_Predicate(responses: [], lock: predicate.lock);
+        return stripped..attestation.predicate.responses.clear();
       } else if (attestation.hasImage()) {
-        final image = attestation.image;
-        return stxo..attestation.image = Attestation_Image(responses: [], lock: image.lock);
+        return stripped..attestation.image.responses.clear();
       } else if (attestation.hasCommitment()) {
-        final commitment = attestation.image;
-        return stxo..attestation.image = Attestation_Image(responses: [], lock: commitment.lock);
+        return stripped..attestation.commitment.responses.clear();
       } else {
-        return stxo;
+        return stripped;
       }
     }
 
-    final inputs = iotx.inputs.map(stripInput).toList();
-    (iotx..clear()).inputs.addAll(inputs);
-    final strippedTransaction = iotx;
-
-    return ContainsSignable.immutable(ContainsImmutable.apply(strippedTransaction).immutableBytes);
+    // copies then freezes not to impact the original object
+    final st = iotx.deepCopy()..freeze();
+    return ContainsSignable.immutable(
+        ContainsImmutable.apply(st.rebuild((p0) => p0.inputs.update(iotx.inputs.map(stripInput).toList())))
+            .immutableBytes);
   }
 }
 

@@ -58,7 +58,9 @@ class TransactionSyntaxInterpreter {
         .where((entry) => entry.value.length > 1)
         .map((entry) => TransactionSyntaxError.duplicateInput(entry.key))
         .toList();
-    return duplicates.isEmpty ? ListEither.right([Unit()]) : ListEither.left(List.from(duplicates));
+    return (duplicates.isEmpty
+        ? ListEither.right<TransactionSyntaxError, Unit>([Unit()])
+        : ListEither.left<TransactionSyntaxError, Unit>(List.from(duplicates)));
   }
 
   /// Verify that this transaction does not contain too many outputs. A transaction's outputs are referenced by index,
@@ -106,7 +108,9 @@ class TransactionSyntaxInterpreter {
         errors.add(TransactionSyntaxError.nonPositiveOutputValue(output.value));
       }
     }
-    return errors.isEmpty ? ListEither.right([Unit()]) : ListEither.left(errors);
+    return errors.isEmpty
+        ? ListEither.right<TransactionSyntaxError, Unit>([Unit()])
+        : ListEither.left<TransactionSyntaxError, Unit>(errors);
   }
 
   /// Ensure the input value quantities exceed or equal the (non-minting) output value quantities
@@ -153,7 +157,9 @@ class TransactionSyntaxInterpreter {
         }
       }
     }
-    return errors.isEmpty ? ListEither.right([Unit()]) : ListEither.left(errors);
+    return errors.isEmpty
+        ? ListEither.right<TransactionSyntaxError, Unit>([Unit()])
+        : ListEither.left<TransactionSyntaxError, Unit>(errors);
   }
 
   /// Validates that the proofs associated with each proposition matches the expected _type_ for a Predicate Attestation
@@ -172,7 +178,9 @@ class TransactionSyntaxInterpreter {
         errors.add(result.left!);
       }
     }
-    return errors.isEmpty ? ListEither.right([Unit()]) : ListEither.left(errors);
+    return errors.isEmpty
+        ? ListEither.right<TransactionSyntaxError, Unit>([Unit()])
+        : ListEither.left<TransactionSyntaxError, Unit>(errors);
   }
 
   /// Validate that the type of Proof matches the type of the given Proposition

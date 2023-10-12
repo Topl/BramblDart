@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/common/functional/either.dart';
@@ -223,6 +224,7 @@ extension ListExtensions<T> on List<T> {
     return sublist(start, actualEnd);
   }
 
+  /// Returns the first object, works the same as [first].
   T head() {
     if (isEmpty) {
       throw StateError('Cannot get head of empty list');
@@ -231,6 +233,7 @@ extension ListExtensions<T> on List<T> {
     }
   }
 
+  /// Returns a new list containing all elements except the first.
   List<T> tail() {
     if (isEmpty) {
       throw StateError('Cannot get tail of empty list');
@@ -238,10 +241,45 @@ extension ListExtensions<T> on List<T> {
       return sublist(1);
     }
   }
+
+  /// Clears the list and adds member to the new list.
+  /// [member] can be a single element or a list of elements of type [T].
+  ///
+  /// This is a convenience method for replacing all members of a list or clearing a list and adding all elements
+  ///
+  /// Example:
+  /// ```dart
+  /// final myList = [1, 2, 3];
+  /// myList.update([4, 5, 6]);
+  /// print(myList); // Output: [4, 5, 6]
+  /// ```
+  void update(member) {
+    clear();
+    if (member is List<T>) {
+      addAll(member);
+    } else if (member is T) {
+      add(member);
+    } else {
+      throw ArgumentError('Cannot update list with type ${member.runtimeType}');
+    }
+  }
+
+  List<(T, B)> zip<B>(List<B> other) {
+    final length = min(this.length, other.length);
+    return List.generate(length, (i) => (this[i], other[i]));
+  }
 }
 
 extension EitherExceptionExtensions on Exception {
   Either<Exception, T> asLeft<T>() {
     return Either.left(this);
   }
+}
+
+extension EitherTSwapExtension<L, R> on Either<L, R> {
+  /// Swaps the left and right values of an [Either].
+  Either<R, L> swap() {
+    return fold((l) => Either<R, L>.right(l), (r) => Either<R, L>.left(r));
+  }
+
 }

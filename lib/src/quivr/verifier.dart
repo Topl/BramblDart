@@ -175,8 +175,8 @@ class Verifier {
     return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
   }
 
-  static Future<QuivrResult<bool>> verifyThreshold(
-      Proposition_Threshold proposition, Proof_Threshold proof, DynamicContext context) async {
+  static QuivrResult<bool> verifyThreshold(
+      Proposition_Threshold proposition, Proof_Threshold proof, DynamicContext context) {
     final (wrappedProposition, wrappedProof) = (Proposition()..threshold = proposition, Proof()..threshold = proof);
 
     final messageResult = _evaluateBlake2b256Bind(Tokens.threshold, wrappedProof, proof.transactionBind, context);
@@ -197,7 +197,7 @@ class Verifier {
       for (int i = 0; i < proposition.challenges.length && successCount < proposition.threshold; i++) {
         final challenge = proposition.challenges[i];
         final response = proof.responses[i];
-        final verifyResult = await verify(challenge, response, context);
+        final verifyResult = verify(challenge, response, context);
         if (verifyResult.isRight) {
           successCount++;
         }
@@ -210,14 +210,13 @@ class Verifier {
     return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
   }
 
-  static Future<QuivrResult<bool>> verifyNot(
-      Proposition_Not proposition, Proof_Not proof, DynamicContext context) async {
+  static QuivrResult<bool> verifyNot(Proposition_Not proposition, Proof_Not proof, DynamicContext context) {
     final (wrappedProposition, wrappedProof) = (Proposition()..not = proposition, Proof()..not = proof);
 
     final messageResult = _evaluateBlake2b256Bind(Tokens.not, wrappedProof, proof.transactionBind, context);
     if (messageResult.isLeft) return messageResult;
 
-    final evalResult = await verify(proposition.proposition, proof.proof, context);
+    final evalResult = verify(proposition.proposition, proof.proof, context);
 
     final beforeReturn =
         evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
@@ -225,17 +224,16 @@ class Verifier {
     return beforeReturn.isRight ? quivrEvaluationAuthorizationFailure(proof, proposition) : QuivrResult.right(true);
   }
 
-  static Future<QuivrResult<bool>> verifyAnd(
-      Proposition_And proposition, Proof_And proof, DynamicContext context) async {
+  static QuivrResult<bool> verifyAnd(Proposition_And proposition, Proof_And proof, DynamicContext context) {
     final (wrappedProposition, wrappedProof) = (Proposition()..and = proposition, Proof()..and = proof);
 
     final messageResult = _evaluateBlake2b256Bind(Tokens.and, wrappedProof, proof.transactionBind, context);
     if (messageResult.isLeft) return messageResult;
 
-    final leftResult = await verify(proposition.left, proof.left, context);
+    final leftResult = verify(proposition.left, proof.left, context);
     if (leftResult.isLeft) return leftResult;
 
-    final rightResult = await verify(proposition.right, proof.right, context);
+    final rightResult = verify(proposition.right, proof.right, context);
     if (rightResult.isLeft) return rightResult;
 
     // We're not checking the value of right as it's existence is enough to satisfy this condition
@@ -244,46 +242,51 @@ class Verifier {
     return quivrEvaluationAuthorizationFailure(wrappedProposition, wrappedProof);
   }
 
-  static Future<QuivrResult<bool>> verifyOr(Proposition_Or proposition, Proof_Or proof, DynamicContext context) async {
+  static QuivrResult<bool> verifyOr(Proposition_Or proposition, Proof_Or proof, DynamicContext context) {
     final (wrappedProposition, wrappedProof) = (Proposition()..or = proposition, Proof()..or = proof);
 
     final messageResult = _evaluateBlake2b256Bind(Tokens.or, wrappedProof, proof.transactionBind, context);
     if (messageResult.isLeft) return messageResult;
 
-    final leftResult = await verify(proposition.left, proof.left, context);
+    final leftResult = verify(proposition.left, proof.left, context);
     if (leftResult.isRight) return QuivrResult.right(true);
 
-    final rightResult = await verify(proposition.right, proof.right, context);
+    final rightResult = verify(proposition.right, proof.right, context);
     return rightResult;
   }
 
-  static Future<QuivrResult<bool>> verify(Proposition proposition, Proof proof, DynamicContext context) async {
-    if (proposition.hasLocked() && proposition.hasLocked()) {
-      return verifyLocked();
-    } else if (proposition.hasDigest() && proof.hasDigest()) {
-      return verifyDigest(proposition.digest, proof.digest, context);
-    } else if (proposition.hasDigitalSignature() && proof.hasDigitalSignature()) {
-      return verifySignature(proposition.digitalSignature, proof.digitalSignature, context);
-    } else if (proposition.hasHeightRange() && proof.hasHeightRange()) {
-      return verifyHeightRange(proposition.heightRange, proof.heightRange, context);
-    } else if (proposition.hasTickRange() && proof.hasTickRange()) {
-      return verifyTickRange(proposition.tickRange, proof.tickRange, context);
-    } else if (proposition.hasLessThan() && proof.hasLessThan()) {
-      return verifyLessThan(proposition.lessThan, proof.lessThan, context);
-    } else if (proposition.hasGreaterThan() && proof.hasGreaterThan()) {
-      return verifyGreaterThan(proposition.greaterThan, proof.greaterThan, context);
-    } else if (proposition.hasEqualTo() && proof.hasEqualTo()) {
-      return verifyEqualTo(proposition.equalTo, proof.equalTo, context);
-    } else if (proposition.hasThreshold() && proof.hasThreshold()) {
-      return verifyThreshold(proposition.threshold, proof.threshold, context);
-    } else if (proposition.hasNot() && proof.hasNot()) {
-      return verifyNot(proposition.not, proof.not, context);
-    } else if (proposition.hasAnd() && proof.hasAnd()) {
-      return verifyAnd(proposition.and, proof.and, context);
-    } else if (proposition.hasOr() && proof.hasOr()) {
-      return verifyOr(proposition.or, proof.or, context);
-    } else {
-      return quivrEvaluationAuthorizationFailure(proof, proposition);
+  // TODO: Remove this alias for evaluate
+  /// does not satisfy context in all scenarios
+
+  static QuivrResult<bool> verify(Proposition proposition, Proof proof, DynamicContext context) => evaluate(proposition, proof, context);
+  static QuivrResult<bool> evaluate(Proposition proposition, Proof proof, DynamicContext context) {
+    switch ((proposition.whichValue(), proof.whichValue())) {
+      case (Proposition_Value.locked, Proof_Value.locked):
+        return verifyLocked();
+      case (Proposition_Value.digest, Proof_Value.digest):
+        return verifyDigest(proposition.digest, proof.digest, context);
+      case (Proposition_Value.digitalSignature, Proof_Value.digitalSignature):
+        return verifySignature(proposition.digitalSignature, proof.digitalSignature, context);
+      case (Proposition_Value.heightRange, Proof_Value.heightRange):
+        return verifyHeightRange(proposition.heightRange, proof.heightRange, context);
+      case (Proposition_Value.tickRange, Proof_Value.tickRange):
+        return verifyTickRange(proposition.tickRange, proof.tickRange, context);
+      case (Proposition_Value.lessThan, Proof_Value.lessThan):
+        return verifyLessThan(proposition.lessThan, proof.lessThan, context);
+      case (Proposition_Value.greaterThan, Proof_Value.greaterThan):
+        return verifyGreaterThan(proposition.greaterThan, proof.greaterThan, context);
+      case (Proposition_Value.equalTo, Proof_Value.equalTo):
+        return verifyEqualTo(proposition.equalTo, proof.equalTo, context);
+      case (Proposition_Value.threshold, Proof_Value.threshold):
+        return verifyThreshold(proposition.threshold, proof.threshold, context);
+      case (Proposition_Value.not, Proof_Value.not):
+        return verifyNot(proposition.not, proof.not, context);
+      case (Proposition_Value.and, Proof_Value.and):
+        return verifyAnd(proposition.and, proof.and, context);
+      case (Proposition_Value.or, Proof_Value.or):
+        return verifyOr(proposition.or, proof.or, context);
+      default:
+        return quivrEvaluationAuthorizationFailure(proof, proposition);
     }
   }
 }
