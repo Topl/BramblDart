@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:brambl_dart/src/brambl/common/contains_immutable.dart';
 import 'package:brambl_dart/src/brambl/validation/transaction_syntax_error.dart';
 import 'package:brambl_dart/src/common/functional/either.dart';
@@ -14,6 +12,7 @@ import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 
 class TransactionSyntaxInterpreter {
   static const int maxDataLength = 15360;
+  static const int shortMaxValue = 32767;
 
   static Either<List<TransactionSyntaxError>, IoTransaction> validate(IoTransaction t) {
     final errors = <TransactionSyntaxError>[];
@@ -43,6 +42,14 @@ class TransactionSyntaxInterpreter {
     sufficientFundsValidation,
     attestationValidation,
     dataLengthValidation,
+
+    // todo: implement new validators
+    // assetEqualFundsValidation,
+    // groupEqualFundsValidation,
+    // seriesEqualFundsValidation,
+    // assetNoRepeatedUtxosValidation,
+    // mintingValidation,
+    // updateProposalValidation
   ];
 
   /// Verify that this transaction contains at least one input
@@ -66,7 +73,7 @@ class TransactionSyntaxInterpreter {
   /// Verify that this transaction does not contain too many outputs. A transaction's outputs are referenced by index,
   /// but that index must be a Short value.
   static Either<TransactionSyntaxError, Unit> maximumOutputsCountValidation(IoTransaction transaction) {
-    return transaction.outputs.length < pow(2, 15)
+    return transaction.outputs.length < shortMaxValue
         ? Either.right(Unit())
         : Either.left(TransactionSyntaxError.excessiveOutputsCount());
   }
@@ -90,49 +97,65 @@ class TransactionSyntaxInterpreter {
   /// Verify that each transaction output contains a positive quantity (where applicable)
   static ListEither<TransactionSyntaxError, Unit> positiveOutputValuesValidation(IoTransaction transaction) {
     BigInt? getQuantity(Value value) {
-      if (value.hasLvl()) {
-        return value.lvl.quantity.value.toBigInt;
-      } else if (value.hasTopl()) {
-        return value.topl.quantity.value.toBigInt;
-      } else if (value.hasAsset()) {
-        return value.asset.quantity.value.toBigInt;
-      } else {
-        return null;
+      switch (value.whichValue()) {
+        case Value_Value.lvl:
+          return value.lvl.quantity.value.toBigInt;
+        case Value_Value.topl:
+          return value.topl.quantity.value.toBigInt;
+        case Value_Value.asset:
+          return value.asset.quantity.value.toBigInt;
+        default:
+          return null;
       }
     }
 
     final errors = <TransactionSyntaxError>[];
     for (final output in transaction.outputs) {
       final quantity = getQuantity(output.value);
-      if (quantity == null || quantity <= BigInt.zero) {
-        errors.add(TransactionSyntaxError.nonPositiveOutputValue(output.value));
-      }
+      if (quantity == null) continue;
+      if (quantity <= BigInt.zero) errors.add(TransactionSyntaxError.nonPositiveOutputValue(output.value));
     }
     return errors.isEmpty
         ? ListEither.right<TransactionSyntaxError, Unit>([Unit()])
         : ListEither.left<TransactionSyntaxError, Unit>(errors);
   }
 
+  static BigInt getQuantity(Value value) {
+    return switch (value.whichValue()) {
+      Value_Value.lvl => value.lvl.quantity.value.toBigInt,
+      Value_Value.topl => value.topl.quantity.value.toBigInt,
+      Value_Value.asset => value.asset.quantity.value.toBigInt,
+      Value_Value.series => value.series.quantity.value.toBigInt,
+      Value_Value.group => value.group.quantity.value.toBigInt,
+      Value_Value.updateProposal =>
+        // todo evaluate if this switch is right
+        BigInt.zero,
+      Value_Value.notSet => BigInt.zero,
+    };
+  }
+
   /// Ensure the input value quantities exceed or equal the (non-minting) output value quantities
   static Either<TransactionSyntaxError, Unit> sufficientFundsValidation(IoTransaction transaction) {
-    BigInt? getQuantity(Value value) {
-      if (value.hasLvl()) {
-        return value.lvl.quantity.value.toBigInt;
-      } else if (value.hasTopl()) {
-        return value.topl.quantity.value.toBigInt;
-      } else if (value.hasAsset()) {
-        return value.asset.quantity.value.toBigInt;
-      } else {
-        return null;
-      }
-    }
+    // TODO: figure out correct implementation for quantity (include series, group asset)
+    // BigInt? getQuantity(Value value) {
+    //   if (value.hasLvl()) {
+    //     return value.lvl.quantity.value.toBigInt;
+    //   } else if (value.hasTopl()) {
+    //     return value.topl.quantity.value.toBigInt;
+    //   } else if (value.hasAsset()) {
+    //     return value.asset.quantity.value.toBigInt;
+    //   } else {
+    //     return null;
+    //   }
+    // }
 
     BigInt sumAll(List<Value> values) {
-      return values.map((value) => getQuantity(value)!).reduce((a, b) => a + b);
+      return values.map((value) => getQuantity(value)).reduce((a, b) => a + b);
     }
 
     final inputsSum = sumAll(transaction.inputs.map((input) => input.value).toList());
     final outputsSum = sumAll(transaction.outputs.map((output) => output.value).toList());
+
     return inputsSum >= outputsSum
         ? Either.unit()
         : Either.left(TransactionSyntaxError.insufficientInputFunds(
@@ -186,34 +209,26 @@ class TransactionSyntaxInterpreter {
   /// Validate that the type of Proof matches the type of the given Proposition
   /// A Proof.Value.Empty type is considered valid for all Proposition types
   static Either<TransactionSyntaxError, Unit> proofTypeMatch(Proposition proposition, Proof proof) {
-    if (proposition.hasLocked() && proof.hasLocked()) {
-      return Either.unit();
-    } else if (proposition.hasDigest() && proof.hasDigest()) {
-      return Either.unit();
-    } else if (proposition.hasDigitalSignature() && proof.hasDigitalSignature()) {
-      return Either.unit();
-    } else if (proposition.hasHeightRange() && proof.hasHeightRange()) {
-      return Either.unit();
-    } else if (proposition.hasTickRange() && proof.hasTickRange()) {
-      return Either.unit();
-    } else if (proposition.hasExactMatch() && proof.hasExactMatch()) {
-      return Either.unit();
-    } else if (proposition.hasLessThan() && proof.hasLessThan()) {
-      return Either.unit();
-    } else if (proposition.hasGreaterThan() && proof.hasGreaterThan()) {
-      return Either.unit();
-    } else if (proposition.hasEqualTo() && proof.hasEqualTo()) {
-      return Either.unit();
-    } else if (proposition.hasThreshold() && proof.hasThreshold()) {
-      return Either.unit();
-    } else if (proposition.hasNot() && proof.hasNot()) {
-      return Either.unit();
-    } else if (proposition.hasAnd() && proof.hasAnd()) {
-      return Either.unit();
-    } else if (proposition.hasOr() && proof.hasOr()) {
-      return Either.unit();
-    } else {
-      return Either.left(TransactionSyntaxError.invalidProofType(proposition, proof));
+    switch ((proposition.whichValue(), proof.whichValue())) {
+      // Empty proofs are valid for all Proposition types
+      case (_, Proof_Value.notSet):
+      case (Proposition_Value.locked, Proof_Value.locked):
+      case (Proposition_Value.digest, Proof_Value.digest):
+      case (Proposition_Value.digitalSignature, Proof_Value.digitalSignature):
+      case (Proposition_Value.heightRange, Proof_Value.heightRange):
+      case (Proposition_Value.tickRange, Proof_Value.tickRange):
+      case (Proposition_Value.exactMatch, Proof_Value.exactMatch):
+      case (Proposition_Value.lessThan, Proof_Value.lessThan):
+      case (Proposition_Value.greaterThan, Proof_Value.greaterThan):
+      case (Proposition_Value.equalTo, Proof_Value.equalTo):
+      case (Proposition_Value.threshold, Proof_Value.threshold):
+      case (Proposition_Value.not, Proof_Value.not):
+      case (Proposition_Value.and, Proof_Value.and):
+      case (Proposition_Value.or, Proof_Value.or):
+        // cascade all preceding cases to this case
+        return Either.unit();
+      default:
+        return Either.left(TransactionSyntaxError.invalidProofType(proposition, proof));
     }
   }
 

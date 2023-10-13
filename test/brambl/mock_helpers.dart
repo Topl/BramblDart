@@ -6,6 +6,7 @@ import 'package:brambl_dart/src/crypto/generation/bip32_index.dart';
 import 'package:brambl_dart/src/crypto/hash/hash.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
 import 'package:fixnum/fixnum.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/asset.pbenum.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
@@ -25,8 +26,6 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 /// All protobuf returnables are frozen
 /// This is to ensure that they are not mutated and are available for rebuild during testing
-/// in the case of protobufs that are used internally,
-/// they are private variables with a frozen public accessor with the same name
 
 // class MockHelpers {
 final fakeMsgBind = SignableBytes(value: 'transaction binding'.toCodeUnitUint8List());
@@ -153,48 +152,43 @@ final mockGroupPolicy = GroupPolicy(label: 'Mock Group Policy', registrationUtxo
 final seriesValue = Value(series: Value_Series(seriesId: mockSeriesPolicy.computeId, quantity: quantity))..freeze();
 final groupValue = Value(group: Value_Group(groupId: mockGroupPolicy.computeId, quantity: quantity))..freeze();
 
-// public accessor shadows private variable for freeze access
-final _assetGroupSeries = Value(
+final assetGroupSeries = Value(
   asset: Value_Asset(groupId: mockGroupPolicy.computeId, seriesId: mockSeriesPolicy.computeId, quantity: quantity),
-);
-final assetGroupSeries = _assetGroupSeries..freeze();
+)..freeze();
 
-final assetGroupSeriesImmutable = _assetGroupSeries
-  ..asset.quantityDescriptor = QuantityDescriptorType.IMMUTABLE
-  ..freeze();
+final assetGroupSeriesImmutable =
+    assetGroupSeries.rebuild((p0) => p0.asset.quantityDescriptor = QuantityDescriptorType.IMMUTABLE)..freeze();
 
-final assetGroupSeriesFractionable = _assetGroupSeries
-  ..asset.quantityDescriptor = QuantityDescriptorType.FRACTIONABLE
-  ..freeze();
+final assetGroupSeriesFractionable =
+    assetGroupSeries.rebuild((p0) => p0.asset.quantityDescriptor = QuantityDescriptorType.FRACTIONABLE)..freeze();
 
-final assetGroupSeriesAccumulator = _assetGroupSeries
-  ..asset.quantityDescriptor = QuantityDescriptorType.ACCUMULATOR
-  ..freeze();
+final assetGroupSeriesAccumulator =
+    assetGroupSeries.rebuild((p0) => p0.asset.quantityDescriptor = QuantityDescriptorType.ACCUMULATOR)..freeze();
 
-// public accessor shadows private variable for freeze access
-final _assetGroup = _assetGroupSeries..asset.fungibility = FungibilityType.GROUP;
-final assetGroup = _assetGroup..freeze();
-
-final assetGroupImmutable = _assetGroup
-  ..asset.quantityDescriptor = QuantityDescriptorType.IMMUTABLE
-  ..freeze();
-final assetGroupFractionable = _assetGroup
-  ..asset.quantityDescriptor = QuantityDescriptorType.FRACTIONABLE
-  ..freeze();
-final assetGroupAccumulator = _assetGroup
-  ..asset.quantityDescriptor = QuantityDescriptorType.ACCUMULATOR
+/// awkward rebuilding because rebuild does not allow all fields to be rebuilt.
+final assetGroup = assetGroupSeries.rebuild((p0) {
+  final newAsset = p0.asset.rebuild((p1) => p1.fungibility = FungibilityType.GROUP);
+  p0.asset = newAsset;
+})
   ..freeze();
 
-// public accessor shadows private variable for freeze access
-final _assetSeries = _assetGroupSeries..asset.fungibility = FungibilityType.SERIES;
-final assetSeries = _assetSeries..freeze();
+final assetGroupImmutable = assetGroup.rebuild((p0) => p0.asset.quantityDescriptor = QuantityDescriptorType.IMMUTABLE)
+  ..freeze();
+final assetGroupFractionable =
+    assetGroup.rebuild((p0) => p0.asset.quantityDescriptor = QuantityDescriptorType.FRACTIONABLE)..freeze();
+final assetGroupAccumulator =
+    assetGroup.rebuild((p0) => p0.asset.quantityDescriptor = QuantityDescriptorType.ACCUMULATOR)..freeze();
 
-final assetSeriesImmutable = _assetSeries
-  ..asset.quantityDescriptor = QuantityDescriptorType.IMMUTABLE
+/// awkward rebuilding because rebuild does not allow all fields to be rebuilt.
+final assetSeries = assetGroupSeries.rebuild((p0) {
+  final newAsset = p0.asset.rebuild((p1) => p1.fungibility = FungibilityType.SERIES);
+  p0.asset = newAsset;
+})
   ..freeze();
-final assetSeriesFractionable = _assetSeries
-  ..asset.quantityDescriptor = QuantityDescriptorType.FRACTIONABLE
+
+final assetSeriesImmutable = assetSeries.rebuild((p0) => p0.asset.quantityDescriptor = QuantityDescriptorType.IMMUTABLE)
   ..freeze();
-final assetSeriesAccumulator = _assetSeries
-  ..asset.quantityDescriptor = QuantityDescriptorType.ACCUMULATOR
-  ..freeze();
+final assetSeriesFractionable =
+    assetSeries.rebuild((p0) => p0.asset.quantityDescriptor = QuantityDescriptorType.FRACTIONABLE)..freeze();
+final assetSeriesAccumulator =
+    assetSeries.rebuild((p0) => p0.asset.quantityDescriptor = QuantityDescriptorType.ACCUMULATOR)..freeze();

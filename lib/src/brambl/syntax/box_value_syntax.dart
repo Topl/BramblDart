@@ -1,24 +1,25 @@
+import 'package:protobuf/protobuf.dart';
 import 'package:topl_common/proto/brambl/models/box/value.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 extension LvlAsBoxVal on Value_LVL {
-  Value asBoxVal() => Value()..lvl = this;
+  Value asBoxVal() => Value().deepCopy()..lvl = this;
 }
 
 extension GroupAsBoxVal on Value_Group {
-  Value asBoxVal() => Value()..group = this;
+  Value asBoxVal() => Value().deepCopy()..group = this;
 }
 
 extension SeriesAsBoxVal on Value_Series {
-  Value asBoxVal() => Value()..series = this;
+  Value asBoxVal() => Value().deepCopy()..series = this;
 }
 
 extension AssetAsBoxVal on Value_Asset {
-  Value asBoxVal() => Value()..asset = this;
+  Value asBoxVal() => Value().deepCopy()..asset = this;
 }
 
 extension ValueToQuantitySyntaxOps on Value {
-    Int128 get quantity {
+  Int128 get quantity {
     switch (whichValue()) {
       case Value_Value.lvl:
         return lvl.quantity;
@@ -34,15 +35,16 @@ extension ValueToQuantitySyntaxOps on Value {
   }
 
   Value setQuantity(Int128 quantity) {
+    final copy = deepCopy();
     switch (whichValue()) {
       case Value_Value.lvl:
-        return this..lvl = (lvl..quantity = quantity);
+        return copy..lvl = (copy.lvl..quantity = quantity);
       case Value_Value.group:
-        return this..group = (group..quantity = quantity);
+        return copy..group = (copy.group..quantity = quantity);
       case Value_Value.series:
-        return this..series = (series..quantity = quantity);
+        return copy..series = (copy.series..quantity = quantity);
       case Value_Value.asset:
-        return this..asset = (asset..quantity = quantity);
+        return copy..asset = (copy.asset..quantity = quantity);
       default:
         throw Exception('Invalid value type');
     }

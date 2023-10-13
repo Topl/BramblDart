@@ -24,7 +24,9 @@ import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_ou
 import 'package:topl_common/proto/brambl/models/transaction/unspent_transaction_output.pb.dart';
 import 'package:topl_common/proto/consensus/models/operational_certificate.pb.dart';
 import 'package:topl_common/proto/consensus/models/staking.pb.dart';
+import 'package:topl_common/proto/google/protobuf/duration.pb.dart' as pb_d show Duration;
 import 'package:topl_common/proto/google/protobuf/struct.pb.dart' as str;
+import 'package:topl_common/proto/node/models/ratio.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
@@ -35,12 +37,28 @@ class ContainsImmutable {
 
   const ContainsImmutable(this.immutableBytes);
 
-  // Processes any list, potentially funky problems with nested lists.
-  factory ContainsImmutable.list(List list) {
+  /// Creates an ContainsImmutable object from a list of elements will dynamically match the type
+  /// optional manual processing using a [handler] function.
+  /// handler function is ideally a Contains immutable factory method.
+  ///
+  /// Processes any list, potentially funky problems with nested lists.
+  factory ContainsImmutable.list(List list, {ContainsImmutable Function(dynamic)? handler}) {
     return list.asMap().entries.fold(
           ContainsImmutable.empty(),
-          (acc, entry) => acc + ContainsImmutable.int(entry.key) + ContainsImmutable.apply(entry.value),
+          (acc, entry) =>
+              acc +
+              ContainsImmutable.int(entry.key) +
+              (handler == null ? ContainsImmutable.apply(entry.value) : handler(entry.value)),
         );
+  }
+
+  // todo evaluate necessity of this list rewrite
+  factory ContainsImmutable.seq(List seq) {
+    var acc = ContainsImmutable.empty();
+    for (int i = 0; i < seq.length; i++) {
+      acc += ContainsImmutable.int(i) + ContainsImmutable.apply(seq[i]);
+    }
+    return acc;
   }
 
   factory ContainsImmutable.empty() {
@@ -133,7 +151,21 @@ class ContainsImmutable {
   factory ContainsImmutable.ioTransaction(IoTransaction iotx) =>
       ContainsImmutable.list(iotx.inputs) +
       ContainsImmutable.list(iotx.outputs) +
-      ContainsImmutable.ioTransactionDatum(iotx.datum);
+      ContainsImmutable.ioTransactionDatum(iotx.datum) +
+      ContainsImmutable.list(iotx.groupPolicies) +
+      ContainsImmutable.list(iotx.seriesPolicies);
+
+  factory ContainsImmutable.x(IoTransaction iotx) =>
+      // ContainsImmutable.list(iotx.inputs, handler: (p0) => ContainsImmutable.spentOutput(p0)) +
+      // ContainsImmutable.list(iotx.outputs, handler: (p0) => ContainsImmutable.unspentOutput(p0)) +
+      // ContainsImmutable.ioTransactionDatum(iotx.datum) +
+      // ContainsImmutable.list(iotx.groupPolicies, handler: (p0) => ContainsImmutable.groupPolicyDatum(p0)) +
+      // ContainsImmutable.list(iotx.seriesPolicies, handler: (p0) => ContainsImmutable.seriesPolicyDatum(p0));
+      ContainsImmutable.list(iotx.inputs) +
+      ContainsImmutable.list(iotx.outputs) +
+      ContainsImmutable.ioTransactionDatum(iotx.datum) +
+      ContainsImmutable.list(iotx.groupPolicies) +
+      ContainsImmutable.list(iotx.seriesPolicies);
 
   factory ContainsImmutable.iotxSchedule(Schedule schedule) =>
       ContainsImmutable.int64(schedule.min) + ContainsImmutable.int64(schedule.max);
@@ -149,14 +181,21 @@ class ContainsImmutable {
   factory ContainsImmutable.box(Box box) => ContainsImmutable.lock(box.lock) + ContainsImmutable.value(box.value);
 
   factory ContainsImmutable.value(Value v) {
-    if (v.hasLvl()) {
-      return ContainsImmutable.lvlValue(v.lvl);
-    } else if (v.hasTopl()) {
-      return ContainsImmutable.toplValue(v.topl);
-    } else if (v.hasAsset()) {
-      return ContainsImmutable.assetValue(v.asset);
-    } else {
-      return [0].immutable;
+    switch (v.whichValue()) {
+      case Value_Value.lvl:
+        return ContainsImmutable.lvlValue(v.lvl);
+      case Value_Value.topl:
+        return ContainsImmutable.toplValue(v.topl);
+      case Value_Value.asset:
+        return ContainsImmutable.assetValue(v.asset);
+      case Value_Value.series:
+        return ContainsImmutable.seriesValue(v.series);
+      case Value_Value.group:
+        return ContainsImmutable.groupValue(v.group);
+      case Value_Value.updateProposal:
+        return ContainsImmutable.updateProposal(v.updateProposal);
+      case Value_Value.notSet:
+        return [0].immutable;
     }
   }
 
@@ -187,6 +226,26 @@ class ContainsImmutable {
       ContainsImmutable.groupIdentifier(_.groupId) +
       ContainsImmutable.int128(_.quantity) +
       ContainsImmutable.seriesIdValue(_.fixedSeries);
+
+  factory ContainsImmutable.ratio(Ratio r) =>
+      ContainsImmutable.int128(r.numerator) + ContainsImmutable.int128(r.denominator);
+
+  factory ContainsImmutable.duration(pb_d.Duration d) =>
+      ContainsImmutable.int64(d.seconds) + ContainsImmutable.int(d.nanos);
+
+  factory ContainsImmutable.updateProposal(Value_UpdateProposal up) =>
+      ContainsImmutable.string(up.label) +
+      ContainsImmutable.ratio(up.fEffective) +
+      up.vrfLddCutoff.value.immutable +
+      up.vrfPrecision.value.immutable +
+      ContainsImmutable.ratio(up.vrfBaselineDifficulty) +
+      ContainsImmutable.ratio(up.vrfAmplitude) +
+      ContainsImmutable.int64(up.chainSelectionKLookback.value) +
+      ContainsImmutable.duration(up.slotDuration) +
+      ContainsImmutable.int64(up.forwardBiasedSlotWindow.value) +
+      ContainsImmutable.int64(up.operationalPeriodsPerEpoch.value) +
+      up.kesKeyHours.value.immutable +
+      up.kesKeyMinutes.value.immutable;
 
   factory ContainsImmutable.fungibility(FungibilityType _) => ContainsImmutable.int(_.value);
 
@@ -248,14 +307,15 @@ class ContainsImmutable {
       ContainsImmutable.accumulatorRoot32Identifier(commitment.root);
 
   factory ContainsImmutable.lock(Lock lock) {
-    if (lock.hasPredicate()) {
-      return ContainsImmutable.predicateLock(lock.predicate);
-    } else if (lock.hasImage()) {
-      return ContainsImmutable.imageLock(lock.image);
-    } else if (lock.hasCommitment()) {
-      return ContainsImmutable.commitmentLock(lock.commitment);
-    } else {
-      throw Exception('Invalid Lock type ${lock.runtimeType}');
+    switch (lock.whichValue()) {
+      case Lock_Value.predicate:
+        return ContainsImmutable.predicateLock(lock.predicate);
+      case Lock_Value.image:
+        return ContainsImmutable.imageLock(lock.image);
+      case Lock_Value.commitment:
+        return ContainsImmutable.commitmentLock(lock.commitment);
+      case Lock_Value.notSet:
+        throw Exception('Invalid Lock type ${lock.runtimeType}');
     }
   }
 
@@ -273,14 +333,15 @@ class ContainsImmutable {
       ContainsImmutable.list(attestation.responses);
 
   factory ContainsImmutable.attestation(Attestation attestation) {
-    if (attestation.hasPredicate()) {
-      return ContainsImmutable.predicateAttestation(attestation.predicate);
-    } else if (attestation.hasImage()) {
-      return ContainsImmutable.imageAttestation(attestation.image);
-    } else if (attestation.hasCommitment()) {
-      return ContainsImmutable.commitmentAttestation(attestation.commitment);
-    } else {
-      return ContainsImmutable.empty();
+    switch (attestation.whichValue()) {
+      case Attestation_Value.predicate:
+        return ContainsImmutable.predicateAttestation(attestation.predicate);
+      case Attestation_Value.image:
+        return ContainsImmutable.imageAttestation(attestation.image);
+      case Attestation_Value.commitment:
+        return ContainsImmutable.commitmentAttestation(attestation.commitment);
+      case Attestation_Value.notSet:
+        return ContainsImmutable.empty();
     }
   }
 
@@ -293,15 +354,11 @@ class ContainsImmutable {
   factory ContainsImmutable.previousPropositionChallengeContains(Challenge_PreviousProposition p) =>
       ContainsImmutable.transactionInputAddressContains(p.address) + ContainsImmutable.int(p.index);
 
-  factory ContainsImmutable.challengeContains(Challenge c) {
-    if (c.hasRevealed()) {
-      return ContainsImmutable.proposition(c.revealed);
-    } else if (c.hasPrevious()) {
-      return ContainsImmutable.previousPropositionChallengeContains(c.previous);
-    } else {
-      throw Exception('Invalid Challenge proposition');
-    }
-  }
+  factory ContainsImmutable.challengeContains(Challenge c) => switch (c.whichProposition()) {
+        Challenge_Proposition.revealed => ContainsImmutable.proposition(c.revealed),
+        Challenge_Proposition.previous => ContainsImmutable.previousPropositionChallengeContains(c.previous),
+        Challenge_Proposition.notSet => throw Exception('Invalid Challenge proposition')
+      };
 
   factory ContainsImmutable.eonEvent(Event_Eon event) =>
       ContainsImmutable.int64(event.beginSlot) + ContainsImmutable.int64(event.height);
@@ -329,25 +386,16 @@ class ContainsImmutable {
       ContainsImmutable.fungibility(_.fungibility) +
       ContainsImmutable.quantityDescriptor(_.quantityDescriptor);
 
-  factory ContainsImmutable.eventImmutable(Event event) {
-    if (event.hasEon()) {
-      return ContainsImmutable.eonEvent(event.eon);
-    } else if (event.hasEra()) {
-      return ContainsImmutable.eraEvent(event.era);
-    } else if (event.hasEpoch()) {
-      return ContainsImmutable.epochEvent(event.epoch);
-    } else if (event.hasHeader()) {
-      return ContainsImmutable.headerEvent(event.header);
-    } else if (event.hasIoTransaction()) {
-      return ContainsImmutable.iotxEventImmutable(event.ioTransaction);
-    } else if (event.hasGroupPolicy()) {
-      return ContainsImmutable.groupPolicyEvent(event.groupPolicy);
-    } else if (event.hasSeriesPolicy()) {
-      return ContainsImmutable.seriesPolicyEvent(event.seriesPolicy);
-    } else {
-      throw Exception('Invalid Event type ${event.runtimeType}');
-    }
-  }
+  factory ContainsImmutable.eventImmutable(Event event) => switch (event.whichValue()) {
+        Event_Value.eon => ContainsImmutable.eonEvent(event.eon),
+        Event_Value.era => ContainsImmutable.eraEvent(event.era),
+        Event_Value.epoch => ContainsImmutable.epochEvent(event.epoch),
+        Event_Value.header => ContainsImmutable.headerEvent(event.header),
+        Event_Value.ioTransaction => ContainsImmutable.iotxEventImmutable(event.ioTransaction),
+        Event_Value.groupPolicy => ContainsImmutable.groupPolicyEvent(event.groupPolicy),
+        Event_Value.seriesPolicy => ContainsImmutable.seriesPolicyEvent(event.seriesPolicy),
+        Event_Value.notSet => throw Exception('Invalid Event type ${event.runtimeType}')
+      };
 
   factory ContainsImmutable.txBind(TxBind txBind) => txBind.value.immutable;
 
@@ -440,69 +488,39 @@ class ContainsImmutable {
   factory ContainsImmutable.orProof(Proof_Or p) =>
       ContainsImmutable.txBind(p.transactionBind) + ContainsImmutable.proof(p.left) + ContainsImmutable.proof(p.right);
 
-  factory ContainsImmutable.proposition(Proposition p) {
-    if (p.hasLocked()) {
-      return ContainsImmutable.locked(p.locked);
-    } else if (p.hasDigest()) {
-      return ContainsImmutable.digestProposition(p.digest);
-    } else if (p.hasDigitalSignature()) {
-      return ContainsImmutable.signature(p.digitalSignature);
-    } else if (p.hasHeightRange()) {
-      return ContainsImmutable.heightRange(p.heightRange);
-    } else if (p.hasTickRange()) {
-      return ContainsImmutable.tickRange(p.tickRange);
-    } else if (p.hasExactMatch()) {
-      return ContainsImmutable.exactMatch(p.exactMatch);
-    } else if (p.hasLessThan()) {
-      return ContainsImmutable.lessThan(p.lessThan);
-    } else if (p.hasGreaterThan()) {
-      return ContainsImmutable.greaterThan(p.greaterThan);
-    } else if (p.hasEqualTo()) {
-      return ContainsImmutable.equalTo(p.equalTo);
-    } else if (p.hasThreshold()) {
-      return ContainsImmutable.threshold(p.threshold);
-    } else if (p.hasNot()) {
-      return ContainsImmutable.not(p.not);
-    } else if (p.hasAnd()) {
-      return ContainsImmutable.and(p.and);
-    } else if (p.hasOr()) {
-      return ContainsImmutable.or(p.or);
-    } else {
-      throw Exception('Invalid Proposition type ${p.runtimeType}');
-    }
-  }
+  factory ContainsImmutable.proposition(Proposition p) => switch (p.whichValue()) {
+        Proposition_Value.locked => ContainsImmutable.locked(p.locked),
+        Proposition_Value.digest => ContainsImmutable.digestProposition(p.digest),
+        Proposition_Value.digitalSignature => ContainsImmutable.signature(p.digitalSignature),
+        Proposition_Value.heightRange => ContainsImmutable.heightRange(p.heightRange),
+        Proposition_Value.tickRange => ContainsImmutable.tickRange(p.tickRange),
+        Proposition_Value.exactMatch => ContainsImmutable.exactMatch(p.exactMatch),
+        Proposition_Value.lessThan => ContainsImmutable.lessThan(p.lessThan),
+        Proposition_Value.greaterThan => ContainsImmutable.greaterThan(p.greaterThan),
+        Proposition_Value.equalTo => ContainsImmutable.equalTo(p.equalTo),
+        Proposition_Value.threshold => ContainsImmutable.threshold(p.threshold),
+        Proposition_Value.not => ContainsImmutable.not(p.not),
+        Proposition_Value.and => ContainsImmutable.and(p.and),
+        Proposition_Value.or => ContainsImmutable.or(p.or),
+        Proposition_Value.notSet => throw Exception('Invalid Proposition type ${p.runtimeType}')
+      };
 
-  factory ContainsImmutable.proof(Proof p) {
-    if (p.hasLocked()) {
-      return ContainsImmutable.lockedProof(p.locked);
-    } else if (p.hasDigest()) {
-      return ContainsImmutable.digestProof(p.digest);
-    } else if (p.hasDigitalSignature()) {
-      return ContainsImmutable.signatureProof(p.digitalSignature);
-    } else if (p.hasHeightRange()) {
-      return ContainsImmutable.heightRangeProof(p.heightRange);
-    } else if (p.hasTickRange()) {
-      return ContainsImmutable.tickRangeProof(p.tickRange);
-    } else if (p.hasExactMatch()) {
-      return ContainsImmutable.exactMatchProof(p.exactMatch);
-    } else if (p.hasLessThan()) {
-      return ContainsImmutable.lessThanProof(p.lessThan);
-    } else if (p.hasGreaterThan()) {
-      return ContainsImmutable.greaterThanProof(p.greaterThan);
-    } else if (p.hasEqualTo()) {
-      return ContainsImmutable.equalToProof(p.equalTo);
-    } else if (p.hasThreshold()) {
-      return ContainsImmutable.thresholdProof(p.threshold);
-    } else if (p.hasNot()) {
-      return ContainsImmutable.notProof(p.not);
-    } else if (p.hasAnd()) {
-      return ContainsImmutable.andProof(p.and);
-    } else if (p.hasOr()) {
-      return ContainsImmutable.orProof(p.or);
-    } else {
-      throw Exception('Invalid Proof type ${p.runtimeType}');
-    }
-  }
+  factory ContainsImmutable.proof(Proof p) => switch (p.whichValue()) {
+        Proof_Value.locked => ContainsImmutable.lockedProof(p.locked),
+        Proof_Value.digest => ContainsImmutable.digestProof(p.digest),
+        Proof_Value.digitalSignature => ContainsImmutable.signatureProof(p.digitalSignature),
+        Proof_Value.heightRange => ContainsImmutable.heightRangeProof(p.heightRange),
+        Proof_Value.tickRange => ContainsImmutable.tickRangeProof(p.tickRange),
+        Proof_Value.exactMatch => ContainsImmutable.exactMatchProof(p.exactMatch),
+        Proof_Value.lessThan => ContainsImmutable.lessThanProof(p.lessThan),
+        Proof_Value.greaterThan => ContainsImmutable.greaterThanProof(p.greaterThan),
+        Proof_Value.equalTo => ContainsImmutable.equalToProof(p.equalTo),
+        Proof_Value.threshold => ContainsImmutable.thresholdProof(p.threshold),
+        Proof_Value.not => ContainsImmutable.notProof(p.not),
+        Proof_Value.and => ContainsImmutable.andProof(p.and),
+        Proof_Value.or => ContainsImmutable.orProof(p.or),
+        Proof_Value.notSet => ContainsImmutable.empty()
+      };
 
   /// dynamically handles processing for generic object
   /// consider using the direct type for better performance
@@ -599,6 +617,12 @@ class ContainsImmutable {
       return ContainsImmutable.seriesValue(type);
     } else if (type is Value_Group) {
       return ContainsImmutable.groupValue(type);
+    } else if (type is Ratio) {
+      return ContainsImmutable.ratio(type);
+    } else if (type is pb_d.Duration) {
+      return ContainsImmutable.duration(type);
+    } else if (type is Value_UpdateProposal) {
+      return ContainsImmutable.updateProposal(type);
     }
 
     // extra
@@ -757,6 +781,14 @@ extension ImmutableByteUint8ListExtensions on Uint8List {
   ContainsImmutable get immutable => ContainsImmutable(immutableBytes);
 }
 
+extension ImmutableByteIntExtensions on int {
+  /// Creates an ContainsImmutable object from a [int]
+  ContainsImmutable get immutable => ContainsImmutable.int(this);
+
+  /// Creates an ImmutableBytes object from a [int]
+  ImmutableBytes get immutableBytes => immutable.immutableBytes;
+}
+
 extension ImmutableByteIntListExtensions on List<int> {
   /// Creates an ImmutableBytes object from a [int] list
   ImmutableBytes get immutableBytes => ImmutableBytes(value: this);
@@ -766,5 +798,6 @@ extension ImmutableByteIntListExtensions on List<int> {
 }
 
 extension IoTransactionContainsImmutableExtensions on IoTransaction {
+  // ImmutableBytes get immutable => ContainsImmutable.ioTransaction(this).immutableBytes;
   ImmutableBytes get immutable => ContainsImmutable.ioTransaction(this).immutableBytes;
 }

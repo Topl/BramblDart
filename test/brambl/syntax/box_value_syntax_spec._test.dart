@@ -34,8 +34,7 @@ void main() {
       expect(assetGroupSeries.asset.quantity, quantity);
       final v1 = Box(value: Value(topl: Value_TOPL(quantity: quantity)));
 
-      /// TODO: ask about behaviour of this test
-      // expect(() => v1.value.lvl.quantity, throwsA(isA<Exception>()));
+      expect(() => v1.value.quantity, throwsA(isA<Exception>()));
     });
 
     test('setQuantity', () {
