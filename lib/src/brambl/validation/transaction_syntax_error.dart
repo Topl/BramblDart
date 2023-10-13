@@ -83,6 +83,8 @@ enum TransactionSyntaxErrorType {
 /// A Syntax error indicating that this transaction does not contain at least 1 input.
 class EmptyInputsError extends TransactionSyntaxError {
   EmptyInputsError() : super(TransactionSyntaxErrorType.emptyInputs, null);
+
+  
 }
 
 /// A Syntax error indicating that this transaction multiple inputs referring to the same KnownIdentifier.

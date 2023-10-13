@@ -121,7 +121,11 @@ class Either<L, R> {
   static Either<L, R> conditional<L, R>(bool condition, {required L left, required R right}) {
     return condition ? Either.right(right) : Either.left(left);
   }
-  
+
+  bool exists(bool Function(R) predicate) {
+    return isRight ? predicate(get()) : false;
+  }
+
   @override
   String toString() {
     return 'Either{_left: $_left, _right: $_right}';

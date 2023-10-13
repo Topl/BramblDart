@@ -18,7 +18,6 @@ class TransactionSyntaxInterpreter {
     final errors = <TransactionSyntaxError>[];
     for (final validator in validators) {
       final result = validator(t);
-
       if (result is Either<TransactionSyntaxError, Unit>) {
         if (result.isLeft) {
           errors.add(result.left!);
@@ -150,6 +149,7 @@ class TransactionSyntaxInterpreter {
     // }
 
     BigInt sumAll(List<Value> values) {
+      if (values.isEmpty) return BigInt.zero;
       return values.map((value) => getQuantity(value)).reduce((a, b) => a + b);
     }
 
