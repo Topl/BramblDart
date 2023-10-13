@@ -24,13 +24,12 @@ import 'package:topl_common/proto/brambl/models/transaction/schedule.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_output.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/unspent_transaction_output.pb.dart';
 import 'package:topl_common/proto/genus/genus_models.pb.dart';
-import 'package:topl_common/proto/google/protobuf/struct.pb.dart';
+import 'package:topl_common/proto/google/protobuf/struct.pb.dart' as struct;
+import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 import '../../common/functional/either.dart';
-
-//TODO  add GroupOutput and SeriesOutput to the transaction builder api
 
 /// Defines a builder for [IoTransaction]s
 abstract class TransactionBuilderApiDefinition {
@@ -98,7 +97,7 @@ abstract class TransactionBuilderApiDefinition {
     SeriesId seriesId,
     FungibilityType fungibilityType,
     QuantityDescriptorType quantityDescriptorType, {
-    Struct? metadata,
+    struct.Struct? metadata,
     ByteString? commitment,
   });
 
@@ -370,7 +369,14 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     }
     var stxoAttestation = await unprovenAttestation(registrationLock);
     var d = await datum();
-    var utxoMinted = await seriesOutput(mintedConstructorLockAddress, quantityToMint, seriesPolicy);
+    var utxoMinted = await seriesOutput(
+      mintedConstructorLockAddress,
+      quantityToMint,
+      seriesPolicy.computeId,
+      seriesPolicy.fungibility,
+      seriesPolicy.quantityDescriptor,
+      tokenSupply: seriesPolicy.tokenSupply.value,
+    );
     return Either.right(IoTransaction(
       inputs: [
         SpentTransactionOutput(
@@ -411,11 +417,13 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
   /// [groupId] - The group ID.
   ///
   /// Returns a Future of an UnspentTransactionOutput.
+  @override
   Future<UnspentTransactionOutput> groupOutput(
     LockAddress lockAddress,
     Int128 quantity,
-    GroupId groupId,
-  ) async {
+    GroupId groupId, {
+    SeriesId? fixedSeries,
+  }) async {
     final value = Value.getDefault()..group = Value_Group(groupId: groupId, quantity: quantity.value.toInt128);
     return UnspentTransactionOutput(address: lockAddress, value: value);
   }
@@ -427,23 +435,26 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
   /// [policy] - The series policy.
   ///
   /// Returns a Future of an UnspentTransactionOutput.
+  @override
   Future<UnspentTransactionOutput> seriesOutput(
     LockAddress lockAddress,
     Int128 quantity,
-    Event_SeriesPolicy policy,
-  ) async {
-    final value = Value.getDefault()
-      ..series = (Value_Series()
-        ..seriesId = SeriesId(value: policy.computeId.value)
-        ..quantity = quantity
-        ..tokenSupply = policy.tokenSupply
-        ..quantityDescriptor = policy.quantityDescriptor
-        ..fungibility = policy.fungibility);
-
+    SeriesId seriesId,
+    FungibilityType fungibility,
+    QuantityDescriptorType quantityDescriptor, {
+    int? tokenSupply,
+  }) async {
     return UnspentTransactionOutput(
-      address: lockAddress,
-      value: value,
-    );
+        address: lockAddress,
+        value: Value(
+          series: Value_Series(
+            seriesId: seriesId,
+            quantity: quantity,
+            tokenSupply: UInt32Value(value: tokenSupply),
+            quantityDescriptor: quantityDescriptor,
+            fungibility: fungibility,
+          ),
+        ));
   }
 
   @override
@@ -502,27 +513,53 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
         predicate:
             Attestation_Predicate(lock: predicate, responses: List.filled(predicate.challenges.length, Proof())));
   }
-  
+
   @override
-  Future<UnspentTransactionOutput> assetOutput(LockAddress lockAddress, Int128 quantity, GroupId groupId, SeriesId seriesId, FungibilityType fungibilityType, QuantityDescriptorType quantityDescriptorType, {Struct? metadata, ByteString? commitment}) {
+  Future<UnspentTransactionOutput> assetOutput(
+    LockAddress lockAddress,
+    Int128 quantity,
+    GroupId groupId,
+    SeriesId seriesId,
+    FungibilityType fungibilityType,
+    QuantityDescriptorType quantityDescriptorType, {
+    struct.Struct? metadata,
+    ByteString? commitment,
+  }) {
     // TODO: implement assetOutput
     throw UnimplementedError();
   }
-  
+
   @override
-  Future<Either<BuilderError, IoTransaction>> buildSimpleAssetMintingTransaction(AssetMintingStatement mintingStatement, Txo groupTxo, Txo seriesTxo, Lock_Predicate groupLock, Lock_Predicate seriesLock, LockAddress mintedAssetLockAddress, {ByteString? ephemeralMetadata, Uint8List? commitment}) {
+  Future<Either<BuilderError, IoTransaction>> buildSimpleAssetMintingTransaction(
+      AssetMintingStatement mintingStatement,
+      Txo groupTxo,
+      Txo seriesTxo,
+      Lock_Predicate groupLock,
+      Lock_Predicate seriesLock,
+      LockAddress mintedAssetLockAddress,
+      {ByteString? ephemeralMetadata,
+      Uint8List? commitment}) {
     // TODO: implement buildSimpleAssetMintingTransaction
     throw UnimplementedError();
   }
-  
+
   @override
-  Future<Either<BuilderError, IoTransaction>> buildTransferAllTransaction(List<Txo> txos, Lock_Predicate lockPredicateFrom, LockAddress recipientLockAddress, LockAddress changeLockAddress, int fee, {ValueTypeIdentifier? tokenIdentifier}) {
+  Future<Either<BuilderError, IoTransaction>> buildTransferAllTransaction(List<Txo> txos,
+      Lock_Predicate lockPredicateFrom, LockAddress recipientLockAddress, LockAddress changeLockAddress, int fee,
+      {ValueTypeIdentifier? tokenIdentifier}) {
     // TODO: implement buildTransferAllTransaction
     throw UnimplementedError();
   }
-  
+
   @override
-  Future<Either<BuilderError, IoTransaction>> buildTransferAmountTransaction(ValueTypeIdentifier tokenIdentifier, List<Txo> txos, Lock_Predicate lockPredicateFrom, Int128 amount, LockAddress recipientLockAddress, LockAddress changeLockAddress, int fee) {
+  Future<Either<BuilderError, IoTransaction>> buildTransferAmountTransaction(
+      ValueTypeIdentifier tokenIdentifier,
+      List<Txo> txos,
+      Lock_Predicate lockPredicateFrom,
+      Int128 amount,
+      LockAddress recipientLockAddress,
+      LockAddress changeLockAddress,
+      int fee) {
     // TODO: implement buildTransferAmountTransaction
     throw UnimplementedError();
   }
