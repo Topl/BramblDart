@@ -10,10 +10,9 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 import 'helpers/mock_helpers.dart';
 import 'helpers/very_secure_signature_routine.dart';
 
-
 main() {
   group('Quivr Composite', () {
-    test("An 'and' proposition must evaluate to true when both the verification of both proofs is true", () async {
+    test("An 'and' proposition must evaluate to true when both the verification of both proofs is true", () {
       final (sk1, vk1) = VerySecureSignatureRoutine.generateKeyPair();
       final (sk2, vk2) = VerySecureSignatureRoutine.generateKeyPair();
 
@@ -33,13 +32,13 @@ main() {
 
       final andProverProof = Prover.andProver(signatureProverProof1, signatureProverProof2, MockHelpers.signableBytes);
 
-      final result = await Verifier.verify(
-          andProposition, andProverProof, MockHelpers.dynamicContext(andProposition, andProverProof));
+      final result =
+          Verifier.verify(andProposition, andProverProof, MockHelpers.dynamicContext(andProposition, andProverProof));
 
       expect(result.isRight, true);
     });
 
-    test("An and proposition must evaluate to false when one of the proofs evaluates to false", () async {
+    test("An and proposition must evaluate to false when one of the proofs evaluates to false", () {
       final (sk1, vk1) = VerySecureSignatureRoutine.generateKeyPair();
       final (_, vk2) = VerySecureSignatureRoutine.generateKeyPair();
       final (sk2, _) = VerySecureSignatureRoutine.generateKeyPair();
@@ -60,8 +59,8 @@ main() {
 
       final andProverProof = Prover.andProver(signatureProverProof1, signatureProverProof2, MockHelpers.signableBytes);
 
-      final result = await Verifier.verify(
-          andProposition, andProverProof, MockHelpers.dynamicContext(andProposition, andProverProof));
+      final result =
+          Verifier.verify(andProposition, andProverProof, MockHelpers.dynamicContext(andProposition, andProverProof));
 
       expect(result.isLeft, true);
 
@@ -69,7 +68,7 @@ main() {
       expect((left.type == ValidationErrorType.evaluationAuthorizationFailure), true);
     });
 
-    test("An or proposition must evaluate to true when one of the proofs evaluates to true", () async {
+    test("An or proposition must evaluate to true when one of the proofs evaluates to true", () {
       final (sk1, vk1) = VerySecureSignatureRoutine.generateKeyPair();
       final (_, vk2) = VerySecureSignatureRoutine.generateKeyPair();
       final (sk2, _) = VerySecureSignatureRoutine.generateKeyPair();
@@ -91,12 +90,12 @@ main() {
       final orProverProof = Prover.orProver(signatureProverProof1, signatureProverProof2, MockHelpers.signableBytes);
 
       final result =
-          await Verifier.verify(orProposition, orProverProof, MockHelpers.dynamicContext(orProposition, orProverProof));
+          Verifier.verify(orProposition, orProverProof, MockHelpers.dynamicContext(orProposition, orProverProof));
 
       expect(result.isRight, true);
     });
 
-    test("An or proposition must evaluate to false when both proofs evaluate to false", () async {
+    test("An or proposition must evaluate to false when both proofs evaluate to false", () {
       final (_, vk1) = VerySecureSignatureRoutine.generateKeyPair();
       final (sk1, _) = VerySecureSignatureRoutine.generateKeyPair();
 
@@ -120,7 +119,7 @@ main() {
       final orProverProof = Prover.orProver(signatureProverProof1, signatureProverProof2, MockHelpers.signableBytes);
 
       final result =
-          await Verifier.verify(orProposition, orProverProof, MockHelpers.dynamicContext(orProposition, orProverProof));
+          Verifier.verify(orProposition, orProverProof, MockHelpers.dynamicContext(orProposition, orProverProof));
 
       expect(result.isLeft, true);
 
@@ -128,15 +127,15 @@ main() {
       expect((left.type == ValidationErrorType.evaluationAuthorizationFailure), true);
     });
 
-    test("A not proposition must evaluate to false when the proof in the parameter is true", () async {
+    test("A not proposition must evaluate to false when the proof in the parameter is true", () {
       final heightProposition = Proposer.heightProposer(MockHelpers.heightString, Int64(900), Int64(1000));
       final heightProverProof = Prover.heightProver(MockHelpers.signableBytes);
 
       final notProposition = Proposer.notProposer(heightProposition);
       final notProverProof = Prover.notProver(heightProverProof, MockHelpers.signableBytes);
 
-      final result = await Verifier.verify(
-          notProposition, notProverProof, MockHelpers.dynamicContext(notProposition, notProverProof));
+      final result =
+          Verifier.verify(notProposition, notProverProof, MockHelpers.dynamicContext(notProposition, notProverProof));
 
       expect(result.isLeft, true);
 
@@ -144,20 +143,20 @@ main() {
       expect((left.type == ValidationErrorType.evaluationAuthorizationFailure), true);
     });
 
-    test("A not proposition must evaluate to true when the proof in the parameter is false", () async {
+    test("A not proposition must evaluate to true when the proof in the parameter is false", () {
       final heightProposition = Proposer.heightProposer(MockHelpers.heightString, Int64(1), Int64(10));
       final heightProverProof = Prover.heightProver(MockHelpers.signableBytes);
 
       final notProposition = Proposer.notProposer(heightProposition);
       final notProverProof = Prover.notProver(heightProverProof, MockHelpers.signableBytes);
 
-      final result = await Verifier.verify(
-          notProposition, notProverProof, MockHelpers.dynamicContext(notProposition, notProverProof));
+      final result =
+          Verifier.verify(notProposition, notProverProof, MockHelpers.dynamicContext(notProposition, notProverProof));
 
       expect(result.isRight, true);
     });
 
-    test("A threshold proposition must evaluate to true when the threshold is passed", () async {
+    test("A threshold proposition must evaluate to true when the threshold is passed", () {
       final (sk1, vk1) = VerySecureSignatureRoutine.generateKeyPair();
       final (_, vk2) = VerySecureSignatureRoutine.generateKeyPair();
       final (sk2, _) = VerySecureSignatureRoutine.generateKeyPair();
@@ -186,13 +185,13 @@ main() {
       final tresholdProverProof = Prover.thresholdProver(
           [signatureProverProof1, signatureProverProof2, signatureProverProof3], MockHelpers.signableBytes);
 
-      final result = await Verifier.verify(tresholdProposition, tresholdProverProof,
+      final result = Verifier.verify(tresholdProposition, tresholdProverProof,
           MockHelpers.dynamicContext(tresholdProposition, tresholdProverProof));
 
       expect(result.isRight, true);
     });
 
-    test("A threshold proposition must evaluate to false when the threshold is not passed", () async {
+    test("A threshold proposition must evaluate to false when the threshold is not passed", () {
       final (sk1, vk1) = VerySecureSignatureRoutine.generateKeyPair();
       final (_, vk2) = VerySecureSignatureRoutine.generateKeyPair();
       final (sk2, _) = VerySecureSignatureRoutine.generateKeyPair();
@@ -234,7 +233,7 @@ main() {
       final tresholdProverProof = Prover.thresholdProver(
           [signatureProverProof1, signatureProverProof2, signatureProverProof3], MockHelpers.signableBytes);
 
-      final result = await Verifier.verify(tresholdProposition, tresholdProverProof,
+      final result = Verifier.verify(tresholdProposition, tresholdProverProof,
           MockHelpers.dynamicContext(tresholdProposition, tresholdProverProof));
 
       expect(result.isLeft, true);

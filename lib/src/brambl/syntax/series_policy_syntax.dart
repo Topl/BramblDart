@@ -11,14 +11,14 @@ typedef SeriesPolicy = Event_SeriesPolicy;
 /// Provides syntax operations for working with [GroupPolicy]s.
 class SeriesPolicySyntax {
   /// Computes the [GroupId] of the [GroupPolicy].
-  static GroupId computeId(SeriesPolicy seriesPolicy) {
+  static SeriesId computeId(SeriesPolicy seriesPolicy) {
     final digest = ContainsImmutable.seriesPolicyEvent(seriesPolicy).immutableBytes.writeToBuffer();
     final sha256 = SHA256().hash(digest);
-    return GroupId(value: sha256);
+    return SeriesId(value: sha256);
   }
 }
 
 extension SeriesPolicySyntaxExtension on SeriesPolicy {
   /// Computes the [GroupId] of the [GroupPolicy].
-  GroupId get computeId => SeriesPolicySyntax.computeId(this);
+  SeriesId get computeId => SeriesPolicySyntax.computeId(this);
 }

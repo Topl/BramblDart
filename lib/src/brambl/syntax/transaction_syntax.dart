@@ -41,4 +41,10 @@ class TransactionSyntax {
 
 extension TransactionSyntaxExtensions on IoTransaction {
   TransactionSyntax get syntax => TransactionSyntax(this);
+
+  TransactionId get id => syntax.id;
+
+  TransactionId get computeId => syntax.computeId();
+
+  IoTransaction get embedId => syntax.embedId();
 }

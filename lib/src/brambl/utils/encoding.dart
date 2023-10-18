@@ -28,8 +28,8 @@ class Encoding implements EncodingDefinition {
 
   @override
   String encodeToBase58Check(Uint8List payload) {
-    final checksum = SHA256().hash(payload).sublist(0, 4);
-    return encodeToBase58(payload..addAll(checksum));
+    final checksum = SHA256().hash(SHA256().hash(payload)).sublist(0, 4);
+    return encodeToBase58(payload.concat(checksum));
   }
 
   @override
@@ -41,10 +41,26 @@ class Encoding implements EncodingDefinition {
       final decoded = decodeFromBase58(b58).getOrThrow(exception: EncodingError);
       final (payload, errorCheckingCode) = decoded.splitAt(decoded.length - 4);
       final (p, ecc) = (payload.toUint8List(), errorCheckingCode.toUint8List());
-      final expectedErrorCheckingCode = SHA256().hash(p).sublist(0, 4);
+      final expectedErrorCheckingCode = SHA256().hash(SHA256().hash(p)).sublist(0, 4);
       final condition = ListEquality().equals(ecc, expectedErrorCheckingCode);
       final result = Either.conditional(condition, left: InvalidChecksum(), right: p);
       return result;
+    } catch (e) {
+      return Either.left(InvalidChecksum());
+    }
+  }
+
+  Either<EncodingError, Uint8List> decodeFromBase58CheckX(String b58) {
+    try {
+      final decoded = decodeFromBase58(b58).getOrThrow(exception: EncodingError);
+      final payload = decoded.sublist(0, decoded.length - 4);
+      final errorCheckingCode = decoded.sublist(decoded.length - 4);
+      final expectedErrorCheckingCode = sha256.hash(sha256.hash(payload.toUint8List()).sublist(0, 4));
+      if (errorCheckingCode.every((e) => e == expectedErrorCheckingCode[e])) {
+        return Either.right(payload);
+      } else {
+        return Either.left(InvalidChecksum());
+      }
     } catch (e) {
       return Either.left(InvalidChecksum());
     }

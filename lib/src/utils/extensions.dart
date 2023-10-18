@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
+import 'package:fixnum/fixnum.dart';
 
 extension StringExtension on String {
   /// Converts string  to a UTF-8 [Uint8List].
@@ -56,7 +58,7 @@ extension BigIntExtensions on BigInt {
 extension IntExtensions on int {
   Uint8List get toBytes => Uint8List.fromList([this]);
 
-  BigInt get toBigInt=> BigInt.from(this);
+  BigInt get toBigInt => BigInt.from(this);
 }
 
 extension Uint8ListExtension on Uint8List {
@@ -92,7 +94,6 @@ extension Uint8ListExtension on Uint8List {
   /// Returns a [List<int>] representation of the [Uint8List].
   List<int> toIntList() => toList();
 
-
   /// Pads a [Uint8List] with zeros to a target size.
   ///
   /// [targetSize] - The desired size of the [Uint8List].
@@ -121,6 +122,16 @@ extension Uint8ListExtension on Uint8List {
     filledList.fillRange(0, length, fillValue);
     return filledList;
   }
+
+  /// Concatenates a [Uint8List] with another [Uint8List].
+  /// Made for Uint8List, that is non growable by default
+  Uint8List concat(Uint8List other) {
+    var builder = BytesBuilder();
+    builder
+      ..add(this)
+      ..add(other);
+    return builder.toBytes();
+  }
 }
 
 extension Int8ListExtension on Int8List {
@@ -139,6 +150,8 @@ extension Int8ListExtension on Int8List {
 extension IntExtension on int {
   /// converts an Int from Bytes to bits
   int get toBits => this * 8;
+
+  Int64 get toInt64 => Int64(this);
 }
 
 extension IntList on List<int> {
@@ -211,6 +224,7 @@ extension ListExtensions<T> on List<T> {
     return sublist(start, actualEnd);
   }
 
+  /// Returns the first object, works the same as [first].
   T head() {
     if (isEmpty) {
       throw StateError('Cannot get head of empty list');
@@ -219,12 +233,40 @@ extension ListExtensions<T> on List<T> {
     }
   }
 
+  /// Returns a new list containing all elements except the first.
   List<T> tail() {
     if (isEmpty) {
       throw StateError('Cannot get tail of empty list');
     } else {
       return sublist(1);
     }
+  }
+
+  /// Clears the list and adds member to the new list.
+  /// [member] can be a single element or a list of elements of type [T].
+  ///
+  /// This is a convenience method for replacing all members of a list or clearing a list and adding all elements
+  ///
+  /// Example:
+  /// ```dart
+  /// final myList = [1, 2, 3];
+  /// myList.update([4, 5, 6]);
+  /// print(myList); // Output: [4, 5, 6]
+  /// ```
+  void update(member) {
+    clear();
+    if (member is List<T>) {
+      addAll(member);
+    } else if (member is T) {
+      add(member);
+    } else {
+      throw ArgumentError('Cannot update list with type ${member.runtimeType}');
+    }
+  }
+
+  List<(T, B)> zip<B>(List<B> other) {
+    final length = min(this.length, other.length);
+    return List.generate(length, (i) => (this[i], other[i]));
   }
 }
 
@@ -234,4 +276,34 @@ extension EitherExceptionExtensions on Exception {
   }
 }
 
+extension EitherTSwapExtension<L, R> on Either<L, R> {
+  /// Swaps the left and right values of an [Either].
+  Either<R, L> swap() {
+    return fold((l) => Either<R, L>.right(l), (r) => Either<R, L>.left(r));
+  }
+}
 
+
+/// Extension providing a `withResult` method on any object of type `T`.
+///
+/// The `withResult` method applies a provided function `f` to the object,
+/// and returns the result. This can be used to transform the object in a
+/// fluent style.
+///
+/// Example usage:
+/// ```
+/// final number = 42;
+/// final result = number.withResult((value) => value * 2); // returns 84
+/// ```
+extension WithResultExtension<T> on T {
+  /// Applies the function [f] to this object and returns the result.
+  ///
+  /// The function [f] is a transformation function that takes an object of
+  /// type `T` and returns an object of type `B`.
+  ///
+  /// This method can be used to apply a transformation to an object in a
+  /// fluent style. implementation similar to Scala's map function.
+  B withResult<B>(B Function(T) f) {
+    return f(this);
+  }
+}

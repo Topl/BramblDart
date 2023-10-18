@@ -1,1 +1,1 @@
-abstract class ValidationError {}
+abstract class ValidationError implements Exception {}

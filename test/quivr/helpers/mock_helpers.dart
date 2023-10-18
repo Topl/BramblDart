@@ -8,7 +8,6 @@ import 'package:brambl_dart/src/quivr/common/parsable_data_interface.dart';
 import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
 import 'package:brambl_dart/src/quivr/runtime/dynamic_context.dart';
 import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/brambl/models/datum.pb.dart';
 import 'package:topl_common/proto/brambl/models/event.pb.dart';
@@ -41,7 +40,7 @@ class MockHelpers {
           return QuivrResult<SignatureVerification>.right(v);
         } else {
           return QuivrResult<SignatureVerification>.left(
-              ValidationError.messageAuthorizationFailure(context: proof.toString()));
+              ValidationError.messageAuthorizationFailure(proof: proof));
         }
       })
     };
@@ -60,14 +59,14 @@ class MockHelpers {
 
     final currentTick = Int64(999);
 
-    Option<Int64> heightOf(String label) {
+    Int64? heightOf(String label, Datum? Function(String) heightOfDatum) {
       final datum = mapOfDatums[label];
       if (datum != null) {
         final header = (datum).header;
         final eventHeader = header.event;
-        return Some(eventHeader.height);
+        return eventHeader.height;
       }
-      return None();
+      return null;
     }
 
     return DynamicContext(

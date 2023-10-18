@@ -1,14 +1,34 @@
 import 'package:brambl_dart/src/common/functional/either.dart';
 
 /// A list wrapper for `Either` objects.
+/// Made as a alternative for Cats Validated NEC (Non Empty Chain) which is not available in Dart.
 class ListEither<L, R> {
   final List<Either<L, R>> _list;
 
   ListEither(this._list);
 
-  ListEither.right(List<R> list) : _list = list.map((r) => Either.right(r)).toList() as List<Either<L, R>>;
 
-  ListEither.left(List<L> list) : _list = list.map((l) => Either.left(l)).toList() as List<Either<L, R>>;
+  // TODO: restore factory methods once casting issue has been solved, for now static class Accessors are used
+
+  // ListEither.right(List<R> list) : _list = list.map((r) => Either.right(r)).toList() as List<Either<L, R>>;
+
+  // ListEither.left(List<L> list) : _list = list.map((l) => Either.left(l)).toList() as List<Either<L, R>>;
+
+  static right<L, R>(List<R> list) {
+    final List<Either<L, R>> rights = [];
+    for (final r in list) {
+      rights.add(Either.right(r));
+    }
+    return ListEither<L, R>(rights);
+  }
+
+  static left<L, R>(List<L> list) {
+    final List<Either<L, R>> lefts = [];
+    for (final l in list) {
+      lefts.add(Either.left(l));
+    }
+    return ListEither<L, R>(lefts);
+  }
 
   /// Returns a list of all the right values in the list.
   List<R> get rights => _list.where((e) => e.isRight).map((e) => e.right!).toList();

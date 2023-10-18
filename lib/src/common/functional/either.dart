@@ -2,8 +2,6 @@
 // Basic Functional Logic Types that allow us to use simple functional programming concepts
 // **************************************************************************
 
-
-
 /// A container class that represents one of two possible values.
 /// An `Either` instance is either a `Left` value, or a `Right` value.
 /// This class has supporting functions for `void` types, however it's use is against spec
@@ -21,7 +19,9 @@ class Either<L, R> {
   Either.right(this._right) : _left = null;
 
   /// Constructs an `Either` instance with a right generic value of `Unit`.
-  Either.unit({val = const Unit()}) : _left = null, _right = val;
+  Either.unit({val = const Unit()})
+      : _left = null,
+        _right = val;
 
   /// Returns true if this `Either` instance is a `Left` value.
   bool get isLeft => _left != null;
@@ -86,7 +86,6 @@ class Either<L, R> {
   /// Returns the value on the left of the Either if it exists, otherwise throws the provided exception
   L getLeftOrThrow(Object exception) => isLeft ? left! : throw exception;
 
-
   /// Returns the value on the right of the Either if it exists, otherwise throws the left value unless an exception is provided
   ///
   /// Don't use this on Right of [void]
@@ -112,7 +111,6 @@ class Either<L, R> {
   /// `Either<Exception, void>` is the ideal use case as this is incompatible with [right]
   Either<T, R> mapLeftVoid<T>(T Function(L) f) => isLeft ? Either.left(f(left as L)) : Either.unit();
 
-
   /// Converts the Either to an Option, returning the value on the right of the Either if it exists, otherwise None
   Option<R> toOption() => isRight ? Some(right as R) : None();
 
@@ -122,6 +120,10 @@ class Either<L, R> {
   /// Returns the value on the right of the Either if it exists, otherwise returns the result of the provided function
   static Either<L, R> conditional<L, R>(bool condition, {required L left, required R right}) {
     return condition ? Either.right(right) : Either.left(left);
+  }
+
+  bool exists(bool Function(R) predicate) {
+    return isRight ? predicate(get()) : false;
   }
 
   @override
@@ -180,7 +182,6 @@ class None<T> extends Option<T> {
   int get hashCode => runtimeType.hashCode;
 }
 
-
 abstract class Option<T> {
   bool get isDefined;
 
@@ -222,5 +223,3 @@ class EitherException implements Exception {
 class Unit {
   const Unit();
 }
-
-

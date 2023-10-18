@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
 
 /// A class that represents a sequence of bytes. uses [Uint8List] under the hood
 class ByteString {
@@ -24,11 +25,12 @@ class ByteString {
 
   /// Returns the UTF-8 encoded string representation of this [ByteString].
   String get utf8String => utf8.decode(_bytes);
-  
+
+  BytesValue get toBytesValue => BytesValue(value: _bytes);
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is ByteString && runtimeType == other.runtimeType && _bytes == other._bytes;
+      identical(this, other) || other is ByteString && runtimeType == other.runtimeType && _bytes.equals(other._bytes);
 
   @override
   int get hashCode => _bytes.hashCode;

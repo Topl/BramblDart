@@ -6,6 +6,7 @@ import 'package:brambl_dart/src/brambl/validation/transaction_authorization_inte
 import 'package:brambl_dart/src/brambl/validation/transaction_syntax_interpreter.dart';
 import 'package:brambl_dart/src/brambl/validation/validation_error.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
@@ -23,7 +24,7 @@ abstract class Credentialler {
   /// [unprovenTx] - The unproven transaction to prove.
   ///
   /// Returns the proven version of the transaction.
-  Future<IoTransaction> prove(IoTransaction unprovenTx);
+  IoTransaction prove(IoTransaction unprovenTx);
 
   /// Validate whether the transaction is syntactically valid and authorized.
   /// A Transaction is authorized if all contained attestations are satisfied.
@@ -34,7 +35,7 @@ abstract class Credentialler {
   /// [ctx] - Context to validate the transaction in.
   ///
   /// Returns a list of validation errors, if any.
-  Future<List<ValidationError>> validate(IoTransaction tx, Context ctx);
+  List<ValidationError> validate(IoTransaction tx, Context ctx);
 
   /// Prove and validate a transaction.
   /// That is, attempt to prove all the inputs within the transaction and then validate if the transaction
@@ -44,7 +45,7 @@ abstract class Credentialler {
   /// [ctx] - Context to validate the transaction in.
   ///
   /// Returns the proven version of the input if valid. Else the validation errors.
-  Future<Either<List<ValidationError>, IoTransaction>> proveAndValidate(IoTransaction unprovenTx, Context ctx);
+  Either<List<ValidationError>, IoTransaction> proveAndValidate(IoTransaction unprovenTx, Context ctx);
 }
 
 class CredentiallerInterpreter implements Credentialler {
@@ -58,101 +59,85 @@ class CredentiallerInterpreter implements Credentialler {
   }
 
   @override
-  Future<IoTransaction> prove(IoTransaction unprovenTx) async {
-    var signable = ContainsSignable.ioTransaction(unprovenTx);
-    var inputs = unprovenTx.inputs;
-    var provenInputs = <SpentTransactionOutput>[];
-    for (var input in inputs) {
-      var provenInput = await proveInput(input, signable.signableBytes);
-      provenInputs.add(provenInput);
-    }
-    final proof = IoTransaction()..mergeFromProto3Json(unprovenTx.writeToJson());
-    proof.inputs.clear();
-    proof.inputs.addAll(provenInputs.map((e) => e));
+  IoTransaction prove(IoTransaction unprovenTx) {
+    final signable = unprovenTx.signable;
+    final provenTx = unprovenTx.deepCopy()..inputs.clear();
 
-    return proof;
+    // referring to origin object to get around concurrent modification during iteration
+    for (var input in unprovenTx.inputs) {
+      final x = proveInput(input, signable);
+      provenTx.inputs.add(x);
+    }
+
+    return provenTx;
   }
 
   @override
-  Future<List<ValidationError>> validate(IoTransaction tx, Context ctx) async {
-    final List<ValidationError> errors = [];
-    var syntaxErrs = await TransactionSyntaxInterpreter.validate(tx);
-    if (syntaxErrs.isLeft) {
-      errors.addAll(syntaxErrs.left as Iterable<ValidationError>);
-    }
-    var authErrs = await TransactionAuthorizationInterpreter.validate(ctx, tx);
-    if (authErrs.isLeft) {
-      errors.addAll(authErrs.left as Iterable<ValidationError>);
-    }
-    return errors;
+  List<ValidationError> validate(IoTransaction tx, Context ctx) {
+    var syntaxErrs = TransactionSyntaxInterpreter.validate(tx).swap().map((p0) => p0.toList()).getOrElse([]);
+    var authErrs = TransactionAuthorizationInterpreter.validate(ctx, tx).swap().map((p0) => [p0]).getOrElse([]);
+    return [
+      ...syntaxErrs,
+      ...authErrs,  //TODO: figure out why this is failing for ever proof
+    ];
   }
 
   @override
-  Future<Either<List<ValidationError>, IoTransaction>> proveAndValidate(IoTransaction unprovenTx, Context ctx) async {
-    var provenTx = await prove(unprovenTx);
-    var vErrs = await validate(provenTx, ctx);
+  Either<List<ValidationError>, IoTransaction> proveAndValidate(IoTransaction unprovenTx, Context ctx) {
+    var provenTx = prove(unprovenTx);
+    var vErrs = validate(provenTx, ctx);
     return vErrs.isEmpty ? Either.right(provenTx) : Either.left(vErrs);
   }
 
-  /// TODO: Going to be completely honest, i have no clue how this works;
-  /// review before publishing
-  Future<SpentTransactionOutput> proveInput(SpentTransactionOutput input, SignableBytes msg) async {
-    var attestation = input.attestation;
+  SpentTransactionOutput proveInput(SpentTransactionOutput input, SignableBytes msg) {
+    Attestation attestation = input.attestation.deepCopy();
+
     switch (attestation.whichValue()) {
       case Attestation_Value.predicate:
         var pred = attestation.predicate;
         var challenges = pred.lock.challenges;
         var proofs = pred.responses;
         var revealed = challenges.map((e) => e.revealed).toList();
-        var pairs = List.generate(revealed.length, (i) => (revealed[i], proofs[i]));
+        final pairs = revealed.zip(proofs);
+
         var newProofs = <Proof>[];
         for (var pair in pairs) {
-          var proof = await getProof(msg, pair.$1, pair.$2);
+          var proof = getProof(msg, pair.$1, pair.$2);
           newProofs.add(proof);
         }
-        var newPred = Attestation_Predicate()
-          ..mergeFromProto3Json(pred.writeToJson())
-          ..responses.clear()
-          ..responses.addAll(newProofs.map((e) => e));
-        var newAttestation = Attestation()
-          ..mergeFromProto3Json(attestation.writeToJson())
-          ..predicate.clear()
-          ..predicate.mergeFromProto3Json(newPred.writeToJson());
-        return SpentTransactionOutput()
-          ..mergeFromProto3Json(input.writeToJson())
-          ..attestation.clear()
-          ..attestation.mergeFromProto3Json(newAttestation.writeToJson());
+        attestation = Attestation(predicate: Attestation_Predicate(lock: pred.lock, responses: newProofs));
       default:
         throw UnimplementedError();
     }
+    return SpentTransactionOutput(address: input.address, attestation: attestation, value: input.value);
   }
 
-  Future<Proof> getProof(SignableBytes msg, Proposition prop, Proof existingProof) async {
+  Proof getProof(SignableBytes msg, Proposition prop, Proof existingProof) {
     switch (prop.whichValue()) {
       case Proposition_Value.locked:
-        return await getLockedProof(existingProof, msg);
+        return getLockedProof(existingProof, msg);
       case Proposition_Value.heightRange:
-        return await getHeightProof(existingProof, msg);
+        return getHeightProof(existingProof, msg);
       case Proposition_Value.tickRange:
-        return await getTickProof(existingProof, msg);
+        return getTickProof(existingProof, msg);
       case Proposition_Value.digest:
-        return await getDigestProof(existingProof, msg, prop.digest);
+        return getDigestProof(existingProof, msg, prop.digest);
       case Proposition_Value.digitalSignature:
-        return await getSignatureProof(existingProof, msg, prop.digitalSignature);
+        return getSignatureProof(existingProof, msg, prop.digitalSignature);
       case Proposition_Value.not:
-        return await getNotProof(existingProof, msg, prop.not.proposition);
+        return getNotProof(existingProof, msg, prop.not.proposition);
       case Proposition_Value.and:
-        return await getAndProof(existingProof, msg, prop.and.left, prop.and.right);
+        return getAndProof(existingProof, msg, prop.and.left, prop.and.right);
       case Proposition_Value.or:
-        return await getOrProof(existingProof, msg, prop.or.left, prop.or.right);
+        return getOrProof(existingProof, msg, prop.or.left, prop.or.right);
       case Proposition_Value.threshold:
-        return await getThresholdProof(existingProof, msg, prop.threshold.challenges);
+        return getThresholdProof(existingProof, msg, prop.threshold.challenges);
       default:
         return Proof();
     }
   }
 
-  Future<Proof> getLockedProof(Proof existingProof, SignableBytes msg) async {
+  Proof getLockedProof(Proof existingProof, SignableBytes msg) {
     if (existingProof.hasLocked()) {
       return existingProof;
     } else {
@@ -160,7 +145,7 @@ class CredentiallerInterpreter implements Credentialler {
     }
   }
 
-  Future<Proof> getHeightProof(Proof existingProof, SignableBytes msg) async {
+  Proof getHeightProof(Proof existingProof, SignableBytes msg) {
     if (existingProof.hasHeightRange()) {
       return existingProof;
     } else {
@@ -168,7 +153,7 @@ class CredentiallerInterpreter implements Credentialler {
     }
   }
 
-  Future<Proof> getTickProof(Proof existingProof, SignableBytes msg) async {
+  Proof getTickProof(Proof existingProof, SignableBytes msg) {
     if (existingProof.hasTickRange()) {
       return existingProof;
     } else {
@@ -176,11 +161,11 @@ class CredentiallerInterpreter implements Credentialler {
     }
   }
 
-  Future<Proof> getDigestProof(Proof existingProof, SignableBytes msg, Proposition_Digest digest) async {
+  Proof getDigestProof(Proof existingProof, SignableBytes msg, Proposition_Digest digest) {
     if (existingProof.hasDigest()) {
       return existingProof;
     } else {
-      var preimage = await walletStateApi.getPreimage(digest);
+      var preimage = walletStateApi.getPreimage(digest);
       if (preimage != null) {
         return Prover.digestProver(preimage, msg);
       } else {
@@ -198,18 +183,18 @@ class CredentiallerInterpreter implements Credentialler {
   /// @param msg           Signable bytes to bind to the proof
   /// @param signature     The Signature Proposition to prove
   /// @return The Proof
-  Future<Proof> getSignatureProof(
+  Proof getSignatureProof(
     Proof existingProof,
     SignableBytes msg,
     Proposition_DigitalSignature signature,
-  ) async {
+  ) {
     if (existingProof.hasDigitalSignature()) {
       return existingProof;
     } else {
-      var indices = await walletStateApi.getIndicesBySignature(signature);
+      var indices = walletStateApi.getIndicesBySignature(signature);
       if (indices != null) {
         var idx = indices;
-        return await getSignatureProofForRoutine(signature.routine, idx, msg);
+        return getSignatureProofForRoutine(signature.routine, idx, msg);
       } else {
         return Proof();
       }
@@ -226,10 +211,10 @@ class CredentiallerInterpreter implements Credentialler {
   /// @param idx     Indices for which the proof's secret data can be obtained from
   /// @param msg     Signable bytes to bind to the proof
   /// @return The Proof
-  Future<Proof> getSignatureProofForRoutine(String routine, Indices idx, SignableBytes msg) async {
+  Proof getSignatureProofForRoutine(String routine, Indices idx, SignableBytes msg) {
     if (routine == "ExtendedEd25519") {
       final kp = ProtoConverters.keyPairFromProto(walletApi.deriveChildKeys(mainKey, idx));
-      var witness = Witness.fromBuffer(ExtendedEd25519().sign(kp.signingKey, msg.value.toUint8List()));
+      final witness = Witness(value: ExtendedEd25519().sign(kp.signingKey, msg.value.toUint8List()));
       return Prover.signatureProver(witness, msg);
     } else {
       return Proof();
@@ -244,10 +229,10 @@ class CredentiallerInterpreter implements Credentialler {
   /// @param msg           Signable bytes to bind to the proof
   /// @param innerProposition  The inner Proposition contained in the Not Proposition to prove
   /// @return The Proof
-  Future<Proof> getNotProof(Proof existingProof, SignableBytes msg, Proposition innerProposition) async {
+  Proof getNotProof(Proof existingProof, SignableBytes msg, Proposition innerProposition) {
     final Proof innerProof = existingProof.hasNot() ? existingProof.not.proof : Proof();
 
-    Proof proof = await getProof(msg, innerProposition, innerProof);
+    Proof proof = getProof(msg, innerProposition, innerProof);
     return Prover.notProver(proof, msg);
   }
 
@@ -260,12 +245,12 @@ class CredentiallerInterpreter implements Credentialler {
   /// @param leftProposition  An inner Proposition contained in the And Proposition to prove
   /// @param rightProposition An inner Proposition contained in the And Proposition to prove
   /// @return The Proof
-  Future<Proof> getAndProof(
+  Proof getAndProof(
     Proof existingProof,
     SignableBytes msg,
     Proposition leftProposition,
     Proposition rightProposition,
-  ) async {
+  ) {
     Proof leftProof;
     Proof rightProof;
     if (existingProof.hasAnd()) {
@@ -275,8 +260,8 @@ class CredentiallerInterpreter implements Credentialler {
       leftProof = Proof();
       rightProof = Proof();
     }
-    Proof leftProofResult = await getProof(msg, leftProposition, leftProof);
-    Proof rightProofResult = await getProof(msg, rightProposition, rightProof);
+    Proof leftProofResult = getProof(msg, leftProposition, leftProof);
+    Proof rightProofResult = getProof(msg, rightProposition, rightProof);
     return Prover.andProver(leftProofResult, rightProofResult, msg);
   }
 
@@ -289,12 +274,12 @@ class CredentiallerInterpreter implements Credentialler {
   /// @param leftProposition  An inner Proposition contained in the Or Proposition to prove
   /// @param rightProposition An inner Proposition contained in the Or Proposition to prove
   /// @return The Proof
-  Future<Proof> getOrProof(
+  Proof getOrProof(
     Proof existingProof,
     SignableBytes msg,
     Proposition leftProposition,
     Proposition rightProposition,
-  ) async {
+  ) {
     Proof leftProof;
     Proof rightProof;
     if (existingProof.hasOr()) {
@@ -304,8 +289,8 @@ class CredentiallerInterpreter implements Credentialler {
       leftProof = Proof();
       rightProof = Proof();
     }
-    Proof leftProofResult = await getProof(msg, leftProposition, leftProof);
-    Proof rightProofResult = await getProof(msg, rightProposition, rightProof);
+    Proof leftProofResult = getProof(msg, leftProposition, leftProof);
+    Proof rightProofResult = getProof(msg, rightProposition, rightProof);
     return Prover.orProver(leftProofResult, rightProofResult, msg);
   }
 
@@ -317,18 +302,17 @@ class CredentiallerInterpreter implements Credentialler {
   /// @param msg               Signable bytes to bind to the proof
   /// @param innerPropositions Inner Propositions contained in the Threshold Proposition to prove
   /// @return The Proof
-  Future<Proof> getThresholdProof(Proof existingProof, SignableBytes msg, List<Proposition> innerPropositions) async {
+  Proof getThresholdProof(Proof existingProof, SignableBytes msg, List<Proposition> innerPropositions) {
     final List<Proof> responses;
     if (existingProof.hasThreshold()) {
       responses = existingProof.threshold.responses;
     } else {
       responses = List.filled(innerPropositions.length, Proof());
     }
-    List<Future<Proof>> proofs = [];
+    List<Proof> proofs = [];
     for (var i = 0; i < innerPropositions.length; i++) {
       proofs.add(getProof(msg, innerPropositions[i], responses[i]));
     }
-    List<Proof> resolvedProofs = await Future.wait(proofs);
-    return Prover.thresholdProver(resolvedProofs, msg);
+    return Prover.thresholdProver(proofs, msg);
   }
 }

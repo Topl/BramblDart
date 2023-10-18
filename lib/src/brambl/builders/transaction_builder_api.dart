@@ -1,11 +1,18 @@
+import 'dart:typed_data';
+
 import 'package:brambl_dart/src/brambl/builders/builder_error.dart';
 import 'package:brambl_dart/src/brambl/codecs/address_codecs.dart';
 import 'package:brambl_dart/src/brambl/common/contains_evidence.dart';
+import 'package:brambl_dart/src/brambl/syntax/group_policy_syntax.dart';
 import 'package:brambl_dart/src/brambl/syntax/series_policy_syntax.dart';
+import 'package:brambl_dart/src/brambl/syntax/token_type_identifier_syntax.dart';
+import 'package:brambl_dart/src/common/types/byte_string.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/genus/data_extensions.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
+import 'package:topl_common/proto/brambl/models/box/asset.pbenum.dart';
+import 'package:topl_common/proto/brambl/models/box/assets_statements.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/value.pb.dart';
@@ -17,6 +24,8 @@ import 'package:topl_common/proto/brambl/models/transaction/schedule.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_output.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/unspent_transaction_output.pb.dart';
 import 'package:topl_common/proto/genus/genus_models.pb.dart';
+import 'package:topl_common/proto/google/protobuf/struct.pb.dart' as struct;
+import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
@@ -48,6 +57,50 @@ abstract class TransactionBuilderApiDefinition {
   /// returns an unspent transaction output containing lvls
   Future<UnspentTransactionOutput> lvlOutputWithLockAddress(LockAddress lockAddress, Int128 amount);
 
+  /// Builds an unspent transaction output containing group constructor tokens for the given parameters.
+  ///
+  /// The output is constructed using the provided [lockAddress], [quantity], [groupId], and [fixedSeries].
+  ///
+  /// Returns the resulting unspent transaction output.
+  Future<UnspentTransactionOutput> groupOutput(
+    LockAddress lockAddress,
+    Int128 quantity,
+    GroupId groupId, {
+    SeriesId? fixedSeries,
+  });
+
+  /// Builds an unspent transaction output containing series constructor tokens for the given parameters.
+  ///
+  /// The output is constructed using the provided [lockAddress], [quantity], [seriesId], [tokenSupply], [fungibility],
+  /// and [quantityDescriptor].
+  ///
+  /// Returns the resulting unspent transaction output.
+  Future<UnspentTransactionOutput> seriesOutput(
+    LockAddress lockAddress,
+    Int128 quantity,
+    SeriesId seriesId,
+    FungibilityType fungibility,
+    QuantityDescriptorType quantityDescriptor, {
+    int? tokenSupply,
+  });
+
+  /// Builds an unspent transaction output containing asset tokens for the given parameters.
+  ///
+  /// The output is constructed using the provided [lockAddress], [quantity], [groupId], [seriesId], [fungibilityType],
+  /// [quantityDescriptorType], [metadata], and [commitment].
+  ///
+  /// Returns the resulting unspent transaction output.
+  Future<UnspentTransactionOutput> assetOutput(
+    LockAddress lockAddress,
+    Int128 quantity,
+    GroupId groupId,
+    SeriesId seriesId,
+    FungibilityType fungibilityType,
+    QuantityDescriptorType quantityDescriptorType, {
+    struct.Struct? metadata,
+    ByteString? commitment,
+  });
+
   /// Builds a datum with default values for a transaction. The schedule is defaulted to use the current timestamp, with
   /// min and max slot being 0 and Long.MaxValue respectively.
   ///
@@ -69,6 +122,61 @@ abstract class TransactionBuilderApiDefinition {
     Lock_Predicate lockPredicateForChange,
     LockAddress recipientLockAddress,
     int amount,
+  );
+
+  /// Builds a transaction to transfer the ownership of tokens (optionally identified by [tokenIdentifier]). If
+  /// [tokenIdentifier] is provided, only the TXOs matching the identifier will go to the recipient. If it is `null`, then
+  /// all tokens provided in [txos] will go to the recipient. Any remaining tokens in [txos] that are not transferred to the
+  /// recipient will be transferred to the [changeLockAddress].
+  ///
+  /// The function takes in the following parameters:
+  /// - [txos]: All the TXOs encumbered by the Lock given by [lockPredicateFrom]. These TXOs must contain some token
+  ///           matching [tokenIdentifier] (if it is provided) and at least the quantity of LVLs to satisfy the fee, else
+  ///           an error will be returned.
+  /// - [lockPredicateFrom]: The Lock Predicate encumbering the txos.
+  /// - [recipientLockAddress]: The LockAddress of the recipient.
+  /// - [changeLockAddress]: A LockAddress to send the tokens that are not going to the recipient.
+  /// - [fee]: The fee to pay for the transaction. The txos must contain enough LVLs to satisfy this fee.
+  /// - [tokenIdentifier]: An optional token identifier to denote the type of token to transfer to the recipient. If
+  ///                      `null`, all tokens in [txos] will be transferred to the recipient and [changeLockAddress] will be
+  ///                      ignored.
+  ///
+  /// Returns an unproven transaction.
+  Future<Either<BuilderError, IoTransaction>> buildTransferAllTransaction(
+    List<Txo> txos,
+    Lock_Predicate lockPredicateFrom,
+    LockAddress recipientLockAddress,
+    LockAddress changeLockAddress,
+    int fee, {
+    ValueTypeIdentifier? tokenIdentifier,
+  });
+
+  /// Builds a transaction to transfer a certain amount of a specified Token (given by [tokenIdentifier]). The transaction
+  /// will also transfer any other tokens (in the [txos]) that are encumbered by the same predicate to the change address.
+  ///
+  /// We currently only support transferring assets with quantity descriptor type LIQUID.
+  ///
+  /// The function takes in the following parameters:
+  /// - [tokenIdentifier]: The Token Identifier denoting the type of token to transfer to the recipient. If this denotes
+  ///                      an Asset Token, the quantity descriptor type must be LIQUID, else an error will be returned.
+  /// - [txos]: All the TXOs encumbered by the Lock given by [lockPredicateFrom]. These TXOs must contain at least the
+  ///           necessary quantity (given by [amount]) of the identified Token and at least the quantity of LVLs to
+  ///           satisfy the fee, else an error will be returned.
+  /// - [lockPredicateFrom]: The Lock Predicate encumbering the txos.
+  /// - [amount]: The amount of identified Token to transfer to the recipient.
+  /// - [recipientLockAddress]: The LockAddress of the recipient.
+  /// - [changeLockAddress]: A LockAddress to send the tokens that are not going to the recipient.
+  /// - [fee]: The transaction fee. The txos must contain enough LVLs to satisfy this fee.
+  ///
+  /// Returns an unproven transaction.
+  Future<Either<BuilderError, IoTransaction>> buildTransferAmountTransaction(
+    ValueTypeIdentifier tokenIdentifier,
+    List<Txo> txos,
+    Lock_Predicate lockPredicateFrom,
+    Int128 amount,
+    LockAddress recipientLockAddress,
+    LockAddress changeLockAddress,
+    int fee,
   );
 
   /// Builds a simple transaction to mint Group Constructor tokens.
@@ -114,6 +222,45 @@ abstract class TransactionBuilderApiDefinition {
     Int128 quantityToMint,
     LockAddress mintedConstructorLockAddress,
   );
+
+  /// Builds a simple transaction to mint asset tokens.
+  ///
+  /// If successful, the transaction will have two inputs (the group and series constructor token UTXOs) and 2-3 outputs.
+  /// The first output will be the minted asset tokens. The second output will be the group constructor tokens (since
+  /// they are never burned). The potential third output will be the series constructor tokens that were not burned.
+  ///
+  /// We currently only support assets with quantity descriptor type LIQUID.
+  ///
+  /// The function takes in the following parameters:
+  /// - [mintingStatement]: The minting statement that specifies the asset to mint.
+  /// - [groupTxo]: The TXO that corresponds to the groupTokenUtxo (in the asset minting statement) to use
+  ///               as an input in this transaction. This TXO must contain group constructor tokens, else
+  ///               an error will be returned. None of this TXO will be burned.
+  /// - [seriesTxo]: The TXO that corresponds to the seriesTokenUtxo (in the asset minting statement) to
+  ///                use as an input in this transaction. This TXO must contain series constructor tokens,
+  ///                else an error will be returned. If the "tokenSupply" field in the series constructor
+  ///                tokens is present, then the quantity of asset tokens to mint has to be a multiple of
+  ///                this field, else an error will be returned. In this case, minting each multiple of
+  ///                "tokenSupply" quantity of assets will burn a single series constructor token.
+  /// - [groupLock]: The Predicate Lock that encumbers the funds in the groupTxo. This will be used in the
+  ///                attestation of the groupTxo input.
+  /// - [seriesLock]: The Predicate Lock that encumbers the funds in the seriesTxo. This will be used in the
+  ///                 attestation of the seriesTxo input.
+  /// - [mintedAssetLockAddress]: The LockAddress to send the minted asset tokens to.
+  /// - [ephemeralMetadata]: Optional ephemeral metadata to include in the minted asset tokens.
+  /// - [commitment]: Optional commitment to include in the minted asset tokens.
+  ///
+  /// Returns an unproven asset minting transaction if possible. Else, an error.
+  Future<Either<BuilderError, IoTransaction>> buildSimpleAssetMintingTransaction(
+    AssetMintingStatement mintingStatement,
+    Txo groupTxo,
+    Txo seriesTxo,
+    Lock_Predicate groupLock,
+    Lock_Predicate seriesLock,
+    LockAddress mintedAssetLockAddress, {
+    ByteString? ephemeralMetadata,
+    Uint8List? commitment,
+  });
 }
 
 class TransactionBuilderApi implements TransactionBuilderApiDefinition {
@@ -186,7 +333,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     var stxoAttestation = await unprovenAttestation(registrationLock);
     var d = await datum();
 
-    var utxoMinted = await groupOutput(mintedConstructorLockAddress, quantityToMint, groupPolicy.com);
+    var utxoMinted = await groupOutput(mintedConstructorLockAddress, quantityToMint, groupPolicy.computeId);
     return Either.right(IoTransaction(
       inputs: [
         SpentTransactionOutput(
@@ -218,11 +365,18 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     );
     if (validationResult.isLeft) {
       return Either.left(UnableToBuildTransaction(
-          "Unable to build transaction to mint series constructor tokens", validationResult.swap().getOrElse(null)));
+          "Unable to build transaction to mint series constructor tokens", validationResult.left!));
     }
     var stxoAttestation = await unprovenAttestation(registrationLock);
     var d = await datum();
-    var utxoMinted = await seriesOutput(mintedConstructorLockAddress, quantityToMint, seriesPolicy);
+    var utxoMinted = await seriesOutput(
+      mintedConstructorLockAddress,
+      quantityToMint,
+      seriesPolicy.computeId,
+      seriesPolicy.fungibility,
+      seriesPolicy.quantityDescriptor,
+      tokenSupply: seriesPolicy.tokenSupply.value,
+    );
     return Either.right(IoTransaction(
       inputs: [
         SpentTransactionOutput(
@@ -263,11 +417,13 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
   /// [groupId] - The group ID.
   ///
   /// Returns a Future of an UnspentTransactionOutput.
+  @override
   Future<UnspentTransactionOutput> groupOutput(
     LockAddress lockAddress,
     Int128 quantity,
-    GroupId groupId,
-  ) async {
+    GroupId groupId, {
+    SeriesId? fixedSeries,
+  }) async {
     final value = Value.getDefault()..group = Value_Group(groupId: groupId, quantity: quantity.value.toInt128);
     return UnspentTransactionOutput(address: lockAddress, value: value);
   }
@@ -279,23 +435,26 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
   /// [policy] - The series policy.
   ///
   /// Returns a Future of an UnspentTransactionOutput.
+  @override
   Future<UnspentTransactionOutput> seriesOutput(
     LockAddress lockAddress,
     Int128 quantity,
-    Event_SeriesPolicy policy,
-  ) async {
-    final value = Value.getDefault()
-      ..series = (Value_Series()
-        ..seriesId = SeriesId(value: policy.computeId.value)
-        ..quantity = quantity
-        ..tokenSupply = policy.tokenSupply
-        ..quantityDescriptor = policy.quantityDescriptor
-        ..fungibility = policy.fungibility);
-
+    SeriesId seriesId,
+    FungibilityType fungibility,
+    QuantityDescriptorType quantityDescriptor, {
+    int? tokenSupply,
+  }) async {
     return UnspentTransactionOutput(
-      address: lockAddress,
-      value: value,
-    );
+        address: lockAddress,
+        value: Value(
+          series: Value_Series(
+            seriesId: seriesId,
+            quantity: quantity,
+            tokenSupply: UInt32Value(value: tokenSupply),
+            quantityDescriptor: quantityDescriptor,
+            fungibility: fungibility,
+          ),
+        ));
   }
 
   @override
@@ -353,6 +512,56 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     return Attestation(
         predicate:
             Attestation_Predicate(lock: predicate, responses: List.filled(predicate.challenges.length, Proof())));
+  }
+
+  @override
+  Future<UnspentTransactionOutput> assetOutput(
+    LockAddress lockAddress,
+    Int128 quantity,
+    GroupId groupId,
+    SeriesId seriesId,
+    FungibilityType fungibilityType,
+    QuantityDescriptorType quantityDescriptorType, {
+    struct.Struct? metadata,
+    ByteString? commitment,
+  }) {
+    // TODO: implement assetOutput
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<BuilderError, IoTransaction>> buildSimpleAssetMintingTransaction(
+      AssetMintingStatement mintingStatement,
+      Txo groupTxo,
+      Txo seriesTxo,
+      Lock_Predicate groupLock,
+      Lock_Predicate seriesLock,
+      LockAddress mintedAssetLockAddress,
+      {ByteString? ephemeralMetadata,
+      Uint8List? commitment}) {
+    // TODO: implement buildSimpleAssetMintingTransaction
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<BuilderError, IoTransaction>> buildTransferAllTransaction(List<Txo> txos,
+      Lock_Predicate lockPredicateFrom, LockAddress recipientLockAddress, LockAddress changeLockAddress, int fee,
+      {ValueTypeIdentifier? tokenIdentifier}) {
+    // TODO: implement buildTransferAllTransaction
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<BuilderError, IoTransaction>> buildTransferAmountTransaction(
+      ValueTypeIdentifier tokenIdentifier,
+      List<Txo> txos,
+      Lock_Predicate lockPredicateFrom,
+      Int128 amount,
+      LockAddress recipientLockAddress,
+      LockAddress changeLockAddress,
+      int fee) {
+    // TODO: implement buildTransferAmountTransaction
+    throw UnimplementedError();
   }
 }
 

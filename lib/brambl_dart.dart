@@ -3,10 +3,8 @@
 /// More dartdocs go here.
 library brambl_dart;
 
-
 // TODO: Export any libraries intended for clients of this package.
 // export 'src/crypto/hash/hash.dart';
-
 
 /// common
 export 'src/common/functional/either.dart';
@@ -20,6 +18,11 @@ export 'src/brambl/wallet/wallet_api.dart';
 export 'src/brambl/utils/encoding.dart';
 export 'src/brambl/utils/proto_converters.dart';
 
+/// - Builders
+export 'src/brambl/builders/transaction_builder_api.dart';
+export 'src/brambl/builders/locks/lock_template.dart';
+export 'src/brambl/builders/locks/proposition_template.dart';
+
 /// quivr
 export 'src/quivr/proposer.dart';
 export 'src/quivr/prover.dart';
@@ -30,4 +33,3 @@ export 'src/quivr/verifier.dart';
 export 'src/utils/constants.dart';
 export 'src/utils/extensions.dart';
 export 'src/utils/json.dart';
-

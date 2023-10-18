@@ -172,7 +172,6 @@ main() {
       expect(signingInstance.verify(signature, testMsg, PublicKey.proto(childKey.vk.extendedEd25519)), isTrue);
     });
 
-    // TODO: Does not resolve
     test("deriveChildVerificationKey: Verify deriving path '4' produces a valid child verification key", () async {
       final (_, walletApi) = getWalletApi();
       final signingInstance = ExtendedEd25519();

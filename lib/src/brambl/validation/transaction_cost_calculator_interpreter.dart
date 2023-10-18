@@ -1,4 +1,5 @@
 import 'package:brambl_dart/src/brambl/common/contains_immutable.dart';
+import 'package:collection/collection.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_output.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/unspent_transaction_output.pb.dart';
@@ -15,11 +16,12 @@ class TransactionCostCalculator<F> {
   /// [transaction] The transaction to cost.
   ///
   /// Returns a cost, represented as a Long.
-  Future<int> costOf(IoTransaction transaction) async {
+  int costOf(IoTransaction transaction) {
     var baseCost = transactionCostConfig.baseCost;
     var dataCost = transactionDataCost(transaction);
-    var inputCost = transaction.inputs.map(transactionInputCost).reduce((a, b) => a + b);
-    var outputCost = transaction.outputs.map(transactionOutputCost).reduce((a, b) => a + b);
+
+    final inputCost = transaction.inputs.map((e) => transactionInputCost(e)).sum;
+    final outputCost = transaction.outputs.map((e) => transactionOutputCost(e)).sum;
     return baseCost + dataCost + inputCost + outputCost;
   }
 
