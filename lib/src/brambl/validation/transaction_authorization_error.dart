@@ -29,6 +29,10 @@ class TransactionAuthorizationError implements ValidationError {
 
   @override
   int get hashCode => type.hashCode ^ errors.hashCode;
+
+  bool checkType(TransactionAuthorizationErrorType type) {
+    return (this).type == type;
+  }
 }
 
 enum TransactionAuthorizationErrorType {

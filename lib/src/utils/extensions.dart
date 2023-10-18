@@ -281,5 +281,29 @@ extension EitherTSwapExtension<L, R> on Either<L, R> {
   Either<R, L> swap() {
     return fold((l) => Either<R, L>.right(l), (r) => Either<R, L>.left(r));
   }
+}
 
+
+/// Extension providing a `withResult` method on any object of type `T`.
+///
+/// The `withResult` method applies a provided function `f` to the object,
+/// and returns the result. This can be used to transform the object in a
+/// fluent style.
+///
+/// Example usage:
+/// ```
+/// final number = 42;
+/// final result = number.withResult((value) => value * 2); // returns 84
+/// ```
+extension WithResultExtension<T> on T {
+  /// Applies the function [f] to this object and returns the result.
+  ///
+  /// The function [f] is a transformation function that takes an object of
+  /// type `T` and returns an object of type `B`.
+  ///
+  /// This method can be used to apply a transformation to an object in a
+  /// fluent style. implementation similar to Scala's map function.
+  B withResult<B>(B Function(T) f) {
+    return f(this);
+  }
 }

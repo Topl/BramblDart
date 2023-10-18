@@ -40,7 +40,7 @@ class MockHelpers {
           return QuivrResult<SignatureVerification>.right(v);
         } else {
           return QuivrResult<SignatureVerification>.left(
-              ValidationError.messageAuthorizationFailure(context: proof.toString()));
+              ValidationError.messageAuthorizationFailure(proof: proof));
         }
       })
     };

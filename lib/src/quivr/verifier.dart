@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:brambl_dart/brambl_dart.dart' show Tokens;
+import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/hash/hash.dart' show blake2b256;
 import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
 import 'package:brambl_dart/src/quivr/runtime/dynamic_context.dart';
@@ -28,7 +29,9 @@ class Verifier {
 
     final result = ListEquality().equals(verifierTxBind, proofTxBind.value.toUint8List());
 
-    return result ? QuivrResult.right(result) : QuivrResult.left(ValidationError.messageAuthorizationFailure());
+    return result
+        ? QuivrResult.right(result)
+        : QuivrResult.left(ValidationError.messageAuthorizationFailure(proof: proof));
   }
 
   static QuivrResult<bool> evaluateResult(
@@ -246,19 +249,30 @@ class Verifier {
     final (wrappedProposition, wrappedProof) = (Proposition()..or = proposition, Proof()..or = proof);
 
     final messageResult = _evaluateBlake2b256Bind(Tokens.or, wrappedProof, proof.transactionBind, context);
-    if (messageResult.isLeft) return messageResult;
-
     final leftResult = verify(proposition.left, proof.left, context);
-    if (leftResult.isRight) return QuivrResult.right(true);
-
     final rightResult = verify(proposition.right, proof.right, context);
-    return rightResult;
+
+    final (msg, a, b) = (messageResult, leftResult, rightResult);
+
+    if (msg.getOrElse(false) == true && a.isRight) return Either.right(true);
+    if (msg.getOrElse(false) == true && b.isRight) return Either.right(true);
+    if (b.isRight) return a;
+    if (a.isRight) return b;
+    return quivrEvaluationAuthorizationFailure(wrappedProposition, wrappedProof);
+
+    // evalutate results
+    // if (messageResult.isLeft) return messageResult;
+
+    // if (leftResult.isRight) return QuivrResult.right(true);
+
+    // return rightResult;
   }
 
   // TODO: Remove this alias for evaluate
   /// does not satisfy context in all scenarios
 
-  static QuivrResult<bool> verify(Proposition proposition, Proof proof, DynamicContext context) => evaluate(proposition, proof, context);
+  static QuivrResult<bool> verify(Proposition proposition, Proof proof, DynamicContext context) =>
+      evaluate(proposition, proof, context);
   static QuivrResult<bool> evaluate(Proposition proposition, Proof proof, DynamicContext context) {
     switch ((proposition.whichValue(), proof.whichValue())) {
       case (Proposition_Value.locked, Proof_Value.locked):

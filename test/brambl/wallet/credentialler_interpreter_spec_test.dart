@@ -5,6 +5,7 @@ import 'package:brambl_dart/src/brambl/validation/transaction_authorization_erro
 import 'package:brambl_dart/src/brambl/validation/transaction_syntax_error.dart';
 import 'package:brambl_dart/src/brambl/wallet/credentialler.dart';
 import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
+import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart' as quivr;
 import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:protobuf/protobuf.dart';
@@ -239,7 +240,7 @@ main() {
       expect(validLength && validThreshold && validProofs && validSignable, isTrue);
     });
 
-    test('prove: Transaction with And Proposition > And Proof is correctly generated', () async {
+    test('prove: Transaction with And Proposition > And Proof is correctly generated', () {
       final tp = Proposer.andProposer(mockTickProposition, mockHeightProposition);
       final testProposition = Challenge(revealed: tp);
 
@@ -262,8 +263,7 @@ main() {
 
       final andProof = provenPredicate.responses.first;
 
-      final validAnd = 
-          (andProof.hasAnd()) &&
+      final validAnd = (andProof.hasAnd()) &&
           (andProof.and.left.whichValue() == Proof_Value.tickRange) &&
           (andProof.and.right.whichValue() == Proof_Value.heightRange);
 
@@ -272,6 +272,138 @@ main() {
       expect(validLength && validAnd && validSignable, isTrue);
     });
 
-    
+    test('prove: Transaction with Not Proposition > Not Proof is correctly generated', () {
+      final testProposition = Proposer.notProposer(mockTickProposition).withResult((p) => Challenge(revealed: p));
+      final testTx = txFull.rebuild((p0) {
+        p0.inputs.update(inputFull.rebuild((p0) {
+          p0.attestation = Attestation(
+              predicate: Attestation_Predicate(
+                  lock: Lock_Predicate(
+                    challenges: [testProposition],
+                    threshold: 1,
+                  ),
+                  responses: [Proof()]));
+        }));
+      });
+      final provenTx = mockCI.prove(testTx);
+
+      final provenPredicate = provenTx.inputs.first.attestation.predicate;
+      final validLength = provenPredicate.responses.length == 1;
+      final notProof = provenPredicate.responses.first;
+      final validAnd = notProof.hasNot() && notProof.not.proof.hasTickRange();
+      final validSignable = provenTx.signable.value.equals(testTx.signable.value);
+
+      expect(validLength && validAnd && validSignable, true);
+    });
+
+    test('proveAndValidate: Transaction with Threshold Proposition > Unmet Threshold fails validation', () {
+      final testProposition = Proposer.thresholdProposer([mockTickProposition, mockHeightProposition], 2)
+          .withResult((_) => Challenge(revealed: _));
+      final testTx = txFull.rebuild((p0) {
+        p0.inputs.update([
+          inputFull.rebuild((p1) => p1.attestation = Attestation(
+              predicate: Attestation_Predicate(
+                  lock: Lock_Predicate(challenges: [testProposition], threshold: 1), responses: [Proof()])))
+        ]);
+      });
+      final ctx = Context(testTx, 50.toInt64, {}); // Tick should pass, height should fail
+
+      final provenTx = mockCI.proveAndValidate(testTx, ctx);
+
+      final validationErrs = provenTx.fold((l) => l, (_) => []);
+      final validLength = validationErrs.length == 1;
+
+      final List<quivr.QuivrRunTimeError> errors = [];
+
+      final f = validationErrs.first;
+      if (f is TransactionAuthorizationError) {
+        if (f.type == TransactionAuthorizationErrorType.authorizationFailed) errors.update(f.errors);
+      }
+
+      final validQuivrErrs =
+          errors.length == 1 && errors.first.checkForError(ValidationErrorType.evaluationAuthorizationFailure);
+
+      final err = errors.first as ValidationError;
+      final validThreshold = err.proposition == testProposition.revealed &&
+          err.proof!.hasThreshold() &&
+          err.proof!.threshold.responses.first.hasTickRange() &&
+          err.proof!.threshold.responses[1].hasHeightRange();
+
+      expect(validLength && validQuivrErrs && validThreshold, true);
+    });
+
+    test('proveAndValidate: Transaction with And Proposition > If one inner proof fails, the And proof fails',
+        () async {
+      final testProposition =
+          Proposer.andProposer(mockTickProposition, mockHeightProposition).withResult((_) => Challenge(revealed: _));
+      final testTx = txFull.rebuild((p0) {
+        p0.inputs.update([
+          inputFull.rebuild((p1) => p1.attestation = Attestation(
+              predicate: Attestation_Predicate(
+                  lock: Lock_Predicate(challenges: [testProposition], threshold: 1), responses: [Proof()])))
+        ]);
+      });
+
+      final ctx = Context(testTx, 50.toInt64, {}); // Tick should pass, height should fail
+      final provenTx = mockCI.proveAndValidate(testTx, ctx);
+
+      final validationErrs = provenTx.getLeftOrElse([]);
+      final validLength = validationErrs.length == 1;
+
+      final List<quivr.QuivrRunTimeError> errors = [];
+
+      final f = validationErrs.first;
+      if (f is TransactionAuthorizationError) {
+        if (f.type == TransactionAuthorizationErrorType.authorizationFailed) errors.update(f.errors);
+      }
+
+      final validQuivrErrs =
+          errors.length == 1 && errors.first.checkForError(ValidationErrorType.evaluationAuthorizationFailure);
+
+      final err = errors.first as ValidationError;
+
+      // If an AND proposition fails, the error of the failed inner proof is returned. In this case it is the Height
+      final validAnd = err.proposition == mockHeightProposition && err.proof!.hasHeightRange();
+
+      expect(validLength && validQuivrErrs && validAnd, true);
+    });
+
+    test('proveAndValidate: Transaction with Or Proposition > If both inner proofs fail, the Or proof fails', () async {
+      final testProposition =
+          Proposer.orProposer(mockTickProposition, mockHeightProposition).withResult((_) => Challenge(revealed: _));
+      final testTx = txFull.rebuild((p0) {
+        p0.inputs.update([
+          inputFull.rebuild((p1) => p1.attestation = Attestation(
+              predicate: Attestation_Predicate(
+                  lock: Lock_Predicate(challenges: [testProposition], threshold: 1), responses: [Proof()])))
+        ]);
+      });
+
+      final ctx = Context(testTx, 500.toInt64, {}); // Tick and height should fail
+
+      final provenTx = mockCI.proveAndValidate(testTx, ctx);
+
+      final validationErrs = provenTx.getLeftOrElse([]);
+      final validLength = validationErrs.length == 1;
+
+      final List<quivr.QuivrRunTimeError> errors = [];
+      final f = validationErrs.first;
+      if (f is TransactionAuthorizationError) {
+        if (f.checkType(TransactionAuthorizationErrorType.authorizationFailed)) errors.update(f.errors);
+      }
+
+      final validQuivrErrs =
+          errors.length == 1 && errors.first.checkForError(ValidationErrorType.evaluationAuthorizationFailure);
+
+      final err = errors.first as ValidationError;
+      final validOr = err.proposition == testProposition.revealed &&
+          err.proof!.hasOr() &&
+          err.proof!.or.left.hasTickRange() &&
+          err.proof!.or.right.hasHeightRange();
+
+      expect(validLength && validQuivrErrs && validOr, true);
+    });
+
+    // todo expand tests
   });
 }
