@@ -1,4 +1,4 @@
-import 'package:grpc/grpc.dart';
+import '../utils/grpc_native_channel_type.dart' if (dart.library.html) '../../utils/grpc_web_channel_type.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/genus/genus_models.pb.dart';
 import 'package:topl_common/proto/genus/genus_rpc.pbgrpc.dart';
@@ -6,7 +6,7 @@ import 'package:topl_common/proto/genus/genus_rpc.pbgrpc.dart';
 /// Defines a Genus Query API for interacting with a Genus node.
 class GenusQueryAlgebra {
   /// The gRPC channel to the node.
-  final ClientChannel channel;
+  final Channel channel;
 
   /// The client stub for the transaction rpc service
   late TransactionServiceClient client;

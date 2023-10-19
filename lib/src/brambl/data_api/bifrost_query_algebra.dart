@@ -1,5 +1,5 @@
 import 'package:fixnum/fixnum.dart';
-import 'package:grpc/grpc.dart';
+import '../utils/grpc_native_channel_type.dart' if (dart.library.html) '../../utils/grpc_web_channel_type.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/consensus/models/block_id.pb.dart';
@@ -23,7 +23,7 @@ sealed class BifrostQueryAlgbraDefinition {
 /// Defines a Bifrost Query API for interacting with a Bifrost node.
 class BifrostQueryAlgebra implements BifrostQueryAlgbraDefinition {
   /// The gRPC channel to the node.
-  final ClientChannel channel;
+  final Channel channel;
 
   /// The client stub for the node rpc service
   late NodeRpcClient client;
