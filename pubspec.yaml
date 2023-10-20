@@ -2,7 +2,7 @@ publish_to: none
 name: brambl_dart
 description: A starting point for Dart libraries or applications.
 version: 2.0.0+1
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/Topl/BramblDart/
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
