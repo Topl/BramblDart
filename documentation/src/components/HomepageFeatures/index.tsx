@@ -10,32 +10,29 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Dev-friendly by design',
+    Svg: require('@site/static/img/dev-friendly.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Say goodbye to learning new languages and complex smart contracts – build on Topl in your preferred language with simple API calls.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Future proof',
+    Svg: require('@site/static/img/future-proof.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Topl’s digital asset model can support fungible, non-fungible, and semi-fungible tokens, all defined without smart contracts, unlocking novel uses for developers and future-proofing against new use cases.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Fully Bitcoin compliant',
+    Svg: require('@site/static/img/bitcoin-compliant.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        No more walled gardens – Topl is built to connect the Bitcoin economy across ecosystems, making it the future-proof home for your next project.
       </>
     ),
   },
