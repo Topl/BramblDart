@@ -34,9 +34,8 @@ dependencies:
   fixnum: ^1.1.0
   fast_base58: ^0.2.1
 
-  #db
-  isar: ^3.1.0+1
-
+  #storage
+  isar: ^3.1.0+1 # upgrade to v4 when available for encryption support
 
 assets:
   - lib/assets/bip-0039/
