@@ -1,7 +1,7 @@
 publish_to: none
 name: brambl_dart
 description: A starting point for Dart libraries or applications.
-version: 0.2.0
+version: 2.0.0+1
 # repository: https://github.com/my_org/my_repo
 
 environment:
@@ -13,7 +13,6 @@ dev_dependencies:
   test: ^1.21.0
   dependency_validator: ^3.2.2
   build_runner: ^2.1.1
-  flutter_lints: ^2.0.1
 
 
 dependencies:
@@ -22,7 +21,6 @@ dependencies:
   
   # third party
   pointycastle: ^3.1.3
-  # cryptography: ^2.5.0
   convert: ^3.1.1
   hashlib: ^1.9.0
   collection: ^1.17.2
@@ -31,7 +29,6 @@ dependencies:
   protobuf: ^3.1.0
   grpc: ^3.0.2
   fixnum: ^1.1.0
-  # characters: ^1.3.0
   fast_base58: ^0.2.1
 
 assets:

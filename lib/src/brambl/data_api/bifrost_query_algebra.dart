@@ -1,10 +1,11 @@
 import 'package:fixnum/fixnum.dart';
-import '../utils/grpc_native_channel_type.dart' if (dart.library.html) '../../utils/grpc_web_channel_type.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/consensus/models/block_id.pb.dart';
 import 'package:topl_common/proto/node/models/block.pb.dart';
 import 'package:topl_common/proto/node/services/bifrost_rpc.pbgrpc.dart';
+
+import '../utils/grpc/grpc.dart';
 
 /// Defines a Bifrost Query API for interacting with a Bifrost node.
 sealed class BifrostQueryAlgbraDefinition {
