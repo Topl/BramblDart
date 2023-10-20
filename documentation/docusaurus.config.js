@@ -85,7 +85,7 @@ const config = {
             label: 'Concepts',
           },
           {
-            href: 'https://github.com/Topl/BramblSc',
+            href: 'https://github.com/Topl/BramblDart',
             label: 'GitHub',
             position: 'right',
           },
@@ -116,7 +116,7 @@ const config = {
             items: [
               {
                 label: 'Contribute',
-                href: 'https://github.com/Topl/BramblSc',
+                href: 'https://github.com/Topl/BramblDart',
               },
             ],
           },

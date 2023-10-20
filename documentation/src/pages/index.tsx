@@ -32,7 +32,7 @@ export default function Home(): JSX.Element {
   return (
     <Layout
       title="Documentation Portal"
-      description="Documentation for Topl's BramblSc SDK">
+      description="Documentation for Topl's BramblDart SDK">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
