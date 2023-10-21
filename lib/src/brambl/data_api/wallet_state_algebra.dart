@@ -37,8 +37,7 @@ abstract class WalletStateAlgebra {
   /// [routine] The routine to add to the wallet state
   /// [vk] The verification key to add to the wallet state
   /// [indices] The indices to add to the wallet state
-  void updateWalletState(
-      String lockPredicate, String lockAddress, String? routine, String? vk, Indices indices);
+  void updateWalletState(String lockPredicate, String lockAddress, String? routine, String? vk, Indices indices);
 
   /// Get the current indices for the given party, contract and optional state
   ///
@@ -71,6 +70,13 @@ abstract class WalletStateAlgebra {
   /// [indices] The indices to get the lock predicate for
   /// Returns the lock predicate for the given indices if possible. Else null
   Lock_Predicate? getLockByIndex(Indices indices);
+
+  /// Get the lock predicate associated to the given lockAddress.
+  ///
+  /// [lockAddress] is the lockAddress for which we are retrieving the lock for.
+  ///
+  /// Returns the lock predicate for the lockAddress if possible. Else null.
+  Lock_Predicate? getLockByAddress(String lockAddress);
 
   /// Get the lock address associated to the given party, contract and optional state
   ///
