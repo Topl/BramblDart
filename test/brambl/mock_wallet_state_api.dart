@@ -11,8 +11,7 @@ import 'mock_helpers.dart';
 /// Mock Implementation of the WalletStateAlgebra for testing
 class MockWalletStateApi extends WalletStateAlgebra {
   final propEvidenceToIdx = {
-    mockSignatureProposition.digitalSignature.sizedEvidence:
-    mockIndices,
+    mockSignatureProposition.digitalSignature.sizedEvidence: mockIndices,
   };
 
   final propEvidenceToPreimage = {
@@ -87,6 +86,11 @@ class MockWalletStateApi extends WalletStateAlgebra {
   @override
   Future<void> updateWalletState(
       String lockPredicate, String lockAddress, String? routine, String? vk, Indices indices) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Lock_Predicate? getLockByAddress(String lockAddress) {
     throw UnimplementedError();
   }
 
