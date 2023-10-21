@@ -1,4 +1,5 @@
 import 'package:brambl_dart/src/brambl/builders/locks/lock_template.dart';
+import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
@@ -56,7 +57,7 @@ abstract class WalletStateAlgebra {
   /// [someState] The optional state index to validate with. If not provided, the next state for the given party
   /// and contract pair will be used
   /// Returns the indices for the given party, contract and optional state if valid. If not, the relevant errors
-  (String, Indices)? validateCurrentIndicesForFunds(String party, String contract, int? someState);
+  Either<String, Indices>? validateCurrentIndicesForFunds(String party, String contract, int? someState);
 
   /// Get the next available indices for the given party and contract
   ///
