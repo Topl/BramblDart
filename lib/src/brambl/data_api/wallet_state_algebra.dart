@@ -57,7 +57,7 @@ abstract class WalletStateAlgebra {
   /// [someState] The optional state index to validate with. If not provided, the next state for the given party
   /// and contract pair will be used
   /// Returns the indices for the given party, contract and optional state if valid. If not, the relevant errors
-  Either<String, Indices>? validateCurrentIndicesForFunds(String party, String contract, int? someState);
+  Either<String, Indices> validateCurrentIndicesForFunds(String party, String contract, int? someState);
 
   /// Get the next available indices for the given party and contract
   ///
