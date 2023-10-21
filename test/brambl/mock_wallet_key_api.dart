@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:brambl_dart/src/brambl/data_api/wallet_key_api_algebra.dart';
 import 'package:brambl_dart/src/common/functional/either.dart';
-import 'package:brambl_dart/src/crypto/encryption/vault_store.dart';
 
 /// Mock implementation of the [WalletKeyApiAlgebra] interface.
 class MockWalletKeyApi extends WalletKeyApiAlgebra {
@@ -24,7 +23,7 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
   }
 
   @override
-  Either<WalletKeyException, VaultStore> getMainKeyVaultStore(String? name) {
+  Future<Either<WalletKeyException, VaultStore>> getMainKeyVaultStore(String? name) async {
     final n = name ?? defaultName;
     final json = mainKeyVaultStoreInstance[n];
     if (json == null) {
@@ -48,7 +47,7 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
   }
 
   @override
-  Either<WalletKeyException, Unit> deleteMainKeyVaultStore(String? name) {
+  Future<Either<WalletKeyException, Unit>> deleteMainKeyVaultStore(String? name) async {
     final n = name ?? defaultName;
     final json = mainKeyVaultStoreInstance[n];
     if (json == null) {

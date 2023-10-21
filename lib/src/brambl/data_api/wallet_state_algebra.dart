@@ -1,4 +1,5 @@
 import 'package:brambl_dart/src/brambl/builders/locks/lock_template.dart';
+import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
@@ -37,8 +38,7 @@ abstract class WalletStateAlgebra {
   /// [routine] The routine to add to the wallet state
   /// [vk] The verification key to add to the wallet state
   /// [indices] The indices to add to the wallet state
-  void updateWalletState(
-      String lockPredicate, String lockAddress, String? routine, String? vk, Indices indices);
+  void updateWalletState(String lockPredicate, String lockAddress, String? routine, String? vk, Indices indices);
 
   /// Get the current indices for the given party, contract and optional state
   ///
@@ -57,7 +57,7 @@ abstract class WalletStateAlgebra {
   /// [someState] The optional state index to validate with. If not provided, the next state for the given party
   /// and contract pair will be used
   /// Returns the indices for the given party, contract and optional state if valid. If not, the relevant errors
-  (String, Indices)? validateCurrentIndicesForFunds(String party, String contract, int? someState);
+  Either<String, Indices> validateCurrentIndicesForFunds(String party, String contract, int? someState);
 
   /// Get the next available indices for the given party and contract
   ///
@@ -71,6 +71,13 @@ abstract class WalletStateAlgebra {
   /// [indices] The indices to get the lock predicate for
   /// Returns the lock predicate for the given indices if possible. Else null
   Lock_Predicate? getLockByIndex(Indices indices);
+
+  /// Get the lock predicate associated to the given lockAddress.
+  ///
+  /// [lockAddress] is the lockAddress for which we are retrieving the lock for.
+  ///
+  /// Returns the lock predicate for the lockAddress if possible. Else null.
+  Lock_Predicate? getLockByAddress(String lockAddress);
 
   /// Get the lock address associated to the given party, contract and optional state
   ///

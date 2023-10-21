@@ -1,8 +1,7 @@
+import 'package:brambl_dart/src/brambl/utils/grpc/grpc.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/genus/genus_models.pb.dart';
 import 'package:topl_common/proto/genus/genus_rpc.pbgrpc.dart';
-
-import '../utils/grpc/grpc.dart';
 
 /// Defines a Genus Query API for interacting with a Genus node.
 class GenusQueryAlgebra {
@@ -10,11 +9,9 @@ class GenusQueryAlgebra {
   final Channel channel;
 
   /// The client stub for the transaction rpc service
-  late TransactionServiceClient client;
+  final TransactionServiceClient client;
 
-  GenusQueryAlgebra(this.channel) {
-    client = TransactionServiceClient(channel);
-  }
+  GenusQueryAlgebra(this.channel) : client = TransactionServiceClient(channel);
 
   /// Query and retrieve a set of UTXOs encumbered by the given LockAddress.
   ///

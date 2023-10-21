@@ -8,7 +8,17 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 sealed class LockTemplate {
   LockType get lockType;
-  Future<Either<BuilderError, Lock>> build(List<VerificationKey> entityVks);
+  Either<BuilderError, Lock> build(List<VerificationKey> entityVks);
+
+  static LockTemplate fromJson(Map<String, dynamic> json) {
+    final type = json['type'] as String;
+    switch (type) {
+      case 'predicate':
+        return PredicateTemplate.fromJson(json);
+      default:
+        throw Exception('Unknown lock type: $type');
+    }
+  }
 }
 
 final class LockType {
@@ -26,7 +36,7 @@ class PredicateTemplate implements LockTemplate {
   PredicateTemplate(this.innerTemplates, this.threshold);
 
   @override
-  Future<Either<BuilderError, Lock>> build(List<VerificationKey> entityVks) async {
+  Either<BuilderError, Lock> build(List<VerificationKey> entityVks) {
     final result = ThresholdTemplate(innerTemplates, threshold).build(entityVks);
     return result.flatMap((ip) {
       if (ip is Proposition_Threshold) {
