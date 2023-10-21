@@ -1,6 +1,9 @@
 import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/encryption/vault_store.dart';
 
+/// export crypto dependency to members
+export 'package:brambl_dart/src/crypto/encryption/vault_store.dart';
+
 /// Defines a storage API for fetching and storing Topl Main Key Vault Store.
 abstract class WalletKeyApiAlgebra {
   /// Persist a [VaultStore] for the Topl Main Secret Key.
