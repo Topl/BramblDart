@@ -38,9 +38,9 @@ List<(A, B)> zip<A, B>(List<A> list1, List<B> list2) {
   for (final x in list) {
     final result = f(x);
     if (result.isLeft) {
-      lefts.add(result.left!);
+      lefts.add(result.left as A);
     } else {
-      rights.add(result.right!);
+      rights.add(result.right as B);
     }
   }
   return (lefts, rights);
