@@ -1,6 +1,7 @@
 import 'package:brambl_dart/src/brambl/builders/locks/lock_template.dart';
 import 'package:brambl_dart/src/brambl/common/contains_evidence.dart';
 import 'package:brambl_dart/src/brambl/data_api/wallet_state_algebra.dart';
+import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
@@ -11,8 +12,7 @@ import 'mock_helpers.dart';
 /// Mock Implementation of the WalletStateAlgebra for testing
 class MockWalletStateApi extends WalletStateAlgebra {
   final propEvidenceToIdx = {
-    mockSignatureProposition.digitalSignature.sizedEvidence:
-    mockIndices,
+    mockSignatureProposition.digitalSignature.sizedEvidence: mockIndices,
   };
 
   final propEvidenceToPreimage = {
@@ -91,7 +91,12 @@ class MockWalletStateApi extends WalletStateAlgebra {
   }
 
   @override
-  (String, Indices)? validateCurrentIndicesForFunds(String party, String contract, int? someState) {
+  Lock_Predicate? getLockByAddress(String lockAddress) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Either<String, Indices> validateCurrentIndicesForFunds(String party, String contract, int? someState) {
     throw UnimplementedError();
   }
 }

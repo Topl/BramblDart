@@ -39,3 +39,5 @@ doc/api/
 .vscode/
 .metals/
 
+# Generated Dart Files
+*g.dart

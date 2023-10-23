@@ -17,7 +17,7 @@ abstract class PartyStorageAlgebra {
   /// Fetches all parties.
   ///
   /// Returns the fetched parties.
-  Future<List<WalletEntity>> findParties();
+  Future<List<WalletEntity>> findParties(List<WalletEntity> walletEntities);
 
   /// Add a new party.
   ///

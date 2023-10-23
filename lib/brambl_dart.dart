@@ -1,35 +1,34 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
-library brambl_dart;
 
-// TODO: Export any libraries intended for clients of this package.
-// export 'src/crypto/hash/hash.dart';
+/// Let's get this show on the road!
+library brambl_dart;
 
 /// common
 export 'src/common/functional/either.dart';
 
 /// bramble
-export 'src/brambl/data_api/bifrost_query_algebra.dart';
-export 'src/brambl/data_api/genus_query_algebra.dart';
-export 'src/brambl/data_api/wallet_key_api_algebra.dart';
+export "src/brambl/context.dart";
 
+/// --- Builders ---
+export 'src/brambl/builders/builders.dart';
+
+/// --- Common ---
+export 'src/brambl/common/common.dart';
+
+/// --- Data API ---
+export 'src/brambl/data_api/data_api.dart';
+
+/// --- Wallet API ---
 export 'src/brambl/wallet/wallet_api.dart';
+export 'src/brambl/wallet/credentialler.dart';
+
+/// --- Quivr ---
+export 'src/quivr/quivr.dart';
+
+/// --- Utils ---
 export 'src/brambl/utils/encoding.dart';
 export 'src/brambl/utils/proto_converters.dart';
+export 'src/brambl/utils/grpc/grpc.dart';
 
-/// - Builders
-export 'src/brambl/builders/transaction_builder_api.dart';
-export 'src/brambl/builders/locks/lock_template.dart';
-export 'src/brambl/builders/locks/proposition_template.dart';
-
-/// quivr
-export 'src/quivr/proposer.dart';
-export 'src/quivr/prover.dart';
-export 'src/quivr/tokens.dart';
-export 'src/quivr/verifier.dart';
-
-/// utils
 export 'src/utils/constants.dart';
 export 'src/utils/extensions.dart';
 export 'src/utils/json.dart';
