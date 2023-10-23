@@ -1,5 +1,5 @@
+import 'package:brambl_dart/brambl_dart.dart';
 import 'package:fixnum/fixnum.dart';
-import '../utils/grpc_native_channel_type.dart' if (dart.library.html) '../../utils/grpc_web_channel_type.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/consensus/models/block_id.pb.dart';
@@ -26,11 +26,9 @@ class BifrostQueryAlgebra implements BifrostQueryAlgbraDefinition {
   final Channel channel;
 
   /// The client stub for the node rpc service
-  late NodeRpcClient client;
+  final NodeRpcClient client;
 
-  BifrostQueryAlgebra(this.channel) {
-    client = NodeRpcClient(channel);
-  }
+  BifrostQueryAlgebra(this.channel) : client = NodeRpcClient(channel);
 
   @override
   Future<(BlockId, BlockBody, List<IoTransaction>)?> blockByHeight(Int64 height) async {
