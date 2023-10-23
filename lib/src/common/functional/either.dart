@@ -133,6 +133,7 @@ class Either<L, R> {
 }
 
 class Some<T> extends Option<T> {
+  @override
   final T value;
 
   Some(this.value);

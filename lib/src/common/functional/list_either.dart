@@ -64,12 +64,12 @@ class ListEither<L, R> {
 
   /// Filters the list by the given left predicate and returns a new `ListEither` with the filtered results.
   ListEither<L, R> filterLeft(bool Function(L) f) {
-    return ListEither(_list.where((e) => e.isRight || f(e.left!)).toList());
+    return ListEither(_list.where((e) => e.isRight || f(e.left as L)).toList());
   }
 
   /// Filters the list by the given right predicate and returns a new `ListEither` with the filtered results.
   ListEither<L, R> filterRight(bool Function(R) f) {
-    return ListEither(_list.where((e) => e.isLeft || f(e.right!)).toList());
+    return ListEither(_list.where((e) => e.isLeft || f(e.right as R)).toList());
   }
 
   /// Converts the list of `Either` objects into an `Either` object of a list of values or a list of errors.
