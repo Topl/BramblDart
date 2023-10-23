@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the Either class from the brambl_dart library, for the Dart programming language.">
+  <title>Either class - brambl_dart library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">brambl_dart</a></li>
+    <li><a href="../brambl_dart/brambl_dart-library.html">brambl_dart</a></li>
+    <li class="self-crumb">Either<span class="signature">&lt;<wbr><span class="type-parameter">L</span>, <span class="type-parameter">R</span>&gt;</span> class</li>
+  </ol>
+  <div class="self-name">Either</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        brightness_4
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        brightness_5
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="brambl_dart&#47;brambl_dart-library-sidebar.html"
+      data-below-sidebar="brambl_dart&#47;Either-class-sidebar.html">
+      <div>
+<h1><span class="kind-class">Either&lt;<wbr><span class="type-parameter">L</span>, <span class="type-parameter">R</span>&gt;</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>A container class that represents one of two possible values.
+An <code>Either</code> instance is either a <code>Left</code> value, or a <code>Right</code> value.
+This class has supporting functions for <code>void</code> types, however it's use is against spec</p>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+
+        
+        
+
+
+        <dt>Available Extensions</dt>
+        <dd><ul class="comma-separated clazz-relationships">
+          <li><a href="../brambl_dart/EitherTSwapExtension.html">EitherTSwapExtension</a></li>
+        </ul></dd>
+
+        
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+
+    <dl class="constructor-summary-list">
+        <dt id="Either.left" class="callable">
+          <span class="name"><a href="../brambl_dart/Either/Either.left.html">Either.left</a></span><span class="signature">(<span class="parameter" id="left-param-_left"><span class="type-annotation">L?</span> <span class="parameter-name">_left</span></span>)</span>
+        </dt>
+        <dd>
+          Constructs an <code>Either</code> instance with a left value.
+        </dd>
+        <dt id="Either.right" class="callable">
+          <span class="name"><a href="../brambl_dart/Either/Either.right.html">Either.right</a></span><span class="signature">(<span class="parameter" id="right-param-_right"><span class="type-annotation">R?</span> <span class="parameter-name">_right</span></span>)</span>
+        </dt>
+        <dd>
+          Constructs an <code>Either</code> instance with a right value.
+        </dd>
+        <dt id="Either.unit" class="callable">
+          <span class="name"><a href="../brambl_dart/Either/Either.unit.html">Either.unit</a></span><span class="signature">(<span class="parameter" id="unit-param-val">{<span class="type-annotation">dynamic</span> <span class="parameter-name">val</span> = <span class="default-value">const Unit()</span>}</span>)</span>
+        </dt>
+        <dd>
+          Constructs an <code>Either</code> instance with a right generic value of <code>Unit</code>.
+        </dd>
+    </dl>
+  </section>
+
+    <section class="summary offset-anchor" id="instance-properties">
+      <h2>Properties</h2>
+
+      <dl class="properties">
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.1.4/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.1.4/dart-core/int-class.html">int</a></span> 
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="isLeft" class="property">
+  <span class="name"><a href="../brambl_dart/Either/isLeft.html">isLeft</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.1.4/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+  Returns true if this <code>Either</code> instance is a <code>Left</code> value.
+  <div class="features"><span class="feature">read-only</span></div>
+
+</dd>
+
+        <dt id="isRight" class="property">
+  <span class="name"><a href="../brambl_dart/Either/isRight.html">isRight</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.1.4/dart-core/bool-class.html">bool</a></span> 
+
+</dt>
+<dd>
+  Returns true if this <code>Either</code> instance is a <code>Right</code> value.
+  <div class="features"><span class="feature">read-only</span></div>
+
+</dd>
+
+        <dt id="left" class="property">
+  <span class="name"><a href="../brambl_dart/Either/left.html">left</a></span>
+  <span class="signature">&#8594; L?</span> 
+
+</dt>
+<dd>
+  Returns the left value of this <code>Either</code> instance.
+  <div class="features"><span class="feature">read-only</span></div>
+
+</dd>
+
+        <dt id="right" class="property">
+  <span class="name"><a href="../brambl_dart/Either/right.html">right</a></span>
+  <span class="signature">&#8594; R?</span> 
+
+</dt>
+<dd>
+  Returns the right value of this <code>Either</code> instance.
+  <div class="features"><span class="feature">read-only</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.1.4/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.1.4/dart-core/Type-class.html">Type</a></span> 
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">read-only</span><span class="feature">inherited</span></div>
+
+</dd>
+
+      </dl>
+    </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="exists" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/exists.html">exists</a></span><span class="signature">(<wbr><span class="parameter" id="exists-param-predicate"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.1.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">predicate</span>(<span class="parameter" id="param-"><span class="type-annotation">R</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.1.4/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="flatMap" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/flatMap.html">flatMap</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="flatMap-param-f"><span class="type-annotation"><a href="../brambl_dart/Either-class.html">Either</a><span class="signature">&lt;<wbr><span class="type-parameter">L</span>, <span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">f</span>(<span class="parameter" id="param-"><span class="type-annotation">R</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="../brambl_dart/Either-class.html">Either</a><span class="signature">&lt;<wbr><span class="type-parameter">L</span>, <span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Applies a function to the value on the right of the Either if it exists, otherwise returns the current Either
+  
+
+</dd>
+
+        <dt id="flatMapLeft" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/flatMapLeft.html">flatMapLeft</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="flatMapLeft-param-f"><span class="type-annotation"><a href="../brambl_dart/Either-class.html">Either</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">R</span>&gt;</span></span> <span class="parameter-name">f</span>(<span class="parameter" id="param-"><span class="type-annotation">L</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="../brambl_dart/Either-class.html">Either</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Applies a function to the value on the left of the Either if it exists, otherwise returns the current Either
+  
+
+</dd>
+
+        <dt id="fold" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/fold.html">fold</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="fold-param-onLeft"><span class="type-annotation">T</span> <span class="parameter-name">onLeft</span>(<span class="parameter" id="param-"><span class="type-annotation">L</span></span>), </span><span class="parameter" id="fold-param-onRight"><span class="type-annotation">T</span> <span class="parameter-name">onRight</span>(<span class="parameter" id="param-"><span class="type-annotation">R</span></span>)</span>)
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Applies one of two provided functions to the value of the Either, depending on its state
+  
+
+</dd>
+
+        <dt id="get" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/get.html">get</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; R</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Shorthand for <a href="../brambl_dart/Either/getOrThrow.html">getOrThrow</a>
+Returns the value on the right of the Either if it exists, otherwise throws <code>Left</code> value as an error
+Don't use this on Right of <code>void</code>
+  
+
+</dd>
+
+        <dt id="getLeftOrElse" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/getLeftOrElse.html">getLeftOrElse</a></span><span class="signature">(<wbr><span class="parameter" id="getLeftOrElse-param-defaultValue"><span class="type-annotation">L</span> <span class="parameter-name">defaultValue</span></span>)
+    <span class="returntype parameter">&#8594; L</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the value on the left of the Either if it exists, otherwise returns the provided default value
+  
+
+</dd>
+
+        <dt id="getLeftOrThrow" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/getLeftOrThrow.html">getLeftOrThrow</a></span><span class="signature">(<wbr><span class="parameter" id="getLeftOrThrow-param-exception"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.1.4/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">exception</span></span>)
+    <span class="returntype parameter">&#8594; L</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the value on the left of the Either if it exists, otherwise throws the provided exception
+  
+
+</dd>
+
+        <dt id="getOrElse" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/getOrElse.html">getOrElse</a></span><span class="signature">(<wbr><span class="parameter" id="getOrElse-param-defaultValue"><span class="type-annotation">R</span> <span class="parameter-name">defaultValue</span></span>)
+    <span class="returntype parameter">&#8594; R</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the value on the right of the Either if it exists, otherwise returns the provided default value
+  
+
+</dd>
+
+        <dt id="getOrThrow" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/getOrThrow.html">getOrThrow</a></span><span class="signature">(<wbr><span class="parameter" id="getOrThrow-param-exception">{<span class="type-annotation"><a href="https://api.dart.dev/stable/3.1.4/dart-core/Object-class.html">Object</a>?</span> <span class="parameter-name">exception</span>}</span>)
+    <span class="returntype parameter">&#8594; R</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the value on the right of the Either if it exists, otherwise throws the left value unless an exception is provided
+  
+
+</dd>
+
+        <dt id="getRightOrThrowLeft" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/getRightOrThrowLeft.html">getRightOrThrowLeft</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; R</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Attempts to get R but will throw left value as an error if the right value does not exist
+  
+
+</dd>
+
+        <dt id="map" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/map.html">map</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="map-param-f"><span class="type-annotation">T</span> <span class="parameter-name">f</span>(<span class="parameter" id="param-"><span class="type-annotation">R</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="../brambl_dart/Either-class.html">Either</a><span class="signature">&lt;<wbr><span class="type-parameter">L</span>, <span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Maps the value on the right of the Either using a provided function
+  
+
+</dd>
+
+        <dt id="mapLeft" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/mapLeft.html">mapLeft</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="mapLeft-param-f"><span class="type-annotation">T</span> <span class="parameter-name">f</span>(<span class="parameter" id="param-"><span class="type-annotation">L</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="../brambl_dart/Either-class.html">Either</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Maps the value on the left of the Either using a provided function
+  
+
+</dd>
+
+        <dt id="mapLeftVoid" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/mapLeftVoid.html">mapLeftVoid</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="mapLeftVoid-param-f"><span class="type-annotation">T</span> <span class="parameter-name">f</span>(<span class="parameter" id="param-"><span class="type-annotation">L</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="../brambl_dart/Either-class.html">Either</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Maps the value on the left of the Either using a provided function when right is a void type
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.1.4/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.1.4/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="throwIfLeft" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/throwIfLeft.html">throwIfLeft</a></span><span class="signature">(<wbr><span class="parameter" id="throwIfLeft-param-exception">{<span class="type-annotation"><a href="https://api.dart.dev/stable/3.1.4/dart-core/Object-class.html">Object</a>?</span> <span class="parameter-name">exception</span>}</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Throws if value is of type left, otherwise does nothing
+  
+
+</dd>
+
+        <dt id="toOption" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/toOption.html">toOption</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../brambl_dart/Option-class.html">Option</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Converts the Either to an Option, returning the value on the right of the Either if it exists, otherwise None
+  
+
+</dd>
+
+        <dt id="toOptionLeft" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/toOptionLeft.html">toOptionLeft</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../brambl_dart/Option-class.html">Option</a><span class="signature">&lt;<wbr><span class="type-parameter">L</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Converts the Either to an Option, returning the value on the left of the Either if it exists, otherwise None
+  
+
+</dd>
+
+        <dt id="toString" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.1.4/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  A string representation of this object.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.1.4/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.1.4/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.1.4/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+  <section class="summary offset-anchor" id="static-methods">
+    <h2>Static Methods</h2>
+    <dl class="callables">
+        <dt id="conditional" class="callable">
+  <span class="name"><a href="../brambl_dart/Either/conditional.html">conditional</a></span><span class="signature">&lt;<wbr><span class="type-parameter">L</span>, <span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="conditional-param-condition"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.1.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">condition</span>, </span><span class="parameter" id="conditional-param-left">{<span>required</span> <span class="type-annotation">L</span> <span class="parameter-name">left</span>, </span><span class="parameter" id="conditional-param-right"><span>required</span> <span class="type-annotation">R</span> <span class="parameter-name">right</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="../brambl_dart/Either-class.html">Either</a><span class="signature">&lt;<wbr><span class="type-parameter">L</span>, <span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the value on the right of the Either if it exists, otherwise returns the result of the provided function
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">brambl_dart</a></li>
+    <li><a href="../brambl_dart/brambl_dart-library.html">brambl_dart</a></li>
+    <li class="self-crumb">Either<span class="signature">&lt;<wbr><span class="type-parameter">L</span>, <span class="type-parameter">R</span>&gt;</span> class</li>
+</ol>
+
+
+    <!--<h5>brambl_dart library</h5>-->
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    brambl_dart
+      2.0.0-alpha.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

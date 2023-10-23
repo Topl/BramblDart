@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="generator" content="made with love by dartdoc 7.0.0-dev">
+  <meta name="description" content="brambl_dart API docs, for the Dart programming language.">
+  <title>brambl_dart - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li class="self-crumb">brambl_dart package</li>
+  </ol>
+  <div class="self-name">brambl_dart</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        brightness_4
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        brightness_5
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <p>A <a href="https://www.dartlang.org">Dart</a> library that supports the <a href="topl.co">Topl</a> blockchain.</p>
+<table>
+<tbody><tr>
+<td>
+<img width="118px" alt="Topl logo" src="https://avatars.githubusercontent.com/u/26033322?s=200&amp;v=4">
+</td>
+<td valign="middle">
+<a href="https://github.com/Topl/BramblDart/blob/main/.github/CODE_OF_CONDUCT.md"><img width="100%" alt="Code of Conduct" src="https://img.shields.io/badge/code-of%20conduct-green.svg"></a>
+<a href="https://opensource.org/licenses/MPL-2.0"><img width="100%" alt="License" src="https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg"></a>
+</td>
+<td>
+<a href="https://github.com/Topl/BramblDart/actions/workflows/ci.yml"><img alt="Github build status" src="https://github.com/Topl/BramblDart/actions/workflows/ci.yml/badge.svg?branch=dev"></a>
+<a href="https://codecov.io/gh/Topl/bip-topl"><img alt="bip-topl code coverage" src="https://codecov.io/gh/Topl/BramblDart/branch/main/graph/badge.svg"></a>
+</td>
+<td>
+<a href="https://twitter.com/topl_protocol"><img alt="@topl_protocol on Twitter" src="https://img.shields.io/twitter/url?style=social&amp;url=https%3A%2F%2Ftwitter.com%2Ftopl_protocol"></a>
+<br>
+<a href="[stackexchange-url]"><img alt="stackoverflow" src="https://img.shields.io/badge/bip--topl-stackexchange-brightgreen"></a>
+<br>
+<a href="[discord-url]"><img alt="Discord" src="https://img.shields.io/discord/591914197219016707.svg?label=&amp;logo=discord&amp;logoColor=ffffff&amp;color=7389D8&amp;labelColor=6A7EC2"></a>
+</td>
+</tr>
+</tbody></table>
+<h1 id="brambldart">BramblDart</h1>
+<p>A dart library that connects via JSON-RPC to interact with the Topl blockchain. It connects
+to a Bifrost node to send transactions, interact with addresses and much
+more!</p>
+<h3 id="features">Features</h3>
+<ul>
+<li>Connect to an Topl node with the rpc-api, call common methods</li>
+<li>Send signed Topl transactions</li>
+<li>Generate private keys, setup new Topl addresses</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<h1 id="running-the-code-generator">Running the code generator</h1>
+<p>Run <code>dart run build_runner build</code> in the package directory to generate the missing <code>.g.dart</code>generated dart files</p>
+<h3 id="credentials-and-wallets">Credentials and Wallets</h3>
+<p>In order to send transactions on the Topl network, some credentials
+are required. The library supports raw private keys and v1 encrypted key-files.
+In addition, it also supports the generation of keys via a HD wallet.</p>
+<pre class="language-dart"><code class="language-dart">
+import 'package:brambldart/brambldart.dart';
+
+// You can create credentials from private keys
+Credentials credentials = ToplSigningKey.fromString("base58EncodedPrivateKeyHere");
+
+// Or generate a new key randomly
+var networkId = 0x40;
+var propositionType = PropositionType.ed25519();
+Credentials random = ToplSigningKey.createRandom(networkId, propositionType);
+
+// In either way, the library can derive the public key and the address
+// from a private key:
+
+var address = await credentials.extractAddress();
+print(address.toBase58());
+
+</code></pre>
+<p>Another way to obtain <code>Credentials</code> which the library uses to sign
+transactions is the usage of an encrypted keyfile. Wallets store a private
+key securely and require a password to unlock. The library has experimental
+support for version 1 keyfiles which are generated by this client and support Extended ED25519 Signing Keys:</p>
+<pre class="language-dart"><code class="language-dart">import 'dart:io';
+import 'package:brambldart/brambldart.dart';
+
+String content = new File("wallet.json").readAsStringSync();
+KeyStore keystore = KeyStore.fromV1Json(content, "testPassword");
+
+Credentials unlocked = ToplSigningKey.fromString(keystore.privateKey);
+// You can now use these credentials to sign transactions
+</code></pre>
+<p>You can also create Keystore files with this library. To do so, you first need
+the private key you want to encrypt and a desired password. Then, create
+your wallet with</p>
+<pre class="language-dart"><code class="language-dart">Keystore keystore = KeyStore.createNew(credentials, 'password', random);
+print(keystore.toJson());
+</code></pre>
+<p>You can also write <code>keystore.toJson()</code> to file which you can later open with <a href="https://github.com/Topl/Bifrost/wiki/BramblSc-examples">BramblSC</a> and potentially other Topl API libraries in the future.</p>
+<h4 id="custom-credentials">Custom credentials</h4>
+<p>If you want to integrate <code>brambldart</code> with other wallet providers, you can implement
+<code>Credentials</code> and override the appropriate methods.</p>
+<h3 id="connecting-to-an-rpc-server">Connecting to an RPC server</h3>
+<p>The library won't send signed transactions to forgers itself. Instead,
+it relies on an RPC client to do that. You can use a public RPC API like
+<a href="https://beta.topl.services">baas</a>, or, if you just want to test things out, use a private testnet with
+<a href="https://docs.topl.co/v1.4.0/docs/installing-bifrost">bifrost</a>. All of these options will give you
+an RPC endpoint to which the library can connect.</p>
+<pre class="language-dart"><code class="language-dart">import 'package:dio/dio.dart'; //You can also import the browser version
+import 'package:brambldart/brambldart.dart';
+
+var networkId = 0x40;
+var propositionType = PropositionType.ed25519();
+var privateKey = 'base58EncodedPrivateKey';
+
+var apiUrl = "http://localhost:9085"; //Replace with your API
+var httpClient = Dio(BaseOptions(
+                    baseUrl: basePathOverride ?? basePath,
+                    contentType: 'application/json',
+                    connectTimeout: 5000,
+                    receiveTimeout: 3000)
+var bramblClient = BramblClient(httpClient: httpClient, basePathOverride: apiUrl);
+var credentials = bramblClient.credentialsFromPrivateKey(privateKey, networkId, propositionType);
+
+// You can now call rpc methods. This one will query the amount of Topl tokens you own
+Balance balance = bramblClient.getBalance(credentials.address);
+print(balance.toString());
+</code></pre>
+<h2 id="sending-transactions">Sending transactions</h2>
+<p>Of course, this library supports creating, signing and sending Topl
+transactions:</p>
+<pre class="language-dart"><code class="language-dart">import 'package:brambldart/brambldart.dart';
+
+/// [...], you need to specify the url and your client, see example above
+var bramblClient = BramblClient(basePathOverride: apiUrl, httpClient: httpClient);
+
+var credentials = bramblClient.credentialsFromPrivateKey("0x...");
+
+const value = 1;
+
+final assetCode =
+    AssetCode.initialize(1, senderAddress, 'testy', 'valhalla');
+
+final securityRoot = SecurityRoot.fromBase58(
+    Base58Data.validated('11111111111111111111111111111111'));
+
+final assetValue = AssetValue(
+    value.toString(), assetCode, securityRoot, 'metadata', 'Asset');
+
+final recipient = AssetRecipient(senderAddress, assetValue);
+
+final data = Latin1Data.validated('data');
+
+final assetTransaction = AssetTransaction(
+    recipients: [recipient],
+    sender: [senderAddress],
+    changeAddress: senderAddress,
+    consolidationAddress: senderAddress,
+    propositionType: PropositionType.ed25519().propositionName,
+    minting: true,
+    assetCode: assetCode,
+    data: data);
+
+final rawTransaction =
+          await client.sendRawAssetTransfer(assetTransaction: assetTransaction);
+
+expect(rawTransaction['rawTx'], isA&lt;TransactionReceipt&gt;());
+
+print(rawTransaction);
+
+final txId = await client.sendTransaction(
+    [first],
+    rawTransaction['rawTx'] as TransactionReceipt,
+    rawTransaction['messageToSign'] as Uint8List);
+</code></pre>
+<p>Missing data, like the fee, the sender or a change/consolidation address will be
+inferred by the BramblClient when not explicitly specified. If you only need
+the signed transaction but don't intend to send it, you can use
+<code>client.signTransaction</code>.</p>
+<h2 id="feature-requests-and-bugs">Feature requests and bugs</h2>
+<p>Please file feature requests and bugs at the <a href="https://github.com/Topl/BramblDart/issues">issue tracker</a>.
+If you want to contribute to this library, please submit a Pull Request.</p>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="brambl_dart">
+  <span class="name"><a href="brambl_dart/brambl_dart-library.html">brambl_dart</a></span> 
+
+</dt>
+<dd>Support for doing something awesome.
+</dd>
+
+        </dl>
+      </section>
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li class="self-crumb">brambl_dart package</li>
+</ol>
+
+
+    <h5 class="hidden-xs"><span class="package-name">brambl_dart</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="brambl_dart/brambl_dart-library.html">brambl_dart</a></li>
+</ol>
+
+  </div>
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+
+</main>
+
+<footer>
+  <span class="no-break">
+    brambl_dart
+      2.0.0-alpha.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+
