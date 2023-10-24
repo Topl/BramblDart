@@ -351,7 +351,7 @@ void mul2(Int32List x, Int32List y, Int32List z) {
   c8 <<= 1;
   var z8 = Int32.ZERO;
   var z9 = Int32.ZERO;
-  var t = Int64(0);
+  var t = Int64();
   t = a8 + (c3 - a3);
   z8 = t.toInt32() & M26;
   t >>= 26;
@@ -548,7 +548,7 @@ void sqr(Int32List x, Int32List z) {
   final c8 = Int64(x4) * x4_2;
   var z8 = 0;
   var z9 = 0;
-  var t = Int64(0);
+  var t = Int64();
   t = a8 + (c3 - a3);
   z8 = t.toInt32().toInt() & M26;
   t >>= 26;

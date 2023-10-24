@@ -547,7 +547,7 @@ class EC {
         }
       }
       final List<PointExt?> points =
-          List.filled(PRECOMP_POINTS, null, growable: false);
+          List.filled(PRECOMP_POINTS, null);
       var k = 1;
       points[0] = sum;
       for (int t = 0; t < PRECOMP_TEETH - 1; t++) {
@@ -623,7 +623,7 @@ class EC {
     var x16 = Int64(decode32v(n, 56)) & M32L; // x16:32/--
     var x17 = Int64((decode24(n, 60)) << 4) & M32L; // x17:28/--
     final x18 = Int64(n[63]) & Int64(0xff); // x18:08/--
-    var t = Int64(0);
+    var t = Int64();
     x09 -= x18 * L0; // x09:34/28
     x10 -= x18 * L1; // x10:33/30
     x11 -= x18 * L2; // x11:35/28

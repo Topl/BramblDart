@@ -23,7 +23,7 @@ class GenusQueryAlgebra {
       TxoState txoState = TxoState.UNSPENT}) async {
     final response = await client.getTxosByLockAddress(
       QueryByLockAddressRequest(
-          address: fromAddress, confidenceFactor: null, state: txoState),
+          address: fromAddress, state: txoState),
     );
     return response.txos;
   }

@@ -58,7 +58,7 @@ class Aes implements Cipher {
   /// returns decrypted data
   @override
   Uint8List decrypt(Uint8List cipherText, Uint8List key) {
-    final preImage = processAes(cipherText, key, params.iv, encrypt: false);
+    final preImage = processAes(cipherText, key, params.iv);
     final preImageSigned = preImage.toSigned();
     final paddedAmount = preImageSigned[0];
     final paddedBytes = preImageSigned.sublist(1);

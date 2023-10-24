@@ -37,8 +37,7 @@ void main() {
       final result = TransactionSyntaxInterpreter.validate(testTx)
           .swap()
           .exists((errors) => errors.containsExactError(
-              DuplicateInputError(inputFull.address),
-              exactMatch: true));
+              DuplicateInputError(inputFull.address)));
 
       expect(result, true);
     });
@@ -70,8 +69,7 @@ void main() {
           //   return false;
           // });
           .exists((errors) => errors.containsExactError(
-              InvalidTimestampError(Int64(-1)),
-              exactMatch: true));
+              InvalidTimestampError(Int64(-1))));
       expect(result, true);
     });
 
@@ -79,7 +77,7 @@ void main() {
       final invalidSchedules = [
         Schedule(min: Int64(5), max: Int64(4), timestamp: Int64(100)),
         Schedule(min: Int64(-5), max: Int64(-1), timestamp: Int64(100)),
-        Schedule(min: Int64(-1), max: Int64(0), timestamp: Int64(100)),
+        Schedule(min: Int64(-1), max: Int64(), timestamp: Int64(100)),
         Schedule(min: Int64(-1), max: Int64(1), timestamp: Int64(100))
       ];
       final result = invalidSchedules.map((schedule) {
@@ -94,8 +92,7 @@ void main() {
             //   return false;
             // });
             .exists((p0) => p0.containsExactError(
-                InvalidScheduleError(schedule),
-                exactMatch: true));
+                InvalidScheduleError(schedule)));
       }).every((element) => element);
 
       expect(result, true);
