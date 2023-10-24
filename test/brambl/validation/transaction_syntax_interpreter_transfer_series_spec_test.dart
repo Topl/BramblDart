@@ -53,7 +53,7 @@ void main() {
       if (result.isRight) {
         result.get().map((e) {
           if (e.type == TransactionSyntaxErrorType.insufficientInputFunds) {
-            final error = (e as InsufficientInputFundsError);
+            final error = e as InsufficientInputFundsError;
             if (error.inputs
                     .equals(testTx.inputs.map((e) => e.value).toList()) &&
                 error.outputs
@@ -106,7 +106,7 @@ void main() {
       if (result.isRight) {
         result.get().map((e) {
           if (e.type == TransactionSyntaxErrorType.insufficientInputFunds) {
-            final error = (e as InsufficientInputFundsError);
+            final error = e as InsufficientInputFundsError;
             if (error.inputs
                     .equals(testTx.inputs.map((e) => e.value).toList()) &&
                 error.outputs
@@ -160,7 +160,7 @@ void main() {
       if (result.isRight) {
         result.get().map((e) {
           if (e.type == TransactionSyntaxErrorType.insufficientInputFunds) {
-            final error = (e as InsufficientInputFundsError);
+            final error = e as InsufficientInputFundsError;
             if (error.inputs
                     .equals(testTx.inputs.map((e) => e.value).toList()) &&
                 error.outputs

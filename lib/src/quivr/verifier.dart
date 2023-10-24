@@ -269,9 +269,9 @@ class Verifier {
 
     if (proposition.threshold == 0) {
       evalResult = QuivrResult.right(true);
-    } else if ((proposition.threshold > proposition.challenges.length ||
+    } else if (proposition.threshold > proposition.challenges.length ||
         proof.responses.isEmpty ||
-        proof.responses.length != proposition.challenges.length)) {
+        proof.responses.length != proposition.challenges.length) {
       evalResult = quivrEvaluationAuthorizationFailure(
           proof: proof, proposition: proposition);
     } else {

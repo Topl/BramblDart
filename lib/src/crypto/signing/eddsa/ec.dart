@@ -113,7 +113,7 @@ class EC {
     for (int i = 0; i < len; i++) {
       var zi = Int32(z[zOff + i]);
       final diff = zi ^ x[xOff + i];
-      zi ^= (diff & maskv);
+      zi ^= diff & maskv;
       z[zOff + i] = zi.toInt();
     }
   }
@@ -144,13 +144,13 @@ class EC {
     var t = Int32.ZERO;
     var xv = x;
     t = (xv ^ (xv.shiftRightUnsigned(7))) & 0x00aa00aa;
-    xv ^= (t ^ (t << 7));
+    xv ^= t ^ (t << 7);
     t = (xv ^ (xv.shiftRightUnsigned(14))) & 0x0000cccc;
-    xv ^= (t ^ (t << 14));
+    xv ^= t ^ (t << 14);
     t = (xv ^ (xv.shiftRightUnsigned(4))) & 0x00f000f0;
-    xv ^= (t ^ (t << 4));
+    xv ^= t ^ (t << 4);
     t = (xv ^ (xv.shiftRightUnsigned(8))) & 0x0000ff00;
-    xv ^= (t ^ (t << 8));
+    xv ^= t ^ (t << 8);
     return xv;
   }
 
@@ -197,18 +197,18 @@ class EC {
 
   /// Decodes a 24-bit integer from a byte array starting at the specified offset.
   int decode24(Uint8List bs, int off) {
-    var n = (bs[off] & 0xff);
-    n |= ((bs[off + 1] & 0xff) << 8);
-    n |= ((bs[off + 2] & 0xff) << 16);
+    var n = bs[off] & 0xff;
+    n |= (bs[off + 1] & 0xff) << 8;
+    n |= (bs[off + 2] & 0xff) << 16;
     return n;
   }
 
   /// Decodes a 32-bit integer from the given byte array starting at the specified offset.
   int decode32v(Uint8List bs, int off) {
-    var n = (bs[off].toByte & 0xff);
-    n |= ((bs[off + 1].toByte & 0xff) << 8);
-    n |= ((bs[off + 2].toByte & 0xff) << 16);
-    n |= (bs[off + 3].toByte << 24);
+    var n = bs[off].toByte & 0xff;
+    n |= (bs[off + 1].toByte & 0xff) << 8;
+    n |= (bs[off + 2].toByte & 0xff) << 16;
+    n |= bs[off + 3].toByte << 24;
     return n;
   }
 
@@ -257,7 +257,7 @@ class EC {
 
   void encode56(Int64 n, Uint8List bs, int off) {
     encode32(n.toInt32().toInt(), bs, off);
-    encode24((n.shiftRightUnsigned(32)).toInt32().toInt(), bs, off + 4);
+    encode24(n.shiftRightUnsigned(32).toInt32().toInt(), bs, off + 4);
   }
 
   void encodePoint(PointAccum p, Uint8List r, int rOff) {
@@ -301,8 +301,8 @@ class EC {
         } else {
           var digit = (word16 & mask) + carry;
           carry = digit & sign;
-          digit -= (carry << 1);
-          carry >>>= (width - 1);
+          digit -= carry << 1;
+          carry >>>= width - 1;
           ws[(i << 4) + j] = digit.toByte;
           j += width;
         }
@@ -629,7 +629,7 @@ class EC {
     x11 -= x18 * L2; // x11:35/28
     x12 -= x18 * L3; // x12:32/31
     x13 -= x18 * L4; // x13:28/21
-    x17 += (x16 >> 28);
+    x17 += x16 >> 28;
     x16 &= M28L; // x17:28/--, x16:28/--
     x08 -= x17 * L0; // x08:54/32
     x09 -= x17 * L1; // x09:52/51
@@ -641,7 +641,7 @@ class EC {
     x09 -= x16 * L2; // x09:55/53
     x10 -= x16 * L3; // x10:55/52
     x11 -= x16 * L4; // x11:51/41
-    x15 += (x14 >> 28);
+    x15 += x14 >> 28;
     x14 &= M28L; // x15:28/--, x14:28/--
     x06 -= x15 * L0; // x06:54/32
     x07 -= x15 * L1; // x07:54/53
@@ -653,37 +653,37 @@ class EC {
     x07 -= x14 * L2; // x07:56/--
     x08 -= x14 * L3; // x08:56/51
     x09 -= x14 * L4; // x09:56/--
-    x13 += (x12 >> 28);
+    x13 += x12 >> 28;
     x12 &= M28L; // x13:28/22, x12:28/--
     x04 -= x13 * L0; // x04:54/49
     x05 -= x13 * L1; // x05:54/53
     x06 -= x13 * L2; // x06:56/--
     x07 -= x13 * L3; // x07:56/52
     x08 -= x13 * L4; // x08:56/52
-    x12 += (x11 >> 28);
+    x12 += x11 >> 28;
     x11 &= M28L; // x12:28/24, x11:28/--
     x03 -= x12 * L0; // x03:54/49
     x04 -= x12 * L1; // x04:54/51
     x05 -= x12 * L2; // x05:56/--
     x06 -= x12 * L3; // x06:56/52
     x07 -= x12 * L4; // x07:56/53
-    x11 += (x10 >> 28);
+    x11 += x10 >> 28;
     x10 &= M28L; // x11:29/--, x10:28/--
     x02 -= x11 * L0; // x02:55/32
     x03 -= x11 * L1; // x03:55/--
     x04 -= x11 * L2; // x04:56/55
     x05 -= x11 * L3; // x05:56/52
     x06 -= x11 * L4; // x06:56/53
-    x10 += (x09 >> 28);
+    x10 += x09 >> 28;
     x09 &= M28L; // x10:29/--, x09:28/--
     x01 -= x10 * L0; // x01:55/28
     x02 -= x10 * L1; // x02:55/54
     x03 -= x10 * L2; // x03:56/55
     x04 -= x10 * L3; // x04:57/--
     x05 -= x10 * L4; // x05:56/53
-    x08 += (x07 >> 28);
+    x08 += x07 >> 28;
     x07 &= M28L; // x08:56/53, x07:28/--
-    x09 += (x08 >> 28);
+    x09 += x08 >> 28;
     x08 &= M28L; // x09:29/25, x08:28/--
     t = x08.shiftRightUnsigned(27);
     x09 += t; // x09:29/26
@@ -692,21 +692,21 @@ class EC {
     x02 -= x09 * L2; // x02:57/--
     x03 -= x09 * L3; // x03:57/--
     x04 -= x09 * L4; // x04:57/42
-    x01 += (x00 >> 28);
+    x01 += x00 >> 28;
     x00 &= M28L;
-    x02 += (x01 >> 28);
+    x02 += x01 >> 28;
     x01 &= M28L;
-    x03 += (x02 >> 28);
+    x03 += x02 >> 28;
     x02 &= M28L;
-    x04 += (x03 >> 28);
+    x04 += x03 >> 28;
     x03 &= M28L;
-    x05 += (x04 >> 28);
+    x05 += x04 >> 28;
     x04 &= M28L;
-    x06 += (x05 >> 28);
+    x06 += x05 >> 28;
     x05 &= M28L;
-    x07 += (x06 >> 28);
+    x07 += x06 >> 28;
     x06 &= M28L;
-    x08 += (x07 >> 28);
+    x08 += x07 >> 28;
     x07 &= M28L;
     x09 = x08 >> 28;
     x08 &= M28L;
@@ -716,21 +716,21 @@ class EC {
     x02 += x09 & L2;
     x03 += x09 & L3;
     x04 += x09 & L4;
-    x01 += (x00 >> 28);
+    x01 += x00 >> 28;
     x00 &= M28L;
-    x02 += (x01 >> 28);
+    x02 += x01 >> 28;
     x01 &= M28L;
-    x03 += (x02 >> 28);
+    x03 += x02 >> 28;
     x02 &= M28L;
-    x04 += (x03 >> 28);
+    x04 += x03 >> 28;
     x03 &= M28L;
-    x05 += (x04 >> 28);
+    x05 += x04 >> 28;
     x04 &= M28L;
-    x06 += (x05 >> 28);
+    x06 += x05 >> 28;
     x05 &= M28L;
-    x07 += (x06 >> 28);
+    x07 += x06 >> 28;
     x06 &= M28L;
-    x08 += (x07 >> 28);
+    x08 += x07 >> 28;
     x07 &= M28L;
     final r = Uint8List(SCALAR_BYTES);
     encode56(x00 | (x01 << 28), r, 0);

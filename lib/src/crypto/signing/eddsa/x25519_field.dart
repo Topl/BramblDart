@@ -64,25 +64,25 @@ void carry(Int32List z) {
   var z7 = z[7];
   var z8 = z[8];
   var z9 = z[9];
-  z3 += (z2 >> 25);
+  z3 += z2 >> 25;
   z2 &= M25;
-  z5 += (z4 >> 25);
+  z5 += z4 >> 25;
   z4 &= M25;
-  z8 += (z7 >> 25);
+  z8 += z7 >> 25;
   z7 &= M25;
   z0 += (z9 >> 25) * 38;
   z9 &= M25;
-  z1 += (z0 >> 26);
+  z1 += z0 >> 26;
   z0 &= M26;
-  z6 += (z5 >> 26);
+  z6 += z5 >> 26;
   z5 &= M26;
-  z2 += (z1 >> 26);
+  z2 += z1 >> 26;
   z1 &= M26;
-  z4 += (z3 >> 26);
+  z4 += z3 >> 26;
   z3 &= M26;
-  z7 += (z6 >> 26);
+  z7 += z6 >> 26;
   z6 &= M26;
-  z9 += (z8 >> 26);
+  z9 += z8 >> 26;
   z8 &= M26;
   z[0] = z0;
   z[1] = z1;
@@ -100,7 +100,7 @@ void cmov(int cond, Int32List x, int xOff, Int32List z, int zOff) {
   for (int i = 0; i < SIZE; i++) {
     int z_i = z[zOff + i];
     final diff = z_i ^ x[xOff + i];
-    z_i ^= (diff & cond);
+    z_i ^= diff & cond;
     z[zOff + i] = z_i;
   }
 }

@@ -172,7 +172,7 @@ sealed class WalletApiDefinition {
       {String name = defaultName}) async {
     try {
       final walletRes = (await loadWallet(name: name)).getOrThrow();
-      final keyPair = (extractMainKey(walletRes, password)).getOrThrow();
+      final keyPair = extractMainKey(walletRes, password).getOrThrow();
       return Either.right(keyPair);
     } on WalletApiFailure catch (f) {
       return Either.left(f);
@@ -196,10 +196,10 @@ sealed class WalletApiDefinition {
       {String name = defaultName}) async {
     try {
       final oldWallet = (await loadWallet(name: name)).getOrThrow();
-      final mainKey = (extractMainKey(oldWallet, oldPassword)).getOrThrow();
+      final mainKey = extractMainKey(oldWallet, oldPassword).getOrThrow();
       final newWallet =
-          (buildMainKeyVaultStore(mainKey.writeToBuffer(), newPassword));
-      final result = (await updateWallet(newWallet, name: name));
+          buildMainKeyVaultStore(mainKey.writeToBuffer(), newPassword);
+      final result = await updateWallet(newWallet, name: name);
       return result.isRight
           ? Either.right(newWallet)
           : Either.left(WalletApiFailure.failedToUpdateWallet());
@@ -380,7 +380,7 @@ class WalletApi extends WalletApiDefinition {
   @override
   Future<Either<WalletApiFailure, Unit>> saveWallet(VaultStore vaultStore,
       {String name = WalletApiDefinition.defaultName}) async {
-    final x = (await walletKeyApi.saveMainKeyVaultStore(vaultStore, name));
+    final x = await walletKeyApi.saveMainKeyVaultStore(vaultStore, name);
     return x.mapLeftVoid((p0) => WalletApiFailure.failedToSaveWallet());
   }
 

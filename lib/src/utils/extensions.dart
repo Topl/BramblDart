@@ -116,7 +116,7 @@ extension Uint8ListExtension on Uint8List {
   ///
   /// Returns `true` if the [Uint8List] is equal to [other], `false` otherwise.
   bool equals(Uint8List other) {
-    return (identical(this, other) || const ListEquality().equals(this, other));
+    return identical(this, other) || const ListEquality().equals(this, other);
   }
 
   Uint8List overwriteBytes(int fillValue) {
@@ -220,7 +220,7 @@ extension ListExtensions<T> on List<T> {
   /// the length of the list.
   List<T> sublistSafe(int start, int end) {
     final actualEnd = end < 0
-        ? (start)
+        ? start
         : end > length
             ? length
             : end;

@@ -28,9 +28,9 @@ main() {
     final testAlloy = ByteString.fromList(List.filled(32, 0));
     expect(
       Value(
-          asset: (assetGroup.asset.rebuild((p0) {
+          asset: assetGroup.asset.rebuild((p0) {
         p0.seriesAlloy = mockAlloy.toBytesValue;
-      }))).typeIdentifier,
+      })).typeIdentifier,
       GroupFungible(gId, testAlloy, qd),
     );
     expect(

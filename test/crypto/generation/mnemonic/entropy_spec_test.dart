@@ -37,7 +37,7 @@ main() {
         final mnemonicSize = Generators.getGeneratedMnemonicSize;
         final entropy1 = Entropy.generate(size: mnemonicSize);
         final entropy2Res =
-            (await Entropy.toMnemonicString(entropy1, language: English()));
+            await Entropy.toMnemonicString(entropy1, language: English());
         final entropy2String = entropy2Res.right!.join(" ");
         final entropy2 = await Entropy.fromMnemonicString(entropy2String,
             language: English());

@@ -27,7 +27,7 @@ main() {
 
       final left = result.left! as ValidationError;
       expect(
-          (left.type == ValidationErrorType.lockedPropositionIsUnsatisfiable),
+          left.type == ValidationErrorType.lockedPropositionIsUnsatisfiable,
           true);
     });
 
@@ -52,7 +52,7 @@ main() {
       expect(result.isLeft, true);
 
       final left = result.left! as ValidationError;
-      expect((left.type == ValidationErrorType.evaluationAuthorizationFailure),
+      expect(left.type == ValidationErrorType.evaluationAuthorizationFailure,
           true);
     });
 
@@ -81,7 +81,7 @@ main() {
       expect(result.isLeft, true);
 
       final left = result.left! as ValidationError;
-      expect((left.type == ValidationErrorType.evaluationAuthorizationFailure),
+      expect(left.type == ValidationErrorType.evaluationAuthorizationFailure,
           true);
     });
 
@@ -131,7 +131,7 @@ main() {
       expect(result.isLeft, true);
 
       final left = result.left! as ValidationError;
-      expect((left.type == ValidationErrorType.evaluationAuthorizationFailure),
+      expect(left.type == ValidationErrorType.evaluationAuthorizationFailure,
           true);
     });
 
@@ -149,7 +149,7 @@ main() {
 
       final badPreimage = Preimage(
           input: Uint8List.fromList(
-              ("${MockHelpers.preimageString} badModifier").codeUnits),
+              "${MockHelpers.preimageString} badModifier".codeUnits),
           salt: salt);
 
       final digestProposition =
@@ -163,7 +163,7 @@ main() {
       expect(result.isLeft, true);
 
       final left = result.left! as ValidationError;
-      expect((left.type == ValidationErrorType.evaluationAuthorizationFailure),
+      expect(left.type == ValidationErrorType.evaluationAuthorizationFailure,
           true);
     });
 
@@ -178,7 +178,7 @@ main() {
       expect(result.isLeft, true);
 
       final left = result.left! as ValidationError;
-      expect((left.type == ValidationErrorType.evaluationAuthorizationFailure),
+      expect(left.type == ValidationErrorType.evaluationAuthorizationFailure,
           true);
     });
 
@@ -193,7 +193,7 @@ main() {
       expect(result.isLeft, true);
 
       final left = result.left! as ValidationError;
-      expect((left.type == ValidationErrorType.evaluationAuthorizationFailure),
+      expect(left.type == ValidationErrorType.evaluationAuthorizationFailure,
           true);
     });
 
@@ -207,7 +207,7 @@ main() {
       expect(result.isLeft, true);
 
       final left = result.left! as ValidationError;
-      expect((left.type == ValidationErrorType.evaluationAuthorizationFailure),
+      expect(left.type == ValidationErrorType.evaluationAuthorizationFailure,
           true);
     });
   });

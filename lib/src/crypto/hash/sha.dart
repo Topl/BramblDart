@@ -73,7 +73,7 @@ class SHA256 extends SHA {
 
     final Either<InvalidDigestFailure, Digest> x = Digest32.from(res);
     if (x.isLeft) {
-      throw (Exception(x.left!.message));
+      throw Exception(x.left!.message);
     }
     return x.right!;
   }
@@ -115,7 +115,7 @@ class SHA512 extends SHA {
 
     final Either<InvalidDigestFailure, Digest> x = Digest64.from(res);
     if (x.isLeft) {
-      throw (Exception(x.left!.message));
+      throw Exception(x.left!.message);
     }
     return x.right!;
   }

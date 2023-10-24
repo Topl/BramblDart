@@ -40,7 +40,7 @@ class TransactionAuthorizationError implements ValidationError {
   int get hashCode => type.hashCode ^ errors.hashCode;
 
   bool checkType(TransactionAuthorizationErrorType type) {
-    return (this).type == type;
+    return this.type == type;
   }
 }
 

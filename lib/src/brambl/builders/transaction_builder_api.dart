@@ -509,7 +509,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
           network: networkId,
           ledger: ledgerId,
           id: LockId(
-            value: (Lock(predicate: predicate).sizedEvidence.digest.value),
+            value: Lock(predicate: predicate).sizedEvidence.digest.value,
           )),
       value: Value(lvl: Value_LVL(quantity: amount)),
     );

@@ -24,7 +24,7 @@ class TransactionSyntaxInterpreter {
           errors.add(result.left!);
         }
       } else if (result is ListEither<TransactionSyntaxError, Unit>) {
-        if ((result).lefts.isNotEmpty) {
+        if (result.lefts.isNotEmpty) {
           errors.addAll(result.lefts);
         }
       }

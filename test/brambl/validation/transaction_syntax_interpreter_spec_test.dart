@@ -184,11 +184,11 @@ extension ContainsErrorExtension on List<TransactionSyntaxError> {
               (error as InsufficientInputFundsError)
                       .inputs
                       .equals((match as InsufficientInputFundsError).inputs) &&
-                  (error).outputs.equals((match).outputs),
+                  error.outputs.equals(match.outputs),
             (TransactionSyntaxErrorType.invalidProofType) =>
               (error as InvalidProofTypeError).proof ==
                       (match as InvalidProofTypeError).proof &&
-                  (error).proposition == (match).proposition,
+                  error.proposition == match.proposition,
             (TransactionSyntaxErrorType.invalidDataLength) => true
           };
           if (cond) return true; // return only if conditional is true

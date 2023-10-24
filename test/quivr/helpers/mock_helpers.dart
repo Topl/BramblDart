@@ -68,7 +68,7 @@ class MockHelpers {
     Int64? heightOf(String label, Datum? Function(String) heightOfDatum) {
       final datum = mapOfDatums[label];
       if (datum != null) {
-        final header = (datum).header;
+        final header = datum.header;
         final eventHeader = header.event;
         return eventHeader.height;
       }

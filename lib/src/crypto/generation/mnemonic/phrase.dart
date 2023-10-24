@@ -37,7 +37,7 @@ class Phrase {
     final phrase = Phrase(
       value: words
           .toLowerCase()
-          .split(RegExp('\\s+'))
+          .split(RegExp(r'\s+'))
           .map((w) => w.trim())
           .toList(),
       size: size,
