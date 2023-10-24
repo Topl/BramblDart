@@ -35,7 +35,6 @@ class TransactionAuthorizationInterpreter<F> {
             context,
           );
           acc = r.map((p0) => transaction);
-          break;
         case Attestation_Value.image:
           final p = attestation.image;
           final r = imageValidate(

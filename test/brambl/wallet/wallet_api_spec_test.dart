@@ -98,7 +98,7 @@ main() {
 
       final res = await walletApi.loadWallet(name: "w1");
       expect(res.isLeft, true);
-      expect(res.left!, equals(WalletApiFailure.failedToLoadWallet()));
+      expect(res.left, equals(WalletApiFailure.failedToLoadWallet()));
     });
 
     test('extractMainKey: ExtendedEd25519 Topl Main Key is returned', () async {
@@ -294,7 +294,7 @@ main() {
       expect(deleteRes.isRight, isTrue);
       final afterDelete = await walletApi.loadWallet(name: "name");
       expect(afterDelete.isLeft, isTrue);
-      expect(afterDelete.left!, WalletApiFailure.failedToLoadWallet());
+      expect(afterDelete.left, WalletApiFailure.failedToLoadWallet());
     });
 
     test(
@@ -306,7 +306,7 @@ main() {
           "dummyKeyPair".toUtf8Uint8List(), password);
       final w1 = await walletApi.updateWallet(vs, name: "name");
       expect(w1.isLeft, isTrue);
-      expect(w1.left!, WalletApiFailure.failedToUpdateWallet());
+      expect(w1.left, WalletApiFailure.failedToUpdateWallet());
     });
 
     test(
@@ -352,7 +352,7 @@ main() {
       final decodeOldPassword =
           walletApi.extractMainKey(loadedWallet, oldPassword);
       expect(decodeOldPassword.isLeft, isTrue);
-      expect(decodeOldPassword.left!, WalletApiFailure.failedToDecodeWallet());
+      expect(decodeOldPassword.left, WalletApiFailure.failedToDecodeWallet());
       final decodeNewPassword =
           walletApi.extractMainKey(loadedWallet, newPassword);
       expect(decodeNewPassword.isRight, isTrue);
@@ -424,7 +424,7 @@ main() {
       final mnemonic = [...wallet.mnemonic, "extraWord"];
       final importedWallet = await walletApi.importWallet(mnemonic, password);
       expect(importedWallet.isLeft, isTrue);
-      expect(importedWallet.left!, WalletApiFailure.failedToInitializeWallet());
+      expect(importedWallet.left, WalletApiFailure.failedToInitializeWallet());
     });
 
     test("importWalletAndSave: verify a save failure returns the correct error",
