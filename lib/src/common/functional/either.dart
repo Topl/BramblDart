@@ -110,7 +110,7 @@ class Either<L, R> {
           (left is Exception
               ? left! as Exception
               : throw StateError(
-                  'Left value was raised intentionally ${left}'));
+                  'Left value was raised intentionally $left'));
     }
   }
 

@@ -94,7 +94,7 @@ main() {
 
       final testTx = txFull.rebuild((p0) {
         final List<SpentTransactionOutput> newInputs = [];
-        for (var input in txFull.inputs) {
+        for (final input in txFull.inputs) {
           final newInput = input.rebuild((p0) {
             p0.attestation = testAttestation;
           });
@@ -158,7 +158,7 @@ main() {
 
       // containsNonPositiveOutputValue
       var containsNonPositiveOutputValue = false;
-      for (var e in errsWrapped) {
+      for (final e in errsWrapped) {
         if (e is TransactionSyntaxError) {
           if (e.type == TransactionSyntaxErrorType.nonPositiveOutputValue) {
             containsNonPositiveOutputValue = true;
@@ -177,7 +177,7 @@ main() {
 
       // lockedPropositionIsUnsatisfiable
       var lockedPropositionIsUnsatisfiable = false;
-      for (var e in errsWrapped.tail()) {
+      for (final e in errsWrapped.tail()) {
         if (e is ValidationError) {
           final ValidationError cast = e as ValidationError;
           if (cast.type ==
@@ -190,7 +190,7 @@ main() {
 
       // evaluationAuthorizationFailure
       var evaluationAuthorizationFailure = false;
-      for (var e in errsWrapped.tail()) {
+      for (final e in errsWrapped.tail()) {
         if (e is ValidationError) {
           final ValidationError cast = e as ValidationError;
           if (cast.type == ValidationErrorType.evaluationAuthorizationFailure) {

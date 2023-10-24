@@ -71,7 +71,7 @@ class CredentiallerInterpreter implements Credentialler {
     final provenTx = unprovenTx.deepCopy()..inputs.clear();
 
     // referring to origin object to get around concurrent modification during iteration
-    for (var input in unprovenTx.inputs) {
+    for (final input in unprovenTx.inputs) {
       final x = proveInput(input, signable);
       provenTx.inputs.add(x);
     }
@@ -116,7 +116,7 @@ class CredentiallerInterpreter implements Credentialler {
         final pairs = revealed.zip(proofs);
 
         final newProofs = <Proof>[];
-        for (var pair in pairs) {
+        for (final pair in pairs) {
           final proof = getProof(msg, pair.$1, pair.$2);
           newProofs.add(proof);
         }

@@ -87,7 +87,7 @@ class Blake2b512 extends Blake2b {
     if (prefix != null) {
       _digest.update(prefix.toBytes, 0, 1);
     }
-    for (var m in messages) {
+    for (final m in messages) {
       _digest.update(m, 0, m.length);
     }
 

@@ -62,7 +62,7 @@ class SHA256 extends SHA {
     if (prefix != null) {
       _digest.update(prefix.toBytes, 0, 1);
     }
-    for (var m in messages) {
+    for (final m in messages) {
       _digest.update(m, 0, m.length);
     }
 
@@ -104,7 +104,7 @@ class SHA512 extends SHA {
     if (prefix != null) {
       _digest.update(prefix.toBytes, 0, 1);
     }
-    for (var m in messages) {
+    for (final m in messages) {
       _digest.update(m, 0, m.length);
     }
 
