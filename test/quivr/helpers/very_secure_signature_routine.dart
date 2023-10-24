@@ -15,7 +15,7 @@ class VerySecureSignatureRoutine {
     for (int i = 0; i < sk.length; i++) {
       sk[i] = Random().nextInt(256);
     }
-    Uint8List vk = Uint8List.fromList(sk.toList().reversed.toList());
+    final Uint8List vk = Uint8List.fromList(sk.toList().reversed.toList());
     return (sk, vk);
   }
 
@@ -28,8 +28,8 @@ class VerySecureSignatureRoutine {
   ///
   /// @param [vk] a 64-byte signature
   static Uint8List sign(Uint8List sk, Uint8List msg) {
-    var inBytes = Uint8List.fromList([...sk, ...msg]);
-    var hash = Blake2b512().hash(inBytes);
+    final inBytes = Uint8List.fromList([...sk, ...msg]);
+    final hash = Blake2b512().hash(inBytes);
     return hash.sublist(0, 64);
   }
 
@@ -43,7 +43,7 @@ class VerySecureSignatureRoutine {
   ///
   /// @param [vk] a 32-byte VK
   static bool verify(Uint8List sig, Uint8List msg, Uint8List vk) {
-    var expectedSig = sign(Uint8List.fromList(vk.reversed.toList()), msg);
+    final expectedSig = sign(Uint8List.fromList(vk.reversed.toList()), msg);
     return ListEquality().equals(sig, expectedSig);
   }
 }

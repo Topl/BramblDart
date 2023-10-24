@@ -17,8 +17,8 @@ class TransactionCostCalculator<F> {
   ///
   /// Returns a cost, represented as a Long.
   int costOf(IoTransaction transaction) {
-    var baseCost = transactionCostConfig.baseCost;
-    var dataCost = transactionDataCost(transaction);
+    final baseCost = transactionCostConfig.baseCost;
+    final dataCost = transactionDataCost(transaction);
 
     final inputCost =
         transaction.inputs.map((e) => transactionInputCost(e)).sum;
@@ -34,7 +34,7 @@ class TransactionCostCalculator<F> {
   ///
   /// Returns a cost, represented as an integer.
   int transactionDataCost(IoTransaction transaction) {
-    var bytes =
+    final bytes =
         ContainsImmutable.ioTransaction(transaction).immutableBytes.value;
     return (bytes.length * transactionCostConfig.dataCostPerMB / 1024 / 1024)
         .floor();
@@ -49,7 +49,7 @@ class TransactionCostCalculator<F> {
   /// Returns a cost, represented as a Long.
   int transactionInputCost(SpentTransactionOutput input) {
     var cost = transactionCostConfig.inputCost;
-    var attestation = input.attestation;
+    final attestation = input.attestation;
     if (attestation.hasPredicate()) {
       cost += attestation.predicate.responses
           .map(proofCost)
@@ -72,7 +72,7 @@ class TransactionCostCalculator<F> {
   /// Returns a cost, represented as a Long.
   int proofCost(Proof proof) {
     var cost = 0;
-    var value = proof;
+    final value = proof;
 
     if (value.hasLocked()) {
       cost += transactionCostConfig.proofCostConfig.lockedCost;

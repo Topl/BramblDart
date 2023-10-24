@@ -128,7 +128,7 @@ extension Uint8ListExtension on Uint8List {
   /// Concatenates a [Uint8List] with another [Uint8List].
   /// Made for Uint8List, that is non growable by default
   Uint8List concat(Uint8List other) {
-    var builder = BytesBuilder();
+    final builder = BytesBuilder();
     builder
       ..add(this)
       ..add(other);

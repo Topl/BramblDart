@@ -42,13 +42,13 @@ class MerkleProof {
         .hashWithPrefix(MerkleTree.leafPrefix, [leafData.value.toUint8List()]);
 
     Digest result = leafHash;
-    for (var (hash, side) in levels) {
-      var prevHash = result;
+    for (final (hash, side) in levels) {
+      final prevHash = result;
 
       late final List<int> nodeBytes;
       if (hash.isDefined) {
         final dHash = hash.getOrThrow(Exception("Hash is undefined"));
-        if ((side == MerkleProof.leftSide)) {
+        if (side == MerkleProof.leftSide) {
           nodeBytes = [...prevHash.bytes, ...dHash.bytes];
         } else {
           nodeBytes = [...dHash.bytes, ...prevHash.bytes];

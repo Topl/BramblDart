@@ -282,7 +282,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     LockAddress recipientLockAddress,
     int amount,
   ) async {
-    var unprovenAttestationToProve =
+    final unprovenAttestationToProve =
         await unprovenAttestation(lockPredicateFrom);
     final BigInt totalValues = lvlTxos.fold(BigInt.zero, (acc, x) {
       final y = x.transactionOutput.value;
@@ -327,9 +327,9 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     Int128 quantityToMint,
     LockAddress mintedConstructorLockAddress,
   ) async {
-    var registrationLockAddr =
+    final registrationLockAddr =
         await lockAddress(Lock()..predicate = registrationLock);
-    var validationResult = validateConstructorMintingParams(
+    final validationResult = validateConstructorMintingParams(
       registrationTxo,
       registrationLockAddr,
       groupPolicy.registrationUtxo,
@@ -341,10 +341,10 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
           validationResult.left!));
     }
 
-    var stxoAttestation = await unprovenAttestation(registrationLock);
-    var d = await datum();
+    final stxoAttestation = await unprovenAttestation(registrationLock);
+    final d = await datum();
 
-    var utxoMinted = await groupOutput(
+    final utxoMinted = await groupOutput(
         mintedConstructorLockAddress, quantityToMint, groupPolicy.computeId);
     return Either.right(IoTransaction(
       inputs: [
@@ -369,9 +369,9 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     Int128 quantityToMint,
     LockAddress mintedConstructorLockAddress,
   ) async {
-    var registrationLockAddr =
+    final registrationLockAddr =
         await lockAddress(Lock()..predicate = registrationLock);
-    var validationResult = validateConstructorMintingParams(
+    final validationResult = validateConstructorMintingParams(
       registrationTxo,
       registrationLockAddr,
       seriesPolicy.registrationUtxo,
@@ -382,9 +382,9 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
           "Unable to build transaction to mint series constructor tokens",
           validationResult.left!));
     }
-    var stxoAttestation = await unprovenAttestation(registrationLock);
-    var d = await datum();
-    var utxoMinted = await seriesOutput(
+    final stxoAttestation = await unprovenAttestation(registrationLock);
+    final d = await datum();
+    final utxoMinted = await seriesOutput(
       mintedConstructorLockAddress,
       quantityToMint,
       seriesPolicy.computeId,

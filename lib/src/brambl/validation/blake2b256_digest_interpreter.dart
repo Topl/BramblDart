@@ -14,10 +14,10 @@ class Blake2b256DigestInterpreter implements DigestVerifier {
   /// Returns the DigestVerification object if the digest is valid, otherwise an error.
   @override
   Either<QuivrRunTimeError, DigestVerification> validate(t) {
-    var d = t.digest.value;
-    var p = t.preimage.input.toUint8List();
-    var salt = t.preimage.salt.toUint8List();
-    var testHash = Blake2b256().hash((p + salt).toUint8List());
+    final d = t.digest.value;
+    final p = t.preimage.input.toUint8List();
+    final salt = t.preimage.salt.toUint8List();
+    final testHash = Blake2b256().hash((p + salt).toUint8List());
     if (testHash.equals(d.toUint8List())) {
       return Either.right(t);
     } else {

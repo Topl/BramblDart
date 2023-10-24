@@ -293,7 +293,7 @@ class ExtendedEd25519
   /// Returns the key pair
   KeyPair<SecretKey, PublicKey> deriveKeyPairFromChildPath(
       SecretKey secretKey, List<Bip32Index> indices) {
-    var derivedSecretKey = deriveSecretKeyFromChildPath(secretKey, indices);
+    final derivedSecretKey = deriveSecretKeyFromChildPath(secretKey, indices);
     return KeyPair(derivedSecretKey, getVerificationKey(derivedSecretKey));
   }
 }

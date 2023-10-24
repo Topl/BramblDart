@@ -39,8 +39,8 @@ class ProtoConverters {
 
   static s.KeyPair<xspec.SecretKey, xspec.PublicKey> keyPairFromProto(
       KeyPair keyPair) {
-    var sk = xspec.SecretKey.proto(keyPair.sk.extendedEd25519);
-    var vk = xspec.PublicKey.proto(keyPair.vk.extendedEd25519);
+    final sk = xspec.SecretKey.proto(keyPair.sk.extendedEd25519);
+    final vk = xspec.PublicKey.proto(keyPair.vk.extendedEd25519);
     return s.KeyPair(sk, vk);
   }
 }

@@ -49,9 +49,9 @@ class BifrostQueryAlgebra implements BifrostQueryAlgbraDefinition {
 
     final txIds = body.transactionIds;
 
-    List<Future<IoTransaction?>> futures =
+    final List<Future<IoTransaction?>> futures =
         txIds.map((id) => fetchTransaction(id)).toList();
-    List<IoTransaction> transactions =
+    final List<IoTransaction> transactions =
         (await Future.wait(futures)).whereType<IoTransaction>().toList();
 
     return (blockId, body, transactions);

@@ -51,7 +51,7 @@ void main() {
       final vaultStore = generateVaultStore(sensitiveInformation, password);
 
       // VaultStore is corrupted by changing the cipher text
-      var decoded1 = VaultStore.decodeCipher(
+      final decoded1 = VaultStore.decodeCipher(
           vaultStore.copyWith(
               cipherText:
                   'this is an invalid cipher text'.toCodeUnitUint8List()),
@@ -59,7 +59,7 @@ void main() {
       expect(decoded1.left is InvalidMac, true);
 
       // VaultStore is corrupted by changing the mac
-      var decoded2 = VaultStore.decodeCipher(
+      final decoded2 = VaultStore.decodeCipher(
           vaultStore.copyWith(
               mac: 'this is an invalid mac'.toCodeUnitUint8List()),
           password);
@@ -69,7 +69,7 @@ void main() {
       final kdfParams =
           SCryptParams(salt: 'invalid salt'.toCodeUnitUint8List());
       final wrongKdf = SCrypt(kdfParams);
-      var decoded3 =
+      final decoded3 =
           VaultStore.decodeCipher(vaultStore.copyWith(kdf: wrongKdf), password);
       expect(decoded3.left is InvalidMac, true);
     });

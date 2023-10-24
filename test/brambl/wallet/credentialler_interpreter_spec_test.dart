@@ -182,7 +182,7 @@ main() {
       var lockedPropositionIsUnsatisfiable = false;
       for (var e in errsWrapped.tail()) {
         if (e is ValidationError) {
-          ValidationError cast = e as ValidationError;
+          final ValidationError cast = e as ValidationError;
           if (cast.type ==
               ValidationErrorType.lockedPropositionIsUnsatisfiable) {
             lockedPropositionIsUnsatisfiable = true;
@@ -195,7 +195,7 @@ main() {
       var evaluationAuthorizationFailure = false;
       for (var e in errsWrapped.tail()) {
         if (e is ValidationError) {
-          ValidationError cast = e as ValidationError;
+          final ValidationError cast = e as ValidationError;
           if (cast.type == ValidationErrorType.evaluationAuthorizationFailure) {
             evaluationAuthorizationFailure = true;
           }
