@@ -16,7 +16,7 @@ class ContainsEvidence {
     return ContainsEvidence(Evidence());
   }
 
-  factory ContainsEvidence.blake2bEvidenceFromImmutable(t) {
+  factory ContainsEvidence.blake2bEvidenceFromImmutable(dynamic t) {
     final bytes = ContainsImmutable.apply(t).immutableBytes.value.toUint8List();
     final hash = Blake2b256().hash(bytes);
     final digest = pb.Digest(value: hash);
@@ -37,5 +37,6 @@ class ContainsEvidence {
 
 extension SizedEvidence on dynamic {
   /// converts a dynamic value to a sized evidence via blake 2b hash
-  Evidence get sizedEvidence => ContainsEvidence.blake2bEvidenceFromImmutable(this).evidence;
+  Evidence get sizedEvidence =>
+      ContainsEvidence.blake2bEvidenceFromImmutable(this).evidence;
 }

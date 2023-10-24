@@ -19,6 +19,7 @@ class Either<L, R> {
   Either.right(this._right) : _left = null;
 
   /// Constructs an `Either` instance with a right generic value of `Unit`.
+  // ignore: inference_failure_on_untyped_parameter
   Either.unit({val = const Unit()})
       : _left = null,
         _right = val;
@@ -50,18 +51,22 @@ class Either<L, R> {
   }
 
   /// Maps the value on the right of the Either using a provided function
-  Either<L, T> map<T>(T Function(R) f) => isRight ? Either.right(f(right as R)) : Either.left(left);
+  Either<L, T> map<T>(T Function(R) f) =>
+      isRight ? Either.right(f(right as R)) : Either.left(left);
 
   /// Applies a function to the value on the right of the Either if it exists, otherwise returns the current Either
-  Either<L, T> flatMap<T>(Either<L, T> Function(R) f) => isRight ? f(right as R) : Either.left(left);
+  Either<L, T> flatMap<T>(Either<L, T> Function(R) f) =>
+      isRight ? f(right as R) : Either.left(left);
 
   /// Maps the value on the left of the Either using a provided function
   ///
   /// Incompatible with right [void] values
-  Either<T, R> mapLeft<T>(T Function(L) f) => isLeft ? Either.left(f(left as L)) : Either.right(right);
+  Either<T, R> mapLeft<T>(T Function(L) f) =>
+      isLeft ? Either.left(f(left as L)) : Either.right(right);
 
   /// Applies a function to the value on the left of the Either if it exists, otherwise returns the current Either
-  Either<T, R> flatMapLeft<T>(Either<T, R> Function(L) f) => isLeft ? f(left as L) : Either.right(right);
+  Either<T, R> flatMapLeft<T>(Either<T, R> Function(L) f) =>
+      isLeft ? f(left as L) : Either.right(right);
 
   /// Applies one of two provided functions to the value of the Either, depending on its state
   T fold<T>(T Function(L) onLeft, T Function(R) onRight) {
@@ -89,7 +94,9 @@ class Either<L, R> {
   /// Returns the value on the right of the Either if it exists, otherwise throws the left value unless an exception is provided
   ///
   /// Don't use this on Right of [void]
-  R getOrThrow({Object? exception}) => exception == null ? getRightOrThrowLeft() : (isRight ? right! : throw exception);
+  R getOrThrow({Object? exception}) => exception == null
+      ? getRightOrThrowLeft()
+      : (isRight ? right! : throw exception);
 
   /// Attempts to get R but will throw left value as an error if the right value does not exist
   R getRightOrThrowLeft() => isRight ? right! : throw left! as Exception;
@@ -102,14 +109,16 @@ class Either<L, R> {
       throw exception ??
           (left is Exception
               ? left as Exception
-              : throw StateError('Left value was raised intentionally ${left.toString()}'));
+              : throw StateError(
+                  'Left value was raised intentionally ${left.toString()}'));
     }
   }
 
   /// Maps the value on the left of the Either using a provided function when right is a void type
   ///
   /// `Either<Exception, void>` is the ideal use case as this is incompatible with [right]
-  Either<T, R> mapLeftVoid<T>(T Function(L) f) => isLeft ? Either.left(f(left as L)) : Either.unit();
+  Either<T, R> mapLeftVoid<T>(T Function(L) f) =>
+      isLeft ? Either.left(f(left as L)) : Either.unit();
 
   /// Converts the Either to an Option, returning the value on the right of the Either if it exists, otherwise None
   Option<R> toOption() => isRight ? Some(right as R) : None();
@@ -118,7 +127,8 @@ class Either<L, R> {
   Option<L> toOptionLeft() => isLeft ? Some(left as L) : None();
 
   /// Returns the value on the right of the Either if it exists, otherwise returns the result of the provided function
-  static Either<L, R> conditional<L, R>(bool condition, {required L left, required R right}) {
+  static Either<L, R> conditional<L, R>(bool condition,
+      {required L left, required R right}) {
     return condition ? Either.right(right) : Either.left(left);
   }
 
@@ -174,7 +184,7 @@ class None<T> extends Option<T> {
   Option<U> map<U>(U Function(T t) f) => None();
 
   @override
-  void forEach(void Function(T p1) f) => None();
+  None forEach(void Function(T p1) f) => None();
 
   @override
   bool operator ==(Object other) => identical(this, other) || other is None<T>;
@@ -201,9 +211,11 @@ abstract class Option<T> {
 
   Option<U> map<U>(U Function(T t) f);
 
-  Option<U> flatMap<U>(Option<U> Function(T) f) => isDefined ? f(getOrElse(null as T)) : None();
+  Option<U> flatMap<U>(Option<U> Function(T) f) =>
+      isDefined ? f(getOrElse(null as T)) : None();
 
-  U fold<U>(U Function(T) onDefined, U Function() onUndefined) => isDefined ? onDefined(value) : onUndefined();
+  U fold<U>(U Function(T) onDefined, U Function() onUndefined) =>
+      isDefined ? onDefined(value) : onUndefined();
 }
 
 class EitherException implements Exception {
@@ -211,7 +223,8 @@ class EitherException implements Exception {
 
   const EitherException(this.message);
 
-  factory EitherException.rightIsUndefined() => EitherException("Right value is undefined!");
+  factory EitherException.rightIsUndefined() =>
+      EitherException("Right value is undefined!");
 
   @override
   String toString() {

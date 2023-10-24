@@ -1,5 +1,3 @@
-
-
 /// export builder libraries
 export 'transaction_builder_api.dart';
 export 'locks/lock_template.dart';

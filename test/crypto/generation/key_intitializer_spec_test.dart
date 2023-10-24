@@ -2,8 +2,10 @@ import 'package:brambl_dart/src/crypto/generation/key_initializer/ed25519_initia
 import 'package:brambl_dart/src/crypto/generation/key_initializer/extended_ed25519_initializer.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/language.dart';
 import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519.dart';
-import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart' as spec;
-import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart' as x_spec;
+import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart'
+    as spec;
+import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart'
+    as x_spec;
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
@@ -15,21 +17,37 @@ void main() {
     for (final x in keyInitializerTestVectors) {
       final vector = KeyInitializerVector.fromJson(x);
 
-      test('Generate 96 byte seed from mnemonic: ${vector.mnemonic} + password: ${vector.password}', () async {
+      test(
+          'Generate 96 byte seed from mnemonic: ${vector.mnemonic} + password: ${vector.password}',
+          () async {
         final ed25519SkRes = await Ed25519Initializer(Ed25519())
-            .fromMnemonicString(vector.mnemonic, password: vector.password, language: English());
+            .fromMnemonicString(vector.mnemonic,
+                password: vector.password, language: English());
         final ed25519Sk = ed25519SkRes.right! as spec.SecretKey;
 
-        final extendedEd25519SkRes = await ExtendedEd25519Intializer(ExtendedEd25519())
-            .fromMnemonicString(vector.mnemonic, password: vector.password, language: English());
+        final extendedEd25519SkRes =
+            await ExtendedEd25519Intializer(ExtendedEd25519())
+                .fromMnemonicString(vector.mnemonic,
+                    password: vector.password, language: English());
 
-        final extendedEd25519Sk = extendedEd25519SkRes.right! as x_spec.SecretKey;
+        final extendedEd25519Sk =
+            extendedEd25519SkRes.right! as x_spec.SecretKey;
 
-        expect(ListEquality().equals(ed25519Sk.bytes, vector.ed25519.bytes), true);
+        expect(
+            ListEquality().equals(ed25519Sk.bytes, vector.ed25519.bytes), true);
 
-        expect(ListEquality().equals(extendedEd25519Sk.leftKey, vector.extendedEd25519.leftKey), true);
-        expect(ListEquality().equals(extendedEd25519Sk.chainCode, vector.extendedEd25519.chainCode), true);
-        expect(ListEquality().equals(extendedEd25519Sk.rightKey, vector.extendedEd25519.rightKey), true);
+        expect(
+            ListEquality().equals(
+                extendedEd25519Sk.leftKey, vector.extendedEd25519.leftKey),
+            true);
+        expect(
+            ListEquality().equals(
+                extendedEd25519Sk.chainCode, vector.extendedEd25519.chainCode),
+            true);
+        expect(
+            ListEquality().equals(
+                extendedEd25519Sk.rightKey, vector.extendedEd25519.rightKey),
+            true);
       });
     }
   });

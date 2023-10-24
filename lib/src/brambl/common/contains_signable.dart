@@ -46,14 +46,15 @@ class ContainsSignable {
 
     // copies then freezes not to impact the original object
     final st = iotx.deepCopy()..freeze();
-    return ContainsSignable.immutable(
-        ContainsImmutable.apply(st.rebuild((p0) => p0.inputs.update(iotx.inputs.map(stripInput).toList())))
-            .immutableBytes);
+    return ContainsSignable.immutable(ContainsImmutable.apply(st.rebuild(
+            (p0) => p0.inputs.update(iotx.inputs.map(stripInput).toList())))
+        .immutableBytes);
   }
 }
 
 extension IoTransactionContainsSignableExtensions on IoTransaction {
-  SignableBytes get signable => ContainsSignable.ioTransaction(this).signableBytes;
+  SignableBytes get signable =>
+      ContainsSignable.ioTransaction(this).signableBytes;
 }
 
 extension ImmutableBytesContainsSignableExtension on ImmutableBytes {

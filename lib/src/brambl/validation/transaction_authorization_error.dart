@@ -1,5 +1,6 @@
 import 'package:brambl_dart/src/brambl/validation/validation_error.dart';
-import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart' as quivr;
+import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart'
+    as quivr;
 import 'package:collection/collection.dart';
 
 class TransactionAuthorizationError implements ValidationError {
@@ -8,12 +9,18 @@ class TransactionAuthorizationError implements ValidationError {
 
   const TransactionAuthorizationError(this.type, this.errors);
 
-  factory TransactionAuthorizationError.authorizationFailed(List<quivr.QuivrRunTimeError> errors) =>
-      TransactionAuthorizationError(TransactionAuthorizationErrorType.authorizationFailed, errors);
-  factory TransactionAuthorizationError.contextual(List<quivr.QuivrRunTimeError> errors) =>
-      TransactionAuthorizationError(TransactionAuthorizationErrorType.authorizationFailed, errors);
-  factory TransactionAuthorizationError.permanent(List<quivr.QuivrRunTimeError> errors) =>
-      TransactionAuthorizationError(TransactionAuthorizationErrorType.authorizationFailed, errors);
+  factory TransactionAuthorizationError.authorizationFailed(
+          List<quivr.QuivrRunTimeError> errors) =>
+      TransactionAuthorizationError(
+          TransactionAuthorizationErrorType.authorizationFailed, errors);
+  factory TransactionAuthorizationError.contextual(
+          List<quivr.QuivrRunTimeError> errors) =>
+      TransactionAuthorizationError(
+          TransactionAuthorizationErrorType.authorizationFailed, errors);
+  factory TransactionAuthorizationError.permanent(
+          List<quivr.QuivrRunTimeError> errors) =>
+      TransactionAuthorizationError(
+          TransactionAuthorizationErrorType.authorizationFailed, errors);
 
   @override
   String toString() {
@@ -24,7 +31,9 @@ class TransactionAuthorizationError implements ValidationError {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is TransactionAuthorizationError && other.type == type && ListEquality().equals(other.errors, errors);
+    return other is TransactionAuthorizationError &&
+        other.type == type &&
+        errors.equals(other.errors);
   }
 
   @override

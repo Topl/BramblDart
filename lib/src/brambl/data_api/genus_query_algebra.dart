@@ -18,9 +18,12 @@ class GenusQueryAlgebra {
   /// [fromAddress] The lock address to query the unspent UTXOs by.
   /// [txoState] The state of the UTXOs to query. By default, only unspent UTXOs are returned.
   /// returns A sequence of UTXOs.
-  Future<List<Txo>> queryUtxo({required LockAddress fromAddress, TxoState txoState = TxoState.UNSPENT}) async {
+  Future<List<Txo>> queryUtxo(
+      {required LockAddress fromAddress,
+      TxoState txoState = TxoState.UNSPENT}) async {
     final response = await client.getTxosByLockAddress(
-      QueryByLockAddressRequest(address: fromAddress, confidenceFactor: null, state: txoState),
+      QueryByLockAddressRequest(
+          address: fromAddress, confidenceFactor: null, state: txoState),
     );
     return response.txos;
   }

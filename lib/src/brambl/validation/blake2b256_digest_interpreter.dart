@@ -13,7 +13,7 @@ class Blake2b256DigestInterpreter implements DigestVerifier {
   ///
   /// Returns the DigestVerification object if the digest is valid, otherwise an error.
   @override
-  Either<QuivrRunTimeError, DigestVerification> validate(t)  {
+  Either<QuivrRunTimeError, DigestVerification> validate(t) {
     var d = t.digest.value;
     var p = t.preimage.input.toUint8List();
     var salt = t.preimage.salt.toUint8List();
@@ -25,8 +25,9 @@ class Blake2b256DigestInterpreter implements DigestVerifier {
       return Either.left(ValidationError.lockedPropositionIsUnsatisfiable());
     }
   }
-  
+
   @override
   // TODO: implement definedFunction
-  Function(dynamic p1) get definedFunction => throw UnimplementedError();
+  dynamic Function(dynamic p1) get definedFunction =>
+      throw UnimplementedError();
 }

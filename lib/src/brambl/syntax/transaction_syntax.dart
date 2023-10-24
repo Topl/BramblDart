@@ -14,7 +14,8 @@ class TransactionSyntax {
   ///
   /// If an ID was pre-computed and saved in the Transaction, it is restored.
   /// Otherwise, a new ID is computed (but not saved in the Transaction).
-  TransactionId get id => transaction.hasTransactionId() ? transaction.transactionId : computeId();
+  TransactionId get id =>
+      transaction.hasTransactionId() ? transaction.transactionId : computeId();
 
   /// Computes what the ID _should_ be for this Transaction.
   TransactionId computeId() {

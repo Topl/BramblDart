@@ -1,6 +1,3 @@
-
-
-
 class InitializationFailure implements Exception {
   final String? message;
   final InitializationFailureType type;

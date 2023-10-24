@@ -29,7 +29,8 @@ main() {
       test('phrases should be generated in $language', () async {
         final size = Generators.getGeneratedMnemonicSize;
         final entropy = Entropy.generate(size: size);
-        final phrase = await Phrase.fromEntropy(entropy: entropy, size: size, language: language);
+        final phrase = await Phrase.fromEntropy(
+            entropy: entropy, size: size, language: language);
         expect(phrase.isRight, true);
       });
     }

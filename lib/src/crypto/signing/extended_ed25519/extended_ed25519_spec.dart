@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/common/functional/either.dart';
-import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart' as spec;
+import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart'
+    as spec;
 import 'package:brambl_dart/src/crypto/signing/signing.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
@@ -104,7 +105,9 @@ class SecretKey extends SigningKey with ExtendedEd25519Spec {
 
   @override
   int get hashCode =>
-      const ListEquality().hash(leftKey) ^ const ListEquality().hash(rightKey) ^ const ListEquality().hash(chainCode);
+      const ListEquality().hash(leftKey) ^
+      const ListEquality().hash(rightKey) ^
+      const ListEquality().hash(chainCode);
 }
 
 class PublicKey extends VerificationKey with ExtendedEd25519Spec {
@@ -131,9 +134,10 @@ class PublicKey extends VerificationKey with ExtendedEd25519Spec {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PublicKey && vk == other.vk && const ListEquality().equals(chainCode, other.chainCode);
+      other is PublicKey && vk == other.vk && chainCode.equals(other.chainCode);
 
   @override
+  // ignore: inference_failure_on_instance_creation
   int get hashCode => vk.hashCode ^ const ListEquality().hash(chainCode);
 }
 

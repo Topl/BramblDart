@@ -9,7 +9,8 @@ class LockSyntaxOps {
   LockSyntaxOps(this.lock);
 
   LockAddress lockAddress(int network, int ledger) {
-    final evidence = ContainsEvidence.blake2bEvidenceFromImmutable(lock).evidence;
+    final evidence =
+        ContainsEvidence.blake2bEvidenceFromImmutable(lock).evidence;
     final digest = evidence.digest.value;
     final lockId = LockId(value: digest);
     return LockAddress(network: network, ledger: ledger, id: lockId);
@@ -22,7 +23,9 @@ class PredicateLockSyntaxOps {
   PredicateLockSyntaxOps(this.lock);
 
   LockAddress lockAddress(int network, int ledger) {
-    final evidence = ContainsEvidence.blake2bEvidenceFromImmutable(Lock()..predicate = lock).evidence;
+    final evidence =
+        ContainsEvidence.blake2bEvidenceFromImmutable(Lock()..predicate = lock)
+            .evidence;
     final digest = evidence.digest.value;
     final lockId = LockId(value: digest);
     return LockAddress(network: network, ledger: ledger, id: lockId);

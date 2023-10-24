@@ -17,34 +17,51 @@ main() {
     group("hashes 256 correctly", () {
       test('hash "test"', () {
         final hash = _doHashCheck("test", Blake2b256());
-        expect(hash, equals("928b20366943e2afd11ebc0eae2e53a93bf177a4fcf35bcc64d503704e65e202"));
+        expect(
+            hash,
+            equals(
+                "928b20366943e2afd11ebc0eae2e53a93bf177a4fcf35bcc64d503704e65e202"));
       });
 
       test('hash "topl"', () {
         final hash = _doHashCheck("topl", Blake2b256());
-        expect(hash, equals("c39310192260edc08a5fde86b81068055ea63571dbcfdcb40c533fba2d1e6d9e"));
+        expect(
+            hash,
+            equals(
+                "c39310192260edc08a5fde86b81068055ea63571dbcfdcb40c533fba2d1e6d9e"));
       });
 
       test('hash "dart"', () {
         final hash = _doHashCheck("dart", Blake2b256());
-        expect(hash, equals("c8c86c6dce81dd76e9a01c7c95886f4004d4ebd7ae47ca29da682da81dd2c0f4"));
+        expect(
+            hash,
+            equals(
+                "c8c86c6dce81dd76e9a01c7c95886f4004d4ebd7ae47ca29da682da81dd2c0f4"));
       });
 
       test('hash ""', () {
         final hash = _doHashCheck("", Blake2b256());
-        expect(hash, equals("0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"));
+        expect(
+            hash,
+            equals(
+                "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"));
       });
 
       test('hash empty list', () {
         final hash = Blake2b256().hash(Uint8List(0)).toHexString();
-        expect(hash, equals("0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"));
+        expect(
+            hash,
+            equals(
+                "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"));
       });
 
       test('throws error when bytes is empty', () {
         final blake2b = Blake2b256();
 
-        expect(blake2b.hash(Uint8List(0)).toHexString(),
-            equals("0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"));
+        expect(
+            blake2b.hash(Uint8List(0)).toHexString(),
+            equals(
+                "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"));
       });
     });
 

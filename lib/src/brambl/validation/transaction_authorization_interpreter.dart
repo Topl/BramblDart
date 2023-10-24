@@ -18,7 +18,8 @@ class TransactionAuthorizationInterpreter<F> {
     DynamicContext context,
     IoTransaction transaction,
   ) {
-    var acc = Either<TransactionAuthorizationError, IoTransaction>.right(transaction);
+    var acc =
+        Either<TransactionAuthorizationError, IoTransaction>.right(transaction);
 
     for (var i = 0; i < transaction.inputs.length; i++) {
       final input = transaction.inputs[i];
@@ -56,7 +57,8 @@ class TransactionAuthorizationInterpreter<F> {
           );
           acc = r.map((p0) => transaction);
         default:
-          acc = Either.left(TransactionAuthorizationError.authorizationFailed([]));
+          acc = Either.left(
+              TransactionAuthorizationError.authorizationFailed([]));
           break;
       }
     }
@@ -90,12 +92,17 @@ class TransactionAuthorizationInterpreter<F> {
     else if (proofs.length != propositions.length) {
       return Either.left(TransactionAuthorizationError.authorizationFailed([]));
     } else {
-      final eval = propositions.zip(proofs).map((p) => Verifier.evaluate(p.$1, p.$2, context)).toList();
-      final partitionedResults = partitionMap<QuivrRunTimeError, bool>(eval, (r) => r);
+      final eval = propositions
+          .zip(proofs)
+          .map((p) => Verifier.evaluate(p.$1, p.$2, context))
+          .toList();
+      final partitionedResults =
+          partitionMap<QuivrRunTimeError, bool>(eval, (r) => r);
       if (partitionedResults.$2.length >= threshold) {
         return Either.right(true);
       } else {
-        return Either.left(TransactionAuthorizationError.authorizationFailed(partitionedResults.$1));
+        return Either.left(TransactionAuthorizationError.authorizationFailed(
+            partitionedResults.$1));
       }
     }
   }

@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:brambl_dart/src/crypto/signing/signing.dart';
 import 'package:collection/collection.dart';
 
-
 mixin Ed25519Spec {
   static const int signatureLength = 64;
   static const int keyLength = 32;
@@ -12,7 +11,7 @@ mixin Ed25519Spec {
 }
 
 ///
-class SecretKey extends SigningKey with Ed25519Spec  {
+class SecretKey extends SigningKey with Ed25519Spec {
   final Uint8List bytes;
   SecretKey(this.bytes) {
     if (bytes.length != Ed25519Spec.keyLength) {
@@ -33,7 +32,7 @@ class SecretKey extends SigningKey with Ed25519Spec  {
   int get hashCode => const ListEquality().hash(bytes);
 }
 
-class PublicKey extends VerificationKey with Ed25519Spec  {
+class PublicKey extends VerificationKey with Ed25519Spec {
   final Uint8List bytes;
   PublicKey(this.bytes) {
     if (bytes.length != Ed25519Spec.publicKeyLength) {

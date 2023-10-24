@@ -34,8 +34,10 @@ class Mac {
   /// returns `true` if this MAC matches the expectedMac, false otherwise
   bool validateMac({Mac? expectedMac, Uint8List? expectedMacList}) {
     // if neither or both are supplied, throw exception
-    if ((expectedMac == null && expectedMacList == null) || (expectedMac != null && expectedMacList != null)) {
-      throw Exception('Either expectedMac or ExpectedMacList must be supplied, but not both');
+    if ((expectedMac == null && expectedMacList == null) ||
+        (expectedMac != null && expectedMacList != null)) {
+      throw Exception(
+          'Either expectedMac or ExpectedMacList must be supplied, but not both');
     }
     if (expectedMac != null) {
       return ListEquality().equals(value, expectedMac.value);

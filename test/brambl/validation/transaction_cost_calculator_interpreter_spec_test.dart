@@ -1,5 +1,4 @@
 import 'package:brambl_dart/brambl_dart.dart';
-import 'package:brambl_dart/src/brambl/common/contains_immutable.dart';
 import 'package:brambl_dart/src/brambl/validation/transaction_cost_calculator_interpreter.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:test/test.dart';

@@ -1,6 +1,3 @@
-
-
-
 /// export data_api libraries
 export 'bifrost_query_algebra.dart';
 export 'contract_storage_algebra.dart';

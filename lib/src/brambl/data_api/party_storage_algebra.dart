@@ -1,6 +1,3 @@
-
-
-
 /// Defines a wallet entity with an X coordinate and a name.
 class WalletEntity {
   /// The X coordinate associated with the entity.

@@ -2,7 +2,6 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 /// Provides Digest verification for use in a Dynamic Context
 abstract class ParsableDataInterface {
-
   const ParsableDataInterface(this.data);
   final Data data;
 
@@ -10,5 +9,3 @@ abstract class ParsableDataInterface {
     return f(data);
   }
 }
-
-

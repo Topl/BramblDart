@@ -17,8 +17,14 @@ class DynamicContext {
   Map<String, SignatureVerifier> signingRoutines;
   Map<String, DigestVerifier> hashingRoutines;
 
-  DynamicContext(this.datum, this.interfaces, this.signingRoutines, this.hashingRoutines, this.signableBytes,
-      this.currentTick, this.heightOf);
+  DynamicContext(
+      this.datum,
+      this.interfaces,
+      this.signingRoutines,
+      this.hashingRoutines,
+      this.signableBytes,
+      this.currentTick,
+      this.heightOf);
 
   SignableBytes signableBytes;
 
@@ -28,26 +34,34 @@ class DynamicContext {
   Int64? Function(String, Datum? Function(String) heightDatums) heightOf;
 
   /// can return wrapped[ContextError.failedToFindDigestVerifier]
-  QuivrResult<DigestVerification> digestVerify(String routine, DigestVerification verification) {
-    final verifier = hashingRoutines.containsKey(routine) ? hashingRoutines[routine] : null;
+  QuivrResult<DigestVerification> digestVerify(
+      String routine, DigestVerification verification) {
+    final verifier =
+        hashingRoutines.containsKey(routine) ? hashingRoutines[routine] : null;
 
     // uses equality operator instead of .isNull for type promotion
-    if (verifier == null) return QuivrResult.left(ContextError.failedToFindDigestVerifier());
+    if (verifier == null)
+      return QuivrResult.left(ContextError.failedToFindDigestVerifier());
 
-    final result = verifier.validate(verification) as QuivrResult<DigestVerification>;
+    final result =
+        verifier.validate(verification) as QuivrResult<DigestVerification>;
     if (result.isLeft) return result;
 
     return QuivrResult<DigestVerification>.right(result.right);
   }
 
   /// can return wrapped [ContextError.failedToFindSignatureVerifier]
-  QuivrResult<SignatureVerification> signatureVerify(String routine, SignatureVerification verification) {
-    final verifier = signingRoutines.containsKey(routine) ? signingRoutines[routine] : null;
+  QuivrResult<SignatureVerification> signatureVerify(
+      String routine, SignatureVerification verification) {
+    final verifier =
+        signingRoutines.containsKey(routine) ? signingRoutines[routine] : null;
 
     // uses equality operator instead of .isNull for type promotion
-    if (verifier == null) return QuivrResult.left(ContextError.failedToFindSignatureVerifier());
+    if (verifier == null)
+      return QuivrResult.left(ContextError.failedToFindSignatureVerifier());
 
-    final result = verifier.validate(verification) as QuivrResult<SignatureVerification>;
+    final result =
+        verifier.validate(verification) as QuivrResult<SignatureVerification>;
     if (result.isLeft) return result;
 
     return QuivrResult<SignatureVerification>.right(result.right);
@@ -58,7 +72,8 @@ class DynamicContext {
     final interface = interfaces.containsKey(label) ? interfaces[label] : null;
 
     // uses equality operator instead of .isNull for type promotion
-    if (interface == null) return QuivrResult<Data>.left(ContextError.failedToFindInterface());
+    if (interface == null)
+      return QuivrResult<Data>.left(ContextError.failedToFindInterface());
 
     return QuivrResult<Data>.right(interface.parse((data) => data));
   }

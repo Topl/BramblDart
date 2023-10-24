@@ -33,7 +33,10 @@ class VaultStore {
 
   @override
   int get hashCode =>
-      kdf.hashCode ^ cipher.hashCode ^ const ListEquality().hash(cipherText) ^ const ListEquality().hash(mac);
+      kdf.hashCode ^
+      cipher.hashCode ^
+      const ListEquality().hash(cipherText) ^
+      const ListEquality().hash(mac);
 
   /// Create a copy of the VaultStore with the provided parameters.
   VaultStore copyWith({
@@ -53,7 +56,7 @@ class VaultStore {
   /// Decode a the cipher text of a VaultStore
   /// [VaultStore] the VaultStore
   /// returns the decrypted data if mac is valid, otherwise [InvalidMac]
-  static Either<Exception, Uint8List> decodeCipher<F>(
+  static Either<Exception, Uint8List> decodeCipher(
     VaultStore vaultStore,
     Uint8List password,
   ) {

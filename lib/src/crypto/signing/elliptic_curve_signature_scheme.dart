@@ -4,30 +4,32 @@ import 'package:brambl_dart/src/crypto/generation/entropy_to_seed.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
 import 'package:brambl_dart/src/crypto/signing/signing.dart';
 
-abstract class EllipticCurveSignatureScheme<SK extends SigningKey, VK extends VerificationKey> {
+abstract class EllipticCurveSignatureScheme<SK extends SigningKey,
+    VK extends VerificationKey> {
   final int seedLength;
 
   const EllipticCurveSignatureScheme({required this.seedLength});
+
   /// Generate a key pair from a given entropy and password.
   KeyPair<SK, VK> deriveKeyPairFromEntropy(
     Entropy entropy,
     String? passphrase, {
     EntropyToSeed entropyToSeed = const Pbkdf2Sha512(),
-  })  {
-    final seed = entropyToSeed.toSeed(entropy, passphrase, seedLength: seedLength);
+  }) {
+    final seed =
+        entropyToSeed.toSeed(entropy, passphrase, seedLength: seedLength);
     return deriveKeyPairFromSeed(seed);
   }
 
   /// Derive a key pair from a seed.
-  KeyPair<SK, VK> deriveKeyPairFromSeed(Uint8List seed)  {
-    final secretKey =  deriveSecretKeyFromSeed(seed);
-    final verificationKey =  getVerificationKey(secretKey);
+  KeyPair<SK, VK> deriveKeyPairFromSeed(Uint8List seed) {
+    final secretKey = deriveSecretKeyFromSeed(seed);
+    final verificationKey = getVerificationKey(secretKey);
     return KeyPair(secretKey, verificationKey);
   }
 
   /// Derive a secret key from a seed.
   SK deriveSecretKeyFromSeed(Uint8List seed);
-
 
   /// Sign a given message with a given signing key.
   Uint8List sign(SK privateKey, Uint8List message);

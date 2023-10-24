@@ -9,7 +9,8 @@ import 'package:pointycastle/digests/sha512.dart';
 abstract class EntropyToSeed {
   const EntropyToSeed();
 
-  Uint8List toSeed(Entropy entropy, String? password, {required int seedLength}) {
+  Uint8List toSeed(Entropy entropy, String? password,
+      {required int seedLength}) {
     final kdf = Pbkdf2Sha512();
 
     return kdf.generateKey(password ?? "", entropy.value, seedLength, 4096);
@@ -39,7 +40,8 @@ class Pbkdf2Sha512 extends EntropyToSeed {
   ) {
     final generator = PKCS5S2ParametersGenerator(SHA512Digest());
     generator.init(password.toUtf8Uint8List(), salt, iterations);
-    final param = generator.generateDerivedParameters(keySizeBytes.toBits) as KeyParameter;
+    final param = generator.generateDerivedParameters(keySizeBytes.toBits)
+        as KeyParameter;
     return param.key;
   }
 }

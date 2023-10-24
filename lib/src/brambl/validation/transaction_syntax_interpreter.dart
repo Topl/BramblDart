@@ -14,7 +14,8 @@ class TransactionSyntaxInterpreter {
   static const int maxDataLength = 15360;
   static const int shortMaxValue = 32767;
 
-  static Either<List<TransactionSyntaxError>, IoTransaction> validate(IoTransaction t) {
+  static Either<List<TransactionSyntaxError>, IoTransaction> validate(
+      IoTransaction t) {
     final errors = <TransactionSyntaxError>[];
     for (final validator in validators) {
       final result = validator(t);
@@ -52,12 +53,16 @@ class TransactionSyntaxInterpreter {
   ];
 
   /// Verify that this transaction contains at least one input
-  static Either<TransactionSyntaxError, Unit> nonEmptyInputsValidation(IoTransaction transaction) {
-    return transaction.inputs.isNotEmpty ? Either.right(Unit()) : Either.left(TransactionSyntaxError.emptyInputs());
+  static Either<TransactionSyntaxError, Unit> nonEmptyInputsValidation(
+      IoTransaction transaction) {
+    return transaction.inputs.isNotEmpty
+        ? Either.right(Unit())
+        : Either.left(TransactionSyntaxError.emptyInputs());
   }
 
   /// Verify that this transaction does not spend the same box more than once
-  static ListEither<TransactionSyntaxError, Unit> distinctInputsValidation(IoTransaction transaction) {
+  static ListEither<TransactionSyntaxError, Unit> distinctInputsValidation(
+      IoTransaction transaction) {
     final duplicates = transaction.inputs
         .groupListsBy((input) => input.address)
         .entries
@@ -71,7 +76,8 @@ class TransactionSyntaxInterpreter {
 
   /// Verify that this transaction does not contain too many outputs. A transaction's outputs are referenced by index,
   /// but that index must be a Short value.
-  static Either<TransactionSyntaxError, Unit> maximumOutputsCountValidation(IoTransaction transaction) {
+  static Either<TransactionSyntaxError, Unit> maximumOutputsCountValidation(
+      IoTransaction transaction) {
     return transaction.outputs.length < shortMaxValue
         ? Either.right(Unit())
         : Either.left(TransactionSyntaxError.excessiveOutputsCount());
@@ -79,22 +85,28 @@ class TransactionSyntaxInterpreter {
 
   /// Verify that the timestamp of the transaction is positive (greater than or equal to 0). Transactions _can_ be created
   /// in the past.
-  static Either<TransactionSyntaxError, Unit> nonNegativeTimestampValidation(IoTransaction transaction) {
+  static Either<TransactionSyntaxError, Unit> nonNegativeTimestampValidation(
+      IoTransaction transaction) {
     return transaction.datum.event.schedule.timestamp >= 0
         ? Either.right(Unit())
-        : Either.left(TransactionSyntaxError.invalidTimestamp(transaction.datum.event.schedule.timestamp));
+        : Either.left(TransactionSyntaxError.invalidTimestamp(
+            transaction.datum.event.schedule.timestamp));
   }
 
   /// Verify that the schedule of the timestamp contains valid minimum and maximum slot values
-  static Either<TransactionSyntaxError, Unit> scheduleValidation(IoTransaction transaction) {
-    return transaction.datum.event.schedule.max >= transaction.datum.event.schedule.min &&
+  static Either<TransactionSyntaxError, Unit> scheduleValidation(
+      IoTransaction transaction) {
+    return transaction.datum.event.schedule.max >=
+                transaction.datum.event.schedule.min &&
             transaction.datum.event.schedule.min >= 0
         ? Either.right(Unit())
-        : Either.left(TransactionSyntaxError.invalidSchedule(transaction.datum.event.schedule));
+        : Either.left(TransactionSyntaxError.invalidSchedule(
+            transaction.datum.event.schedule));
   }
 
   /// Verify that each transaction output contains a positive quantity (where applicable)
-  static ListEither<TransactionSyntaxError, Unit> positiveOutputValuesValidation(IoTransaction transaction) {
+  static ListEither<TransactionSyntaxError, Unit>
+      positiveOutputValuesValidation(IoTransaction transaction) {
     BigInt? getQuantity(Value value) {
       switch (value.whichValue()) {
         case Value_Value.lvl:
@@ -112,7 +124,8 @@ class TransactionSyntaxInterpreter {
     for (final output in transaction.outputs) {
       final quantity = getQuantity(output.value);
       if (quantity == null) continue;
-      if (quantity <= BigInt.zero) errors.add(TransactionSyntaxError.nonPositiveOutputValue(output.value));
+      if (quantity <= BigInt.zero)
+        errors.add(TransactionSyntaxError.nonPositiveOutputValue(output.value));
     }
     return errors.isEmpty
         ? ListEither.right<TransactionSyntaxError, Unit>([Unit()])
@@ -134,7 +147,8 @@ class TransactionSyntaxInterpreter {
   }
 
   /// Ensure the input value quantities exceed or equal the (non-minting) output value quantities
-  static Either<TransactionSyntaxError, Unit> sufficientFundsValidation(IoTransaction transaction) {
+  static Either<TransactionSyntaxError, Unit> sufficientFundsValidation(
+      IoTransaction transaction) {
     // TODO: figure out correct implementation for quantity (include series, group asset)
     // BigInt? getQuantity(Value value) {
     //   if (value.hasLvl()) {
@@ -153,8 +167,10 @@ class TransactionSyntaxInterpreter {
       return values.map((value) => getQuantity(value)).reduce((a, b) => a + b);
     }
 
-    final inputsSum = sumAll(transaction.inputs.map((input) => input.value).toList());
-    final outputsSum = sumAll(transaction.outputs.map((output) => output.value).toList());
+    final inputsSum =
+        sumAll(transaction.inputs.map((input) => input.value).toList());
+    final outputsSum =
+        sumAll(transaction.outputs.map((output) => output.value).toList());
 
     return inputsSum >= outputsSum
         ? Either.unit()
@@ -167,7 +183,8 @@ class TransactionSyntaxInterpreter {
   /// Perform validation based on the quantities of boxes grouped by type
   ///
   /// @param f an extractor function which retrieves a BigInt from a Box.Value
-  static ListEither<TransactionSyntaxError, Unit> attestationValidation(IoTransaction transaction) {
+  static ListEither<TransactionSyntaxError, Unit> attestationValidation(
+      IoTransaction transaction) {
     final errors = <TransactionSyntaxError>[];
     for (final input in transaction.inputs) {
       final attestation = input.attestation;
@@ -190,8 +207,9 @@ class TransactionSyntaxInterpreter {
   /// (i.e. a DigitalSignature Proof that is associated with a HeightRange Proposition, this validation will fail)
   ///
   /// Preconditions: lock.challenges.length <= responses.length
-  static ListEither<TransactionSyntaxError, Unit> predicateLockProofTypeValidation(
-      Lock_Predicate lock, List<Proof> responses) {
+  static ListEither<TransactionSyntaxError, Unit>
+      predicateLockProofTypeValidation(
+          Lock_Predicate lock, List<Proof> responses) {
     final errors = <TransactionSyntaxError>[];
     for (int i = 0; i < lock.challenges.length; i++) {
       final challenge = lock.challenges[i];
@@ -208,7 +226,8 @@ class TransactionSyntaxInterpreter {
 
   /// Validate that the type of Proof matches the type of the given Proposition
   /// A Proof.Value.Empty type is considered valid for all Proposition types
-  static Either<TransactionSyntaxError, Unit> proofTypeMatch(Proposition proposition, Proof proof) {
+  static Either<TransactionSyntaxError, Unit> proofTypeMatch(
+      Proposition proposition, Proof proof) {
     switch ((proposition.whichValue(), proof.whichValue())) {
       // Empty proofs are valid for all Proposition types
       case (_, Proof_Value.notSet):
@@ -228,7 +247,8 @@ class TransactionSyntaxInterpreter {
         // cascade all preceding cases to this case
         return Either.unit();
       default:
-        return Either.left(TransactionSyntaxError.invalidProofType(proposition, proof));
+        return Either.left(
+            TransactionSyntaxError.invalidProofType(proposition, proof));
     }
   }
 
@@ -236,8 +256,13 @@ class TransactionSyntaxInterpreter {
   /// @see [[https://topl.atlassian.net/browse/BN-708]]
   /// @param transaction transaction
   /// @return
-  static Either<TransactionSyntaxError, Unit> dataLengthValidation(IoTransaction transaction) {
-    return ContainsImmutable.ioTransaction(transaction).immutableBytes.value.length <= maxDataLength
+  static Either<TransactionSyntaxError, Unit> dataLengthValidation(
+      IoTransaction transaction) {
+    return ContainsImmutable.ioTransaction(transaction)
+                .immutableBytes
+                .value
+                .length <=
+            maxDataLength
         ? Either.unit()
         : Either.left(TransactionSyntaxError.invalidDataLength());
   }

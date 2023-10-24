@@ -6,7 +6,9 @@ import '../helpers/generators.dart';
 
 void main() {
   group('Mac Spec', () {
-    test('Different derived keys should produce different macs > Fail validation', () {
+    test(
+        'Different derived keys should produce different macs > Fail validation',
+        () {
       final dKey1 = Generators.getRandomBytes();
       var dKey2 = Generators.getRandomBytes();
       while (dKey1.equals(dKey2)) {
@@ -19,7 +21,9 @@ void main() {
       expect(mac2.validateMac(expectedMac: mac1), isFalse);
     });
 
-    test('Different cipher texts should produce different macs > Fail validation', () {
+    test(
+        'Different cipher texts should produce different macs > Fail validation',
+        () {
       final dKey = Generators.getRandomBytes();
       final ciphertext1 = 'ciphertext1'.toCodeUnitUint8List();
       final ciphertext2 = 'ciphertext2'.toCodeUnitUint8List();
@@ -29,7 +33,9 @@ void main() {
       expect(mac2.validateMac(expectedMac: mac1), isFalse);
     });
 
-    test('Macs produced with the same derived key and the same cipher texts are identical > Pass validation', () {
+    test(
+        'Macs produced with the same derived key and the same cipher texts are identical > Pass validation',
+        () {
       final dKey = Generators.getRandomBytes();
       final ciphertext = 'ciphertext'.toCodeUnitUint8List();
       final mac1 = Mac(dKey, ciphertext);

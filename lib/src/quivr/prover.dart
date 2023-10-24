@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -6,7 +5,6 @@ import 'package:brambl_dart/src/quivr/tokens.dart';
 import 'package:hashlib/hashlib.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
-
 
 /// Provers create proofs that are bound to the transaction which executes the proof.
 ///
@@ -30,10 +28,12 @@ class Prover {
         transactionBind: _blake2b56ToTxBind(Tokens.digest, message),
         preimage: preimage);
 
-  static Proof signatureProver(Witness witness, SignableBytes message) => Proof()
-    ..digitalSignature = Proof_DigitalSignature(
-        transactionBind: _blake2b56ToTxBind(Tokens.digitalSignature, message),
-        witness: witness);
+  static Proof signatureProver(Witness witness, SignableBytes message) =>
+      Proof()
+        ..digitalSignature = Proof_DigitalSignature(
+            transactionBind:
+                _blake2b56ToTxBind(Tokens.digitalSignature, message),
+            witness: witness);
 
   static Proof heightProver(SignableBytes message) => Proof()
     ..heightRange = Proof_HeightRange(
@@ -43,9 +43,10 @@ class Prover {
     ..tickRange = Proof_TickRange(
         transactionBind: _blake2b56ToTxBind(Tokens.tickRange, message));
 
-  static Proof exactMatchProver(SignableBytes message, Int8List compareTo) => Proof()
-    ..exactMatch = Proof_ExactMatch(
-        transactionBind: _blake2b56ToTxBind(Tokens.exactMatch, message));
+  static Proof exactMatchProver(SignableBytes message, Int8List compareTo) =>
+      Proof()
+        ..exactMatch = Proof_ExactMatch(
+            transactionBind: _blake2b56ToTxBind(Tokens.exactMatch, message));
 
   static Proof lessThanProver(SignableBytes message) => Proof()
     ..lessThan = Proof_LessThan(
@@ -56,8 +57,8 @@ class Prover {
         transactionBind: _blake2b56ToTxBind(Tokens.greaterThan, message));
 
   static Proof equalToProver(String location, SignableBytes message) => Proof()
-    ..equalTo =
-        Proof_EqualTo(transactionBind: _blake2b56ToTxBind(Tokens.equalTo, message));
+    ..equalTo = Proof_EqualTo(
+        transactionBind: _blake2b56ToTxBind(Tokens.equalTo, message));
 
   static Proof thresholdProver(List<Proof> responses, SignableBytes message) =>
       Proof()
@@ -69,15 +70,17 @@ class Prover {
     ..not = Proof_Not(
         transactionBind: _blake2b56ToTxBind(Tokens.not, message), proof: proof);
 
-  static Proof andProver(Proof left, Proof right, SignableBytes message) => Proof()
-    ..and = Proof_And(
-        transactionBind: _blake2b56ToTxBind(Tokens.and, message),
-        left: left,
-        right: right);
+  static Proof andProver(Proof left, Proof right, SignableBytes message) =>
+      Proof()
+        ..and = Proof_And(
+            transactionBind: _blake2b56ToTxBind(Tokens.and, message),
+            left: left,
+            right: right);
 
-  static Proof orProver(Proof left, Proof right, SignableBytes message) => Proof()
-    ..or = Proof_Or(
-        transactionBind: _blake2b56ToTxBind(Tokens.or, message),
-        left: left,
-        right: right);
+  static Proof orProver(Proof left, Proof right, SignableBytes message) =>
+      Proof()
+        ..or = Proof_Or(
+            transactionBind: _blake2b56ToTxBind(Tokens.or, message),
+            left: left,
+            right: right);
 }

@@ -14,7 +14,8 @@ abstract class WalletKeyApiAlgebra {
   /// to manage the names of the wallet identities if multiple will be used.
   ///
   /// Returns Unit if successful. If persisting fails due to an underlying cause, return a [WalletKeyException].
-  Future<Either<WalletKeyException, Unit>> saveMainKeyVaultStore(VaultStore mainKeyVaultStore, String name);
+  Future<Either<WalletKeyException, Unit>> saveMainKeyVaultStore(
+      VaultStore mainKeyVaultStore, String name);
 
   /// Persist a mnemonic used to recover a Topl Main Secret Key.
   ///
@@ -22,7 +23,8 @@ abstract class WalletKeyApiAlgebra {
   /// [mnemonicName] - The name identifier of the mnemonic.
   ///
   /// Returns Unit if successful. If persisting fails due to an underlying cause, return a [WalletKeyException].
-  Future<Either<WalletKeyException, Unit>> saveMnemonic(List<String> mnemonic, String mnemonicName);
+  Future<Either<WalletKeyException, Unit>> saveMnemonic(
+      List<String> mnemonic, String mnemonicName);
 
   /// Return the [VaultStore] for the Topl Main Secret Key.
   ///
@@ -31,7 +33,8 @@ abstract class WalletKeyApiAlgebra {
   /// the names of the wallet identities if multiple will be used.
   ///
   /// Returns the [VaultStore] for the Topl Main Secret Key if it exists. If retrieving fails due to an underlying cause, return a [WalletKeyException].
-  Future<Either<WalletKeyException, VaultStore>> getMainKeyVaultStore(String name);
+  Future<Either<WalletKeyException, VaultStore>> getMainKeyVaultStore(
+      String name);
 
   /// Update a persisted [VaultStore] for the Topl Main Secret Key.
   ///
@@ -41,7 +44,8 @@ abstract class WalletKeyApiAlgebra {
   /// to manage the names of the wallet identities if multiple will be used.
   ///
   /// Returns Unit if successful. If the update fails due to an underlying cause (for ex does not exist), return a [WalletKeyException].
-  Future<Either<WalletKeyException, Unit>> updateMainKeyVaultStore(VaultStore mainKeyVaultStore, String name);
+  Future<Either<WalletKeyException, Unit>> updateMainKeyVaultStore(
+      VaultStore mainKeyVaultStore, String name);
 
   /// Delete a persisted [VaultStore] for the Topl Main Secret Key.
   ///
@@ -60,20 +64,27 @@ class WalletKeyException implements Exception {
   const WalletKeyException(this.type, this.message);
 
   factory WalletKeyException.decodeVaultStore({String? context}) =>
-      WalletKeyException(WalletKeyExceptionType.decodeVaultStoreException, context);
+      WalletKeyException(
+          WalletKeyExceptionType.decodeVaultStoreException, context);
   factory WalletKeyException.vaultStoreDoesNotExist({String? context}) =>
-      WalletKeyException(WalletKeyExceptionType.vaultStoreDoesNotExistException, context);
+      WalletKeyException(
+          WalletKeyExceptionType.vaultStoreDoesNotExistException, context);
   factory WalletKeyException.mnemonicDoesNotExist({String? context}) =>
-      WalletKeyException(WalletKeyExceptionType.mnemonicDoesNotExistException, context);
+      WalletKeyException(
+          WalletKeyExceptionType.mnemonicDoesNotExistException, context);
 
   factory WalletKeyException.vaultStoreSave({String? context}) =>
-      WalletKeyException(WalletKeyExceptionType.vaultStoreSaveException, context);
+      WalletKeyException(
+          WalletKeyExceptionType.vaultStoreSaveException, context);
   factory WalletKeyException.vaultStoreInvalid({String? context}) =>
-      WalletKeyException(WalletKeyExceptionType.vaultStoreInvalidException, context);
+      WalletKeyException(
+          WalletKeyExceptionType.vaultStoreInvalidException, context);
   factory WalletKeyException.vaultStoreDelete({String? context}) =>
-      WalletKeyException(WalletKeyExceptionType.vaultStoreDeleteException, context);
+      WalletKeyException(
+          WalletKeyExceptionType.vaultStoreDeleteException, context);
   factory WalletKeyException.vaultStoreNotInitialized({String? context}) =>
-      WalletKeyException(WalletKeyExceptionType.vaultStoreNotInitialized, context);
+      WalletKeyException(
+          WalletKeyExceptionType.vaultStoreNotInitialized, context);
 }
 
 enum WalletKeyExceptionType {

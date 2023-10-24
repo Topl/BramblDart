@@ -33,7 +33,8 @@ class ExtendedEd25519SignatureInterpreter implements SignatureVerifier {
       return Either.left(ValidationError.lockedPropositionIsUnsatisfiable());
     }
   }
-  
+
   @override
-  Function(dynamic p1) get definedFunction => throw UnimplementedError();
+  dynamic Function(dynamic p1) get definedFunction =>
+      throw UnimplementedError();
 }

@@ -8,7 +8,7 @@ class KeyPair<SigningKey, VerificationKey> {
   KeyPair(this.signingKey, this.verificationKey);
 
   @override
-  bool operator == (Object other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       other is KeyPair &&
           runtimeType == other.runtimeType &&

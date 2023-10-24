@@ -1,4 +1,3 @@
-
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -8,7 +7,6 @@ import 'package:collection/collection.dart';
 /// A top-secret signature scheme that is very secure.  Yes, this is just a joke.  The point is that
 /// the signing routine is plug-and-play, and can be replaced with any other signature scheme depending on context.
 class VerySecureSignatureRoutine {
-
   /// Generates a key pair.
   /// The secret key is just a random 32-byte array.
   /// The verification key is the reverse of the private key
@@ -34,7 +32,6 @@ class VerySecureSignatureRoutine {
     var hash = Blake2b512().hash(inBytes);
     return hash.sublist(0, 64);
   }
-
 
   /// Verifies the given signature against the given msg and vk.
   /// The signature is valid if it is equal to the Blake2b-512

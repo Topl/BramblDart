@@ -61,7 +61,8 @@ class MnemonicSize {
   const MnemonicSize.words21() : this._(21);
   const MnemonicSize.words24() : this._(24);
 
-static Either<PhraseFailure, MnemonicSize> fromNumberOfWords(int numberOfWords) {
+  static Either<PhraseFailure, MnemonicSize> fromNumberOfWords(
+      int numberOfWords) {
     switch (numberOfWords) {
       case 12:
         return Either.right(MnemonicSize.words12());
@@ -74,7 +75,8 @@ static Either<PhraseFailure, MnemonicSize> fromNumberOfWords(int numberOfWords) 
       case 24:
         return Either.right(MnemonicSize.words24());
       default:
-        return Either.left(PhraseFailure(PhraseFailureType.invalidWordLength, 'Invalid number of words'));
+        return Either.left(PhraseFailure(
+            PhraseFailureType.invalidWordLength, 'Invalid number of words'));
     }
   }
 }

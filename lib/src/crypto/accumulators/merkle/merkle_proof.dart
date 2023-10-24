@@ -38,7 +38,8 @@ class MerkleProof {
   static final rightSide = Side(1);
 
   bool valid(Digest expectedRootHash) {
-    final leafHash = hashFunction.hashWithPrefix(MerkleTree.leafPrefix, [leafData.value.toUint8List()]);
+    final leafHash = hashFunction
+        .hashWithPrefix(MerkleTree.leafPrefix, [leafData.value.toUint8List()]);
 
     Digest result = leafHash;
     for (var (hash, side) in levels) {
@@ -55,7 +56,8 @@ class MerkleProof {
       } else {
         nodeBytes = prevHash.bytes;
       }
-      result = hashFunction.hashWithPrefix(MerkleTree.internalNodePrefix, [Uint8List.fromList(nodeBytes)]);
+      result = hashFunction.hashWithPrefix(
+          MerkleTree.internalNodePrefix, [Uint8List.fromList(nodeBytes)]);
     }
     return result == expectedRootHash;
   }

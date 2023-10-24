@@ -12,7 +12,6 @@ import 'package:pointycastle/export.dart';
 /// Aes is a symmetric block cipher that can encrypt and decrypt data using the same key.
 /// @see [[https://en.wikipedia.org/wiki/Advanced_Encryption_Standard]]
 class Aes implements Cipher {
-
   Aes({Uint8List? iv, AesParams? params}) {
     this.params = params ?? AesParams(iv ?? generateIv());
   }
@@ -42,8 +41,11 @@ class Aes implements Cipher {
   @override
   Uint8List encrypt(Uint8List plainText, Uint8List key) {
     // + 1 to account for the byte storing the amount padded. This value is guaranteed to be <16
-    final amountPadded = (Aes.blockSize - ((plainText.length + 1) % Aes.blockSize)) % Aes.blockSize;
-    final paddedBytes = Uint8List.fromList([amountPadded, ...plainText, ...Uint8List(amountPadded)]);
+    final amountPadded =
+        (Aes.blockSize - ((plainText.length + 1) % Aes.blockSize)) %
+            Aes.blockSize;
+    final paddedBytes = Uint8List.fromList(
+        [amountPadded, ...plainText, ...Uint8List(amountPadded)]);
     return processAes(paddedBytes, key, params.iv, encrypt: true);
   }
 
@@ -61,12 +63,14 @@ class Aes implements Cipher {
     final paddedAmount = preImageSigned[0];
     final paddedBytes = preImageSigned.sublist(1);
 
-    final resultSigned = paddedBytes.sublistSafe(0, paddedBytes.length - paddedAmount);
+    final resultSigned =
+        paddedBytes.sublistSafe(0, paddedBytes.length - paddedAmount);
 
     return resultSigned.toUint8List();
   }
 
-  Uint8List processAes(Uint8List input, Uint8List key, Uint8List iv, {bool encrypt = false}) {
+  Uint8List processAes(Uint8List input, Uint8List key, Uint8List iv,
+      {bool encrypt = false}) {
     final cipherParams = ParametersWithIV(KeyParameter(key), iv);
     final aesCtr = StreamCipher('AES/SIC');
 
@@ -83,14 +87,20 @@ class Aes implements Cipher {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Aes && runtimeType == other.runtimeType && params == other.params;
+      identical(this, other) ||
+      other is Aes &&
+          runtimeType == other.runtimeType &&
+          params == other.params;
 
   @override
   int get hashCode => params.hashCode;
 
   @override
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> json = {'cipher': params.cipher, ...params.toJson()};
+    final Map<String, dynamic> json = {
+      'cipher': params.cipher,
+      ...params.toJson()
+    };
     return json;
   }
 }
@@ -99,7 +109,6 @@ class Aes implements Cipher {
 ///
 /// [iv] initialization vector
 class AesParams extends Params {
-
   AesParams(this.iv);
 
   factory AesParams.generate() => AesParams(Aes.generateIv());
@@ -116,7 +125,9 @@ class AesParams extends Params {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AesParams && runtimeType == other.runtimeType && hex.encode(iv) == hex.encode(other.iv);
+      other is AesParams &&
+          runtimeType == other.runtimeType &&
+          hex.encode(iv) == hex.encode(other.iv);
 
   @override
   int get hashCode => hex.encode(iv).hashCode;

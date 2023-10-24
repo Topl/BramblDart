@@ -32,7 +32,8 @@ sealed class SHA extends Hash {
 
   /// Add [len] bytes of data contained in [inp], starting at position [inpOff]
   /// to the digested input.
-  void update(Uint8List inp, int inpOff, int len) => _digest.update(inp, inpOff, len);
+  void update(Uint8List inp, int inpOff, int len) =>
+      _digest.update(inp, inpOff, len);
 
   /// Store the digest of previously given data in buffer [out] starting at
   /// offset [outOff]. This method returns the size of the digest.

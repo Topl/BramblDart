@@ -21,7 +21,10 @@ abstract class Cipher {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Cipher && runtimeType == other.runtimeType && params == other.params;
+      identical(this, other) ||
+      other is Cipher &&
+          runtimeType == other.runtimeType &&
+          params == other.params;
 
   @override
   int get hashCode => params.hashCode;

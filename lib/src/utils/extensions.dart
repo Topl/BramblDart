@@ -20,7 +20,8 @@ extension StringExtension on String {
     return Int8List.fromList(bytes);
   }
 
-  (String, String) splitAt(int index) => (substring(0, index), substring(index));
+  (String, String) splitAt(int index) =>
+      (substring(0, index), substring(index));
 
   /// Converts List<string> to a hex encoded [Uint8List].
   Uint8List toHexUint8List() => Uint8List.fromList(hex.decode(this));
@@ -72,7 +73,8 @@ extension Uint8ListExtension on Uint8List {
   /// Returns a [BigInt] representation of the [Uint8List] in little-endian byte order.
   BigInt fromLittleEndian() {
     final reversed = this.reversed.toList();
-    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    final hex =
+        reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 
@@ -142,7 +144,8 @@ extension Int8ListExtension on Int8List {
 
   BigInt fromLittleEndian() {
     final reversed = this.reversed.toList();
-    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    final hex =
+        reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 }

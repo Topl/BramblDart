@@ -5,14 +5,17 @@ import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
 
 extension TokenTypeIdentifierExtension on Value {
-  ValueToTypeIdentifierSyntaxOps get toTypeIdentifierSyntaxOps => ValueToTypeIdentifierSyntaxOps(this);
+  ValueToTypeIdentifierSyntaxOps get toTypeIdentifierSyntaxOps =>
+      ValueToTypeIdentifierSyntaxOps(this);
 
-  ValueTypeIdentifier get typeIdentifier => ValueToTypeIdentifierSyntaxOps(this).typeIdentifier;
+  ValueTypeIdentifier get typeIdentifier =>
+      ValueToTypeIdentifierSyntaxOps(this).typeIdentifier;
 }
 
 extension TypeIdentifierToQuantityDescriptorExtension on ValueTypeIdentifier {
-  TypeIdentifierToQuantityDescriptorSyntaxOps get toTypeIdentifierToQuantityDescriptorSyntaxOps =>
-      TypeIdentifierToQuantityDescriptorSyntaxOps(this);
+  TypeIdentifierToQuantityDescriptorSyntaxOps
+      get toTypeIdentifierToQuantityDescriptorSyntaxOps =>
+          TypeIdentifierToQuantityDescriptorSyntaxOps(this);
 
   QuantityDescriptorType? get getQuantityDescriptor =>
       TypeIdentifierToQuantityDescriptorSyntaxOps(this).getQuantityDescriptor();
@@ -38,19 +41,25 @@ class ValueToTypeIdentifierSyntaxOps {
         final sId = a.seriesId;
         final gAlloy = a.groupAlloy;
         final sAlloy = a.seriesAlloy;
-        if (a.fungibility == FungibilityType.GROUP_AND_SERIES && gId.value.isNotEmpty && sId.value.isNotEmpty) {
+        if (a.fungibility == FungibilityType.GROUP_AND_SERIES &&
+            gId.value.isNotEmpty &&
+            sId.value.isNotEmpty) {
           return GroupAndSeriesFungible(gId, sId, qd);
         } // If seriesAlloy is provided, the seriesId is ignored
-        else if (a.fungibility == FungibilityType.GROUP && sAlloy.value.isNotEmpty) {
+        else if (a.fungibility == FungibilityType.GROUP &&
+            sAlloy.value.isNotEmpty) {
           return GroupFungible(gId, sAlloy.asByteString, qd);
         } // If groupAlloy is provided, the groupId is ignored
-        else if (a.fungibility == FungibilityType.SERIES && gAlloy.value.isNotEmpty) {
+        else if (a.fungibility == FungibilityType.SERIES &&
+            gAlloy.value.isNotEmpty) {
           return SeriesFungible(sId, gAlloy.asByteString, qd);
         } // If seriesAlloy is not provided, the seriesId is used to identify instead
-        else if (a.fungibility == FungibilityType.GROUP && sAlloy.value.isEmpty) {
+        else if (a.fungibility == FungibilityType.GROUP &&
+            sAlloy.value.isEmpty) {
           return GroupFungible(gId, ByteString.fromList(sId.value), qd);
         } // If groupAlloy is not provided, the groupId is used to identify instead
-        else if (a.fungibility == FungibilityType.SERIES && gAlloy.value.isEmpty) {
+        else if (a.fungibility == FungibilityType.SERIES &&
+            gAlloy.value.isEmpty) {
           return SeriesFungible(sId, ByteString.fromList(gId.value), qd);
         } else {
           throw Exception('Invalid asset');
@@ -99,7 +108,10 @@ class GroupType implements ValueTypeIdentifier {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is GroupType && runtimeType == other.runtimeType && groupId == other.groupId;
+      identical(this, other) ||
+      other is GroupType &&
+          runtimeType == other.runtimeType &&
+          groupId == other.groupId;
 
   @override
   int get hashCode => groupId.hashCode;
@@ -114,7 +126,10 @@ class SeriesType implements ValueTypeIdentifier {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is SeriesType && runtimeType == other.runtimeType && seriesId == other.seriesId;
+      identical(this, other) ||
+      other is SeriesType &&
+          runtimeType == other.runtimeType &&
+          seriesId == other.seriesId;
 
   @override
   int get hashCode => seriesId.hashCode;
@@ -170,7 +185,8 @@ class GroupFungible implements AssetType {
           qdType == other.qdType;
 
   @override
-  int get hashCode => groupId.hashCode ^ seriesAlloyOrId.hashCode ^ qdType.hashCode;
+  int get hashCode =>
+      groupId.hashCode ^ seriesAlloyOrId.hashCode ^ qdType.hashCode;
 }
 
 /// A Series fungible asset type, identified by a SeriesId, a Group alloy, and a QuantityDescriptorType. If the asset is
@@ -196,5 +212,6 @@ class SeriesFungible implements AssetType {
           qdType == other.qdType;
 
   @override
-  int get hashCode => seriesId.hashCode ^ groupAlloyOrId.hashCode ^ qdType.hashCode;
+  int get hashCode =>
+      seriesId.hashCode ^ groupAlloyOrId.hashCode ^ qdType.hashCode;
 }
