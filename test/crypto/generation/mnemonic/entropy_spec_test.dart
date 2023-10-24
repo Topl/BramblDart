@@ -1,5 +1,4 @@
 import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
-import 'package:brambl_dart/src/crypto/generation/mnemonic/language.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';

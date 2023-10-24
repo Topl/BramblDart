@@ -1,12 +1,11 @@
 import 'package:brambl_dart/src/crypto/generation/key_initializer/ed25519_initializer.dart';
 import 'package:brambl_dart/src/crypto/generation/key_initializer/extended_ed25519_initializer.dart';
-import 'package:brambl_dart/src/crypto/generation/mnemonic/language.dart';
 import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519.dart';
 import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart'
     as spec;
+import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart'
     as x_spec;
-import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
