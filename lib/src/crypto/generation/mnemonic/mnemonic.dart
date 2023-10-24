@@ -1,4 +1,3 @@
-library mnemonic;
 
 import 'package:brambl_dart/src/crypto/generation/mnemonic/phrase.dart';
 

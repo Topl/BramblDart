@@ -361,10 +361,10 @@ class Verifier {
 
     final (msg, a, b) = (messageResult, leftResult, rightResult);
 
-    if (msg.getOrElse(false) == true && a.isRight) {
+    if (msg.getOrElse(false) && a.isRight) {
       return Either.right(true);
     }
-    if (msg.getOrElse(false) == true && b.isRight) {
+    if (msg.getOrElse(false) && b.isRight) {
       return Either.right(true);
     }
     if (b.isRight) {
