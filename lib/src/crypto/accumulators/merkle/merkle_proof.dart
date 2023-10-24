@@ -34,8 +34,8 @@ class MerkleProof {
     required this.hashFunction,
   });
 
-  static final leftSide = const Side(0);
-  static final rightSide = const Side(1);
+  static const leftSide = Side(0);
+  static const rightSide = Side(1);
 
   bool valid(Digest expectedRootHash) {
     final leafHash = hashFunction

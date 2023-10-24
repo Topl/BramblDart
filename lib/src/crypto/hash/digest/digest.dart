@@ -8,7 +8,7 @@ import 'package:meta/meta.dart';
 @immutable
 class Digest {
   final Uint8List bytes;
-  Digest(this.bytes);
+  const Digest(this.bytes);
 
   factory Digest.empty() => Digest(Uint8List(0));
 

@@ -11,7 +11,7 @@ abstract class EntropyToSeed {
 
   Uint8List toSeed(Entropy entropy, String? password,
       {required int seedLength}) {
-    final kdf = const Pbkdf2Sha512();
+    const kdf = Pbkdf2Sha512();
 
     return kdf.generateKey(password ?? "", entropy.value, seedLength, 4096);
   }

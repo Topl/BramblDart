@@ -23,7 +23,7 @@ main() {
     test('Entropy derived from UUIDs should result in valid mnemonic strings',
         () async {
       for (var i = 0; i < 10; i++) {
-        final uuid = const Uuid();
+        const uuid = Uuid();
         final entropy = Entropy.fromUuid(uuid);
 
         final res = await Entropy.toMnemonicString(entropy);

@@ -12,7 +12,7 @@ void main() {
 
       test('Generate 96 byte seed from entropy: ${vector.entropyString}',
           () async {
-        final entropyToSeed = const Pbkdf2Sha512();
+        const entropyToSeed = Pbkdf2Sha512();
         final seed = entropyToSeed.toSeed(vector.entropy, vector.password,
             seedLength: 96);
 
