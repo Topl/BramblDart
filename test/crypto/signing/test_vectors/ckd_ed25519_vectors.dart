@@ -24,10 +24,10 @@ class CkdEd25519TestVector {
       required this.childVerificationKey});
 
   factory CkdEd25519TestVector.fromJson(Map<String, Object> vector) {
-    final input = vector['inputs'] as Map<String, Object>;
-    final output = vector['outputs'] as Map<String, Object>;
+    final input = vector['inputs']! as Map<String, Object>;
+    final output = vector['outputs']! as Map<String, Object>;
 
-    final path = (input['path'] as List<List<Object>>).map((x) {
+    final path = (input['path']! as List<List<Object>>).map((x) {
       final type = x[0] as String;
       final index = x[1] as int;
       if (type == 'soft') {
@@ -40,11 +40,11 @@ class CkdEd25519TestVector {
     }).toList();
 
     // input
-    final rSkString = input['rootSecretKey'] as String;
+    final rSkString = input['rootSecretKey']! as String;
 
     Option<PublicKey> rootVerificationKey = None();
     if (input.containsKey("rootVerificationKey")) {
-      final rVkString = input['rootVerificationKey'] as String;
+      final rVkString = input['rootVerificationKey']! as String;
       final rootVkBytes = rVkString.toHexUint8List();
       rootVerificationKey = Some(PublicKey(
         spec.PublicKey(rootVkBytes.sublist(0, 32)),
@@ -57,8 +57,8 @@ class CkdEd25519TestVector {
     );
 
     // output
-    final cSkString = output['childSecretKey'] as String;
-    final cVkString = output['childVerificationKey'] as String;
+    final cSkString = output['childSecretKey']! as String;
+    final cVkString = output['childVerificationKey']! as String;
 
     final childSK = ExtendedEd25519Intializer(ExtendedEd25519()).fromBytes(
       cSkString.toHexUint8List(),
@@ -70,7 +70,7 @@ class CkdEd25519TestVector {
     );
 
     return CkdEd25519TestVector(
-      description: vector['description'] as String,
+      description: vector['description']! as String,
       rootSecretKey: rootSK as SecretKey,
       rootVerificationKey: rootVerificationKey,
       childSecretKey: childSK as SecretKey,

@@ -20,15 +20,15 @@ class Ed25519TestVector {
 }
 
 Ed25519TestVector parseVector(Map<String, Object> vector) {
-  final input = vector['inputs'] as Map<String, Object>;
-  final output = vector['outputs'] as Map<String, Object>;
+  final input = vector['inputs']! as Map<String, Object>;
+  final output = vector['outputs']! as Map<String, Object>;
 
   return Ed25519TestVector(
-    description: vector['description'] as String,
-    secretKey: input['secretKey'] as String,
-    message: input['message'] as String,
-    verificationKey: output['verificationKey'] as String,
-    signature: output['signature'] as String,
+    description: vector['description']! as String,
+    secretKey: input['secretKey']! as String,
+    message: input['message']! as String,
+    verificationKey: output['verificationKey']! as String,
+    signature: output['signature']! as String,
   );
 }
 
