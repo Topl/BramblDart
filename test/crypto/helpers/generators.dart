@@ -34,7 +34,7 @@ class Generators {
 
   /// Generate random bytes of length 32.
   static Uint8List getRandomBytes() {
-    final int length = 32;
+    const int length = 32;
     final r = Uint8List(length);
     final random = Random.secure();
     for (var i = 0; i < length; i++) {

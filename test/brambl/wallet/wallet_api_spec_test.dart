@@ -441,7 +441,7 @@ main() {
     test("saveMnemonic: verify a simple save", () async {
       final (mockWalletKeyApi, walletApi) = getWalletApi();
 
-      final name = "test";
+      const name = "test";
       final res =
           await walletApi.saveMnemonic(["a", "b", "c"], mnemonicName: name);
       expect(res.isRight, isTrue);

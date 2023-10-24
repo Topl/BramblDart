@@ -11,7 +11,7 @@ import '../helpers/generators.dart';
 
 void main() {
   final hf = blake2b256;
-  final leafSize = 32;
+  const leafSize = 32;
 
   group('Merkle Tree Spec', () {
     test('Proof generation by element', () {

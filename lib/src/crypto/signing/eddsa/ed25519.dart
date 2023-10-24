@@ -352,7 +352,7 @@ class Ed25519 extends EC {
     required int signatureOffset,
   }) {
     // PH MUST BE EITHER [SHA512] or [UInt8List]
-    final phflag = 0x01; // facilitate Prehash Functionality
+    const phflag = 0x01; // facilitate Prehash Functionality
     final phOff = phOffset ?? 0;
 
     if (phSha == null && ph == null) throw ArgumentError('Prehash is null');
@@ -405,7 +405,7 @@ class Ed25519 extends EC {
     required int messageOffset,
     required int messageLength,
   }) {
-    final phflag = 0x00;
+    const phflag = 0x00;
     final ctx = context ?? Uint8List(0);
 
     return _implVerify(
@@ -439,7 +439,7 @@ class Ed25519 extends EC {
     SHA512? phSha,
     required int phOff,
   }) {
-    final phflag = 0x01;
+    const phflag = 0x01;
 
     if (phSha == null && ph == null) throw ArgumentError('Prehash is null');
     if (phSha == null && ph != null) {

@@ -110,7 +110,7 @@ main() {
         () {
       final ed25519 = Ed25519();
       final e = Entropy("topl".toUtf8Uint8List());
-      final p = "topl";
+      const p = "topl";
 
       final specOutSk =
           "d8f0ad4d22ec1a143905af150e87c7f0dadd13749ef56fbd1bb380c37bc18cf8"

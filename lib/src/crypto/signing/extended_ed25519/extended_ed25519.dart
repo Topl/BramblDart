@@ -31,7 +31,7 @@ class ExtendedEd25519
     final resultSig = Uint8List(ExtendedEd25519Spec.signatureLength);
     final pk = Uint8List(ExtendedEd25519Spec.publicKeyLength);
     final ctx = Uint8List(0);
-    final phflag = 0x00;
+    const phflag = 0x00;
     final leftKeyDataArray = privateKey.leftKey;
     final h = Uint8List.fromList([...leftKeyDataArray, ...privateKey.rightKey]);
     final s = leftKeyDataArray;

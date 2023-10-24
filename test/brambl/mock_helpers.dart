@@ -44,7 +44,7 @@ final mockChildKeyPair = ExtendedEd25519().deriveKeyPairFromChildPath(
   ],
 );
 
-final mockSigningRoutine = 'ExtendedEd25519';
+const mockSigningRoutine = 'ExtendedEd25519';
 
 final mockSignatureProposition = Proposer.signatureProposer(
     mockSigningRoutine, ProtoConverters.keyPairToProto(mockChildKeyPair).vk)
@@ -62,7 +62,7 @@ final mockPreimage = Preimage(
   ..freeze();
 
 // Hardcoding Blake2b256
-final mockDigestRoutine = 'Blake2b256';
+const mockDigestRoutine = 'Blake2b256';
 
 final mockDigest = Digest(
     value: Blake2b256()
@@ -73,9 +73,9 @@ final mockDigestProposition =
 final mockDigestProof = Prover.digestProver(mockPreimage, fakeMsgBind)
   ..freeze();
 
-final mockMin = 0;
-final mockMax = 100;
-final mockChain = 'header';
+const mockMin = 0;
+const mockMax = 100;
+const mockChain = 'header';
 final mockTickProposition =
     Proposer.tickProposer(mockMin.toInt64, mockMax.toInt64)..freeze();
 final mockTickProof = Prover.tickProver(fakeMsgBind)..freeze();

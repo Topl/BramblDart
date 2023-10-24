@@ -112,7 +112,7 @@ main() {
       final xEd25519 = ExtendedEd25519();
 
       final e = Entropy("topl".toUtf8Uint8List());
-      final p = "topl";
+      const p = "topl";
 
       final specOutSk = x_spec.SecretKey(
         "d8f0ad4d22ec1a143905af150e87c7f0dadd13749ef56fbd1bb380c37bc18c58"
@@ -181,7 +181,7 @@ main() {
       final xEd25519 = ExtendedEd25519();
 
       final e = Entropy("topl".toUtf8Uint8List());
-      final p = "topl";
+      const p = "topl";
 
       final specOutSk = x_spec.SecretKey(
         "d8f0ad4d22ec1a143905af150e87c7f0dadd13749ef56fbd1bb380c37bc18c58"

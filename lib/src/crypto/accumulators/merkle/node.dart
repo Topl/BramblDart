@@ -23,7 +23,7 @@ class InternalNode extends Node {
 
   @override
   Digest get hash {
-    final prefix = MerkleTree.internalNodePrefix;
+    const prefix = MerkleTree.internalNodePrefix;
     final leftBytes = left.hash.bytes;
     final rightBytes = right?.hash.bytes ?? Uint8List(0);
     return h.hashWithPrefix(prefix, [leftBytes, rightBytes]);
@@ -41,7 +41,7 @@ class Leaf extends Node {
 
   @override
   Digest get hash {
-    final prefix = MerkleTree.leafPrefix;
+    const prefix = MerkleTree.leafPrefix;
     return h.hashWithPrefix(prefix, [data.value.toUint8List()]);
   }
 }

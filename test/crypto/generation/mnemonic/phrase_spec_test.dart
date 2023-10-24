@@ -32,7 +32,7 @@ main() {
     });
 
     test('12 phrase mnemonic with valid words should be valid', () async {
-      final phrase =
+      const phrase =
           "cat swing flag economy stadium alone churn speed unique patch report train";
       final mnemonic =
           await Phrase.validated(words: phrase, language: English());
@@ -42,7 +42,7 @@ main() {
 
     test('12 phrase mnemonic with invalid word length should be invalid',
         () async {
-      final phrase = "result fresh margin life life filter vapor trim";
+      const phrase = "result fresh margin life life filter vapor trim";
       final mnemonic =
           await Phrase.validated(words: phrase, language: English());
 
@@ -50,7 +50,7 @@ main() {
     });
 
     test('12 phrase mnemonic with invalid words should be invalid', () async {
-      final phrase =
+      const phrase =
           "amber glue hallway can truth drawer wave flex cousin grace close compose";
       final mnemonic =
           await Phrase.validated(words: phrase, language: English());
@@ -61,7 +61,7 @@ main() {
     test(
         '12 phrase mnemonic with valid words and invalid checksum should be invalid',
         () async {
-      final phrase =
+      const phrase =
           "ugly wire busy skate slice kidney razor eager bicycle struggle aerobic picnic";
       final mnemonic =
           await Phrase.validated(words: phrase, language: English());
@@ -70,7 +70,7 @@ main() {
     });
 
     test('mnemonic with extra whitespace is valid', () async {
-      final phrase =
+      const phrase =
           "vessel ladder alter error  federal sibling chat   ability sun glass valve picture";
       final mnemonic =
           await Phrase.validated(words: phrase, language: English());
@@ -80,9 +80,9 @@ main() {
 
     test('mnemonic with extra whitespace has same value as single spaced',
         () async {
-      final phrase1 =
+      const phrase1 =
           "vessel ladder alter error federal sibling chat ability sun glass valve picture";
-      final phrase2 =
+      const phrase2 =
           "vessel ladder alter error  federal sibling chat   ability sun glass valve picture";
 
       final mnemonic1 =
@@ -96,7 +96,7 @@ main() {
     });
 
     test('mnemonic with capital letters is valid', () async {
-      final phrase = "Legal Winner Thank Year Wave Sausage Worth Useful Legal "
+      const phrase = "Legal Winner Thank Year Wave Sausage Worth Useful Legal "
           "Winner Thank Year Wave Sausage Worth Useful Legal Will";
       final mnemonic =
           await Phrase.validated(words: phrase, language: English());
@@ -106,9 +106,9 @@ main() {
 
     test('mnemonic with capital letters has same entropy as lowercase',
         () async {
-      final phrase1 = "Legal Winner Thank Year Wave Sausage Worth Useful Legal "
+      const phrase1 = "Legal Winner Thank Year Wave Sausage Worth Useful Legal "
           "Winner Thank Year Wave Sausage Worth Useful Legal Will";
-      final phrase2 = "legal winner thank year wave sausage worth useful legal "
+      const phrase2 = "legal winner thank year wave sausage worth useful legal "
           "winner thank year wave sausage worth useful legal will";
 
       final mnemonic1 =

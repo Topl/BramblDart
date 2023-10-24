@@ -785,7 +785,7 @@ class EC {
   void scalarMultStraussVar(
       Int32List nb, Int32List np, PointExt p, PointAccum r) {
     // Set the window size to 5.
-    final width = 5;
+    const width = 5;
 
     // Compute the WNAF of the scalar values nb and np.
     // NOTE: We're converting to signed here because signed bits
@@ -926,12 +926,12 @@ final C_d4 = Int32List.fromList([
   0x00901b67
 ]);
 
-final WNAF_WIDTH_BASE = 7;
-final PRECOMP_BLOCKS = 8;
-final PRECOMP_TEETH = 4;
-final PRECOMP_SPACING = 8;
-final PRECOMP_POINTS = 1 << PRECOMP_TEETH - 1;
-final PRECOMP_MASK = PRECOMP_POINTS - 1;
+const WNAF_WIDTH_BASE = 7;
+const PRECOMP_BLOCKS = 8;
+const PRECOMP_TEETH = 4;
+const PRECOMP_SPACING = 8;
+const PRECOMP_POINTS = 1 << PRECOMP_TEETH - 1;
+const PRECOMP_MASK = PRECOMP_POINTS - 1;
 final M = Int64(0xffffffff);
 
 class PointAccum {
