@@ -610,12 +610,12 @@ LockAddressOps lockAddressOps(LockAddress lockAddress) {
 }
 
 class UserInputError extends BuilderError {
-  UserInputError(String message) : super(message);
+  UserInputError(String super.message);
 }
 
 class UnableToBuildTransaction extends BuilderError {
-  UnableToBuildTransaction(String message, Exception cause)
-      : super(message, exception: cause);
+  UnableToBuildTransaction(String super.message, Exception cause)
+      : super(exception: cause);
 }
 
 extension Int128IntListExtension on List<int> {

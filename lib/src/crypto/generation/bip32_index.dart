@@ -16,7 +16,7 @@ sealed class Bip32Index {
 }
 
 class SoftIndex extends Bip32Index {
-  SoftIndex(int value) : super(value);
+  SoftIndex(super.value);
 }
 
 class HardenedIndex extends Bip32Index {

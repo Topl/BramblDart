@@ -49,8 +49,8 @@ extension PropositionTypeExtension on PropositionType {
 }
 
 final class UnableToBuildPropositionTemplate extends BuilderError {
-  UnableToBuildPropositionTemplate(String message, {Exception? cause})
-      : super(message, exception: cause);
+  UnableToBuildPropositionTemplate(String super.message, {Exception? cause})
+      : super(exception: cause);
 }
 
 sealed class PropositionTemplate {
