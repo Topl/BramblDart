@@ -29,7 +29,7 @@ class DynamicContext {
 
   /// can return wrapped[ContextError.failedToFindDigestVerifier]
   QuivrResult<DigestVerification> digestVerify(String routine, DigestVerification verification) {
-    var verifier = hashingRoutines.containsKey(routine) ? hashingRoutines[routine] : null;
+    final verifier = hashingRoutines.containsKey(routine) ? hashingRoutines[routine] : null;
 
     // uses equality operator instead of .isNull for type promotion
     if (verifier == null) return QuivrResult.left(ContextError.failedToFindDigestVerifier());
@@ -42,7 +42,7 @@ class DynamicContext {
 
   /// can return wrapped [ContextError.failedToFindSignatureVerifier]
   QuivrResult<SignatureVerification> signatureVerify(String routine, SignatureVerification verification) {
-    var verifier = signingRoutines.containsKey(routine) ? signingRoutines[routine] : null;
+    final verifier = signingRoutines.containsKey(routine) ? signingRoutines[routine] : null;
 
     // uses equality operator instead of .isNull for type promotion
     if (verifier == null) return QuivrResult.left(ContextError.failedToFindSignatureVerifier());
@@ -55,7 +55,7 @@ class DynamicContext {
 
   /// can return wrapped [ContextError.failedToFindInterface]
   QuivrResult<Data> useInterface(String label) {
-    var interface = interfaces.containsKey(label) ? interfaces[label] : null;
+    final interface = interfaces.containsKey(label) ? interfaces[label] : null;
 
     // uses equality operator instead of .isNull for type promotion
     if (interface == null) return QuivrResult<Data>.left(ContextError.failedToFindInterface());
@@ -64,7 +64,7 @@ class DynamicContext {
   }
 
   exactMatch(String label, List<int> compareTo) {
-    var result = useInterface(label);
+    final result = useInterface(label);
 
     if (result.isLeft) return false;
 
@@ -72,7 +72,7 @@ class DynamicContext {
   }
 
   lessThan(String label, BigInt compareTo) {
-    var result = useInterface(label);
+    final result = useInterface(label);
 
     if (result.isLeft) return false;
 
@@ -80,7 +80,7 @@ class DynamicContext {
   }
 
   greaterThan(String label, BigInt compareTo) {
-    var result = useInterface(label);
+    final result = useInterface(label);
 
     if (result.isLeft) return false;
 
@@ -88,7 +88,7 @@ class DynamicContext {
   }
 
   equalTo(String label, BigInt compareTo) {
-    var result = useInterface(label);
+    final result = useInterface(label);
 
     if (result.isLeft) return false;
 

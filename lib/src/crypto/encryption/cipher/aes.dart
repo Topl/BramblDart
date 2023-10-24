@@ -12,16 +12,21 @@ import 'package:pointycastle/export.dart';
 /// Aes is a symmetric block cipher that can encrypt and decrypt data using the same key.
 /// @see [[https://en.wikipedia.org/wiki/Advanced_Encryption_Standard]]
 class Aes implements Cipher {
+
+  Aes({Uint8List? iv, AesParams? params}) {
+    this.params = params ?? AesParams(iv ?? generateIv());
+  }
+
+  factory Aes.fromJson(Map<String, dynamic> json) {
+    final params = AesParams.fromJson(json);
+    return Aes(params: params);
+  }
   static const blockSize = 16;
 
   /// Generate a random initialization vector.
   static Uint8List generateIv() {
     final rand = Random.secure();
     return List.generate(blockSize, (_) => rand.nextInt(256)).toUint8List();
-  }
-
-  Aes({Uint8List? iv, AesParams? params}) {
-    this.params = params ?? AesParams(iv ?? generateIv());
   }
 
   /// Encrypt data.
@@ -83,11 +88,6 @@ class Aes implements Cipher {
   @override
   int get hashCode => params.hashCode;
 
-  factory Aes.fromJson(Map<String, dynamic> json) {
-    final params = AesParams.fromJson(json);
-    return Aes(params: params);
-  }
-
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> json = {'cipher': params.cipher, ...params.toJson()};
@@ -99,14 +99,19 @@ class Aes implements Cipher {
 ///
 /// [iv] initialization vector
 class AesParams extends Params {
-  Uint8List iv;
-
-  @override
-  String get cipher => 'aes';
 
   AesParams(this.iv);
 
   factory AesParams.generate() => AesParams(Aes.generateIv());
+
+  factory AesParams.fromJson(Map<String, dynamic> json) {
+    final iv = Json.decodeUint8List(json['iv']);
+    return AesParams(iv);
+  }
+  Uint8List iv;
+
+  @override
+  String get cipher => 'aes';
 
   @override
   bool operator ==(Object other) =>
@@ -118,10 +123,5 @@ class AesParams extends Params {
 
   Map<String, dynamic> toJson() {
     return {'iv': Json.encodeUint8List(iv)};
-  }
-
-  factory AesParams.fromJson(Map<String, dynamic> json) {
-    final iv = Json.decodeUint8List(json['iv']);
-    return AesParams(iv);
   }
 }

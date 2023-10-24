@@ -6,7 +6,7 @@ import '../common/quivr_result.dart';
 class DigestVerifier<T> implements ContextlessValidation<T> {
   final Function(T) definedFunction;
 
-  DigestVerifier(this.definedFunction);
+  const DigestVerifier(this.definedFunction);
 
   @override
   QuivrResult<T> validate(t) => definedFunction(t);

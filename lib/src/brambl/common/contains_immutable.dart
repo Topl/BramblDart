@@ -526,7 +526,7 @@ class ContainsImmutable {
   /// consider using the direct type for better performance
   ///
   /// primarily implemented for the List function
-  static ContainsImmutable apply(type) {
+  static ContainsImmutable apply(dynamic type) {
     /// dart does not support proper type checking in switch statements
     /// ergo: A horrible if/else chain
     if (type is ContainsImmutable) {
@@ -536,8 +536,10 @@ class ContainsImmutable {
     }
 
     /// base types
-    else if (type is Uint8List || type is List<int>) {
-      return ContainsImmutable(type);
+    else if (type is List<int>) {
+      return ContainsImmutable(type.immutableBytes);
+    } else if (type is Uint8List) {
+      return ContainsImmutable(type.immutableBytes);
     } else if (type is int) {
       return ContainsImmutable.int(type);
     } else if (type is String) {

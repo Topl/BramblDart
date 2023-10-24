@@ -1,5 +1,6 @@
 import 'package:brambl_dart/src/brambl/common/contains_immutable.dart';
 import 'package:brambl_dart/src/brambl/common/contains_signable.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:test/test.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
 
@@ -14,7 +15,7 @@ void main() {
       iterable.map((e) => txFull..inputs.add(e));
       final withProofs = txFull;
 
-      final emptyAttestation = Attestation(predicate: inPredicateLockFullAttestation..responses.clear());
+      final emptyAttestation = Attestation(predicate: inPredicateLockFullAttestation.rebuild((p0) => p0.responses.clear()));
       final iterable2 = withProofs.inputs.map((stxo) => stxo..attestation = emptyAttestation);
       iterable2.map((e) => withProofs.inputs.add(e));
       final noProofs = withProofs;
@@ -35,7 +36,7 @@ void main() {
       final iterable = txFull.inputs.map((stxo) => stxo..attestation = nonEmptyAttestation);
       iterable.map((e) => txFull.inputs.add(e));
       final withProofs = txFull;
-      
+
       final signableFull = withProofs.signable.value;
       final signableEmpty = txFull.signable.value;
       expect(signableFull.length, equals(signableEmpty.length));

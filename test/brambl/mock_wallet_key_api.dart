@@ -29,7 +29,7 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
     if (json == null) {
       return Either.left(WalletKeyException.vaultStoreNotInitialized());
     } else {
-      return (VaultStore.fromJson(jsonDecode(json)))
+      return VaultStore.fromJson(jsonDecode(json))
           .toOption()
           .fold((p0) => Either.right(p0), () => Either.left(WalletKeyException.decodeVaultStore()));
     }

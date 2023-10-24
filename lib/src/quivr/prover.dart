@@ -17,7 +17,7 @@ class Prover {
   /// [tag] is an identifier of the Operation
   /// [message] unique bytes from a transaction that will be bound to the proof
   /// @return [TxBind] / array of bytes that is similar to a "signature" for the proof
-  static _blake2b56ToTxBind(String tag, SignableBytes message) {
+  static TxBind _blake2b56ToTxBind(String tag, SignableBytes message) {
     final m = utf8.encode(tag) + message.value;
     final h = blake2b256.convert(m).bytes;
     return TxBind()..value = h;
