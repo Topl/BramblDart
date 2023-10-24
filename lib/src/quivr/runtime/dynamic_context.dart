@@ -40,8 +40,9 @@ class DynamicContext {
         hashingRoutines.containsKey(routine) ? hashingRoutines[routine] : null;
 
     // uses equality operator instead of .isNull for type promotion
-    if (verifier == null)
+    if (verifier == null) {
       return QuivrResult.left(ContextError.failedToFindDigestVerifier());
+    }
 
     final result =
         verifier.validate(verification) as QuivrResult<DigestVerification>;
@@ -57,8 +58,9 @@ class DynamicContext {
         signingRoutines.containsKey(routine) ? signingRoutines[routine] : null;
 
     // uses equality operator instead of .isNull for type promotion
-    if (verifier == null)
+    if (verifier == null) {
       return QuivrResult.left(ContextError.failedToFindSignatureVerifier());
+    }
 
     final result =
         verifier.validate(verification) as QuivrResult<SignatureVerification>;
@@ -72,8 +74,9 @@ class DynamicContext {
     final interface = interfaces.containsKey(label) ? interfaces[label] : null;
 
     // uses equality operator instead of .isNull for type promotion
-    if (interface == null)
+    if (interface == null) {
       return QuivrResult<Data>.left(ContextError.failedToFindInterface());
+    }
 
     return QuivrResult<Data>.right(interface.parse((data) => data));
   }

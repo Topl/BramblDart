@@ -392,8 +392,9 @@ main() {
 
       final f = validationErrs.first;
       if (f is TransactionAuthorizationError) {
-        if (f.type == TransactionAuthorizationErrorType.authorizationFailed)
+        if (f.type == TransactionAuthorizationErrorType.authorizationFailed) {
           errors.update(f.errors);
+        }
       }
 
       final validQuivrErrs = errors.length == 1 &&
@@ -436,8 +437,9 @@ main() {
 
       final f = validationErrs.first;
       if (f is TransactionAuthorizationError) {
-        if (f.type == TransactionAuthorizationErrorType.authorizationFailed)
+        if (f.type == TransactionAuthorizationErrorType.authorizationFailed) {
           errors.update(f.errors);
+        }
       }
 
       final validQuivrErrs = errors.length == 1 &&
@@ -480,8 +482,9 @@ main() {
       final List<quivr.QuivrRunTimeError> errors = [];
       final f = validationErrs.first;
       if (f is TransactionAuthorizationError) {
-        if (f.checkType(TransactionAuthorizationErrorType.authorizationFailed))
+        if (f.checkType(TransactionAuthorizationErrorType.authorizationFailed)) {
           errors.update(f.errors);
+        }
       }
 
       final validQuivrErrs = errors.length == 1 &&

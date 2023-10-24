@@ -124,8 +124,9 @@ class TransactionSyntaxInterpreter {
     for (final output in transaction.outputs) {
       final quantity = getQuantity(output.value);
       if (quantity == null) continue;
-      if (quantity <= BigInt.zero)
+      if (quantity <= BigInt.zero) {
         errors.add(TransactionSyntaxError.nonPositiveOutputValue(output.value));
+      }
     }
     return errors.isEmpty
         ? ListEither.right<TransactionSyntaxError, Unit>([const Unit()])
