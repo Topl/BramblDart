@@ -151,7 +151,7 @@ final class MerkleTree {
   }
 
   int get lengthWithEmptyLeafs {
-    return max(pow(2, _log2(length.toDouble()).ceil()).toInt(), 2);
+    return max(pow(2, _log2(length.toDouble())).toInt(), 2);
   }
 
   int _log2(double x) => (log(x) / ln2).ceil();

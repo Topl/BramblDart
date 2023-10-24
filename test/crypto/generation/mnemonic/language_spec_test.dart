@@ -21,7 +21,7 @@ main() {
 
   group('Language Spec Test Vectors', () {
     for (final language in languages) {
-      test("Language resolves wordlist${language.toString()}", () async {
+      test("Language resolves wordlist${language}", () async {
         final x = await LanguageWordList.validated(language);
         expect(x.isRight, isTrue);
       });

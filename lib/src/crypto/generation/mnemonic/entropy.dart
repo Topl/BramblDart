@@ -71,7 +71,7 @@ class Entropy {
 
   static Entropy fromUuid(Uuid uuid) {
     final bytes = Uint8List.fromList(
-        uuid.v4().toString().replaceAll('-', '').split('').map((c) {
+        uuid.v4().replaceAll('-', '').split('').map((c) {
       return int.parse(c, radix: 16);
     }).toList());
     return Entropy(bytes);
