@@ -22,13 +22,13 @@ void main() {
           () async {
         final ed25519SkRes = await Ed25519Initializer(Ed25519())
             .fromMnemonicString(vector.mnemonic,
-                password: vector.password, language: const English());
+                password: vector.password);
         final ed25519Sk = ed25519SkRes.right! as spec.SecretKey;
 
         final extendedEd25519SkRes =
             await ExtendedEd25519Intializer(ExtendedEd25519())
                 .fromMnemonicString(vector.mnemonic,
-                    password: vector.password, language: const English());
+                    password: vector.password);
 
         final extendedEd25519Sk =
             extendedEd25519SkRes.right! as x_spec.SecretKey;

@@ -37,10 +37,9 @@ main() {
         final mnemonicSize = Generators.getGeneratedMnemonicSize;
         final entropy1 = Entropy.generate(size: mnemonicSize);
         final entropy2Res =
-            await Entropy.toMnemonicString(entropy1, language: const English());
+            await Entropy.toMnemonicString(entropy1);
         final entropy2String = entropy2Res.right!.join(" ");
-        final entropy2 = await Entropy.fromMnemonicString(entropy2String,
-            language: const English());
+        final entropy2 = await Entropy.fromMnemonicString(entropy2String);
 
         expect(const ListEquality().equals(entropy1.value, entropy2.right!.value),
             isTrue);
@@ -55,8 +54,7 @@ main() {
             'Test vector mnemonic should produce known entropy. Mnemonic: ${vector.mnemonic}',
             () async {
           final actualEntropy = await Entropy.fromMnemonicString(
-              vector.mnemonic,
-              language: const English());
+              vector.mnemonic);
           expect(actualEntropy.isRight, isTrue);
           expect(
               const ListEquality()
