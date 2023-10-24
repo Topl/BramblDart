@@ -23,7 +23,6 @@ class Digest {
 
 /// Represents a Digest and the ability to convert to and from bytes.
 class Digest32 {
-
   Digest32._();
   static const size = 32;
 
@@ -38,7 +37,6 @@ class Digest32 {
 
 /// Represents a Digest and the ability to convert to and from bytes.
 class Digest64 {
-
   Digest64._();
   static const size = 64;
 
@@ -53,7 +51,6 @@ class Digest64 {
 
 @immutable
 class InvalidDigestFailure implements Exception {
-
   const InvalidDigestFailure(this.message);
   final String message;
 }

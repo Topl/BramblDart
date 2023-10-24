@@ -13,7 +13,6 @@ import 'package:uuid/uuid.dart';
 import 'key_initializer.dart';
 
 class Ed25519Initializer implements KeyInitializer {
-
   Ed25519Initializer(this.ed25519);
   final Ed25519 ed25519;
 

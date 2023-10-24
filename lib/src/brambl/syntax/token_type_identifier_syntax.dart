@@ -22,7 +22,6 @@ extension TypeIdentifierToQuantityDescriptorExtension on ValueTypeIdentifier {
 }
 
 class ValueToTypeIdentifierSyntaxOps {
-
   ValueToTypeIdentifierSyntaxOps(this.value);
   final Value value;
 
@@ -75,7 +74,6 @@ extension BytesValToString on BytesValue {
 }
 
 class TypeIdentifierToQuantityDescriptorSyntaxOps {
-
   TypeIdentifierToQuantityDescriptorSyntaxOps(this.typeIdentifier);
   final ValueTypeIdentifier typeIdentifier;
 
@@ -102,7 +100,6 @@ class LvlType implements ValueTypeIdentifier {}
 ///
 /// [groupId] The GroupId of the Group Constructor Token
 class GroupType implements ValueTypeIdentifier {
-
   GroupType(this.groupId);
   final GroupId groupId;
 
@@ -120,7 +117,6 @@ class GroupType implements ValueTypeIdentifier {
 /// A Series Constructor Token value type, identified by a SeriesId
 /// [seriesId] The SeriesId of the Series Constructor Token
 class SeriesType implements ValueTypeIdentifier {
-
   SeriesType(this.seriesId);
   final SeriesId seriesId;
 
@@ -143,7 +139,6 @@ abstract class AssetType implements ValueTypeIdentifier {}
 /// [seriesId] The SeriesId of the asset
 /// [qdType] The QuantityDescriptorType of the asset
 class GroupAndSeriesFungible implements AssetType {
-
   GroupAndSeriesFungible(this.groupId, this.seriesId, this.qdType);
   final GroupId groupId;
   final SeriesId seriesId;
@@ -169,7 +164,6 @@ class GroupAndSeriesFungible implements AssetType {
 /// [seriesAlloyOrId] If the asset is an alloy, the Series alloy. Else the SeriesId of the asset
 /// [qdType] The QuantityDescriptorType of the asset
 class GroupFungible implements AssetType {
-
   GroupFungible(this.groupId, this.seriesAlloyOrId, this.qdType);
   final GroupId groupId;
   final ByteString seriesAlloyOrId;
@@ -196,7 +190,6 @@ class GroupFungible implements AssetType {
 /// [groupAlloyOrId] If the asset is an alloy, the Group alloy. Else the GroupId of the asset
 /// [qdType] The QuantityDescriptorType of the asset
 class SeriesFungible implements AssetType {
-
   SeriesFungible(this.seriesId, this.groupAlloyOrId, this.qdType);
   final SeriesId seriesId;
   final ByteString groupAlloyOrId;

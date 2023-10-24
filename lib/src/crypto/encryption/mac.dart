@@ -8,7 +8,6 @@ import 'package:pointycastle/digests/blake2b.dart';
 ///
 /// @see [[https://en.wikipedia.org/wiki/Message_authentication_code]]
 class Mac {
-
   /// Create MAC for a KeyFile.
   /// The KeyFile MAC is used to verify the integrity of the cipher text and derived key.
   /// It is calculated by hashing the last 16 bytes of the derived key + cipher text

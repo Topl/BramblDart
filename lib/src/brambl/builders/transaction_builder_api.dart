@@ -269,7 +269,6 @@ abstract class TransactionBuilderApiDefinition {
 }
 
 class TransactionBuilderApi implements TransactionBuilderApiDefinition {
-
   TransactionBuilderApi(this.networkId, this.ledgerId);
   final int networkId;
   final int ledgerId;
@@ -565,7 +564,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
           LockAddress mintedAssetLockAddress,
           {ByteString? ephemeralMetadata,
           Uint8List? commitment}) {
-    // TODO: implement buildSimpleAssetMintingTransaction
+    // TODO(ultimaterex): implement buildSimpleAssetMintingTransaction
     throw UnimplementedError();
   }
 
@@ -577,7 +576,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
       LockAddress changeLockAddress,
       int fee,
       {ValueTypeIdentifier? tokenIdentifier}) {
-    // TODO: implement buildTransferAllTransaction
+    // TODO(ultimaterex): implement buildTransferAllTransaction
     throw UnimplementedError();
   }
 
@@ -596,7 +595,6 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
 }
 
 class LockAddressOps {
-
   LockAddressOps(this.lockAddress);
   final LockAddress lockAddress;
 

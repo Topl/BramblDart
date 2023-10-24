@@ -27,8 +27,8 @@ class Verifier {
     final merge = utf8.encode(tag) + sb.value.toUint8List();
     final verifierTxBind = blake2b256.hash(merge.toUint8List());
 
-    final result =
-        const ListEquality().equals(verifierTxBind, proofTxBind.value.toUint8List());
+    final result = const ListEquality()
+        .equals(verifierTxBind, proofTxBind.value.toUint8List());
 
     return result
         ? QuivrResult.right(result)

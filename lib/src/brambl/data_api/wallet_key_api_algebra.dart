@@ -58,7 +58,6 @@ abstract class WalletKeyApiAlgebra {
 }
 
 class WalletKeyException implements Exception {
-
   const WalletKeyException(this.type, this.message);
 
   factory WalletKeyException.decodeVaultStore({String? context}) =>

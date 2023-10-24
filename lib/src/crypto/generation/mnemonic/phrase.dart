@@ -7,7 +7,6 @@ import 'package:brambl_dart/src/crypto/generation/mnemonic/mnemonic.dart';
 import 'package:brambl_dart/src/crypto/hash/sha.dart';
 
 class Phrase {
-
   Phrase({
     required this.value,
     required this.size,
@@ -142,7 +141,6 @@ class Phrase {
 }
 
 class PhraseFailure implements Exception {
-
   PhraseFailure(this.type, this.message);
 
   factory PhraseFailure.invalidWordLength({String? context}) =>
@@ -159,6 +157,7 @@ class PhraseFailure implements Exception {
 
   factory PhraseFailure.wordListFailure({String? context}) =>
       PhraseFailure(PhraseFailureType.invalidEntropyLength, context);
+
   /// A message describing the error.
   final String? message;
   final PhraseFailureType type;

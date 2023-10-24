@@ -54,7 +54,6 @@ abstract class Credentialler {
 }
 
 class CredentiallerInterpreter implements Credentialler {
-
   CredentiallerInterpreter(this.walletApi, this.walletStateApi, this.mainKey) {
     assert(mainKey.vk.hasExtendedEd25519(),
         "mainKey must be an extended Ed25519 key");

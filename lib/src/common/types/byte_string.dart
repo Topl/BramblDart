@@ -6,7 +6,6 @@ import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
 
 /// A class that represents a sequence of bytes. uses [Uint8List] under the hood
 class ByteString {
-
   /// Creates a new [ByteString] object from the given [Uint8List]
   const ByteString(this._bytes);
 

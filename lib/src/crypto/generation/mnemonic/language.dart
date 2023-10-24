@@ -5,7 +5,6 @@ import 'package:brambl_dart/src/crypto/hash/sha.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 sealed class Language {
-
   const Language(this.filePath, this.hash);
   final String filePath;
   final String hash;
@@ -73,7 +72,6 @@ class Portuguese extends Language {
 }
 
 class LanguageWordList {
-
   const LanguageWordList(this.value);
   final List<String> value;
 
@@ -120,7 +118,6 @@ class LanguageWordList {
 sealed class ValidationFailure implements Exception {}
 
 class FileReadFailure implements ValidationFailure {
-
   const FileReadFailure(this.exception);
   final Object exception;
 }

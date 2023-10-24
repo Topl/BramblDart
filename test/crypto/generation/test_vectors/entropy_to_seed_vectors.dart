@@ -2,7 +2,6 @@ import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 class EntropyToSeedVector {
-
   EntropyToSeedVector({
     required this.entropy,
     required this.entropyString,

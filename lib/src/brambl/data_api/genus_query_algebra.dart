@@ -5,8 +5,8 @@ import 'package:topl_common/proto/genus/genus_rpc.pbgrpc.dart';
 
 /// Defines a Genus Query API for interacting with a Genus node.
 class GenusQueryAlgebra {
-
   GenusQueryAlgebra(this.channel) : client = TransactionServiceClient(channel);
+
   /// The gRPC channel to the node.
   final Channel channel;
 
@@ -22,8 +22,7 @@ class GenusQueryAlgebra {
       {required LockAddress fromAddress,
       TxoState txoState = TxoState.UNSPENT}) async {
     final response = await client.getTxosByLockAddress(
-      QueryByLockAddressRequest(
-          address: fromAddress, state: txoState),
+      QueryByLockAddressRequest(address: fromAddress, state: txoState),
     );
     return response.txos;
   }

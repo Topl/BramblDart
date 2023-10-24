@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 sealed class Bip32Index {
-
   Bip32Index(this.value);
   final int value;
 

@@ -2,7 +2,6 @@ import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 
 class TransactionIdSyntax {
-
   TransactionIdSyntax(this.id);
   final TransactionId id;
 

@@ -11,7 +11,6 @@ import 'package:pointycastle/export.dart';
 /// SCrypt is a key derivation function.
 /// @see [[https://en.wikipedia.org/wiki/Scrypt]]
 class SCrypt implements Kdf {
-
   SCrypt(this.params);
 
   /// Create a SCrypt with generated salt.
@@ -60,7 +59,6 @@ class SCrypt implements Kdf {
 }
 
 class SCryptParams extends Params {
-
   /// SCrypt parameters.
   ///
   /// [salt]  salt

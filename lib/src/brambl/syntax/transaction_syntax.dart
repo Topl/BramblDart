@@ -6,7 +6,6 @@ import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 
 class TransactionSyntax {
-
   TransactionSyntax(this.transaction);
   final IoTransaction transaction;
 

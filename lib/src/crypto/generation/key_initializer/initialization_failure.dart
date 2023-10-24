@@ -1,5 +1,4 @@
 class InitializationFailure implements Exception {
-
   const InitializationFailure(this.type, this.message);
 
   factory InitializationFailure.failedToCreateEntropy({String? context}) =>

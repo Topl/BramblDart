@@ -254,7 +254,6 @@ sealed class WalletApiDefinition {
 }
 
 class WalletApi extends WalletApiDefinition {
-
   /// Create an instance of the WalletAPI.
   ///
   /// The wallet uses ExtendedEd25519 to generate the main secret key.
@@ -428,7 +427,6 @@ class WalletApi extends WalletApiDefinition {
 }
 
 class NewWalletResult {
-
   NewWalletResult({required this.mnemonic, required this.mainKeyVaultStore});
   final List<String> mnemonic;
   final VaultStore mainKeyVaultStore;
@@ -443,7 +441,6 @@ class NewWalletResult {
 }
 
 class WalletApiFailure implements Exception {
-
   const WalletApiFailure(this.type, this.message);
 
   factory WalletApiFailure.failedToInitializeWallet({String? context}) =>

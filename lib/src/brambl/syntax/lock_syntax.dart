@@ -4,7 +4,6 @@ import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 
 class LockSyntaxOps {
-
   LockSyntaxOps(this.lock);
   final Lock lock;
 
@@ -18,7 +17,6 @@ class LockSyntaxOps {
 }
 
 class PredicateLockSyntaxOps {
-
   PredicateLockSyntaxOps(this.lock);
   final Lock_Predicate lock;
 

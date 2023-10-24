@@ -6,7 +6,6 @@ import 'package:brambl_dart/src/crypto/signing/signing.dart';
 
 abstract class EllipticCurveSignatureScheme<SK extends SigningKey,
     VK extends VerificationKey> {
-
   const EllipticCurveSignatureScheme({required this.seedLength});
   final int seedLength;
 

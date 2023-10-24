@@ -1,7 +1,7 @@
 /// Defines a wallet entity with an X coordinate and a name.
 class WalletEntity {
-
   WalletEntity(this.xIdx, this.name);
+
   /// The X coordinate associated with the entity.
   final int xIdx;
 

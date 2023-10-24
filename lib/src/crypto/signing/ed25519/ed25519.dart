@@ -9,7 +9,6 @@ import 'ed25519_spec.dart' as spec;
 /// Ed25519 native implementation ported from BramblSC Scala.
 class Ed25519
     extends EllipticCurveSignatureScheme<spec.SecretKey, spec.PublicKey> {
-
   Ed25519() : super(seedLength: Ed25519Spec.seedLength);
   final impl = eddsa.Ed25519();
 

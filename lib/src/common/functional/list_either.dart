@@ -3,7 +3,6 @@ import 'package:brambl_dart/src/common/functional/either.dart';
 /// A list wrapper for `Either` objects.
 /// Made as a alternative for Cats Validated NEC (Non Empty Chain) which is not available in Dart.
 class ListEither<L, R> {
-
   ListEither(this._list);
   final List<Either<L, R>> _list;
 

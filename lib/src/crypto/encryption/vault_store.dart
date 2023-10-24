@@ -10,7 +10,6 @@ import 'package:collection/collection.dart';
 
 /// A VaultStore is a JSON encode-able object that contains the KDF and Cipher necessary to decrypt the cipher text.
 class VaultStore {
-
   /// A VaultStore is a JSON encode-able object that contains the KDF and Cipher necessary to decrypt the cipher text.
   ///
   /// [kdf] the associated KDF

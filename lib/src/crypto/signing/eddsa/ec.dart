@@ -44,7 +44,6 @@ Table 1: Parameters of Ed25519
 /// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class EC {
-
   EC() {
     final precompute = _precompute();
     _precompBaseTable = precompute.$1;
@@ -546,8 +545,7 @@ class EC {
           }
         }
       }
-      final List<PointExt?> points =
-          List.filled(PRECOMP_POINTS, null);
+      final List<PointExt?> points = List.filled(PRECOMP_POINTS, null);
       var k = 1;
       points[0] = sum;
       for (int t = 0; t < PRECOMP_TEETH - 1; t++) {
@@ -935,7 +933,6 @@ const PRECOMP_MASK = PRECOMP_POINTS - 1;
 final M = Int64(0xffffffff);
 
 class PointAccum {
-
   PointAccum(this.x, this.y, this.z, this.u, this.v);
 
   PointAccum.create()
@@ -952,7 +949,6 @@ class PointAccum {
 }
 
 class PointExt {
-
   PointExt(this.x, this.y, this.z, this.t);
 
   PointExt.create()
@@ -967,7 +963,6 @@ class PointExt {
 }
 
 class PointPrecomp {
-
   PointPrecomp(this.ypxH, this.ymxH, this.xyd);
 
   PointPrecomp.create()

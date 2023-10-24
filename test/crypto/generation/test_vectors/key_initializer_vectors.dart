@@ -9,7 +9,6 @@ import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 class KeyInitializerVector {
-
   KeyInitializerVector({
     required this.mnemonic,
     required this.password,

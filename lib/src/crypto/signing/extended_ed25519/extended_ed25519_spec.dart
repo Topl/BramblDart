@@ -63,7 +63,6 @@ mixin ExtendedEd25519Spec {
 }
 
 class SecretKey extends SigningKey with ExtendedEd25519Spec {
-
   SecretKey(this.leftKey, this.rightKey, this.chainCode) {
     if (leftKey.length != ExtendedEd25519Spec.keyLength) {
       throw ArgumentError(
@@ -111,7 +110,6 @@ class SecretKey extends SigningKey with ExtendedEd25519Spec {
 }
 
 class PublicKey extends VerificationKey with ExtendedEd25519Spec {
-
   PublicKey(this.vk, this.chainCode) {
     if (chainCode.length != ExtendedEd25519Spec.keyLength) {
       throw ArgumentError(

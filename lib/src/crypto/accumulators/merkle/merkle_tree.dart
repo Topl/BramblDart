@@ -11,7 +11,6 @@ import 'package:brambl_dart/src/crypto/hash/hash.dart';
 import 'package:collection/collection.dart';
 
 final class MerkleTree {
-
   MerkleTree(
       {required this.topNode,
       required elementsHashIndex,

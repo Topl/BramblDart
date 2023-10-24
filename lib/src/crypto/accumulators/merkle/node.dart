@@ -15,7 +15,6 @@ sealed class Node {
 /// @param left  - left child. always non-empty
 /// @param right - right child. can be emptyNode
 class InternalNode extends Node {
-
   InternalNode(this.left, this.right, this.h);
   final Node left;
   final Node? right;
@@ -31,7 +30,6 @@ class InternalNode extends Node {
 }
 
 class Leaf extends Node {
-
   Leaf({
     required this.data,
     required this.h,

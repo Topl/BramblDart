@@ -1,5 +1,4 @@
 class BuilderError implements Exception {
-
   BuilderError(this.message, {this.type, this.exception});
 
   /// A Builder error indicating that an IoTransaction's input

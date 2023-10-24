@@ -294,8 +294,8 @@ main() {
           (innerProofs.first.whichValue() == Proof_Value.tickRange) &&
           (innerProofs[1].whichValue() == Proof_Value.heightRange);
 
-      final validSignable =
-          const ListEquality().equals(provenTx.signable.value, testTx.signable.value);
+      final validSignable = const ListEquality()
+          .equals(provenTx.signable.value, testTx.signable.value);
 
       expect(validLength && validThreshold && validProofs && validSignable,
           isTrue);
@@ -331,8 +331,8 @@ main() {
           (andProof.and.left.whichValue() == Proof_Value.tickRange) &&
           (andProof.and.right.whichValue() == Proof_Value.heightRange);
 
-      final validSignable =
-          const ListEquality().equals(provenTx.signable.value, testTx.signable.value);
+      final validSignable = const ListEquality()
+          .equals(provenTx.signable.value, testTx.signable.value);
 
       expect(validLength && validAnd && validSignable, isTrue);
     });
@@ -482,7 +482,8 @@ main() {
       final List<quivr.QuivrRunTimeError> errors = [];
       final f = validationErrs.first;
       if (f is TransactionAuthorizationError) {
-        if (f.checkType(TransactionAuthorizationErrorType.authorizationFailed)) {
+        if (f
+            .checkType(TransactionAuthorizationErrorType.authorizationFailed)) {
           errors.update(f.errors);
         }
       }
@@ -500,6 +501,6 @@ main() {
       expect(validLength && validQuivrErrs && validOr, true);
     });
 
-    // todo expand tests
+    // TODO(ultimaterex): expand tests.
   });
 }

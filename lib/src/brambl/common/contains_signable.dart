@@ -13,7 +13,6 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 // DAML: DObject -> DSignable -> DEvidence (==TEvidence) -> TSignable -> TEvidence -> TIdentifier -> TAddress -> TKnownIdentifier
 
 class ContainsSignable {
-
   const ContainsSignable(this.signableBytes);
 
   factory ContainsSignable.empty() {

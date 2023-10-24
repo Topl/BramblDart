@@ -26,8 +26,7 @@ main() {
       expect(result.isLeft, true);
 
       final left = result.left! as ValidationError;
-      expect(
-          left.type == ValidationErrorType.lockedPropositionIsUnsatisfiable,
+      expect(left.type == ValidationErrorType.lockedPropositionIsUnsatisfiable,
           true);
     });
 

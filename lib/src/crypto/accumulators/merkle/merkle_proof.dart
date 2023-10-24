@@ -24,7 +24,6 @@ import 'package:brambl_dart/src/utils/extensions.dart';
 /// @param levels - levels in proof, bottom up, each level is about stored value and position of computed element
 ///               (whether it is left or right to stored value)
 class MerkleProof {
-
   MerkleProof({
     required this.leafData,
     required this.levels,

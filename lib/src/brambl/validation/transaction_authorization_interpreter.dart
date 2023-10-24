@@ -10,7 +10,6 @@ import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 
 class TransactionAuthorizationInterpreter<F> {
-
   TransactionAuthorizationInterpreter(this.verifier);
   final Verifier verifier;
 

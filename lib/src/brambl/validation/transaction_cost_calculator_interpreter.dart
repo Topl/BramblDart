@@ -7,7 +7,6 @@ import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 
 /// A transaction cost calculator.
 class TransactionCostCalculator<F> {
-
   TransactionCostCalculator(this.transactionCostConfig);
   final TransactionCostConfig transactionCostConfig;
 
@@ -136,7 +135,6 @@ class TransactionCostCalculator<F> {
 
 /// Configuration values for individual cost components.
 class TransactionCostConfig {
-
   TransactionCostConfig({
     this.baseCost = 1,
     this.dataCostPerMB = 1024,
@@ -153,7 +151,6 @@ class TransactionCostConfig {
 
 /// Configuration values for individual proof cost components.
 class ProofCostConfig {
-
   const ProofCostConfig({
     this.txBindCost = 50,
     this.emptyCost = 1,

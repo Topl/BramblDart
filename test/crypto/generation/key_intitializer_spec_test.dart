@@ -20,20 +20,19 @@ void main() {
           'Generate 96 byte seed from mnemonic: ${vector.mnemonic} + password: ${vector.password}',
           () async {
         final ed25519SkRes = await Ed25519Initializer(Ed25519())
-            .fromMnemonicString(vector.mnemonic,
-                password: vector.password);
+            .fromMnemonicString(vector.mnemonic, password: vector.password);
         final ed25519Sk = ed25519SkRes.right! as spec.SecretKey;
 
         final extendedEd25519SkRes =
             await ExtendedEd25519Intializer(ExtendedEd25519())
-                .fromMnemonicString(vector.mnemonic,
-                    password: vector.password);
+                .fromMnemonicString(vector.mnemonic, password: vector.password);
 
         final extendedEd25519Sk =
             extendedEd25519SkRes.right! as x_spec.SecretKey;
 
         expect(
-            const ListEquality().equals(ed25519Sk.bytes, vector.ed25519.bytes), true);
+            const ListEquality().equals(ed25519Sk.bytes, vector.ed25519.bytes),
+            true);
 
         expect(
             const ListEquality().equals(

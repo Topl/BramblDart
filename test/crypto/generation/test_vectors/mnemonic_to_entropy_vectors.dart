@@ -2,7 +2,6 @@ import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 class MnemonicToEntropyVector {
-
   MnemonicToEntropyVector({required this.mnemonic, required this.entropy});
 
   factory MnemonicToEntropyVector.fromJson(Map<String, dynamic> json) {

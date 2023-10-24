@@ -1,4 +1,3 @@
-
 import 'package:brambl_dart/src/crypto/generation/mnemonic/phrase.dart';
 
 import '../../../common/functional/either.dart';
@@ -46,7 +45,6 @@ class Mnemonic {
 /// @param wordLength the size of the mnemonic
 ///
 class MnemonicSize {
-
   const MnemonicSize._(this.wordLength)
       : checksumLength = wordLength ~/ 3,
         entropyLength = 32 * (wordLength ~/ 3); // 32 * checksumLength

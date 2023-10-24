@@ -36,8 +36,8 @@ void main() {
       // });
       final result = TransactionSyntaxInterpreter.validate(testTx)
           .swap()
-          .exists((errors) => errors.containsExactError(
-              DuplicateInputError(inputFull.address)));
+          .exists((errors) => errors
+              .containsExactError(DuplicateInputError(inputFull.address)));
 
       expect(result, true);
     });
@@ -68,8 +68,8 @@ void main() {
           //   }
           //   return false;
           // });
-          .exists((errors) => errors.containsExactError(
-              InvalidTimestampError(Int64(-1))));
+          .exists((errors) =>
+              errors.containsExactError(InvalidTimestampError(Int64(-1))));
       expect(result, true);
     });
 
@@ -91,8 +91,8 @@ void main() {
             //   }
             //   return false;
             // });
-            .exists((p0) => p0.containsExactError(
-                InvalidScheduleError(schedule)));
+            .exists(
+                (p0) => p0.containsExactError(InvalidScheduleError(schedule)));
       }).every((element) => element);
 
       expect(result, true);

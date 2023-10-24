@@ -2,8 +2,8 @@ typedef Id = int;
 
 /// Defines a wallet contract with a Y coordinate, a name, and a lock template.
 class WalletContract {
-
   WalletContract(this.yIdx, this.name, this.lockTemplate);
+
   /// The Y coordinate associated with the contract.
   final Id yIdx;
 

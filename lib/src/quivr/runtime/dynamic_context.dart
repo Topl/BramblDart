@@ -11,7 +11,6 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 import '../algebras/digest_verifier.dart';
 
 class DynamicContext {
-
   DynamicContext(
       this.datum,
       this.interfaces,

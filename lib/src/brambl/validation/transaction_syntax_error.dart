@@ -7,7 +7,6 @@ import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 
 class TransactionSyntaxError implements ValidationError {
-
   const TransactionSyntaxError(this.type, this.param);
   final TransactionSyntaxErrorType type;
   final dynamic param;
@@ -128,7 +127,6 @@ class NonPositiveOutputValueError extends TransactionSyntaxError {
 
 /// A Syntax error indicating that the inputs of this transaction cannot satisfy the outputs.
 class InsufficientInputFundsError extends TransactionSyntaxError {
-
   InsufficientInputFundsError(this.inputs, this.outputs)
       : super(TransactionSyntaxErrorType.insufficientInputFunds,
             (inputs, outputs));

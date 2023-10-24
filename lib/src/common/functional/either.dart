@@ -6,7 +6,6 @@
 /// An `Either` instance is either a `Left` value, or a `Right` value.
 /// This class has supporting functions for `void` types, however it's use is against spec
 class Either<L, R> {
-
   /// Constructs an `Either` instance with a left value.
   Either.left(this._left) : _right = null;
 
@@ -18,6 +17,7 @@ class Either<L, R> {
   Either.unit({val = const Unit()})
       : _left = null,
         _right = val;
+
   /// The left value of the `Either`.
   final L? _left;
 
@@ -109,8 +109,7 @@ class Either<L, R> {
       throw exception ??
           (left is Exception
               ? left! as Exception
-              : throw StateError(
-                  'Left value was raised intentionally $left'));
+              : throw StateError('Left value was raised intentionally $left'));
     }
   }
 
@@ -143,7 +142,6 @@ class Either<L, R> {
 }
 
 class Some<T> extends Option<T> {
-
   Some(this.value);
   @override
   final T value;
@@ -219,7 +217,6 @@ abstract class Option<T> {
 }
 
 class EitherException implements Exception {
-
   const EitherException(this.message);
 
   factory EitherException.rightIsUndefined() =>

@@ -7,7 +7,6 @@ class Accumulators {
 
 @immutable
 class LeafData {
-
   const LeafData(this.value);
   final List<int> value;
 
@@ -24,7 +23,6 @@ class LeafData {
 
 @immutable
 class Side {
-
   const Side(this.value);
   final int value;
 

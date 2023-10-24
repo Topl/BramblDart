@@ -8,7 +8,6 @@ import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 class CkdEd25519TestVector {
-
   CkdEd25519TestVector(
       {required this.description,
       required this.rootSecretKey,

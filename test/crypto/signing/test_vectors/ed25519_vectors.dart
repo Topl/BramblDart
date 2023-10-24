@@ -1,5 +1,4 @@
 class Ed25519TestVector {
-
   Ed25519TestVector({
     required this.description,
     required this.secretKey,

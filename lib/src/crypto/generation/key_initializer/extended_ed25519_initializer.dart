@@ -15,7 +15,6 @@ import 'package:uuid/uuid.dart';
 import 'key_initializer.dart';
 
 class ExtendedEd25519Intializer implements KeyInitializer {
-
   ExtendedEd25519Intializer(this.extendedEd25519);
   final ExtendedEd25519 extendedEd25519;
 

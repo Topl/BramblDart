@@ -4,7 +4,6 @@ import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart'
 import 'package:collection/collection.dart';
 
 class TransactionAuthorizationError implements ValidationError {
-
   const TransactionAuthorizationError(this.type, this.errors);
 
   factory TransactionAuthorizationError.authorizationFailed(

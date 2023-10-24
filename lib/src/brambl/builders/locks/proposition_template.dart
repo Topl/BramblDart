@@ -54,7 +54,6 @@ final class UnableToBuildPropositionTemplate extends BuilderError {
 }
 
 sealed class PropositionTemplate {
-
   factory PropositionTemplate.fromJson(Map<String, dynamic> json) {
     final type = json['propositionType'] as String;
     switch (type) {
