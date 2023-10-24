@@ -44,14 +44,14 @@ Table 1: Parameters of Ed25519
 /// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class EC {
-  late final List<PointExt> _precompBaseTable;
-  late final Int32List _precompBase;
 
   EC() {
     final precompute = _precompute();
     _precompBaseTable = precompute.$1;
     _precompBase = precompute.$2;
   }
+  late final List<PointExt> _precompBaseTable;
+  late final Int32List _precompBase;
 
   int mulAddTo256(Int32List x, Int32List y, Int32List zz) {
     final y_0 = Int64(y[0]) & M;
@@ -935,11 +935,6 @@ const PRECOMP_MASK = PRECOMP_POINTS - 1;
 final M = Int64(0xffffffff);
 
 class PointAccum {
-  final Int32List x;
-  final Int32List y;
-  final Int32List z;
-  final Int32List u;
-  final Int32List v;
 
   PointAccum(this.x, this.y, this.z, this.u, this.v);
 
@@ -949,13 +944,14 @@ class PointAccum {
         z = x25519_field.create,
         u = x25519_field.create,
         v = x25519_field.create;
-}
-
-class PointExt {
   final Int32List x;
   final Int32List y;
   final Int32List z;
-  final Int32List t;
+  final Int32List u;
+  final Int32List v;
+}
+
+class PointExt {
 
   PointExt(this.x, this.y, this.z, this.t);
 
@@ -964,12 +960,13 @@ class PointExt {
         y = x25519_field.create,
         z = x25519_field.create,
         t = x25519_field.create;
+  final Int32List x;
+  final Int32List y;
+  final Int32List z;
+  final Int32List t;
 }
 
 class PointPrecomp {
-  final Int32List ypxH;
-  final Int32List ymxH;
-  final Int32List xyd;
 
   PointPrecomp(this.ypxH, this.ymxH, this.xyd);
 
@@ -977,6 +974,9 @@ class PointPrecomp {
       : ypxH = x25519_field.create,
         ymxH = x25519_field.create,
         xyd = x25519_field.create;
+  final Int32List ypxH;
+  final Int32List ymxH;
+  final Int32List xyd;
 }
 
 extension IntOps on int {

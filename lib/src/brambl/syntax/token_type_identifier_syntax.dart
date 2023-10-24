@@ -22,9 +22,9 @@ extension TypeIdentifierToQuantityDescriptorExtension on ValueTypeIdentifier {
 }
 
 class ValueToTypeIdentifierSyntaxOps {
-  final Value value;
 
   ValueToTypeIdentifierSyntaxOps(this.value);
+  final Value value;
 
   ValueTypeIdentifier get typeIdentifier {
     switch (value.whichValue()) {
@@ -75,9 +75,9 @@ extension BytesValToString on BytesValue {
 }
 
 class TypeIdentifierToQuantityDescriptorSyntaxOps {
-  final ValueTypeIdentifier typeIdentifier;
 
   TypeIdentifierToQuantityDescriptorSyntaxOps(this.typeIdentifier);
+  final ValueTypeIdentifier typeIdentifier;
 
   QuantityDescriptorType? getQuantityDescriptor() {
     if (typeIdentifier is GroupAndSeriesFungible) {
@@ -102,9 +102,9 @@ class LvlType implements ValueTypeIdentifier {}
 ///
 /// [groupId] The GroupId of the Group Constructor Token
 class GroupType implements ValueTypeIdentifier {
-  final GroupId groupId;
 
   GroupType(this.groupId);
+  final GroupId groupId;
 
   @override
   bool operator ==(Object other) =>
@@ -120,9 +120,9 @@ class GroupType implements ValueTypeIdentifier {
 /// A Series Constructor Token value type, identified by a SeriesId
 /// [seriesId] The SeriesId of the Series Constructor Token
 class SeriesType implements ValueTypeIdentifier {
-  final SeriesId seriesId;
 
   SeriesType(this.seriesId);
+  final SeriesId seriesId;
 
   @override
   bool operator ==(Object other) =>
@@ -143,11 +143,11 @@ abstract class AssetType implements ValueTypeIdentifier {}
 /// [seriesId] The SeriesId of the asset
 /// [qdType] The QuantityDescriptorType of the asset
 class GroupAndSeriesFungible implements AssetType {
+
+  GroupAndSeriesFungible(this.groupId, this.seriesId, this.qdType);
   final GroupId groupId;
   final SeriesId seriesId;
   final QuantityDescriptorType qdType;
-
-  GroupAndSeriesFungible(this.groupId, this.seriesId, this.qdType);
 
   @override
   bool operator ==(Object other) =>
@@ -169,11 +169,11 @@ class GroupAndSeriesFungible implements AssetType {
 /// [seriesAlloyOrId] If the asset is an alloy, the Series alloy. Else the SeriesId of the asset
 /// [qdType] The QuantityDescriptorType of the asset
 class GroupFungible implements AssetType {
+
+  GroupFungible(this.groupId, this.seriesAlloyOrId, this.qdType);
   final GroupId groupId;
   final ByteString seriesAlloyOrId;
   final QuantityDescriptorType qdType;
-
-  GroupFungible(this.groupId, this.seriesAlloyOrId, this.qdType);
 
   @override
   bool operator ==(Object other) =>
@@ -196,11 +196,11 @@ class GroupFungible implements AssetType {
 /// [groupAlloyOrId] If the asset is an alloy, the Group alloy. Else the GroupId of the asset
 /// [qdType] The QuantityDescriptorType of the asset
 class SeriesFungible implements AssetType {
+
+  SeriesFungible(this.seriesId, this.groupAlloyOrId, this.qdType);
   final SeriesId seriesId;
   final ByteString groupAlloyOrId;
   final QuantityDescriptorType qdType;
-
-  SeriesFungible(this.seriesId, this.groupAlloyOrId, this.qdType);
 
   @override
   bool operator ==(Object other) =>

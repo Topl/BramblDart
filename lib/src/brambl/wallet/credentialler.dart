@@ -54,9 +54,6 @@ abstract class Credentialler {
 }
 
 class CredentiallerInterpreter implements Credentialler {
-  WalletApi walletApi;
-  WalletStateAlgebra walletStateApi;
-  KeyPair mainKey;
 
   CredentiallerInterpreter(this.walletApi, this.walletStateApi, this.mainKey) {
     assert(mainKey.vk.hasExtendedEd25519(),
@@ -64,6 +61,9 @@ class CredentiallerInterpreter implements Credentialler {
     assert(mainKey.sk.hasExtendedEd25519(),
         "mainKey must be an extended Ed25519 key");
   }
+  WalletApi walletApi;
+  WalletStateAlgebra walletStateApi;
+  KeyPair mainKey;
 
   @override
   IoTransaction prove(IoTransaction unprovenTx) {

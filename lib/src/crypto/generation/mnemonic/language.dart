@@ -5,11 +5,11 @@ import 'package:brambl_dart/src/crypto/hash/sha.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 sealed class Language {
+
+  const Language(this.filePath, this.hash);
   final String filePath;
   final String hash;
   final String wordlistDirectory = 'bip-0039';
-
-  const Language(this.filePath, this.hash);
 }
 
 class ChineseSimplified extends Language {
@@ -73,9 +73,9 @@ class Portuguese extends Language {
 }
 
 class LanguageWordList {
-  final List<String> value;
 
   const LanguageWordList(this.value);
+  final List<String> value;
 
   static const _hexDigits = '0123456789abcdef';
 
@@ -120,9 +120,9 @@ class LanguageWordList {
 sealed class ValidationFailure implements Exception {}
 
 class FileReadFailure implements ValidationFailure {
-  final Object exception;
 
   const FileReadFailure(this.exception);
+  final Object exception;
 }
 
 class InvalidChecksum implements ValidationFailure {}

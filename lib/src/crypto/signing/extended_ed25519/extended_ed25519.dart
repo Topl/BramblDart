@@ -14,9 +14,9 @@ import 'package:brambl_dart/src/utils/extensions.dart';
 
 class ExtendedEd25519
     extends EllipticCurveSignatureScheme<SecretKey, PublicKey> {
-  final impl = eddsa.Ed25519();
 
   ExtendedEd25519() : super(seedLength: ExtendedEd25519Spec.seedLength);
+  final impl = eddsa.Ed25519();
 
   /// Sign a given message with a given signing key.
   ///

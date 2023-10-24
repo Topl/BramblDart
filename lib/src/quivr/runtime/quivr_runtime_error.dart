@@ -42,12 +42,6 @@ sealed class QuivrRunTimeError implements Exception {
 
 /// A Validation error indicates that the evaluation of the proof failed for the given proposition within the provided context.
 class ValidationError extends QuivrRunTimeError {
-  /// A message describing the Quivr error.
-  final String? message;
-  final ValidationErrorType type;
-
-  Proof? proof;
-  Proposition? proposition;
 
   ValidationError(this.type, this.message, {this.proof, this.proposition});
 
@@ -68,6 +62,12 @@ class ValidationError extends QuivrRunTimeError {
   factory ValidationError.userProvidedInterfaceFailure({String? context}) =>
       ValidationError(
           ValidationErrorType.userProvidedInterfaceFailure, context);
+  /// A message describing the Quivr error.
+  final String? message;
+  final ValidationErrorType type;
+
+  Proof? proof;
+  Proposition? proposition;
 
   @override
   String toString() {
@@ -95,9 +95,6 @@ enum ValidationErrorType {
 
 /// A Context error indicates that the Dynamic context failed to retrieve an instance of a requested member
 class ContextError extends QuivrRunTimeError {
-  /// A message describing the Context error.
-  final String? message;
-  final ContextErrorType type;
 
   ContextError(this.type, this.message);
 
@@ -109,6 +106,9 @@ class ContextError extends QuivrRunTimeError {
       ContextError(ContextErrorType.failedToFindDatum, context);
   factory ContextError.failedToFindInterface({String? context}) =>
       ContextError(ContextErrorType.failedToFindInterface, context);
+  /// A message describing the Context error.
+  final String? message;
+  final ContextErrorType type;
 
   @override
   String toString() {

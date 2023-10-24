@@ -6,7 +6,6 @@ import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
 
 /// A class that represents a sequence of bytes. uses [Uint8List] under the hood
 class ByteString {
-  final Uint8List _bytes;
 
   /// Creates a new [ByteString] object from the given [Uint8List]
   const ByteString(this._bytes);
@@ -18,6 +17,7 @@ class ByteString {
   /// Creates a new [ByteString] object from the given UTF-8 encoded string.
   factory ByteString.fromString(String str) =>
       ByteString(str.toUtf8Uint8List());
+  final Uint8List _bytes;
 
   /// Returns the bytes of this [ByteString] as a [Uint8List].
   List<int> get value => _bytes;

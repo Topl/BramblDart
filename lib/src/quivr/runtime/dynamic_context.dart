@@ -11,11 +11,6 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 import '../algebras/digest_verifier.dart';
 
 class DynamicContext {
-  Map<String, Datum?> datum;
-
-  Map<String, ParsableDataInterface> interfaces;
-  Map<String, SignatureVerifier> signingRoutines;
-  Map<String, DigestVerifier> hashingRoutines;
 
   DynamicContext(
       this.datum,
@@ -25,6 +20,11 @@ class DynamicContext {
       this.signableBytes,
       this.currentTick,
       this.heightOf);
+  Map<String, Datum?> datum;
+
+  Map<String, ParsableDataInterface> interfaces;
+  Map<String, SignatureVerifier> signingRoutines;
+  Map<String, DigestVerifier> hashingRoutines;
 
   SignableBytes signableBytes;
 

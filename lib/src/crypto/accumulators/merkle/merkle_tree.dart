@@ -11,12 +11,6 @@ import 'package:brambl_dart/src/crypto/hash/hash.dart';
 import 'package:collection/collection.dart';
 
 final class MerkleTree {
-  static const leafPrefix = 0;
-  static const internalNodePrefix = 1;
-
-  final Option<Node> topNode;
-  late final HashMap<Uint8List, int> elementsHashIndex;
-  final Hash hashFunction;
 
   MerkleTree(
       {required this.topNode,
@@ -48,6 +42,12 @@ final class MerkleTree {
     return MerkleTree(
         topNode: topNode, elementsHashIndex: elementsToIndex, hashFunction: h);
   }
+  static const leafPrefix = 0;
+  static const internalNodePrefix = 1;
+
+  final Option<Node> topNode;
+  late final HashMap<Uint8List, int> elementsHashIndex;
+  final Hash hashFunction;
 
   Digest get emptyRootHash => Digest.empty();
 

@@ -7,10 +7,10 @@ import 'package:meta/meta.dart';
 /// Represents a digest with a size
 @immutable
 class Digest {
-  final Uint8List bytes;
   const Digest(this.bytes);
 
   factory Digest.empty() => Digest(Uint8List(0));
+  final Uint8List bytes;
 
   @override
   bool operator ==(Object other) =>
@@ -23,9 +23,9 @@ class Digest {
 
 /// Represents a Digest and the ability to convert to and from bytes.
 class Digest32 {
-  static const size = 32;
 
   Digest32._();
+  static const size = 32;
 
   static Either<InvalidDigestFailure, Digest> from(Uint8List bytes) {
     if (bytes.length != size) {
@@ -38,9 +38,9 @@ class Digest32 {
 
 /// Represents a Digest and the ability to convert to and from bytes.
 class Digest64 {
-  static const size = 64;
 
   Digest64._();
+  static const size = 64;
 
   static Either<InvalidDigestFailure, Digest> from(Uint8List bytes) {
     if (bytes.length != size) {
@@ -53,7 +53,7 @@ class Digest64 {
 
 @immutable
 class InvalidDigestFailure implements Exception {
-  final String message;
 
   const InvalidDigestFailure(this.message);
+  final String message;
 }

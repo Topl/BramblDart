@@ -8,12 +8,6 @@ import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 class Bip32Ed25519CkdTestVector {
-  final String description;
-  final SecretKey rootSecretKey;
-  final Option<PublicKey> rootVerificationKey;
-  final List<Bip32Index> path;
-  final SecretKey childSecretKey;
-  final PublicKey childVerificationKey;
 
   Bip32Ed25519CkdTestVector(
       {required this.description,
@@ -78,6 +72,12 @@ class Bip32Ed25519CkdTestVector {
       path: path,
     );
   }
+  final String description;
+  final SecretKey rootSecretKey;
+  final Option<PublicKey> rootVerificationKey;
+  final List<Bip32Index> path;
+  final SecretKey childSecretKey;
+  final PublicKey childVerificationKey;
 }
 
 final bip32Ed25519CkdTestVectors = [

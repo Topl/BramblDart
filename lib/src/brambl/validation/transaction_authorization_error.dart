@@ -4,8 +4,6 @@ import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart'
 import 'package:collection/collection.dart';
 
 class TransactionAuthorizationError implements ValidationError {
-  final List<quivr.QuivrRunTimeError> errors;
-  final TransactionAuthorizationErrorType type;
 
   const TransactionAuthorizationError(this.type, this.errors);
 
@@ -21,6 +19,8 @@ class TransactionAuthorizationError implements ValidationError {
           List<quivr.QuivrRunTimeError> errors) =>
       TransactionAuthorizationError(
           TransactionAuthorizationErrorType.authorizationFailed, errors);
+  final List<quivr.QuivrRunTimeError> errors;
+  final TransactionAuthorizationErrorType type;
 
   @override
   String toString() {

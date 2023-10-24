@@ -3,9 +3,9 @@ abstract class SigningKey {}
 abstract class VerificationKey {}
 
 class KeyPair<SigningKey, VerificationKey> {
+  KeyPair(this.signingKey, this.verificationKey);
   SigningKey signingKey;
   VerificationKey verificationKey;
-  KeyPair(this.signingKey, this.verificationKey);
 
   @override
   bool operator ==(Object other) =>

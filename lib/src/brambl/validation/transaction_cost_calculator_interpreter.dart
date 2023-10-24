@@ -7,9 +7,9 @@ import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 
 /// A transaction cost calculator.
 class TransactionCostCalculator<F> {
-  final TransactionCostConfig transactionCostConfig;
 
   TransactionCostCalculator(this.transactionCostConfig);
+  final TransactionCostConfig transactionCostConfig;
 
   /// Calculates the cost of a transaction.
   ///
@@ -136,11 +136,6 @@ class TransactionCostCalculator<F> {
 
 /// Configuration values for individual cost components.
 class TransactionCostConfig {
-  final int baseCost;
-  final int dataCostPerMB;
-  final int inputCost;
-  final int outputCost;
-  final ProofCostConfig proofCostConfig;
 
   TransactionCostConfig({
     this.baseCost = 1,
@@ -149,25 +144,15 @@ class TransactionCostConfig {
     this.outputCost = 5,
     this.proofCostConfig = const ProofCostConfig(),
   });
+  final int baseCost;
+  final int dataCostPerMB;
+  final int inputCost;
+  final int outputCost;
+  final ProofCostConfig proofCostConfig;
 }
 
 /// Configuration values for individual proof cost components.
 class ProofCostConfig {
-  final int txBindCost;
-  final int emptyCost;
-  final int lockedCost;
-  final int digestCost;
-  final int digitalSignatureCost;
-  final int heightRangeCost;
-  final int tickRangeCost;
-  final int exactMatchCost;
-  final int lessThanCost;
-  final int greaterThanCost;
-  final int equalToCost;
-  final int thresholdCost;
-  final int andCost;
-  final int orCost;
-  final int notCost;
 
   const ProofCostConfig({
     this.txBindCost = 50,
@@ -186,4 +171,19 @@ class ProofCostConfig {
     this.orCost = 1,
     this.notCost = 1,
   });
+  final int txBindCost;
+  final int emptyCost;
+  final int lockedCost;
+  final int digestCost;
+  final int digitalSignatureCost;
+  final int heightRangeCost;
+  final int tickRangeCost;
+  final int exactMatchCost;
+  final int lessThanCost;
+  final int greaterThanCost;
+  final int equalToCost;
+  final int thresholdCost;
+  final int andCost;
+  final int orCost;
+  final int notCost;
 }

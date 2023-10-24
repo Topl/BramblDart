@@ -76,10 +76,10 @@ Int64? _heightOf(String label, Datum? Function(String) heightDatums) {
 }
 
 class Context extends DynamicContext {
-  final IoTransaction tx;
-  final Int64 curTick;
-  final Map<String, Datum?> heightDatums;
   Context(this.tx, this.curTick, this.heightDatums)
       : super(heightDatums, _interfaces, _signingRoutines, _hashingRoutines,
             SignableBytes.fromBuffer(tx.writeToBuffer()), curTick, _heightOf);
+  final IoTransaction tx;
+  final Int64 curTick;
+  final Map<String, Datum?> heightDatums;
 }

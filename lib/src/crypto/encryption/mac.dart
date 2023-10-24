@@ -8,7 +8,6 @@ import 'package:pointycastle/digests/blake2b.dart';
 ///
 /// @see [[https://en.wikipedia.org/wiki/Message_authentication_code]]
 class Mac {
-  late Uint8List value;
 
   /// Create MAC for a KeyFile.
   /// The KeyFile MAC is used to verify the integrity of the cipher text and derived key.
@@ -22,6 +21,7 @@ class Mac {
     final added = [...data, ...cipherText].toUint8List();
     value = Blake2bDigest(digestSize: 32).process(added);
   }
+  late Uint8List value;
 
   /// Validate the MAC against a provided, expected, MAC.
   ///

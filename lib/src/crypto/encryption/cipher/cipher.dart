@@ -5,6 +5,18 @@ import 'package:brambl_dart/src/crypto/encryption/cipher/aes.dart';
 /// Ciphers are used to encrypt and decrypt data.
 /// @see [[https://en.wikipedia.org/wiki/Cipher]]
 abstract class Cipher {
+
+  /// JSON decoder for a Cipher
+  factory Cipher.fromJson(Map<String, dynamic> json) {
+    final cipher = json['cipher'] as String;
+    switch (cipher) {
+      case 'aes':
+        final aesParams = AesParams.fromJson(json);
+        return Aes(params: aesParams);
+      default:
+        throw UnknownCipherException();
+    }
+  }
   Params get params;
 
   /// Encrypt data.
@@ -31,18 +43,6 @@ abstract class Cipher {
 
   /// JSON encoder for a Cipher
   Map<String, dynamic> toJson();
-
-  /// JSON decoder for a Cipher
-  factory Cipher.fromJson(Map<String, dynamic> json) {
-    final cipher = json['cipher'] as String;
-    switch (cipher) {
-      case 'aes':
-        final aesParams = AesParams.fromJson(json);
-        return Aes(params: aesParams);
-      default:
-        throw UnknownCipherException();
-    }
-  }
 }
 
 /// Cipher parameters.

@@ -13,7 +13,6 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 // DAML: DObject -> DSignable -> DEvidence (==TEvidence) -> TSignable -> TEvidence -> TIdentifier -> TAddress -> TKnownIdentifier
 
 class ContainsSignable {
-  final SignableBytes signableBytes;
 
   const ContainsSignable(this.signableBytes);
 
@@ -49,6 +48,7 @@ class ContainsSignable {
             (p0) => p0.inputs.update(iotx.inputs.map(stripInput).toList())))
         .immutableBytes);
   }
+  final SignableBytes signableBytes;
 }
 
 extension IoTransactionContainsSignableExtensions on IoTransaction {

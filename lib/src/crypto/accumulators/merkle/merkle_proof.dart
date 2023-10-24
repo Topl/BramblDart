@@ -24,15 +24,15 @@ import 'package:brambl_dart/src/utils/extensions.dart';
 /// @param levels - levels in proof, bottom up, each level is about stored value and position of computed element
 ///               (whether it is left or right to stored value)
 class MerkleProof {
-  final LeafData leafData;
-  final List<(Option<Digest>, Side)> levels;
-  final Hash hashFunction;
 
   MerkleProof({
     required this.leafData,
     required this.levels,
     required this.hashFunction,
   });
+  final LeafData leafData;
+  final List<(Option<Digest>, Side)> levels;
+  final Hash hashFunction;
 
   static const leftSide = Side(0);
   static const rightSide = Side(1);

@@ -1,7 +1,4 @@
 class BuilderError implements Exception {
-  final String? message;
-  final BuilderErrorType? type;
-  final Exception? exception;
 
   BuilderError(this.message, {this.type, this.exception});
 
@@ -20,6 +17,9 @@ class BuilderError implements Exception {
   /// optionally provide [message] to indicate why the build is unsuccessful
   factory BuilderError.outputBuilder({String? context}) =>
       BuilderError(context, type: BuilderErrorType.outputBuilderError);
+  final String? message;
+  final BuilderErrorType? type;
+  final Exception? exception;
 
   @override
   String toString() {

@@ -4,9 +4,9 @@ import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 
 class LockSyntaxOps {
-  final Lock lock;
 
   LockSyntaxOps(this.lock);
+  final Lock lock;
 
   LockAddress lockAddress(int network, int ledger) {
     final evidence =
@@ -18,9 +18,9 @@ class LockSyntaxOps {
 }
 
 class PredicateLockSyntaxOps {
-  final Lock_Predicate lock;
 
   PredicateLockSyntaxOps(this.lock);
+  final Lock_Predicate lock;
 
   LockAddress lockAddress(int network, int ledger) {
     final evidence =

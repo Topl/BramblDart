@@ -10,9 +10,9 @@ import 'package:brambl_dart/src/crypto/generation/mnemonic/phrase.dart';
 const defaultMnemonicSize = MnemonicSize.words12();
 
 class Entropy {
-  final Uint8List value;
 
   Entropy(this.value);
+  final Uint8List value;
 
   /// Generate an [Entropy] of the specified [size].
   ///
@@ -127,9 +127,6 @@ class Entropy {
 
 /// A class representing a failure in the entropy generation process.
 class EntropyFailure implements Exception {
-  /// A message describing the error.
-  final String? message;
-  final EntropyFailureType type;
 
   EntropyFailure(this.type, this.message);
 
@@ -141,6 +138,9 @@ class EntropyFailure implements Exception {
       EntropyFailure(EntropyFailureType.wordListFailure, context);
   factory EntropyFailure.invalidSizeMismatch({String? context}) =>
       EntropyFailure(EntropyFailureType.invalidSizeMismatch, context);
+  /// A message describing the error.
+  final String? message;
+  final EntropyFailureType type;
 
   @override
   String toString() {

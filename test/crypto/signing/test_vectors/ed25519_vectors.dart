@@ -1,9 +1,4 @@
 class Ed25519TestVector {
-  final String description;
-  final String secretKey;
-  final String message;
-  final String verificationKey;
-  final String signature;
 
   Ed25519TestVector({
     required this.description,
@@ -12,6 +7,11 @@ class Ed25519TestVector {
     required this.verificationKey,
     required this.signature,
   });
+  final String description;
+  final String secretKey;
+  final String message;
+  final String verificationKey;
+  final String signature;
 
   @override
   String toString() {

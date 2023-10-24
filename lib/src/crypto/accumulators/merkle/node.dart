@@ -15,11 +15,11 @@ sealed class Node {
 /// @param left  - left child. always non-empty
 /// @param right - right child. can be emptyNode
 class InternalNode extends Node {
+
+  InternalNode(this.left, this.right, this.h);
   final Node left;
   final Node? right;
   final Hash h;
-
-  InternalNode(this.left, this.right, this.h);
 
   @override
   Digest get hash {
@@ -31,13 +31,13 @@ class InternalNode extends Node {
 }
 
 class Leaf extends Node {
-  final LeafData data;
-  final Hash h;
 
   Leaf({
     required this.data,
     required this.h,
   });
+  final LeafData data;
+  final Hash h;
 
   @override
   Digest get hash {

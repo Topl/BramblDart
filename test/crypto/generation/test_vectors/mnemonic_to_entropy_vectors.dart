@@ -2,8 +2,6 @@ import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 class MnemonicToEntropyVector {
-  final String mnemonic;
-  final Entropy entropy;
 
   MnemonicToEntropyVector({required this.mnemonic, required this.entropy});
 
@@ -16,6 +14,8 @@ class MnemonicToEntropyVector {
     final entropy = Entropy.fromBytes(entropyString.toHexUint8List());
     return MnemonicToEntropyVector(mnemonic: mnemonic, entropy: entropy.right!);
   }
+  final String mnemonic;
+  final Entropy entropy;
 }
 
 final mnemonicToEntropyTestVectors = [

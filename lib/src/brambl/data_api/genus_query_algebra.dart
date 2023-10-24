@@ -5,13 +5,13 @@ import 'package:topl_common/proto/genus/genus_rpc.pbgrpc.dart';
 
 /// Defines a Genus Query API for interacting with a Genus node.
 class GenusQueryAlgebra {
+
+  GenusQueryAlgebra(this.channel) : client = TransactionServiceClient(channel);
   /// The gRPC channel to the node.
   final Channel channel;
 
   /// The client stub for the transaction rpc service
   final TransactionServiceClient client;
-
-  GenusQueryAlgebra(this.channel) : client = TransactionServiceClient(channel);
 
   /// Query and retrieve a set of UTXOs encumbered by the given LockAddress.
   ///

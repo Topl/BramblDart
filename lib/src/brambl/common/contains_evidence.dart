@@ -8,7 +8,6 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
 
 /// Contains signable bytes and has methods to get evidence of those bytes in the form of a 32 or 64 byte hash.
 class ContainsEvidence {
-  final Evidence evidence;
 
   const ContainsEvidence(this.evidence);
 
@@ -33,6 +32,7 @@ class ContainsEvidence {
     final digest = pb.Digest(value: rootHash.bytes);
     return ContainsEvidence(Evidence(digest: digest));
   }
+  final Evidence evidence;
 }
 
 extension SizedEvidence on dynamic {

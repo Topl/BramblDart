@@ -3,9 +3,9 @@ import 'dart:typed_data';
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 sealed class Bip32Index {
-  final int value;
 
   Bip32Index(this.value);
+  final int value;
 
   Uint8List get bytes {
     final buffer = ByteData(4)..setInt32(0, value);

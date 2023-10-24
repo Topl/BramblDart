@@ -23,13 +23,13 @@ sealed class BifrostQueryAlgbraDefinition {
 
 /// Defines a Bifrost Query API for interacting with a Bifrost node.
 class BifrostQueryAlgebra implements BifrostQueryAlgbraDefinition {
+
+  BifrostQueryAlgebra(this.channel) : client = NodeRpcClient(channel);
   /// The gRPC channel to the node.
   final Channel channel;
 
   /// The client stub for the node rpc service
   final NodeRpcClient client;
-
-  BifrostQueryAlgebra(this.channel) : client = NodeRpcClient(channel);
 
   @override
   Future<(BlockId, BlockBody, List<IoTransaction>)?> blockByHeight(

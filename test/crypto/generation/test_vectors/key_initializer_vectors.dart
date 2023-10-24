@@ -9,13 +9,6 @@ import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 class KeyInitializerVector {
-  final String mnemonic;
-  final String password;
-
-  final String curve25519;
-  final spec.SecretKey ed25519;
-  final String vrfEd25519;
-  final x_spec.SecretKey extendedEd25519;
 
   KeyInitializerVector({
     required this.mnemonic,
@@ -50,6 +43,13 @@ class KeyInitializerVector {
       extendedEd25519: extendedEd25519Sk,
     );
   }
+  final String mnemonic;
+  final String password;
+
+  final String curve25519;
+  final spec.SecretKey ed25519;
+  final String vrfEd25519;
+  final x_spec.SecretKey extendedEd25519;
 }
 
 final keyInitializerTestVectors = [

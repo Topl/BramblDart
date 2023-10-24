@@ -7,15 +7,15 @@ import 'package:brambl_dart/src/crypto/generation/mnemonic/mnemonic.dart';
 import 'package:brambl_dart/src/crypto/hash/sha.dart';
 
 class Phrase {
-  final List<String> value;
-  final MnemonicSize size;
-  final LanguageWordList languageWords;
 
   Phrase({
     required this.value,
     required this.size,
     required this.languageWords,
   });
+  final List<String> value;
+  final MnemonicSize size;
+  final LanguageWordList languageWords;
 
   static Future<Either<PhraseFailure, Phrase>> validated({
     required String words,
@@ -142,9 +142,6 @@ class Phrase {
 }
 
 class PhraseFailure implements Exception {
-  /// A message describing the error.
-  final String? message;
-  final PhraseFailureType type;
 
   PhraseFailure(this.type, this.message);
 
@@ -162,6 +159,9 @@ class PhraseFailure implements Exception {
 
   factory PhraseFailure.wordListFailure({String? context}) =>
       PhraseFailure(PhraseFailureType.invalidEntropyLength, context);
+  /// A message describing the error.
+  final String? message;
+  final PhraseFailureType type;
 
   @override
   String toString() {

@@ -2,10 +2,6 @@ import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 class EntropyToSeedVector {
-  final Entropy entropy;
-  final String entropyString;
-  final String password;
-  final String seed96;
 
   EntropyToSeedVector({
     required this.entropy,
@@ -30,6 +26,10 @@ class EntropyToSeedVector {
       seed96: seed96,
     );
   }
+  final Entropy entropy;
+  final String entropyString;
+  final String password;
+  final String seed96;
 }
 
 final entropyToSeedVectors = [

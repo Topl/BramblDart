@@ -10,10 +10,6 @@ import 'package:collection/collection.dart';
 
 /// A VaultStore is a JSON encode-able object that contains the KDF and Cipher necessary to decrypt the cipher text.
 class VaultStore {
-  final Kdf kdf;
-  final Cipher cipher;
-  final Uint8List cipherText;
-  final Uint8List mac;
 
   /// A VaultStore is a JSON encode-able object that contains the KDF and Cipher necessary to decrypt the cipher text.
   ///
@@ -22,6 +18,10 @@ class VaultStore {
   /// [cipherText] cipher text
   /// [mac] MAC to validate the data integrity
   VaultStore(this.kdf, this.cipher, this.cipherText, this.mac);
+  final Kdf kdf;
+  final Cipher cipher;
+  final Uint8List cipherText;
+  final Uint8List mac;
 
   @override
   bool operator ==(Object other) =>

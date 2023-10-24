@@ -58,8 +58,6 @@ abstract class WalletKeyApiAlgebra {
 }
 
 class WalletKeyException implements Exception {
-  final String? message;
-  final WalletKeyExceptionType type;
 
   const WalletKeyException(this.type, this.message);
 
@@ -85,6 +83,8 @@ class WalletKeyException implements Exception {
   factory WalletKeyException.vaultStoreNotInitialized({String? context}) =>
       WalletKeyException(
           WalletKeyExceptionType.vaultStoreNotInitialized, context);
+  final String? message;
+  final WalletKeyExceptionType type;
 }
 
 enum WalletKeyExceptionType {

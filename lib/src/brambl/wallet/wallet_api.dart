@@ -254,14 +254,6 @@ sealed class WalletApiDefinition {
 }
 
 class WalletApi extends WalletApiDefinition {
-  late final ExtendedEd25519 instance;
-
-  final purpose = 1852;
-  final coinType = 7091;
-
-  final kdf = SCrypt.withGeneratedSalt(); //generates salt
-  final cipher = Aes(); // generates IV
-  final WalletKeyApiAlgebra walletKeyApi;
 
   /// Create an instance of the WalletAPI.
   ///
@@ -275,6 +267,14 @@ class WalletApi extends WalletApiDefinition {
   WalletApi(this.walletKeyApi, {ExtendedEd25519? extendedEd25519Instance}) {
     instance = extendedEd25519Instance ?? ExtendedEd25519();
   }
+  late final ExtendedEd25519 instance;
+
+  final purpose = 1852;
+  final coinType = 7091;
+
+  final kdf = SCrypt.withGeneratedSalt(); //generates salt
+  final cipher = Aes(); // generates IV
+  final WalletKeyApiAlgebra walletKeyApi;
 
   @override
   Either<WalletApiFailure, KeyPair> extractMainKey(
@@ -428,10 +428,10 @@ class WalletApi extends WalletApiDefinition {
 }
 
 class NewWalletResult {
-  final List<String> mnemonic;
-  final VaultStore mainKeyVaultStore;
 
   NewWalletResult({required this.mnemonic, required this.mainKeyVaultStore});
+  final List<String> mnemonic;
+  final VaultStore mainKeyVaultStore;
 
   NewWalletResult copyWith(
       {List<String>? mnemonic, VaultStore? mainKeyVaultStore}) {
@@ -443,8 +443,6 @@ class NewWalletResult {
 }
 
 class WalletApiFailure implements Exception {
-  final String? message;
-  final WalletApiFailureType type;
 
   const WalletApiFailure(this.type, this.message);
 
@@ -464,6 +462,8 @@ class WalletApiFailure implements Exception {
       WalletApiFailure(WalletApiFailureType.failedToDecodeWallet, context);
   factory WalletApiFailure.failureDefault({String? context}) =>
       WalletApiFailure(WalletApiFailureType.failureDefault, context);
+  final String? message;
+  final WalletApiFailureType type;
 
   @override
   bool operator ==(Object other) =>

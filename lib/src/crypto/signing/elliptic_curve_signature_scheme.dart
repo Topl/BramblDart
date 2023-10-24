@@ -6,9 +6,9 @@ import 'package:brambl_dart/src/crypto/signing/signing.dart';
 
 abstract class EllipticCurveSignatureScheme<SK extends SigningKey,
     VK extends VerificationKey> {
-  final int seedLength;
 
   const EllipticCurveSignatureScheme({required this.seedLength});
+  final int seedLength;
 
   /// Generate a key pair from a given entropy and password.
   KeyPair<SK, VK> deriveKeyPairFromEntropy(

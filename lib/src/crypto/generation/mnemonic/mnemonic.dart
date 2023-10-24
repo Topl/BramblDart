@@ -46,9 +46,6 @@ class Mnemonic {
 /// @param wordLength the size of the mnemonic
 ///
 class MnemonicSize {
-  final int wordLength;
-  final int checksumLength;
-  final int entropyLength;
 
   const MnemonicSize._(this.wordLength)
       : checksumLength = wordLength ~/ 3,
@@ -59,6 +56,9 @@ class MnemonicSize {
   const MnemonicSize.words18() : this._(18);
   const MnemonicSize.words21() : this._(21);
   const MnemonicSize.words24() : this._(24);
+  final int wordLength;
+  final int checksumLength;
+  final int entropyLength;
 
   static Either<PhraseFailure, MnemonicSize> fromNumberOfWords(
       int numberOfWords) {

@@ -12,7 +12,6 @@ mixin Ed25519Spec {
 
 ///
 class SecretKey extends SigningKey with Ed25519Spec {
-  final Uint8List bytes;
   SecretKey(this.bytes) {
     if (bytes.length != Ed25519Spec.keyLength) {
       throw ArgumentError(
@@ -20,6 +19,7 @@ class SecretKey extends SigningKey with Ed25519Spec {
       );
     }
   }
+  final Uint8List bytes;
 
   @override
   bool operator ==(Object other) =>
@@ -33,7 +33,6 @@ class SecretKey extends SigningKey with Ed25519Spec {
 }
 
 class PublicKey extends VerificationKey with Ed25519Spec {
-  final Uint8List bytes;
   PublicKey(this.bytes) {
     if (bytes.length != Ed25519Spec.publicKeyLength) {
       throw ArgumentError(
@@ -41,6 +40,7 @@ class PublicKey extends VerificationKey with Ed25519Spec {
       );
     }
   }
+  final Uint8List bytes;
 
   @override
   bool operator ==(Object other) =>

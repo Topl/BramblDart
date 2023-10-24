@@ -11,13 +11,18 @@ import 'package:pointycastle/export.dart';
 /// SCrypt is a key derivation function.
 /// @see [[https://en.wikipedia.org/wiki/Scrypt]]
 class SCrypt implements Kdf {
-  @override
-  final SCryptParams params;
 
   SCrypt(this.params);
 
   /// Create a SCrypt with generated salt.
   SCrypt.withGeneratedSalt() : this(SCryptParams.withGeneratedSalt());
+
+  factory SCrypt.fromJson(Map<String, dynamic> json) {
+    final params = SCryptParams.fromJson(json);
+    return SCrypt(params);
+  }
+  @override
+  final SCryptParams params;
 
   /// Derive a key from a secret.
   ///
@@ -35,11 +40,6 @@ class SCrypt implements Kdf {
   static Uint8List generateSalt() {
     final rand = Random.secure();
     return List.generate(32, (_) => rand.nextInt(256)).toUint8List();
-  }
-
-  factory SCrypt.fromJson(Map<String, dynamic> json) {
-    final params = SCryptParams.fromJson(json);
-    return SCrypt(params);
   }
 
   @override
@@ -60,11 +60,6 @@ class SCrypt implements Kdf {
 }
 
 class SCryptParams extends Params {
-  final Uint8List salt;
-  final int n;
-  final int r;
-  final int p;
-  final int dkLen;
 
   /// SCrypt parameters.
   ///
@@ -90,9 +85,6 @@ class SCryptParams extends Params {
   /// Create SCryptParameters with generated salt.
   SCryptParams.withGeneratedSalt() : this(salt: SCrypt.generateSalt());
 
-  @override
-  String get kdf => "scrypt";
-
   factory SCryptParams.fromJson(Map<String, dynamic> json) {
     final salt = Json.decodeUint8List(json['salt']);
     final n = jsonDecode(json['n']);
@@ -101,6 +93,14 @@ class SCryptParams extends Params {
     final dkLen = jsonDecode(json['dkLen']);
     return SCryptParams(salt: salt, n: n, r: r, p: p, dkLen: dkLen);
   }
+  final Uint8List salt;
+  final int n;
+  final int r;
+  final int p;
+  final int dkLen;
+
+  @override
+  String get kdf => "scrypt";
 
   /// JSON encoder for SCrypt parameters
   Map<String, dynamic> toJson() {

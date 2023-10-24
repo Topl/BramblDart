@@ -269,10 +269,10 @@ abstract class TransactionBuilderApiDefinition {
 }
 
 class TransactionBuilderApi implements TransactionBuilderApiDefinition {
-  final int networkId;
-  final int ledgerId;
 
   TransactionBuilderApi(this.networkId, this.ledgerId);
+  final int networkId;
+  final int ledgerId;
 
   @override
   Future<IoTransaction> buildSimpleLvlTransaction(
@@ -596,9 +596,9 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
 }
 
 class LockAddressOps {
-  final LockAddress lockAddress;
 
   LockAddressOps(this.lockAddress);
+  final LockAddress lockAddress;
 
   String toBase58() {
     return AddressCodecs.encode(lockAddress);

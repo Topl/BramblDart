@@ -7,9 +7,9 @@ class Accumulators {
 
 @immutable
 class LeafData {
-  final List<int> value;
 
   const LeafData(this.value);
+  final List<int> value;
 
   @override
   bool operator ==(Object other) =>
@@ -24,9 +24,9 @@ class LeafData {
 
 @immutable
 class Side {
-  final int value;
 
   const Side(this.value);
+  final int value;
 
   @override
   bool operator ==(Object other) =>

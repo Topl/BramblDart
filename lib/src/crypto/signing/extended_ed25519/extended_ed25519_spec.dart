@@ -63,9 +63,6 @@ mixin ExtendedEd25519Spec {
 }
 
 class SecretKey extends SigningKey with ExtendedEd25519Spec {
-  final Uint8List leftKey;
-  final Uint8List rightKey;
-  final Uint8List chainCode;
 
   SecretKey(this.leftKey, this.rightKey, this.chainCode) {
     if (leftKey.length != ExtendedEd25519Spec.keyLength) {
@@ -94,6 +91,9 @@ class SecretKey extends SigningKey with ExtendedEd25519Spec {
       sk.chainCode.toUint8List(),
     );
   }
+  final Uint8List leftKey;
+  final Uint8List rightKey;
+  final Uint8List chainCode;
 
   @override
   bool operator ==(Object other) =>
@@ -111,10 +111,6 @@ class SecretKey extends SigningKey with ExtendedEd25519Spec {
 }
 
 class PublicKey extends VerificationKey with ExtendedEd25519Spec {
-  final spec.PublicKey vk;
-  final Uint8List chainCode;
-
-  Uint8List get verificationBytes => vk.bytes;
 
   PublicKey(this.vk, this.chainCode) {
     if (chainCode.length != ExtendedEd25519Spec.keyLength) {
@@ -130,6 +126,10 @@ class PublicKey extends VerificationKey with ExtendedEd25519Spec {
       vk.chainCode.toUint8List(),
     );
   }
+  final spec.PublicKey vk;
+  final Uint8List chainCode;
+
+  Uint8List get verificationBytes => vk.bytes;
 
   @override
   bool operator ==(Object other) =>
