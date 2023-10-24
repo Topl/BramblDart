@@ -19,7 +19,7 @@ class Ed25519Initializer implements KeyInitializer {
 
   @override
   SigningKey random() {
-    return fromEntropy(Entropy.fromUuid(Uuid()));
+    return fromEntropy(Entropy.fromUuid(const Uuid()));
   }
 
   @override

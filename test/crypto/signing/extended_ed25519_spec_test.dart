@@ -88,7 +88,7 @@ main() {
     test(
         'With ExtendedEd25519, keyPairs generated with the same seed should be the same',
         () {
-      void forAll(Future<void> Function(Entropy) f) async {
+      Future<void> forAll(Future<void> Function(Entropy) f) async {
         for (var i = 0; i < 10; i++) {
           final entropy = Entropy.generate();
           await f(entropy);

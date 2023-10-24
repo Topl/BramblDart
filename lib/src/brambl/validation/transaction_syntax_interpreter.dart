@@ -56,7 +56,7 @@ class TransactionSyntaxInterpreter {
   static Either<TransactionSyntaxError, Unit> nonEmptyInputsValidation(
       IoTransaction transaction) {
     return transaction.inputs.isNotEmpty
-        ? Either.right(Unit())
+        ? Either.right(const Unit())
         : Either.left(TransactionSyntaxError.emptyInputs());
   }
 
@@ -70,7 +70,7 @@ class TransactionSyntaxInterpreter {
         .map((entry) => TransactionSyntaxError.duplicateInput(entry.key))
         .toList();
     return (duplicates.isEmpty
-        ? ListEither.right<TransactionSyntaxError, Unit>([Unit()])
+        ? ListEither.right<TransactionSyntaxError, Unit>([const Unit()])
         : ListEither.left<TransactionSyntaxError, Unit>(List.from(duplicates)));
   }
 
@@ -79,7 +79,7 @@ class TransactionSyntaxInterpreter {
   static Either<TransactionSyntaxError, Unit> maximumOutputsCountValidation(
       IoTransaction transaction) {
     return transaction.outputs.length < shortMaxValue
-        ? Either.right(Unit())
+        ? Either.right(const Unit())
         : Either.left(TransactionSyntaxError.excessiveOutputsCount());
   }
 
@@ -88,7 +88,7 @@ class TransactionSyntaxInterpreter {
   static Either<TransactionSyntaxError, Unit> nonNegativeTimestampValidation(
       IoTransaction transaction) {
     return transaction.datum.event.schedule.timestamp >= 0
-        ? Either.right(Unit())
+        ? Either.right(const Unit())
         : Either.left(TransactionSyntaxError.invalidTimestamp(
             transaction.datum.event.schedule.timestamp));
   }
@@ -99,7 +99,7 @@ class TransactionSyntaxInterpreter {
     return transaction.datum.event.schedule.max >=
                 transaction.datum.event.schedule.min &&
             transaction.datum.event.schedule.min >= 0
-        ? Either.right(Unit())
+        ? Either.right(const Unit())
         : Either.left(TransactionSyntaxError.invalidSchedule(
             transaction.datum.event.schedule));
   }
@@ -128,7 +128,7 @@ class TransactionSyntaxInterpreter {
         errors.add(TransactionSyntaxError.nonPositiveOutputValue(output.value));
     }
     return errors.isEmpty
-        ? ListEither.right<TransactionSyntaxError, Unit>([Unit()])
+        ? ListEither.right<TransactionSyntaxError, Unit>([const Unit()])
         : ListEither.left<TransactionSyntaxError, Unit>(errors);
   }
 
@@ -198,7 +198,7 @@ class TransactionSyntaxInterpreter {
       }
     }
     return errors.isEmpty
-        ? ListEither.right<TransactionSyntaxError, Unit>([Unit()])
+        ? ListEither.right<TransactionSyntaxError, Unit>([const Unit()])
         : ListEither.left<TransactionSyntaxError, Unit>(errors);
   }
 
@@ -220,7 +220,7 @@ class TransactionSyntaxInterpreter {
       }
     }
     return errors.isEmpty
-        ? ListEither.right<TransactionSyntaxError, Unit>([Unit()])
+        ? ListEither.right<TransactionSyntaxError, Unit>([const Unit()])
         : ListEither.left<TransactionSyntaxError, Unit>(errors);
   }
 

@@ -44,6 +44,6 @@ class VerySecureSignatureRoutine {
   /// @param [vk] a 32-byte VK
   static bool verify(Uint8List sig, Uint8List msg, Uint8List vk) {
     final expectedSig = sign(Uint8List.fromList(vk.reversed.toList()), msg);
-    return ListEquality().equals(sig, expectedSig);
+    return const ListEquality().equals(sig, expectedSig);
   }
 }

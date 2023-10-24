@@ -7,16 +7,16 @@ import '../../helpers/generators.dart';
 
 main() {
   final List<Language> languages = [
-    English(),
-    ChineseSimplified(),
-    ChineseTraditional(),
-    Portuguese(),
-    Czech(),
-    Spanish(),
-    Italian(),
-    French(),
-    Japanese(),
-    Korean()
+    const English(),
+    const ChineseSimplified(),
+    const ChineseTraditional(),
+    const Portuguese(),
+    const Czech(),
+    const Spanish(),
+    const Italian(),
+    const French(),
+    const Japanese(),
+    const Korean()
   ];
 
   group('Language Spec Test Vectors', () {

@@ -14,7 +14,7 @@ main() {
         final size = Generators.getGeneratedMnemonicSize;
         final entropy = Entropy.generate(size: size);
         final phrase = await Phrase.fromEntropy(
-            entropy: entropy, size: size, language: English());
+            entropy: entropy, size: size, language: const English());
         expect(phrase.isRight, true);
         expect(phrase.right!.value.length == size.wordLength, true);
       }
@@ -23,9 +23,9 @@ main() {
     test('entropy should fail to create a phrase if there is a size mismatch',
         () {
       Phrase.fromEntropy(
-        entropy: Entropy.generate(size: MnemonicSize.words24()),
-        size: MnemonicSize.words12(),
-        language: English(),
+        entropy: Entropy.generate(size: const MnemonicSize.words24()),
+        size: const MnemonicSize.words12(),
+        language: const English(),
       ).then((phrase) {
         expect(phrase.isLeft, true);
       });
@@ -35,7 +35,7 @@ main() {
       const phrase =
           "cat swing flag economy stadium alone churn speed unique patch report train";
       final mnemonic =
-          await Phrase.validated(words: phrase, language: English());
+          await Phrase.validated(words: phrase, language: const English());
 
       expect(mnemonic.isRight, true);
     });
@@ -44,7 +44,7 @@ main() {
         () async {
       const phrase = "result fresh margin life life filter vapor trim";
       final mnemonic =
-          await Phrase.validated(words: phrase, language: English());
+          await Phrase.validated(words: phrase, language: const English());
 
       expect(mnemonic.isLeft, true);
     });
@@ -53,7 +53,7 @@ main() {
       const phrase =
           "amber glue hallway can truth drawer wave flex cousin grace close compose";
       final mnemonic =
-          await Phrase.validated(words: phrase, language: English());
+          await Phrase.validated(words: phrase, language: const English());
 
       expect(mnemonic.isLeft, true);
     });
@@ -64,7 +64,7 @@ main() {
       const phrase =
           "ugly wire busy skate slice kidney razor eager bicycle struggle aerobic picnic";
       final mnemonic =
-          await Phrase.validated(words: phrase, language: English());
+          await Phrase.validated(words: phrase, language: const English());
 
       expect(mnemonic.isLeft, true);
     });
@@ -73,7 +73,7 @@ main() {
       const phrase =
           "vessel ladder alter error  federal sibling chat   ability sun glass valve picture";
       final mnemonic =
-          await Phrase.validated(words: phrase, language: English());
+          await Phrase.validated(words: phrase, language: const English());
 
       expect(mnemonic.isRight, true);
     });
@@ -86,9 +86,9 @@ main() {
           "vessel ladder alter error  federal sibling chat   ability sun glass valve picture";
 
       final mnemonic1 =
-          await Phrase.validated(words: phrase1, language: English());
+          await Phrase.validated(words: phrase1, language: const English());
       final mnemonic2 =
-          await Phrase.validated(words: phrase2, language: English());
+          await Phrase.validated(words: phrase2, language: const English());
 
       expect(mnemonic1.isRight, true);
       expect(mnemonic2.isRight, true);
@@ -99,7 +99,7 @@ main() {
       const phrase = "Legal Winner Thank Year Wave Sausage Worth Useful Legal "
           "Winner Thank Year Wave Sausage Worth Useful Legal Will";
       final mnemonic =
-          await Phrase.validated(words: phrase, language: English());
+          await Phrase.validated(words: phrase, language: const English());
 
       expect(mnemonic.isRight, true);
     });
@@ -112,9 +112,9 @@ main() {
           "winner thank year wave sausage worth useful legal will";
 
       final mnemonic1 =
-          await Phrase.validated(words: phrase1, language: English());
+          await Phrase.validated(words: phrase1, language: const English());
       final mnemonic2 =
-          await Phrase.validated(words: phrase2, language: English());
+          await Phrase.validated(words: phrase2, language: const English());
 
       expect(mnemonic1.isRight, true);
       expect(mnemonic2.isRight, true);
@@ -128,7 +128,7 @@ main() {
             " clutch c\uD83D\uDD25rush"
             " open amazing screen "
             "patrol group space point ten exist slush inv\uD83D\uDD25olve unfold",
-        language: English(),
+        language: const English(),
       );
 
       expect(entropy.isLeft, true);

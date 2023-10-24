@@ -83,7 +83,7 @@ class DynamicContext {
 
     if (result.isLeft) return false;
 
-    return ListEquality().equals(result.right?.value, compareTo);
+    return const ListEquality().equals(result.right?.value, compareTo);
   }
 
   lessThan(String label, BigInt compareTo) {

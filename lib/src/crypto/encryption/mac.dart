@@ -40,9 +40,9 @@ class Mac {
           'Either expectedMac or ExpectedMacList must be supplied, but not both');
     }
     if (expectedMac != null) {
-      return ListEquality().equals(value, expectedMac.value);
+      return const ListEquality().equals(value, expectedMac.value);
     } else if (expectedMacList != null) {
-      return ListEquality().equals(value, expectedMacList);
+      return const ListEquality().equals(value, expectedMacList);
     }
     return false;
   }

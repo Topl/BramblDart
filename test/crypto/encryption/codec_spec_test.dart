@@ -33,7 +33,7 @@ void main() {
     test('AES Params > Decode fails with invalid JSON', () {
       final invalidJson = {'iv': 10}; // IV should be a string
       expect(() => AesParams.fromJson(invalidJson),
-          throwsA(TypeMatcher<TypeError>()));
+          throwsA(const TypeMatcher<TypeError>()));
     });
 
     test('SCrypt Params > Encode and Decode', () {
@@ -65,7 +65,7 @@ void main() {
         'dkLen': 10,
       };
       expect(() => SCryptParams.fromJson(invalidJson),
-          throwsA(TypeMatcher<FormatException>()));
+          throwsA(const TypeMatcher<FormatException>()));
     });
 
     test('Cipher > AES > Encode and Decode', () {
@@ -96,7 +96,7 @@ void main() {
       final invalidJson = jsonEncode(fields);
 
       expect(() => Cipher.fromJson(jsonDecode(invalidJson)),
-          throwsA(TypeMatcher<UnknownCipherException>()));
+          throwsA(const TypeMatcher<UnknownCipherException>()));
     });
 
     test('Cipher > AES > Decode fails with invalid JSON', () {
@@ -107,7 +107,7 @@ void main() {
       final invalidJson = jsonEncode(fields);
 
       expect(() => Cipher.fromJson(jsonDecode(invalidJson)),
-          throwsA(TypeMatcher<TypeError>()));
+          throwsA(const TypeMatcher<TypeError>()));
     });
 
     test('KDF > SCrypt > Encode and Decode', () {
@@ -136,7 +136,7 @@ void main() {
       final invalidJson = jsonEncode(expected.fields); // label is missing
 
       expect(() => Kdf.fromJson(jsonDecode(invalidJson)),
-          throwsA(TypeMatcher<TypeError>()));
+          throwsA(const TypeMatcher<TypeError>()));
     });
 
     test('KDF > SCrypt > Decode fails with invalid JSON', () {
@@ -149,7 +149,7 @@ void main() {
       final invalidJson = jsonEncode(fields);
 
       expect(() => Kdf.fromJson(jsonDecode(invalidJson)),
-          throwsA(TypeMatcher<TypeError>()));
+          throwsA(const TypeMatcher<TypeError>()));
     });
 
     test('VaultStore > Encode and Decode', () {

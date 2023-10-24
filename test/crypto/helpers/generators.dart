@@ -53,10 +53,10 @@ class Generators {
 
   /// Generate a random mnemonic size
   static MnemonicSize get getGeneratedMnemonicSize => [
-        MnemonicSize.words12(),
-        MnemonicSize.words15(),
-        MnemonicSize.words18(),
-        MnemonicSize.words21(),
-        MnemonicSize.words24(),
+        const MnemonicSize.words12(),
+        const MnemonicSize.words15(),
+        const MnemonicSize.words18(),
+        const MnemonicSize.words21(),
+        const MnemonicSize.words24(),
       ][_random.nextInt(5)];
 }

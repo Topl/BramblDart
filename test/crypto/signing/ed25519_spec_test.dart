@@ -41,10 +41,10 @@ main() {
           final signingKey = SecretKey(sk);
           final verifyKey = ed25519.getVerificationKey(signingKey);
 
-          expect(ListEquality().equals(verifyKey.bytes, vk), true);
+          expect(const ListEquality().equals(verifyKey.bytes, vk), true);
 
           final resultSignature = ed25519.sign(signingKey, m);
-          expect(ListEquality().equals(resultSignature, sig), true);
+          expect(const ListEquality().equals(resultSignature, sig), true);
         });
       }
     });
@@ -52,7 +52,7 @@ main() {
     test(
         "with Ed25519, signed message should be verifiable with appropriate public key",
         () {
-      void forAll(
+      Future<void> forAll(
           void Function(Entropy, Entropy, Uint8List, Uint8List) f) async {
         for (var i = 0; i < 10; i++) {
           final seed1 = Entropy.generate();
@@ -64,8 +64,8 @@ main() {
       }
 
       forAll((seed1, seed2, message1, message2) {
-        if (!ListEquality().equals(seed1.value, seed2.value) &&
-            !ListEquality().equals(message1, message2)) {
+        if (!const ListEquality().equals(seed1.value, seed2.value) &&
+            !const ListEquality().equals(message1, message2)) {
           final ed25519 = Ed25519();
 
           final k1 = ed25519.deriveKeyPairFromEntropy(seed1, null);

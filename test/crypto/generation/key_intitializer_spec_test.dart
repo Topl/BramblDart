@@ -22,30 +22,30 @@ void main() {
           () async {
         final ed25519SkRes = await Ed25519Initializer(Ed25519())
             .fromMnemonicString(vector.mnemonic,
-                password: vector.password, language: English());
+                password: vector.password, language: const English());
         final ed25519Sk = ed25519SkRes.right! as spec.SecretKey;
 
         final extendedEd25519SkRes =
             await ExtendedEd25519Intializer(ExtendedEd25519())
                 .fromMnemonicString(vector.mnemonic,
-                    password: vector.password, language: English());
+                    password: vector.password, language: const English());
 
         final extendedEd25519Sk =
             extendedEd25519SkRes.right! as x_spec.SecretKey;
 
         expect(
-            ListEquality().equals(ed25519Sk.bytes, vector.ed25519.bytes), true);
+            const ListEquality().equals(ed25519Sk.bytes, vector.ed25519.bytes), true);
 
         expect(
-            ListEquality().equals(
+            const ListEquality().equals(
                 extendedEd25519Sk.leftKey, vector.extendedEd25519.leftKey),
             true);
         expect(
-            ListEquality().equals(
+            const ListEquality().equals(
                 extendedEd25519Sk.chainCode, vector.extendedEd25519.chainCode),
             true);
         expect(
-            ListEquality().equals(
+            const ListEquality().equals(
                 extendedEd25519Sk.rightKey, vector.extendedEd25519.rightKey),
             true);
       });

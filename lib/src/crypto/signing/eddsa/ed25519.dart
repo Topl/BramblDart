@@ -258,7 +258,7 @@ class Ed25519 extends EC {
     // Encode the point R' and check if it matches the R component of the signature.
     final check = Uint8List(POINT_BYTES);
     encodePoint(pR, check, 0);
-    return ListEquality().equals(check, R);
+    return const ListEquality().equals(check, R);
   }
 
   /// Signs a message using the Ed25519 digital signature algorithm.

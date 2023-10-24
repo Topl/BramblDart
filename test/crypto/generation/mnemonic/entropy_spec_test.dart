@@ -23,7 +23,7 @@ main() {
     test('Entropy derived from UUIDs should result in valid mnemonic strings',
         () async {
       for (var i = 0; i < 10; i++) {
-        final uuid = Uuid();
+        final uuid = const Uuid();
         final entropy = Entropy.fromUuid(uuid);
 
         final res = await Entropy.toMnemonicString(entropy);
@@ -37,12 +37,12 @@ main() {
         final mnemonicSize = Generators.getGeneratedMnemonicSize;
         final entropy1 = Entropy.generate(size: mnemonicSize);
         final entropy2Res =
-            await Entropy.toMnemonicString(entropy1, language: English());
+            await Entropy.toMnemonicString(entropy1, language: const English());
         final entropy2String = entropy2Res.right!.join(" ");
         final entropy2 = await Entropy.fromMnemonicString(entropy2String,
-            language: English());
+            language: const English());
 
-        expect(ListEquality().equals(entropy1.value, entropy2.right!.value),
+        expect(const ListEquality().equals(entropy1.value, entropy2.right!.value),
             isTrue);
       }
     });
@@ -56,10 +56,10 @@ main() {
             () async {
           final actualEntropy = await Entropy.fromMnemonicString(
               vector.mnemonic,
-              language: English());
+              language: const English());
           expect(actualEntropy.isRight, isTrue);
           expect(
-              ListEquality()
+              const ListEquality()
                   .equals(actualEntropy.right!.value, vector.entropy.value),
               isTrue);
         });

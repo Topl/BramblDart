@@ -224,7 +224,7 @@ class EitherException implements Exception {
   const EitherException(this.message);
 
   factory EitherException.rightIsUndefined() =>
-      EitherException("Right value is undefined!");
+      const EitherException("Right value is undefined!");
 
   @override
   String toString() {

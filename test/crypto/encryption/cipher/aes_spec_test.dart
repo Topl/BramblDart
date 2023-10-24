@@ -97,7 +97,7 @@ void main() {
     test('encrypt and decrypt is unsuccessful with a different iv', () {
       final encryptParams = AesParams.generate();
       var decryptParams = AesParams.generate();
-      while (ListEquality().equals(decryptParams.iv, encryptParams.iv)) {
+      while (const ListEquality().equals(decryptParams.iv, encryptParams.iv)) {
         decryptParams = AesParams.generate();
       }
       final aesEncrypt = Aes(params: encryptParams);
@@ -107,7 +107,7 @@ void main() {
       final cipherText = aesEncrypt.encrypt(message, key);
       final decodedText = aesDecrypt.decrypt(cipherText, key);
 
-      expect(ListEquality().equals(decodedText, message), isFalse);
+      expect(const ListEquality().equals(decodedText, message), isFalse);
     });
   });
 }

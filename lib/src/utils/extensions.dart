@@ -10,7 +10,7 @@ import 'package:fixnum/fixnum.dart';
 extension StringExtension on String {
   /// Converts string  to a UTF-8 [Uint8List].
   Uint8List toUtf8Uint8List() {
-    final encoder = Utf8Encoder();
+    final encoder = const Utf8Encoder();
     return Uint8List.fromList(encoder.convert(this));
   }
 
@@ -33,7 +33,7 @@ extension StringExtension on String {
 extension StringListExtension on List<String> {
   /// Converts List<string> to a UTF-8 List of [Uint8List].
   List<Uint8List> toUtf8Uint8List() {
-    final encoder = Utf8Encoder();
+    final encoder = const Utf8Encoder();
     return map((e) => Uint8List.fromList(encoder.convert(e))).toList();
   }
 }

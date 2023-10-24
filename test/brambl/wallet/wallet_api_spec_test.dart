@@ -53,7 +53,7 @@ main() {
         final (_, walletApi) = getWalletApi();
 
         final res = await walletApi.createAndSaveNewWallet(password,
-            mLen: MnemonicSize.words24());
+            mLen: const MnemonicSize.words24());
         expect(res.isRight, isTrue);
         expect(res.get().mnemonic.length, equals(24));
       },

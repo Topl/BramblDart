@@ -90,15 +90,15 @@ class Entropy {
       int entropyByteLength) {
     switch (entropyByteLength) {
       case 16:
-        return Either.right(MnemonicSize.words12());
+        return Either.right(const MnemonicSize.words12());
       case 20:
-        return Either.right(MnemonicSize.words15());
+        return Either.right(const MnemonicSize.words15());
       case 24:
-        return Either.right(MnemonicSize.words18());
+        return Either.right(const MnemonicSize.words18());
       case 28:
-        return Either.right(MnemonicSize.words21());
+        return Either.right(const MnemonicSize.words21());
       case 32:
-        return Either.right(MnemonicSize.words24());
+        return Either.right(const MnemonicSize.words24());
       default:
         return Either.left(EntropyFailure.invalidByteSize());
     }

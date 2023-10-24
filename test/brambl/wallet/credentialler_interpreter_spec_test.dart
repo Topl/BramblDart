@@ -49,7 +49,7 @@ main() {
       expect(
           sameLen &&
               nonEmpty &&
-              (ListEquality()
+              (const ListEquality()
                   .equals(provenTx.signable.value, testTx.signable.value)),
           isTrue);
     });
@@ -66,7 +66,7 @@ main() {
       expect(
           sameLen &&
               nonEmpty &&
-              (ListEquality()
+              (const ListEquality()
                   .equals(provenTx.signable.value, txFull.signable.value)),
           isTrue);
     });
@@ -115,7 +115,7 @@ main() {
           sameLen &&
               correctLen &&
               allEmpty &&
-              (ListEquality()
+              (const ListEquality()
                   .equals(provenTx.signable.value, testTx.signable.value)),
           isTrue);
     });
@@ -295,7 +295,7 @@ main() {
           (innerProofs[1].whichValue() == Proof_Value.heightRange);
 
       final validSignable =
-          ListEquality().equals(provenTx.signable.value, testTx.signable.value);
+          const ListEquality().equals(provenTx.signable.value, testTx.signable.value);
 
       expect(validLength && validThreshold && validProofs && validSignable,
           isTrue);
@@ -332,7 +332,7 @@ main() {
           (andProof.and.right.whichValue() == Proof_Value.heightRange);
 
       final validSignable =
-          ListEquality().equals(provenTx.signable.value, testTx.signable.value);
+          const ListEquality().equals(provenTx.signable.value, testTx.signable.value);
 
       expect(validLength && validAnd && validSignable, isTrue);
     });
