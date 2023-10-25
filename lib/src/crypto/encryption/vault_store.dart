@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/common/functional/either.dart';
-import 'package:brambl_dart/src/crypto/encryption/cipher/cipher.dart';
-import 'package:brambl_dart/src/crypto/encryption/kdf/kdf.dart';
-import 'package:brambl_dart/src/crypto/encryption/mac.dart';
-import 'package:brambl_dart/src/utils/json.dart';
+import 'package:brambldart/src/common/functional/either.dart';
+import 'package:brambldart/src/crypto/encryption/cipher/cipher.dart';
+import 'package:brambldart/src/crypto/encryption/kdf/kdf.dart';
+import 'package:brambldart/src/crypto/encryption/mac.dart';
+import 'package:brambldart/src/utils/json.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
@@ -19,7 +19,7 @@ class VaultStore {
   /// [cipherText] cipher text
   /// [mac] MAC to validate the data integrity
   const VaultStore(this.kdf, this.cipher, this.cipherText, this.mac);
-  
+
   final Kdf kdf;
   final Cipher cipher;
   final Uint8List cipherText;

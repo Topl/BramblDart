@@ -1,4 +1,4 @@
-import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
+import 'package:brambldart/src/quivr/common/quivr_result.dart';
 
 /// A validation that can be performed without any context.
 abstract class ContextlessValidation<T> {

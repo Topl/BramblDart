@@ -1,4 +1,4 @@
-import 'package:brambl_dart/src/brambl/utils/grpc/grpc.dart';
+import 'package:brambldart/src/brambl/utils/grpc/grpc.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/genus/genus_models.pb.dart';
 import 'package:topl_common/proto/genus/genus_rpc.pbgrpc.dart';
@@ -18,9 +18,7 @@ class GenusQueryAlgebra {
   /// [fromAddress] The lock address to query the unspent UTXOs by.
   /// [txoState] The state of the UTXOs to query. By default, only unspent UTXOs are returned.
   /// returns A sequence of UTXOs.
-  Future<List<Txo>> queryUtxo(
-      {required LockAddress fromAddress,
-      TxoState txoState = TxoState.UNSPENT}) async {
+  Future<List<Txo>> queryUtxo({required LockAddress fromAddress, TxoState txoState = TxoState.UNSPENT}) async {
     final response = await client.getTxosByLockAddress(
       QueryByLockAddressRequest(address: fromAddress, state: txoState),
     );

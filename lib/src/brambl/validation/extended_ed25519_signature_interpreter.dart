@@ -1,8 +1,8 @@
-import 'package:brambl_dart/brambl_dart.dart';
-import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
-import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
-import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
-import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
+import 'package:brambldart/brambldart.dart';
+import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
+import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
+import 'package:brambldart/src/quivr/common/quivr_result.dart';
+import 'package:brambldart/src/quivr/runtime/quivr_runtime_error.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 import '../../quivr/algebras/signature_verifier.dart';

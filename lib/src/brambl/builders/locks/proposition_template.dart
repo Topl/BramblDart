@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/brambl/builders/builder_error.dart';
-import 'package:brambl_dart/src/common/functional/either.dart';
-import 'package:brambl_dart/src/quivr/proposer.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambldart/src/brambl/builders/builder_error.dart';
+import 'package:brambldart/src/common/functional/either.dart';
+import 'package:brambldart/src/quivr/proposer.dart';
+import 'package:brambldart/src/utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
@@ -49,8 +49,7 @@ extension PropositionTypeExtension on PropositionType {
 }
 
 final class UnableToBuildPropositionTemplate extends BuilderError {
-  UnableToBuildPropositionTemplate(String super.message, {Exception? cause})
-      : super(exception: cause);
+  UnableToBuildPropositionTemplate(String super.message, {Exception? cause}) : super(exception: cause);
 }
 
 sealed class PropositionTemplate {
@@ -91,9 +90,7 @@ class LockedTemplate implements PropositionTemplate {
   LockedTemplate(this.data);
 
   factory LockedTemplate.fromJson(Map<String, dynamic> json) {
-    return LockedTemplate(json.containsKey('data')
-        ? (Data.fromBuffer(json['data'] as Uint8List))
-        : null);
+    return LockedTemplate(json.containsKey('data') ? (Data.fromBuffer(json['data'] as Uint8List)) : null);
   }
   final Data? data;
 
@@ -234,11 +231,10 @@ class SignatureTemplate implements PropositionTemplate {
   Either<BuilderError, Proposition> build(List<VerificationKey> entityVks) {
     try {
       if (entityIdx >= 0 && entityIdx < entityVks.length) {
-        return Either.right(
-            Proposer.signatureProposer(routine, entityVks[entityIdx]));
+        return Either.right(Proposer.signatureProposer(routine, entityVks[entityIdx]));
       } else {
-        return Either.left(BuilderError(
-            'Signature Proposition failed. Index: $entityIdx. Length of VKs: ${entityVks.length}'));
+        return Either.left(
+            BuilderError('Signature Proposition failed. Index: $entityIdx. Length of VKs: ${entityVks.length}'));
       }
     } on Exception catch (e) {
       return Either.left(BuilderError(e.toString(), exception: e));
@@ -258,10 +254,8 @@ class AndTemplate implements PropositionTemplate {
 
   factory AndTemplate.fromJson(Map<String, dynamic> json) {
     return AndTemplate(
-      PropositionTemplate.fromJson(
-          json['leftTemplate'] as Map<String, dynamic>),
-      PropositionTemplate.fromJson(
-          json['rightTemplate'] as Map<String, dynamic>),
+      PropositionTemplate.fromJson(json['leftTemplate'] as Map<String, dynamic>),
+      PropositionTemplate.fromJson(json['rightTemplate'] as Map<String, dynamic>),
     );
   }
   PropositionTemplate leftTemplate;
@@ -300,10 +294,8 @@ class OrTemplate implements PropositionTemplate {
 
   factory OrTemplate.fromJson(Map<String, dynamic> json) {
     return OrTemplate(
-      PropositionTemplate.fromJson(
-          json['leftTemplate'] as Map<String, dynamic>),
-      PropositionTemplate.fromJson(
-          json['rightTemplate'] as Map<String, dynamic>),
+      PropositionTemplate.fromJson(json['leftTemplate'] as Map<String, dynamic>),
+      PropositionTemplate.fromJson(json['rightTemplate'] as Map<String, dynamic>),
     );
   }
   PropositionTemplate leftTemplate;
@@ -342,8 +334,7 @@ class NotTemplate implements PropositionTemplate {
 
   factory NotTemplate.fromJson(Map<String, dynamic> json) {
     return NotTemplate(
-      PropositionTemplate.fromJson(
-          json['innerTemplate'] as Map<String, dynamic>),
+      PropositionTemplate.fromJson(json['innerTemplate'] as Map<String, dynamic>),
     );
   }
   final PropositionTemplate innerTemplate;
@@ -409,8 +400,8 @@ class ThresholdTemplate implements PropositionTemplate {
     }
 
     try {
-      return buildInner(innerTemplates, Either.right([])).flatMap((props) =>
-          Either.right(Proposer.thresholdProposer(props, threshold)));
+      return buildInner(innerTemplates, Either.right([]))
+          .flatMap((props) => Either.right(Proposer.thresholdProposer(props, threshold)));
     } on Exception catch (e) {
       return Either.left(BuilderError(e.toString(), exception: e));
     }

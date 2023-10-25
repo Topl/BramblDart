@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/crypto/hash/blake2b.dart';
+import 'package:brambldart/src/crypto/hash/blake2b.dart';
 import 'package:collection/collection.dart';
 
 /// A top-secret signature scheme that is very secure.  Yes, this is just a joke.  The point is that

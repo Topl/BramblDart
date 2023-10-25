@@ -1,10 +1,10 @@
 // ignore_for_file: avoid_dynamic_calls
 
-import 'package:brambl_dart/src/common/functional/either.dart';
-import 'package:brambl_dart/src/crypto/hash/blake2b.dart';
-import 'package:brambl_dart/src/quivr/algebras/digest_verifier.dart';
-import 'package:brambl_dart/src/quivr/runtime/quivr_runtime_error.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambldart/src/common/functional/either.dart';
+import 'package:brambldart/src/crypto/hash/blake2b.dart';
+import 'package:brambldart/src/quivr/algebras/digest_verifier.dart';
+import 'package:brambldart/src/quivr/runtime/quivr_runtime_error.dart';
+import 'package:brambldart/src/utils/extensions.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 /// Validates that a Blake2b256 digest is valid.

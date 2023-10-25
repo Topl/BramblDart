@@ -1,5 +1,5 @@
-import 'package:brambl_dart/brambl_dart.dart';
-import 'package:brambl_dart/src/brambl/validation/transaction_cost_calculator_interpreter.dart';
+import 'package:brambldart/brambldart.dart';
+import 'package:brambldart/src/brambl/validation/transaction_cost_calculator_interpreter.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:test/test.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';

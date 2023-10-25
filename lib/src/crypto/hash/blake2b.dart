@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/common/functional/either.dart';
-import 'package:brambl_dart/src/crypto/hash/digest/digest.dart';
-import 'package:brambl_dart/src/crypto/hash/hash.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambldart/src/common/functional/either.dart';
+import 'package:brambldart/src/crypto/hash/digest/digest.dart';
+import 'package:brambldart/src/crypto/hash/hash.dart';
+import 'package:brambldart/src/utils/extensions.dart';
 import 'package:pointycastle/digests/blake2b.dart';
 
 /// An interface for Blake2b hash functions.
