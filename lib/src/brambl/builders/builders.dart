@@ -1,7 +1,7 @@
-
-
 /// export builder libraries
-export 'transaction_builder_api.dart';
+library;
+
+export 'builder_error.dart';
 export 'locks/lock_template.dart';
 export 'locks/proposition_template.dart';
-export 'builder_error.dart';
+export 'transaction_builder_api.dart';

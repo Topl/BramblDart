@@ -10,7 +10,7 @@ import 'package:fixnum/fixnum.dart';
 extension StringExtension on String {
   /// Converts string  to a UTF-8 [Uint8List].
   Uint8List toUtf8Uint8List() {
-    final encoder = Utf8Encoder();
+    const encoder = Utf8Encoder();
     return Uint8List.fromList(encoder.convert(this));
   }
 
@@ -20,7 +20,8 @@ extension StringExtension on String {
     return Int8List.fromList(bytes);
   }
 
-  (String, String) splitAt(int index) => (substring(0, index), substring(index));
+  (String, String) splitAt(int index) =>
+      (substring(0, index), substring(index));
 
   /// Converts List<string> to a hex encoded [Uint8List].
   Uint8List toHexUint8List() => Uint8List.fromList(hex.decode(this));
@@ -32,7 +33,7 @@ extension StringExtension on String {
 extension StringListExtension on List<String> {
   /// Converts List<string> to a UTF-8 List of [Uint8List].
   List<Uint8List> toUtf8Uint8List() {
-    final encoder = Utf8Encoder();
+    const encoder = Utf8Encoder();
     return map((e) => Uint8List.fromList(encoder.convert(e))).toList();
   }
 }
@@ -72,7 +73,8 @@ extension Uint8ListExtension on Uint8List {
   /// Returns a [BigInt] representation of the [Uint8List] in little-endian byte order.
   BigInt fromLittleEndian() {
     final reversed = this.reversed.toList();
-    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    final hex =
+        reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 
@@ -114,7 +116,7 @@ extension Uint8ListExtension on Uint8List {
   ///
   /// Returns `true` if the [Uint8List] is equal to [other], `false` otherwise.
   bool equals(Uint8List other) {
-    return (identical(this, other) || const ListEquality().equals(this, other));
+    return identical(this, other) || const ListEquality().equals(this, other);
   }
 
   Uint8List overwriteBytes(int fillValue) {
@@ -126,7 +128,7 @@ extension Uint8ListExtension on Uint8List {
   /// Concatenates a [Uint8List] with another [Uint8List].
   /// Made for Uint8List, that is non growable by default
   Uint8List concat(Uint8List other) {
-    var builder = BytesBuilder();
+    final builder = BytesBuilder();
     builder
       ..add(this)
       ..add(other);
@@ -142,7 +144,8 @@ extension Int8ListExtension on Int8List {
 
   BigInt fromLittleEndian() {
     final reversed = this.reversed.toList();
-    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    final hex =
+        reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 }
@@ -217,7 +220,7 @@ extension ListExtensions<T> on List<T> {
   /// the length of the list.
   List<T> sublistSafe(int start, int end) {
     final actualEnd = end < 0
-        ? (start)
+        ? start
         : end > length
             ? length
             : end;
@@ -320,6 +323,6 @@ extension WithResultExtension<T> on T {
   /// final result = await number.withResultAsync((value) async => value * 2); // returns 84
   /// ```
   Future<B> withResultAsync<B>(Future<B> Function(T) f) async {
-    return await f(this);
+    return f(this);
   }
 }

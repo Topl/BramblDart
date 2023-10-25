@@ -8,8 +8,6 @@ import 'package:pointycastle/digests/blake2b.dart';
 ///
 /// @see [[https://en.wikipedia.org/wiki/Message_authentication_code]]
 class Mac {
-  late Uint8List value;
-
   /// Create MAC for a KeyFile.
   /// The KeyFile MAC is used to verify the integrity of the cipher text and derived key.
   /// It is calculated by hashing the last 16 bytes of the derived key + cipher text
@@ -22,6 +20,7 @@ class Mac {
     final added = [...data, ...cipherText].toUint8List();
     value = Blake2bDigest(digestSize: 32).process(added);
   }
+  late Uint8List value;
 
   /// Validate the MAC against a provided, expected, MAC.
   ///
@@ -34,13 +33,15 @@ class Mac {
   /// returns `true` if this MAC matches the expectedMac, false otherwise
   bool validateMac({Mac? expectedMac, Uint8List? expectedMacList}) {
     // if neither or both are supplied, throw exception
-    if ((expectedMac == null && expectedMacList == null) || (expectedMac != null && expectedMacList != null)) {
-      throw Exception('Either expectedMac or ExpectedMacList must be supplied, but not both');
+    if ((expectedMac == null && expectedMacList == null) ||
+        (expectedMac != null && expectedMacList != null)) {
+      throw Exception(
+          'Either expectedMac or ExpectedMacList must be supplied, but not both');
     }
     if (expectedMac != null) {
-      return ListEquality().equals(value, expectedMac.value);
+      return const ListEquality().equals(value, expectedMac.value);
     } else if (expectedMacList != null) {
-      return ListEquality().equals(value, expectedMacList);
+      return const ListEquality().equals(value, expectedMacList);
     }
     return false;
   }

@@ -3,10 +3,6 @@ import 'dart:typed_data';
 import 'package:brambl_dart/src/crypto/encryption/kdf/scrypt.dart';
 
 abstract class Kdf {
-  Params get params;
-
-  Uint8List deriveKey(Uint8List secret);
-
   factory Kdf.fromJson(Map<String, dynamic> json) {
     final kdf = json['kdf'] as String;
     switch (kdf) {
@@ -17,6 +13,9 @@ abstract class Kdf {
         throw FormatException('Unknown KDF: $kdf');
     }
   }
+  Params get params;
+
+  Uint8List deriveKey(Uint8List secret);
 
   Map<String, dynamic> toJson();
 }

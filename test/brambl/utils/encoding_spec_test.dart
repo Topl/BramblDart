@@ -17,7 +17,9 @@ void main() {
     test('Valhalla Network Main Ledger Zero Test', () {
       expect(
         encoding.encodeToBase58Check(
-          encoding.decodeFromHex('A5BF4108E7B07A00${List.filled(64, '0').join()}').get(),
+          encoding
+              .decodeFromHex('A5BF4108E7B07A00${List.filled(64, '0').join()}')
+              .get(),
         ),
         'vtetDGydU3EhwSbcRVFiuHmyP37Y57BwpmmutR7ZPYdD8BYssHEj3FRhr2Y8',
       );
@@ -26,7 +28,9 @@ void main() {
     test('Private Network Main Ledger Zero Test', () {
       expect(
         encoding.encodeToBase58Check(
-          encoding.decodeFromHex('934B1900E7B07A00${List.filled(64, '0').join()}').get(),
+          encoding
+              .decodeFromHex('934B1900E7B07A00${List.filled(64, '0').join()}')
+              .get(),
         ),
         'ptetP7jshHTuV9bmPmtVLm6PtUzBMZ8iYRvAxvbGTJ5VgiEPHqCCnZ8MLLdi',
       );
@@ -35,7 +39,9 @@ void main() {
     test('Main Network Main Ledger All One Test', () {
       expect(
         encoding.encodeToBase58Check(
-          encoding.decodeFromHex('8A11054CE7B07A00${List.filled(64, 'F').join()}').get(),
+          encoding
+              .decodeFromHex('8A11054CE7B07A00${List.filled(64, 'F').join()}')
+              .get(),
         ),
         'mtetmain1y3Nb6xbRZiY6w4eCKrwsZeywmoFEHkugUSnS47dZeaEos36pZwb',
       );
@@ -44,7 +50,9 @@ void main() {
     test('Valhalla Network Main Ledger All One Test', () {
       expect(
         encoding.encodeToBase58Check(
-          encoding.decodeFromHex('A5BF4108E7B07A00${List.filled(64, 'F').join()}').get(),
+          encoding
+              .decodeFromHex('A5BF4108E7B07A00${List.filled(64, 'F').join()}')
+              .get(),
         ),
         'vtetDGydU3Gegcq4TLgQ8RbZ5whA54WYbgtXc4pQGLGHERhZmGtjRjwruMj7',
       );
@@ -53,7 +61,9 @@ void main() {
     test('Private Network Main Ledger All One Test', () {
       expect(
         encoding.encodeToBase58Check(
-          encoding.decodeFromHex('934B1900E7B07A00${List.filled(64, 'F').join()}').get(),
+          encoding
+              .decodeFromHex('934B1900E7B07A00${List.filled(64, 'F').join()}')
+              .get(),
         ),
         'ptetP7jshHVrEKqDRdKAZtuybPZoMWTKKM2ngaJ7L5iZnxP5BprDB3hGJEFr',
       );
@@ -62,7 +72,10 @@ void main() {
     test('Encode decode', () {
       expect(
         String.fromCharCodes(
-          encoding.decodeFromBase58(encoding.encodeToBase58('Hello World!'.toCodeUnitUint8List())).get(),
+          encoding
+              .decodeFromBase58(
+                  encoding.encodeToBase58('Hello World!'.toCodeUnitUint8List()))
+              .get(),
         ),
         'Hello World!',
       );

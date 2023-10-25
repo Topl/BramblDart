@@ -1,27 +1,24 @@
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:uuid/uuid.dart';
-
 
 import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/language.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/mnemonic.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/phrase.dart';
-
+import 'package:uuid/uuid.dart';
 
 const defaultMnemonicSize = MnemonicSize.words12();
 
 class Entropy {
-  final Uint8List value;
-
   Entropy(this.value);
+  final Uint8List value;
 
   /// Generate an [Entropy] of the specified [size].
   ///
   /// The [size] parameter must be one of the factory constructor values defined in [MnemonicSize].
   ///
   /// Returns the generated [Entropy].
-  static Entropy generate({MnemonicSize size = defaultMnemonicSize} ) {
+  static Entropy generate({MnemonicSize size = defaultMnemonicSize}) {
     final numBytes = size.entropyLength ~/ 8;
 
     final r = Uint8List(numBytes);
@@ -32,34 +29,38 @@ class Entropy {
     return Entropy(r);
   }
 
-
-
   /// Generate a mnemonic string from an [Entropy] value.
   ///
   /// The [entropy] parameter is the entropy value from which to compute the mnemonic.
   /// The [language] parameter is the language of the mnemonic string.
   ///
   /// Returns an [Either] object that contains either an [EntropyFailure] object or a list of strings.
-  static Future<Either<EntropyFailure, List<String>>> toMnemonicString(Entropy entropy,
+  static Future<Either<EntropyFailure, List<String>>> toMnemonicString(
+      Entropy entropy,
       {Language language = const English()}) async {
     final sizeResult = sizeFromEntropyLength(entropy.value.length);
     if (sizeResult.isLeft) return Either.left(sizeResult.left);
     final size = sizeResult.right!;
 
-    final phraseResult = await Phrase.fromEntropy(entropy: entropy, size: size, language: language);
+    final phraseResult = await Phrase.fromEntropy(
+        entropy: entropy, size: size, language: language);
     if (phraseResult.isLeft) {
-      return Either.left(EntropyFailure.phraseToEntropyFailure(context: phraseResult.left.toString()));
+      return Either.left(EntropyFailure.phraseToEntropyFailure(
+          context: phraseResult.left.toString()));
     }
     final phrase = phraseResult.right!;
 
     return Either.right(phrase.value);
   }
 
-  static Future<Either<EntropyFailure, Entropy>> fromMnemonicString(String mnemonic,
+  static Future<Either<EntropyFailure, Entropy>> fromMnemonicString(
+      String mnemonic,
       {Language language = const English()}) async {
-    final phraseResult = await Phrase.validated(words: mnemonic, language:  language);
+    final phraseResult =
+        await Phrase.validated(words: mnemonic, language: language);
     if (phraseResult.isLeft) {
-      return Either.left(EntropyFailure.phraseToEntropyFailure(context: phraseResult.left.toString()));
+      return Either.left(EntropyFailure.phraseToEntropyFailure(
+          context: phraseResult.left.toString()));
     }
     final phrase = phraseResult.right!;
 
@@ -68,8 +69,8 @@ class Entropy {
   }
 
   static Entropy fromUuid(Uuid uuid) {
-    final bytes = Uint8List.fromList(
-        uuid.v4().toString().replaceAll('-', '').split('').map((c) {
+    final bytes =
+        Uint8List.fromList(uuid.v4().replaceAll('-', '').split('').map((c) {
       return int.parse(c, radix: 16);
     }).toList());
     return Entropy(bytes);
@@ -88,15 +89,15 @@ class Entropy {
       int entropyByteLength) {
     switch (entropyByteLength) {
       case 16:
-        return Either.right(MnemonicSize.words12());
+        return Either.right(const MnemonicSize.words12());
       case 20:
-        return Either.right(MnemonicSize.words15());
+        return Either.right(const MnemonicSize.words15());
       case 24:
-        return Either.right(MnemonicSize.words18());
+        return Either.right(const MnemonicSize.words18());
       case 28:
-        return Either.right(MnemonicSize.words21());
+        return Either.right(const MnemonicSize.words21());
       case 32:
-        return Either.right(MnemonicSize.words24());
+        return Either.right(const MnemonicSize.words24());
       default:
         return Either.left(EntropyFailure.invalidByteSize());
     }
@@ -123,14 +124,8 @@ class Entropy {
   }
 }
 
-
-
 /// A class representing a failure in the entropy generation process.
 class EntropyFailure implements Exception {
-  /// A message describing the error.
-  final String? message;
-  final EntropyFailureType type;
-
   EntropyFailure(this.type, this.message);
 
   factory EntropyFailure.invalidByteSize({String? context}) =>
@@ -141,6 +136,10 @@ class EntropyFailure implements Exception {
       EntropyFailure(EntropyFailureType.wordListFailure, context);
   factory EntropyFailure.invalidSizeMismatch({String? context}) =>
       EntropyFailure(EntropyFailureType.invalidSizeMismatch, context);
+
+  /// A message describing the error.
+  final String? message;
+  final EntropyFailureType type;
 
   @override
   String toString() {

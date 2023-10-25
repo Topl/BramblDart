@@ -32,9 +32,9 @@ include: package:lints/recommended.yaml
 
 analyzer:
   language:
-    strict-casts: true
-    strict-inference: true
-    strict-raw-types: true
+    strict-casts: false # We rely on dynamic type checking in the SDK
+    strict-inference: false
+    strict-raw-types: false
   errors:
     # allow self-reference to deprecated members (we do this because otherwise we have
     # to annotate every member in every test, assert, etc, when we deprecate something)
@@ -48,10 +48,10 @@ linter:
   rules:
     # This list is derived from the list of all available lints located at
     # https://github.com/dart-lang/linter/blob/main/example/all.yaml
-    - always_declare_return_types
-    - always_put_control_body_on_new_line
+    # - always_declare_return_types
+    # - always_put_control_body_on_new_line
     # - always_put_required_named_parameters_first # we prefer having parameters in the same order as fields https://github.com/flutter/flutter/issues/10219
-    - always_specify_types
+    # - always_specify_types
     # - always_use_package_imports # we do this commonly
     - annotate_overrides
     # - avoid_annotating_with_dynamic # conflicts with always_specify_types
@@ -132,12 +132,12 @@ linter:
     - library_names
     - library_prefixes
     - library_private_types_in_public_api
-    - lines_longer_than_80_chars # not required by flutter style
+    # - lines_longer_than_80_chars # not required by flutter style
     - literal_only_boolean_expressions
     # - matching_super_parameters # blocked on https://github.com/dart-lang/language/issues/2509
     - missing_whitespace_between_adjacent_strings
     - no_adjacent_strings_in_list
-    - no_default_cases
+    # - no_default_cases Somewhat of a chore with protobuf
     - no_duplicate_case_values
     - no_leading_underscores_for_library_prefixes
     - no_leading_underscores_for_local_identifiers
@@ -169,14 +169,14 @@ linter:
     - prefer_const_literals_to_create_immutables
     # - prefer_constructors_over_static_methods # far too many false positives
     - prefer_contains
-    - prefer_double_quotes # opposite of prefer_single_quotes
+    # - prefer_double_quotes # opposite of prefer_single_quotes
     # - prefer_expression_function_bodies # conflicts with https://github.com/flutter/flutter/wiki/Style-guide-for-Flutter-repo#consider-using--for-short-functions-and-methods
     - prefer_final_fields
     - prefer_final_in_for_each
     - prefer_final_locals
     # - prefer_final_parameters # adds too much verbosity
     - prefer_for_elements_to_map_fromIterable
-    - prefer_foreach
+    # - prefer_foreach #clashes
     - prefer_function_declarations_over_variables
     - prefer_generic_function_type_aliases
     - prefer_if_elements_to_conditional_expressions
@@ -192,7 +192,7 @@ linter:
     - prefer_mixin
     # - prefer_null_aware_method_calls # "call()" is confusing to people new to the language since it's not documented anywhere
     - prefer_null_aware_operators
-    - prefer_relative_imports
+    # - prefer_relative_imports
     # - prefer_single_quotes
     - prefer_spread_collections
     - prefer_typing_uninitialized_variables

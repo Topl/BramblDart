@@ -7,13 +7,15 @@ class Accumulators {
 
 @immutable
 class LeafData {
-  final List<int> value;
-
   const LeafData(this.value);
+  final List<int> value;
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is LeafData && runtimeType == other.runtimeType && value == other.value;
+      identical(this, other) ||
+      other is LeafData &&
+          runtimeType == other.runtimeType &&
+          value == other.value;
 
   @override
   int get hashCode => value.hashCode;
@@ -21,12 +23,12 @@ class LeafData {
 
 @immutable
 class Side {
+  const Side(this.value);
   final int value;
 
-  const Side(this.value);
-
   @override
-  bool operator ==(Object other) => identical(this, other) || other is Side && value == other.value;
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Side && value == other.value;
 
   @override
   int get hashCode => value.hashCode;

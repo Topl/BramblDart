@@ -48,7 +48,7 @@ class Blake2b256 extends Blake2b {
       }
     }
 
-    for (var m in messages) {
+    for (final m in messages) {
       _digest.update(m, 0, m.length);
     }
 
@@ -59,7 +59,7 @@ class Blake2b256 extends Blake2b {
 
     final Either<InvalidDigestFailure, Digest> x = Digest32.from(res);
     if (x.isLeft) {
-      throw (Exception(x.left!.message));
+      throw Exception(x.left!.message);
     }
     return x.right!;
   }
@@ -67,7 +67,7 @@ class Blake2b256 extends Blake2b {
 
 /// A 512 bit (64 byte) implementation of Blake2b
 class Blake2b512 extends Blake2b {
-  final Blake2bDigest _digest = Blake2bDigest(digestSize: Digest64.size);
+  final Blake2bDigest _digest = Blake2bDigest();
 
   /// Computes the digest of the specified [bytes].
   ///
@@ -87,7 +87,7 @@ class Blake2b512 extends Blake2b {
     if (prefix != null) {
       _digest.update(prefix.toBytes, 0, 1);
     }
-    for (var m in messages) {
+    for (final m in messages) {
       _digest.update(m, 0, m.length);
     }
 
@@ -98,7 +98,7 @@ class Blake2b512 extends Blake2b {
 
     final Either<InvalidDigestFailure, Digest> x = Digest64.from(res);
     if (x.isLeft) {
-      throw (Exception(x.left!.message));
+      throw Exception(x.left!.message);
     }
     return x.right!;
   }

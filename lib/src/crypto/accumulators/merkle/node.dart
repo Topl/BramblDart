@@ -15,15 +15,14 @@ sealed class Node {
 /// @param left  - left child. always non-empty
 /// @param right - right child. can be emptyNode
 class InternalNode extends Node {
+  InternalNode(this.left, this.right, this.h);
   final Node left;
   final Node? right;
   final Hash h;
 
-  InternalNode(this.left, this.right, this.h);
-
   @override
   Digest get hash {
-    final prefix = MerkleTree.internalNodePrefix;
+    const prefix = MerkleTree.internalNodePrefix;
     final leftBytes = left.hash.bytes;
     final rightBytes = right?.hash.bytes ?? Uint8List(0);
     return h.hashWithPrefix(prefix, [leftBytes, rightBytes]);
@@ -31,17 +30,16 @@ class InternalNode extends Node {
 }
 
 class Leaf extends Node {
-  final LeafData data;
-  final Hash h;
-
   Leaf({
     required this.data,
     required this.h,
   });
+  final LeafData data;
+  final Hash h;
 
   @override
   Digest get hash {
-    final prefix = MerkleTree.leafPrefix;
+    const prefix = MerkleTree.leafPrefix;
     return h.hashWithPrefix(prefix, [data.value.toUint8List()]);
   }
 }

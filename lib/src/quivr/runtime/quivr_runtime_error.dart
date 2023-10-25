@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 
@@ -7,7 +8,10 @@ sealed class QuivrRunTimeError implements Exception {
   /// If the current instance is not a [ValidationError], it throws a [StateError]. If it is a [ValidationError], it checks if
   /// its type is the same as the provided [type]. If they match, it returns `true`; otherwise, it returns `false`.
   bool checkForValidationError(ValidationErrorType type) {
-    if (this is! ValidationError) throw StateError('Cannot check for ValidationError on non-ValidationError');
+    if (this is! ValidationError) {
+      throw StateError(
+          'Cannot check for ValidationError on non-ValidationError');
+    }
     return (this as ValidationError).type == type;
   }
 
@@ -16,7 +20,9 @@ sealed class QuivrRunTimeError implements Exception {
   /// If the current instance is not a [ContextError], it throws a [StateError]. If it is a [ContextError], it checks if
   /// its type is the same as the provided [type]. If they match, it returns `true`; otherwise, it returns `false`.
   bool checkForContextError(ContextErrorType type) {
-    if (this is! ContextError) throw StateError('Cannot check for ContextError on non-ContextError');
+    if (this is! ContextError) {
+      throw StateError('Cannot check for ContextError on non-ContextError');
+    }
     return (this as ContextError).type == type;
   }
 
@@ -36,26 +42,34 @@ sealed class QuivrRunTimeError implements Exception {
 }
 
 /// A Validation error indicates that the evaluation of the proof failed for the given proposition within the provided context.
+@immutable
 class ValidationError extends QuivrRunTimeError {
+  ValidationError(this.type, this.message, {this.proof, this.proposition});
+
+  factory ValidationError.evaluationAuthorizationFailure(
+          {required Proof proof,
+          required Proposition proposition,
+          String? context}) =>
+      ValidationError(
+          ValidationErrorType.evaluationAuthorizationFailure, context,
+          proof: proof, proposition: proposition);
+  factory ValidationError.messageAuthorizationFailure(
+          {required Proof proof, String? context}) =>
+      ValidationError(ValidationErrorType.messageAuthorizationFailure, context,
+          proof: proof);
+  factory ValidationError.lockedPropositionIsUnsatisfiable({String? context}) =>
+      ValidationError(
+          ValidationErrorType.lockedPropositionIsUnsatisfiable, context);
+  factory ValidationError.userProvidedInterfaceFailure({String? context}) =>
+      ValidationError(
+          ValidationErrorType.userProvidedInterfaceFailure, context);
+
   /// A message describing the Quivr error.
   final String? message;
   final ValidationErrorType type;
 
-  Proof? proof;
-  Proposition? proposition;
-
-  ValidationError(this.type, this.message, {this.proof, this.proposition});
-
-  factory ValidationError.evaluationAuthorizationFailure(
-          {required Proof proof, required Proposition proposition, String? context}) =>
-      ValidationError(ValidationErrorType.evaluationAuthorizationFailure, context,
-          proof: proof, proposition: proposition);
-  factory ValidationError.messageAuthorizationFailure({required Proof proof, String? context}) =>
-      ValidationError(ValidationErrorType.messageAuthorizationFailure, context, proof: proof);
-  factory ValidationError.lockedPropositionIsUnsatisfiable({String? context}) =>
-      ValidationError(ValidationErrorType.lockedPropositionIsUnsatisfiable, context);
-  factory ValidationError.userProvidedInterfaceFailure({String? context}) =>
-      ValidationError(ValidationErrorType.userProvidedInterfaceFailure, context);
+  final Proof? proof;
+  final Proposition? proposition;
 
   @override
   String toString() {
@@ -82,11 +96,8 @@ enum ValidationErrorType {
 }
 
 /// A Context error indicates that the Dynamic context failed to retrieve an instance of a requested member
+@immutable
 class ContextError extends QuivrRunTimeError {
-  /// A message describing the Context error.
-  final String? message;
-  final ContextErrorType type;
-
   ContextError(this.type, this.message);
 
   factory ContextError.failedToFindDigestVerifier({String? context}) =>
@@ -97,6 +108,10 @@ class ContextError extends QuivrRunTimeError {
       ContextError(ContextErrorType.failedToFindDatum, context);
   factory ContextError.failedToFindInterface({String? context}) =>
       ContextError(ContextErrorType.failedToFindInterface, context);
+
+  /// A message describing the Context error.
+  final String? message;
+  final ContextErrorType type;
 
   @override
   String toString() {

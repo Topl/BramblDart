@@ -33,7 +33,7 @@ abstract class Credentialler {
   /// Validate whether the transaction is syntactically valid and authorized.
   /// A Transaction is authorized if all contained attestations are satisfied.
   ///
-  /// TODO: Revisit when we have cost estimator to decide which validations should occur.
+  // TODO(ultimaterex): Revisit when we have cost estimator to decide which validations should occur.
   ///
   /// [tx] - Transaction to validate.
   /// [ctx] - Context to validate the transaction in.
@@ -53,14 +53,13 @@ abstract class Credentialler {
 }
 
 class CredentiallerInterpreter implements Credentialler {
+  CredentiallerInterpreter(this.walletApi, this.walletStateApi, this.mainKey)
+      : assert(mainKey.vk.hasExtendedEd25519(), "mainKey must be an extended Ed25519 key"),
+        assert(mainKey.sk.hasExtendedEd25519(), "mainKey must be an extended Ed25519 key");
+
   WalletApi walletApi;
   WalletStateAlgebra walletStateApi;
   KeyPair mainKey;
-
-  CredentiallerInterpreter(this.walletApi, this.walletStateApi, this.mainKey) {
-    assert(mainKey.vk.hasExtendedEd25519(), "mainKey must be an extended Ed25519 key");
-    assert(mainKey.sk.hasExtendedEd25519(), "mainKey must be an extended Ed25519 key");
-  }
 
   @override
   IoTransaction prove(IoTransaction unprovenTx) {
@@ -68,7 +67,7 @@ class CredentiallerInterpreter implements Credentialler {
     final provenTx = unprovenTx.deepCopy()..inputs.clear();
 
     // referring to origin object to get around concurrent modification during iteration
-    for (var input in unprovenTx.inputs) {
+    for (final input in unprovenTx.inputs) {
       final x = proveInput(input, signable);
       provenTx.inputs.add(x);
     }
@@ -78,18 +77,18 @@ class CredentiallerInterpreter implements Credentialler {
 
   @override
   List<ValidationError> validate(IoTransaction tx, Context ctx) {
-    var syntaxErrs = TransactionSyntaxInterpreter.validate(tx).swap().map((p0) => p0.toList()).getOrElse([]);
-    var authErrs = TransactionAuthorizationInterpreter.validate(ctx, tx).swap().map((p0) => [p0]).getOrElse([]);
+    final syntaxErrs = TransactionSyntaxInterpreter.validate(tx).swap().map((p0) => p0.toList()).getOrElse([]);
+    final authErrs = TransactionAuthorizationInterpreter.validate(ctx, tx).swap().map((p0) => [p0]).getOrElse([]);
     return [
       ...syntaxErrs,
-      ...authErrs,  //TODO: figure out why this is failing for ever proof
+      ...authErrs, // TODO(ultimaterex): figure out why this is failing for ever proof
     ];
   }
 
   @override
   Either<List<ValidationError>, IoTransaction> proveAndValidate(IoTransaction unprovenTx, Context ctx) {
-    var provenTx = prove(unprovenTx);
-    var vErrs = validate(provenTx, ctx);
+    final provenTx = prove(unprovenTx);
+    final vErrs = validate(provenTx, ctx);
     return vErrs.isEmpty ? Either.right(provenTx) : Either.left(vErrs);
   }
 
@@ -98,15 +97,15 @@ class CredentiallerInterpreter implements Credentialler {
 
     switch (attestation.whichValue()) {
       case Attestation_Value.predicate:
-        var pred = attestation.predicate;
-        var challenges = pred.lock.challenges;
-        var proofs = pred.responses;
-        var revealed = challenges.map((e) => e.revealed).toList();
+        final pred = attestation.predicate;
+        final challenges = pred.lock.challenges;
+        final proofs = pred.responses;
+        final revealed = challenges.map((e) => e.revealed).toList();
         final pairs = revealed.zip(proofs);
 
-        var newProofs = <Proof>[];
-        for (var pair in pairs) {
-          var proof = getProof(msg, pair.$1, pair.$2);
+        final newProofs = <Proof>[];
+        for (final pair in pairs) {
+          final proof = getProof(msg, pair.$1, pair.$2);
           newProofs.add(proof);
         }
         attestation = Attestation(predicate: Attestation_Predicate(lock: pred.lock, responses: newProofs));
@@ -169,7 +168,7 @@ class CredentiallerInterpreter implements Credentialler {
     if (existingProof.hasDigest()) {
       return existingProof;
     } else {
-      var preimage = walletStateApi.getPreimage(digest);
+      final preimage = walletStateApi.getPreimage(digest);
       if (preimage != null) {
         return Prover.digestProver(preimage, msg);
       } else {
@@ -195,9 +194,9 @@ class CredentiallerInterpreter implements Credentialler {
     if (existingProof.hasDigitalSignature()) {
       return existingProof;
     } else {
-      var indices = walletStateApi.getIndicesBySignature(signature);
+      final indices = walletStateApi.getIndicesBySignature(signature);
       if (indices != null) {
-        var idx = indices;
+        final idx = indices;
         return getSignatureProofForRoutine(signature.routine, idx, msg);
       } else {
         return Proof();
@@ -236,7 +235,7 @@ class CredentiallerInterpreter implements Credentialler {
   Proof getNotProof(Proof existingProof, SignableBytes msg, Proposition innerProposition) {
     final Proof innerProof = existingProof.hasNot() ? existingProof.not.proof : Proof();
 
-    Proof proof = getProof(msg, innerProposition, innerProof);
+    final Proof proof = getProof(msg, innerProposition, innerProof);
     return Prover.notProver(proof, msg);
   }
 
@@ -264,8 +263,8 @@ class CredentiallerInterpreter implements Credentialler {
       leftProof = Proof();
       rightProof = Proof();
     }
-    Proof leftProofResult = getProof(msg, leftProposition, leftProof);
-    Proof rightProofResult = getProof(msg, rightProposition, rightProof);
+    final Proof leftProofResult = getProof(msg, leftProposition, leftProof);
+    final Proof rightProofResult = getProof(msg, rightProposition, rightProof);
     return Prover.andProver(leftProofResult, rightProofResult, msg);
   }
 
@@ -293,8 +292,8 @@ class CredentiallerInterpreter implements Credentialler {
       leftProof = Proof();
       rightProof = Proof();
     }
-    Proof leftProofResult = getProof(msg, leftProposition, leftProof);
-    Proof rightProofResult = getProof(msg, rightProposition, rightProof);
+    final Proof leftProofResult = getProof(msg, leftProposition, leftProof);
+    final Proof rightProofResult = getProof(msg, rightProposition, rightProof);
     return Prover.orProver(leftProofResult, rightProofResult, msg);
   }
 
@@ -313,7 +312,7 @@ class CredentiallerInterpreter implements Credentialler {
     } else {
       responses = List.filled(innerPropositions.length, Proof());
     }
-    List<Proof> proofs = [];
+    final List<Proof> proofs = [];
     for (var i = 0; i < innerPropositions.length; i++) {
       proofs.add(getProof(msg, innerPropositions[i], responses[i]));
     }

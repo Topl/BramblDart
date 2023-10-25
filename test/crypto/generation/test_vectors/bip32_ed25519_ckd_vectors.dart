@@ -1,19 +1,13 @@
 import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/generation/bip32_index.dart';
 import 'package:brambl_dart/src/crypto/generation/key_initializer/extended_ed25519_initializer.dart';
-import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
-import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart' as spec;
+import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart'
+    as spec;
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
+import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 
 class Bip32Ed25519CkdTestVector {
-  final String description;
-  final SecretKey rootSecretKey;
-  final Option<PublicKey> rootVerificationKey;
-  final List<Bip32Index> path;
-  final SecretKey childSecretKey;
-  final PublicKey childVerificationKey;
-
   Bip32Ed25519CkdTestVector(
       {required this.description,
       required this.rootSecretKey,
@@ -23,10 +17,10 @@ class Bip32Ed25519CkdTestVector {
       required this.childVerificationKey});
 
   factory Bip32Ed25519CkdTestVector.fromJson(Map<String, Object> vector) {
-    final input = vector['inputs'] as Map<String, Object>;
-    final output = vector['outputs'] as Map<String, Object>;
+    final input = vector['inputs']! as Map<String, Object>;
+    final output = vector['outputs']! as Map<String, Object>;
 
-    final path = (input['path'] as List<List<Object>>).map((x) {
+    final path = (input['path']! as List<List<Object>>).map((x) {
       final type = x[0] as String;
       final index = x[1] as int;
       if (type == 'soft') {
@@ -39,11 +33,11 @@ class Bip32Ed25519CkdTestVector {
     }).toList();
 
     // input
-    final rSkString = input['rootSecretKey'] as String;
+    final rSkString = input['rootSecretKey']! as String;
 
     Option<PublicKey> rootVerificationKey = None();
     if (input.containsKey("rootVerificationKey")) {
-      final rVkString = input['rootVerificationKey'] as String;
+      final rVkString = input['rootVerificationKey']! as String;
       final rootVkBytes = rVkString.toHexUint8List();
       rootVerificationKey = Some(PublicKey(
         spec.PublicKey(rootVkBytes.sublist(0, 32)),
@@ -56,8 +50,8 @@ class Bip32Ed25519CkdTestVector {
     );
 
     // output
-    final cSkString = output['childSecretKey'] as String;
-    final cVkString = output['childVerificationKey'] as String;
+    final cSkString = output['childSecretKey']! as String;
+    final cVkString = output['childVerificationKey']! as String;
 
     final childSK = ExtendedEd25519Intializer(ExtendedEd25519()).fromBytes(
       cSkString.toHexUint8List(),
@@ -69,7 +63,7 @@ class Bip32Ed25519CkdTestVector {
     );
 
     return Bip32Ed25519CkdTestVector(
-      description: vector['description'] as String,
+      description: vector['description']! as String,
       rootSecretKey: rootSK as SecretKey,
       rootVerificationKey: rootVerificationKey,
       childSecretKey: childSK as SecretKey,
@@ -77,11 +71,18 @@ class Bip32Ed25519CkdTestVector {
       path: path,
     );
   }
+  final String description;
+  final SecretKey rootSecretKey;
+  final Option<PublicKey> rootVerificationKey;
+  final List<Bip32Index> path;
+  final SecretKey childSecretKey;
+  final PublicKey childVerificationKey;
 }
 
 final bip32Ed25519CkdTestVectors = [
   {
-    "description": "test vector 1 - Derive the correct child keys at path ` m/0 ` given a root extended secret key",
+    "description":
+        "test vector 1 - Derive the correct child keys at path ` m/0 ` given a root extended secret key",
     "inputs": {
       "rootSecretKey":
           "c05377ef282279549898c5a15fe202bc9416c8a26fe81ffe1e19c147c2493549d61547691b72d73947e588ded4967688f82db9628be9bb00c5ad16b5dfaf602ac5f419bd575f8ea23fa1a599b103f85e6325bf2d34b018ff6f2b8cf3f915e19c",
@@ -99,7 +100,8 @@ final bip32Ed25519CkdTestVectors = [
     }
   },
   {
-    "description": "test vector 2 - Derive the correct child keys at path ` m/1 ` given a root extended secret key",
+    "description":
+        "test vector 2 - Derive the correct child keys at path ` m/1 ` given a root extended secret key",
     "inputs": {
       "rootSecretKey":
           "c05377ef282279549898c5a15fe202bc9416c8a26fe81ffe1e19c147c2493549d61547691b72d73947e588ded4967688f82db9628be9bb00c5ad16b5dfaf602ac5f419bd575f8ea23fa1a599b103f85e6325bf2d34b018ff6f2b8cf3f915e19c",
@@ -117,7 +119,8 @@ final bip32Ed25519CkdTestVectors = [
     }
   },
   {
-    "description": "test vector 3 - Derive the correct child keys at path ` m/2 ` given a root extended secret key",
+    "description":
+        "test vector 3 - Derive the correct child keys at path ` m/2 ` given a root extended secret key",
     "inputs": {
       "rootSecretKey":
           "c05377ef282279549898c5a15fe202bc9416c8a26fe81ffe1e19c147c2493549d61547691b72d73947e588ded4967688f82db9628be9bb00c5ad16b5dfaf602ac5f419bd575f8ea23fa1a599b103f85e6325bf2d34b018ff6f2b8cf3f915e19c",
@@ -135,7 +138,8 @@ final bip32Ed25519CkdTestVectors = [
     }
   },
   {
-    "description": "test vector 4 - Derive the correct child keys at path ` m/0' ` given a root extended secret key",
+    "description":
+        "test vector 4 - Derive the correct child keys at path ` m/0' ` given a root extended secret key",
     "inputs": {
       "rootSecretKey":
           "f0d0f18e6ab029166fe4e89519ab64f42aa870fc2791fc472840c3a1ba507347fee30dcae1ae3941bde71e9ddd19eef33d0a7b91aaa4137cea6ef4ea3c27f96a1189e5ec0628974ed7846b594ed0ee2d3ef2d8f5b91d1860ffb0a065159df8be",

@@ -1,5 +1,3 @@
-library mnemonic;
-
 import 'package:brambl_dart/src/crypto/generation/mnemonic/phrase.dart';
 
 import '../../../common/functional/either.dart';
@@ -47,10 +45,6 @@ class Mnemonic {
 /// @param wordLength the size of the mnemonic
 ///
 class MnemonicSize {
-  final int wordLength;
-  final int checksumLength;
-  final int entropyLength;
-
   const MnemonicSize._(this.wordLength)
       : checksumLength = wordLength ~/ 3,
         entropyLength = 32 * (wordLength ~/ 3); // 32 * checksumLength
@@ -60,21 +54,26 @@ class MnemonicSize {
   const MnemonicSize.words18() : this._(18);
   const MnemonicSize.words21() : this._(21);
   const MnemonicSize.words24() : this._(24);
+  final int wordLength;
+  final int checksumLength;
+  final int entropyLength;
 
-static Either<PhraseFailure, MnemonicSize> fromNumberOfWords(int numberOfWords) {
+  static Either<PhraseFailure, MnemonicSize> fromNumberOfWords(
+      int numberOfWords) {
     switch (numberOfWords) {
       case 12:
-        return Either.right(MnemonicSize.words12());
+        return Either.right(const MnemonicSize.words12());
       case 15:
-        return Either.right(MnemonicSize.words15());
+        return Either.right(const MnemonicSize.words15());
       case 18:
-        return Either.right(MnemonicSize.words18());
+        return Either.right(const MnemonicSize.words18());
       case 21:
-        return Either.right(MnemonicSize.words21());
+        return Either.right(const MnemonicSize.words21());
       case 24:
-        return Either.right(MnemonicSize.words24());
+        return Either.right(const MnemonicSize.words24());
       default:
-        return Either.left(PhraseFailure(PhraseFailureType.invalidWordLength, 'Invalid number of words'));
+        return Either.left(PhraseFailure(
+            PhraseFailureType.invalidWordLength, 'Invalid number of words'));
     }
   }
 }

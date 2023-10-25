@@ -12,7 +12,7 @@ main() {
       n++;
       test("Pbkdf2Sha512TestVectors vector $n", () {
         final expectedResult = hex.decode(vector.result.replaceAll(' ', ''));
-        final kdf = Pbkdf2Sha512();
+        const kdf = Pbkdf2Sha512();
 
         final result = kdf.generateKey(
           vector.password,

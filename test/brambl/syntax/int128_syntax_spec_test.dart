@@ -5,7 +5,7 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 void main() {
   group('Int128SyntaxSpec', () {
-    final mockLong = 100;
+    const mockLong = 100;
     final mockBigInt = BigInt.from(mockLong);
     final mockInt128 = Int128(value: mockBigInt.toUint8List());
 

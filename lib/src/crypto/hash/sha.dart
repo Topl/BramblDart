@@ -32,7 +32,8 @@ sealed class SHA extends Hash {
 
   /// Add [len] bytes of data contained in [inp], starting at position [inpOff]
   /// to the digested input.
-  void update(Uint8List inp, int inpOff, int len) => _digest.update(inp, inpOff, len);
+  void update(Uint8List inp, int inpOff, int len) =>
+      _digest.update(inp, inpOff, len);
 
   /// Store the digest of previously given data in buffer [out] starting at
   /// offset [outOff]. This method returns the size of the digest.
@@ -61,7 +62,7 @@ class SHA256 extends SHA {
     if (prefix != null) {
       _digest.update(prefix.toBytes, 0, 1);
     }
-    for (var m in messages) {
+    for (final m in messages) {
       _digest.update(m, 0, m.length);
     }
 
@@ -72,7 +73,7 @@ class SHA256 extends SHA {
 
     final Either<InvalidDigestFailure, Digest> x = Digest32.from(res);
     if (x.isLeft) {
-      throw (Exception(x.left!.message));
+      throw Exception(x.left!.message);
     }
     return x.right!;
   }
@@ -103,7 +104,7 @@ class SHA512 extends SHA {
     if (prefix != null) {
       _digest.update(prefix.toBytes, 0, 1);
     }
-    for (var m in messages) {
+    for (final m in messages) {
       _digest.update(m, 0, m.length);
     }
 
@@ -114,7 +115,7 @@ class SHA512 extends SHA {
 
     final Either<InvalidDigestFailure, Digest> x = Digest64.from(res);
     if (x.isLeft) {
-      throw (Exception(x.left!.message));
+      throw Exception(x.left!.message);
     }
     return x.right!;
   }

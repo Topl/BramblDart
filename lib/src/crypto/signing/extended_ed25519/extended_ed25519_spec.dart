@@ -1,10 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/common/functional/either.dart';
-import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart' as spec;
+import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart'
+    as spec;
 import 'package:brambl_dart/src/crypto/signing/signing.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
+import 'package:meta/meta.dart';
 import 'package:pointycastle/export.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
 
@@ -61,11 +63,8 @@ mixin ExtendedEd25519Spec {
   }
 }
 
+@immutable
 class SecretKey extends SigningKey with ExtendedEd25519Spec {
-  final Uint8List leftKey;
-  final Uint8List rightKey;
-  final Uint8List chainCode;
-
   SecretKey(this.leftKey, this.rightKey, this.chainCode) {
     if (leftKey.length != ExtendedEd25519Spec.keyLength) {
       throw ArgumentError(
@@ -93,6 +92,9 @@ class SecretKey extends SigningKey with ExtendedEd25519Spec {
       sk.chainCode.toUint8List(),
     );
   }
+  final Uint8List leftKey;
+  final Uint8List rightKey;
+  final Uint8List chainCode;
 
   @override
   bool operator ==(Object other) =>
@@ -104,15 +106,13 @@ class SecretKey extends SigningKey with ExtendedEd25519Spec {
 
   @override
   int get hashCode =>
-      const ListEquality().hash(leftKey) ^ const ListEquality().hash(rightKey) ^ const ListEquality().hash(chainCode);
+      const ListEquality().hash(leftKey) ^
+      const ListEquality().hash(rightKey) ^
+      const ListEquality().hash(chainCode);
 }
 
+@immutable
 class PublicKey extends VerificationKey with ExtendedEd25519Spec {
-  final spec.PublicKey vk;
-  final Uint8List chainCode;
-
-  Uint8List get verificationBytes => vk.bytes;
-
   PublicKey(this.vk, this.chainCode) {
     if (chainCode.length != ExtendedEd25519Spec.keyLength) {
       throw ArgumentError(
@@ -127,13 +127,18 @@ class PublicKey extends VerificationKey with ExtendedEd25519Spec {
       vk.chainCode.toUint8List(),
     );
   }
+  final spec.PublicKey vk;
+  final Uint8List chainCode;
+
+  Uint8List get verificationBytes => vk.bytes;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PublicKey && vk == other.vk && const ListEquality().equals(chainCode, other.chainCode);
+      other is PublicKey && vk == other.vk && chainCode.equals(other.chainCode);
 
   @override
+  // ignore: inference_failure_on_instance_creation
   int get hashCode => vk.hashCode ^ const ListEquality().hash(chainCode);
 }
 

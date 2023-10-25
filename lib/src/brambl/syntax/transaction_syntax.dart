@@ -6,15 +6,15 @@ import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 
 class TransactionSyntax {
-  final IoTransaction transaction;
-
   TransactionSyntax(this.transaction);
+  final IoTransaction transaction;
 
   /// The ID of this transaction.
   ///
   /// If an ID was pre-computed and saved in the Transaction, it is restored.
   /// Otherwise, a new ID is computed (but not saved in the Transaction).
-  TransactionId get id => transaction.hasTransactionId() ? transaction.transactionId : computeId();
+  TransactionId get id =>
+      transaction.hasTransactionId() ? transaction.transactionId : computeId();
 
   /// Computes what the ID _should_ be for this Transaction.
   TransactionId computeId() {

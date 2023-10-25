@@ -4,12 +4,12 @@ import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 
 class LockSyntaxOps {
+  LockSyntaxOps(this.lock);
   final Lock lock;
 
-  LockSyntaxOps(this.lock);
-
   LockAddress lockAddress(int network, int ledger) {
-    final evidence = ContainsEvidence.blake2bEvidenceFromImmutable(lock).evidence;
+    final evidence =
+        ContainsEvidence.blake2bEvidenceFromImmutable(lock).evidence;
     final digest = evidence.digest.value;
     final lockId = LockId(value: digest);
     return LockAddress(network: network, ledger: ledger, id: lockId);
@@ -17,12 +17,13 @@ class LockSyntaxOps {
 }
 
 class PredicateLockSyntaxOps {
+  PredicateLockSyntaxOps(this.lock);
   final Lock_Predicate lock;
 
-  PredicateLockSyntaxOps(this.lock);
-
   LockAddress lockAddress(int network, int ledger) {
-    final evidence = ContainsEvidence.blake2bEvidenceFromImmutable(Lock()..predicate = lock).evidence;
+    final evidence =
+        ContainsEvidence.blake2bEvidenceFromImmutable(Lock()..predicate = lock)
+            .evidence;
     final digest = evidence.digest.value;
     final lockId = LockId(value: digest);
     return LockAddress(network: network, ledger: ledger, id: lockId);

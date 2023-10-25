@@ -1,4 +1,3 @@
-
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -8,7 +7,6 @@ import 'package:collection/collection.dart';
 /// A top-secret signature scheme that is very secure.  Yes, this is just a joke.  The point is that
 /// the signing routine is plug-and-play, and can be replaced with any other signature scheme depending on context.
 class VerySecureSignatureRoutine {
-
   /// Generates a key pair.
   /// The secret key is just a random 32-byte array.
   /// The verification key is the reverse of the private key
@@ -17,7 +15,7 @@ class VerySecureSignatureRoutine {
     for (int i = 0; i < sk.length; i++) {
       sk[i] = Random().nextInt(256);
     }
-    Uint8List vk = Uint8List.fromList(sk.toList().reversed.toList());
+    final Uint8List vk = Uint8List.fromList(sk.toList().reversed.toList());
     return (sk, vk);
   }
 
@@ -30,11 +28,10 @@ class VerySecureSignatureRoutine {
   ///
   /// @param [vk] a 64-byte signature
   static Uint8List sign(Uint8List sk, Uint8List msg) {
-    var inBytes = Uint8List.fromList([...sk, ...msg]);
-    var hash = Blake2b512().hash(inBytes);
+    final inBytes = Uint8List.fromList([...sk, ...msg]);
+    final hash = Blake2b512().hash(inBytes);
     return hash.sublist(0, 64);
   }
-
 
   /// Verifies the given signature against the given msg and vk.
   /// The signature is valid if it is equal to the Blake2b-512
@@ -46,7 +43,7 @@ class VerySecureSignatureRoutine {
   ///
   /// @param [vk] a 32-byte VK
   static bool verify(Uint8List sig, Uint8List msg, Uint8List vk) {
-    var expectedSig = sign(Uint8List.fromList(vk.reversed.toList()), msg);
-    return ListEquality().equals(sig, expectedSig);
+    final expectedSig = sign(Uint8List.fromList(vk.reversed.toList()), msg);
+    return const ListEquality().equals(sig, expectedSig);
   }
 }

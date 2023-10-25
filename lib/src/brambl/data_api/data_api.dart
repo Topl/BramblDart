@@ -1,7 +1,6 @@
-
-
-
 /// export data_api libraries
+library;
+
 export 'bifrost_query_algebra.dart';
 export 'contract_storage_algebra.dart';
 export 'genus_query_algebra.dart';

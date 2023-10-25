@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/hash/blake2b.dart';
 import 'package:brambl_dart/src/quivr/algebras/digest_verifier.dart';
@@ -13,20 +15,20 @@ class Blake2b256DigestInterpreter implements DigestVerifier {
   ///
   /// Returns the DigestVerification object if the digest is valid, otherwise an error.
   @override
-  Either<QuivrRunTimeError, DigestVerification> validate(t)  {
-    var d = t.digest.value;
-    var p = t.preimage.input.toUint8List();
-    var salt = t.preimage.salt.toUint8List();
-    var testHash = Blake2b256().hash((p + salt).toUint8List());
+  Either<QuivrRunTimeError, DigestVerification> validate(t) {
+    final d = t.digest.value;
+    final p = t.preimage.input.toUint8List();
+    final salt = t.preimage.salt.toUint8List();
+    final testHash = Blake2b256().hash((p + salt).toUint8List());
     if (testHash.equals(d.toUint8List())) {
       return Either.right(t);
     } else {
-      // TODO: replace with correct error. Verification failed.
+      // TODO(ultimaterex): replace with correct error. Verification failed.
       return Either.left(ValidationError.lockedPropositionIsUnsatisfiable());
     }
   }
-  
+
   @override
-  // TODO: implement definedFunction
-  Function(dynamic p1) get definedFunction => throw UnimplementedError();
+  // TODO(ultimaterex): implement definedFunction
+  dynamic Function(dynamic p1) get definedFunction => throw UnimplementedError();
 }

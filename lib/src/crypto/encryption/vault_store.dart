@@ -7,21 +7,23 @@ import 'package:brambl_dart/src/crypto/encryption/kdf/kdf.dart';
 import 'package:brambl_dart/src/crypto/encryption/mac.dart';
 import 'package:brambl_dart/src/utils/json.dart';
 import 'package:collection/collection.dart';
+import 'package:meta/meta.dart';
 
 /// A VaultStore is a JSON encode-able object that contains the KDF and Cipher necessary to decrypt the cipher text.
+@immutable
 class VaultStore {
-  final Kdf kdf;
-  final Cipher cipher;
-  final Uint8List cipherText;
-  final Uint8List mac;
-
   /// A VaultStore is a JSON encode-able object that contains the KDF and Cipher necessary to decrypt the cipher text.
   ///
   /// [kdf] the associated KDF
   /// [cipher] the associated Cipher
   /// [cipherText] cipher text
   /// [mac] MAC to validate the data integrity
-  VaultStore(this.kdf, this.cipher, this.cipherText, this.mac);
+  const VaultStore(this.kdf, this.cipher, this.cipherText, this.mac);
+  
+  final Kdf kdf;
+  final Cipher cipher;
+  final Uint8List cipherText;
+  final Uint8List mac;
 
   @override
   bool operator ==(Object other) =>
@@ -53,7 +55,7 @@ class VaultStore {
   /// Decode a the cipher text of a VaultStore
   /// [VaultStore] the VaultStore
   /// returns the decrypted data if mac is valid, otherwise [InvalidMac]
-  static Either<Exception, Uint8List> decodeCipher<F>(
+  static Either<Exception, Uint8List> decodeCipher(
     VaultStore vaultStore,
     Uint8List password,
   ) {

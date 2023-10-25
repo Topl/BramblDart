@@ -6,18 +6,24 @@ import 'package:brambl_dart/src/crypto/encryption/kdf/kdf.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:brambl_dart/src/utils/json.dart';
 import 'package:convert/convert.dart';
+import 'package:meta/meta.dart';
 import 'package:pointycastle/export.dart';
 
 /// SCrypt is a key derivation function.
 /// @see [[https://en.wikipedia.org/wiki/Scrypt]]
+@immutable
 class SCrypt implements Kdf {
-  @override
-  final SCryptParams params;
-
-  SCrypt(this.params);
+  const SCrypt(this.params);
 
   /// Create a SCrypt with generated salt.
   SCrypt.withGeneratedSalt() : this(SCryptParams.withGeneratedSalt());
+
+  factory SCrypt.fromJson(Map<String, dynamic> json) {
+    final params = SCryptParams.fromJson(json);
+    return SCrypt(params);
+  }
+  @override
+  final SCryptParams params;
 
   /// Derive a key from a secret.
   ///
@@ -26,7 +32,8 @@ class SCrypt implements Kdf {
   @override
   Uint8List deriveKey(Uint8List secret) {
     final scrypt = Scrypt();
-    scrypt.init(ScryptParameters(params.n, params.r, params.p, params.dkLen, params.salt));
+    scrypt.init(ScryptParameters(
+        params.n, params.r, params.p, params.dkLen, params.salt));
     return scrypt.process(secret);
   }
 
@@ -34,11 +41,6 @@ class SCrypt implements Kdf {
   static Uint8List generateSalt() {
     final rand = Random.secure();
     return List.generate(32, (_) => rand.nextInt(256)).toUint8List();
-  }
-
-  factory SCrypt.fromJson(Map<String, dynamic> json) {
-    final params = SCryptParams.fromJson(json);
-    return SCrypt(params);
   }
 
   @override
@@ -49,19 +51,17 @@ class SCrypt implements Kdf {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is SCrypt && runtimeType == other.runtimeType && params == other.params;
+      identical(this, other) ||
+      other is SCrypt &&
+          runtimeType == other.runtimeType &&
+          params == other.params;
 
   @override
   int get hashCode => params.hashCode;
 }
 
+@immutable
 class SCryptParams extends Params {
-  final Uint8List salt;
-  final int n;
-  final int r;
-  final int p;
-  final int dkLen;
-
   /// SCrypt parameters.
   ///
   /// [salt]  salt
@@ -86,9 +86,6 @@ class SCryptParams extends Params {
   /// Create SCryptParameters with generated salt.
   SCryptParams.withGeneratedSalt() : this(salt: SCrypt.generateSalt());
 
-  @override
-  String get kdf => "scrypt";
-
   factory SCryptParams.fromJson(Map<String, dynamic> json) {
     final salt = Json.decodeUint8List(json['salt']);
     final n = jsonDecode(json['n']);
@@ -97,6 +94,14 @@ class SCryptParams extends Params {
     final dkLen = jsonDecode(json['dkLen']);
     return SCryptParams(salt: salt, n: n, r: r, p: p, dkLen: dkLen);
   }
+  final Uint8List salt;
+  final int n;
+  final int r;
+  final int p;
+  final int dkLen;
+
+  @override
+  String get kdf => "scrypt";
 
   /// JSON encoder for SCrypt parameters
   Map<String, dynamic> toJson() {
@@ -121,5 +126,10 @@ class SCryptParams extends Params {
           dkLen == other.dkLen;
 
   @override
-  int get hashCode => hex.encode(salt).hashCode ^ n.hashCode ^ r.hashCode ^ p.hashCode ^ dkLen.hashCode;
+  int get hashCode =>
+      hex.encode(salt).hashCode ^
+      n.hashCode ^
+      r.hashCode ^
+      p.hashCode ^
+      dkLen.hashCode;
 }

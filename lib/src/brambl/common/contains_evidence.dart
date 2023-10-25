@@ -8,15 +8,13 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
 
 /// Contains signable bytes and has methods to get evidence of those bytes in the form of a 32 or 64 byte hash.
 class ContainsEvidence {
-  final Evidence evidence;
-
   const ContainsEvidence(this.evidence);
 
   factory ContainsEvidence.empty() {
     return ContainsEvidence(Evidence());
   }
 
-  factory ContainsEvidence.blake2bEvidenceFromImmutable(t) {
+  factory ContainsEvidence.blake2bEvidenceFromImmutable(dynamic t) {
     final bytes = ContainsImmutable.apply(t).immutableBytes.value.toUint8List();
     final hash = Blake2b256().hash(bytes);
     final digest = pb.Digest(value: hash);
@@ -33,9 +31,11 @@ class ContainsEvidence {
     final digest = pb.Digest(value: rootHash.bytes);
     return ContainsEvidence(Evidence(digest: digest));
   }
+  final Evidence evidence;
 }
 
 extension SizedEvidence on dynamic {
   /// converts a dynamic value to a sized evidence via blake 2b hash
-  Evidence get sizedEvidence => ContainsEvidence.blake2bEvidenceFromImmutable(this).evidence;
+  Evidence get sizedEvidence =>
+      ContainsEvidence.blake2bEvidenceFromImmutable(this).evidence;
 }

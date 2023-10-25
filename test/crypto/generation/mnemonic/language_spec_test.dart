@@ -7,21 +7,21 @@ import '../../helpers/generators.dart';
 
 main() {
   final List<Language> languages = [
-    English(),
-    ChineseSimplified(),
-    ChineseTraditional(),
-    Portuguese(),
-    Czech(),
-    Spanish(),
-    Italian(),
-    French(),
-    Japanese(),
-    Korean()
+    const English(),
+    const ChineseSimplified(),
+    const ChineseTraditional(),
+    const Portuguese(),
+    const Czech(),
+    const Spanish(),
+    const Italian(),
+    const French(),
+    const Japanese(),
+    const Korean()
   ];
 
   group('Language Spec Test Vectors', () {
     for (final language in languages) {
-      test("Language resolves wordlist${language.toString()}", () async {
+      test("Language resolves wordlist$language", () async {
         final x = await LanguageWordList.validated(language);
         expect(x.isRight, isTrue);
       });
@@ -29,7 +29,8 @@ main() {
       test('phrases should be generated in $language', () async {
         final size = Generators.getGeneratedMnemonicSize;
         final entropy = Entropy.generate(size: size);
-        final phrase = await Phrase.fromEntropy(entropy: entropy, size: size, language: language);
+        final phrase = await Phrase.fromEntropy(
+            entropy: entropy, size: size, language: language);
         expect(phrase.isRight, true);
       });
     }

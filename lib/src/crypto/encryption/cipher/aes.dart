@@ -5,23 +5,27 @@ import 'package:brambl_dart/src/crypto/encryption/cipher/cipher.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:brambl_dart/src/utils/json.dart';
 import 'package:convert/convert.dart';
+import 'package:meta/meta.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/export.dart';
 
 /// AES encryption.
 /// Aes is a symmetric block cipher that can encrypt and decrypt data using the same key.
 /// @see [[https://en.wikipedia.org/wiki/Advanced_Encryption_Standard]]
+@immutable
 class Aes implements Cipher {
+  Aes({Uint8List? iv, AesParams? params}) : params = params ?? AesParams(iv ?? generateIv());
+
+  factory Aes.fromJson(Map<String, dynamic> json) {
+    final params = AesParams.fromJson(json);
+    return Aes(params: params);
+  }
   static const blockSize = 16;
 
   /// Generate a random initialization vector.
   static Uint8List generateIv() {
     final rand = Random.secure();
     return List.generate(blockSize, (_) => rand.nextInt(256)).toUint8List();
-  }
-
-  Aes({Uint8List? iv, AesParams? params}) {
-    this.params = params ?? AesParams(iv ?? generateIv());
   }
 
   /// Encrypt data.
@@ -51,7 +55,7 @@ class Aes implements Cipher {
   /// returns decrypted data
   @override
   Uint8List decrypt(Uint8List cipherText, Uint8List key) {
-    final preImage = processAes(cipherText, key, params.iv, encrypt: false);
+    final preImage = processAes(cipherText, key, params.iv);
     final preImageSigned = preImage.toSigned();
     final paddedAmount = preImageSigned[0];
     final paddedBytes = preImageSigned.sublist(1);
@@ -74,7 +78,7 @@ class Aes implements Cipher {
   }
 
   @override
-  late AesParams params;
+  final AesParams params;
 
   @override
   bool operator ==(Object other) =>
@@ -82,11 +86,6 @@ class Aes implements Cipher {
 
   @override
   int get hashCode => params.hashCode;
-
-  factory Aes.fromJson(Map<String, dynamic> json) {
-    final params = AesParams.fromJson(json);
-    return Aes(params: params);
-  }
 
   @override
   Map<String, dynamic> toJson() {
@@ -98,15 +97,21 @@ class Aes implements Cipher {
 /// AES parameters.
 ///
 /// [iv] initialization vector
+@immutable
 class AesParams extends Params {
-  Uint8List iv;
-
-  @override
-  String get cipher => 'aes';
-
   AesParams(this.iv);
 
   factory AesParams.generate() => AesParams(Aes.generateIv());
+
+  factory AesParams.fromJson(Map<String, dynamic> json) {
+    final iv = Json.decodeUint8List(json['iv']);
+    return AesParams(iv);
+  }
+
+  final Uint8List iv;
+
+  @override
+  String get cipher => 'aes';
 
   @override
   bool operator ==(Object other) =>
@@ -118,10 +123,5 @@ class AesParams extends Params {
 
   Map<String, dynamic> toJson() {
     return {'iv': Json.encodeUint8List(iv)};
-  }
-
-  factory AesParams.fromJson(Map<String, dynamic> json) {
-    final iv = Json.decodeUint8List(json['iv']);
-    return AesParams(iv);
   }
 }

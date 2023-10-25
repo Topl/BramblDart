@@ -22,8 +22,8 @@ sealed class LockTemplate {
 }
 
 final class LockType {
-  final String label;
   const LockType(this.label);
+  final String label;
 }
 
 final class LockTypes {
@@ -31,13 +31,22 @@ final class LockTypes {
 }
 
 class PredicateTemplate implements LockTemplate {
+  PredicateTemplate(this.innerTemplates, this.threshold);
+
+  factory PredicateTemplate.fromJson(Map<String, dynamic> json) {
+    final threshold = json['threshold'] as int;
+    final innerTemplates = (json['innerTemplates'] as List<dynamic>)
+        .map((e) => PropositionTemplate.fromJson(e))
+        .toList();
+    return PredicateTemplate(innerTemplates, threshold);
+  }
   List<PropositionTemplate> innerTemplates;
   int threshold;
-  PredicateTemplate(this.innerTemplates, this.threshold);
 
   @override
   Either<BuilderError, Lock> build(List<VerificationKey> entityVks) {
-    final result = ThresholdTemplate(innerTemplates, threshold).build(entityVks);
+    final result =
+        ThresholdTemplate(innerTemplates, threshold).build(entityVks);
     return result.flatMap((ip) {
       if (ip is Proposition_Threshold) {
         final innerPropositions = ip.threshold.challenges;
@@ -49,7 +58,8 @@ class PredicateTemplate implements LockTemplate {
               threshold: threshold),
         ));
       } else {
-        return Either.left(BuilderError('Unexpected inner proposition type: ${ip.runtimeType}'));
+        return Either.left(BuilderError(
+            'Unexpected inner proposition type: ${ip.runtimeType}'));
       }
     });
   }
@@ -62,11 +72,4 @@ class PredicateTemplate implements LockTemplate {
         'threshold': threshold,
         'innerTemplates': innerTemplates.map((e) => e.toJson()).toList(),
       };
-
-  factory PredicateTemplate.fromJson(Map<String, dynamic> json) {
-    final threshold = json['threshold'] as int;
-    final innerTemplates =
-        (json['innerTemplates'] as List<dynamic>).map((e) => PropositionTemplate.fromJson(e)).toList();
-    return PredicateTemplate(innerTemplates, threshold);
-  }
 }

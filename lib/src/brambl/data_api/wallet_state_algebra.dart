@@ -18,7 +18,8 @@ abstract class WalletStateAlgebra {
   ///
   /// [signatureProposition] The signature proposition to get the indices for
   /// Returns the indices associated to the signature proposition if it exists. Else null
-  Indices? getIndicesBySignature(Proposition_DigitalSignature signatureProposition);
+  Indices? getIndicesBySignature(
+      Proposition_DigitalSignature signatureProposition);
 
   /// Get the preimage secret associated to a digest proposition.
   ///
@@ -38,7 +39,8 @@ abstract class WalletStateAlgebra {
   /// [routine] The routine to add to the wallet state
   /// [vk] The verification key to add to the wallet state
   /// [indices] The indices to add to the wallet state
-  void updateWalletState(String lockPredicate, String lockAddress, String? routine, String? vk, Indices indices);
+  void updateWalletState(String lockPredicate, String lockAddress,
+      String? routine, String? vk, Indices indices);
 
   /// Get the current indices for the given party, contract and optional state
   ///
@@ -47,7 +49,8 @@ abstract class WalletStateAlgebra {
   /// [someState] The optional state index of the indices. If not provided, the next state index for the given party
   /// and contract pair will be used
   /// Returns the indices for the given party, contract and optional state if possible. Else null
-  Indices? getCurrentIndicesForFunds(String party, String contract, int? someState);
+  Indices? getCurrentIndicesForFunds(
+      String party, String contract, int? someState);
 
   /// Validate that the supplied party, contract and optional state exist and are associated with each other in the
   /// current wallet state
@@ -57,7 +60,8 @@ abstract class WalletStateAlgebra {
   /// [someState] The optional state index to validate with. If not provided, the next state for the given party
   /// and contract pair will be used
   /// Returns the indices for the given party, contract and optional state if valid. If not, the relevant errors
-  Either<String, Indices> validateCurrentIndicesForFunds(String party, String contract, int? someState);
+  Either<String, Indices> validateCurrentIndicesForFunds(
+      String party, String contract, int? someState);
 
   /// Get the next available indices for the given party and contract
   ///

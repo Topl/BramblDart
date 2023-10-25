@@ -49,15 +49,11 @@ extension PropositionTypeExtension on PropositionType {
 }
 
 final class UnableToBuildPropositionTemplate extends BuilderError {
-  UnableToBuildPropositionTemplate(String message, {Exception? cause}) : super(message, exception: cause);
+  UnableToBuildPropositionTemplate(String super.message, {Exception? cause})
+      : super(exception: cause);
 }
 
 sealed class PropositionTemplate {
-  PropositionType get propositionType;
-  Either<BuilderError, Proposition> build(List<VerificationKey> entityVks);
-
-  Map<String, dynamic> toJson();
-
   factory PropositionTemplate.fromJson(Map<String, dynamic> json) {
     final type = json['propositionType'] as String;
     switch (type) {
@@ -83,13 +79,23 @@ sealed class PropositionTemplate {
         throw ArgumentError('Unknown Proposition Type');
     }
   }
+  PropositionType get propositionType;
+  Either<BuilderError, Proposition> build(List<VerificationKey> entityVks);
+
+  Map<String, dynamic> toJson();
 }
 
 /// Templates start here
 
 class LockedTemplate implements PropositionTemplate {
-  final Data? data;
   LockedTemplate(this.data);
+
+  factory LockedTemplate.fromJson(Map<String, dynamic> json) {
+    return LockedTemplate(json.containsKey('data')
+        ? (Data.fromBuffer(json['data'] as Uint8List))
+        : null);
+  }
+  final Data? data;
 
   @override
   PropositionType get propositionType => PropositionType.locked;
@@ -108,17 +114,21 @@ class LockedTemplate implements PropositionTemplate {
         'propositionType': propositionType.label,
         'data': data?.writeToBuffer(),
       };
-
-  factory LockedTemplate.fromJson(Map<String, dynamic> json) {
-    return LockedTemplate(json.containsKey('data') ? (Data.fromBuffer(json['data'] as Uint8List)) : null);
-  }
 }
 
 class HeightTemplate implements PropositionTemplate {
+  HeightTemplate(this.chain, this.min, this.max);
+
+  factory HeightTemplate.fromJson(Map<String, dynamic> json) {
+    return HeightTemplate(
+      json['chain'] as String,
+      Int64(json['min'] as int),
+      Int64(json['max'] as int),
+    );
+  }
   final String chain;
   final Int64 min;
   final Int64 max;
-  HeightTemplate(this.chain, this.min, this.max);
 
   @override
   PropositionType get propositionType => PropositionType.height;
@@ -139,20 +149,19 @@ class HeightTemplate implements PropositionTemplate {
         'min': min.toInt(),
         'max': max.toInt(),
       };
+}
 
-  factory HeightTemplate.fromJson(Map<String, dynamic> json) {
-    return HeightTemplate(
-      json['chain'] as String,
+class TickTemplate implements PropositionTemplate {
+  TickTemplate(this.min, this.max);
+
+  factory TickTemplate.fromJson(Map<String, dynamic> json) {
+    return TickTemplate(
       Int64(json['min'] as int),
       Int64(json['max'] as int),
     );
   }
-}
-
-class TickTemplate implements PropositionTemplate {
   final Int64 min;
   final Int64 max;
-  TickTemplate(this.min, this.max);
 
   @override
   PropositionType get propositionType => PropositionType.tick;
@@ -172,19 +181,19 @@ class TickTemplate implements PropositionTemplate {
         'min': min.toInt(),
         'max': max.toInt(),
       };
-
-  factory TickTemplate.fromJson(Map<String, dynamic> json) {
-    return TickTemplate(
-      Int64(json['min'] as int),
-      Int64(json['max'] as int),
-    );
-  }
 }
 
 class DigestTemplate implements PropositionTemplate {
+  DigestTemplate(this.routine, this.digest);
+
+  factory DigestTemplate.fromJson(Map<String, dynamic> json) {
+    return DigestTemplate(
+      json['routine'] as String,
+      Digest.fromBuffer(json['digest'] as List<int>),
+    );
+  }
   final String routine;
   final Digest digest;
-  DigestTemplate(this.routine, this.digest);
 
   @override
   PropositionType get propositionType => PropositionType.digest;
@@ -204,19 +213,19 @@ class DigestTemplate implements PropositionTemplate {
         'routine': routine,
         'digest': digest.writeToBuffer(),
       };
-
-  factory DigestTemplate.fromJson(Map<String, dynamic> json) {
-    return DigestTemplate(
-      json['routine'] as String,
-      Digest.fromBuffer(json['digest'] as List<int>),
-    );
-  }
 }
 
 class SignatureTemplate implements PropositionTemplate {
+  SignatureTemplate(this.routine, this.entityIdx);
+
+  factory SignatureTemplate.fromJson(Map<String, dynamic> json) {
+    return SignatureTemplate(
+      json['routine'] as String,
+      json['entityIdx'] as int,
+    );
+  }
   final String routine;
   final int entityIdx;
-  SignatureTemplate(this.routine, this.entityIdx);
 
   @override
   PropositionType get propositionType => PropositionType.signature;
@@ -225,10 +234,11 @@ class SignatureTemplate implements PropositionTemplate {
   Either<BuilderError, Proposition> build(List<VerificationKey> entityVks) {
     try {
       if (entityIdx >= 0 && entityIdx < entityVks.length) {
-        return Either.right(Proposer.signatureProposer(routine, entityVks[entityIdx]));
+        return Either.right(
+            Proposer.signatureProposer(routine, entityVks[entityIdx]));
       } else {
-        return Either.left(
-            BuilderError('Signature Proposition failed. Index: $entityIdx. Length of VKs: ${entityVks.length}'));
+        return Either.left(BuilderError(
+            'Signature Proposition failed. Index: $entityIdx. Length of VKs: ${entityVks.length}'));
       }
     } on Exception catch (e) {
       return Either.left(BuilderError(e.toString(), exception: e));
@@ -241,19 +251,21 @@ class SignatureTemplate implements PropositionTemplate {
         'routine': routine,
         'entityIdx': entityIdx,
       };
-
-  factory SignatureTemplate.fromJson(Map<String, dynamic> json) {
-    return SignatureTemplate(
-      json['routine'] as String,
-      json['entityIdx'] as int,
-    );
-  }
 }
 
 class AndTemplate implements PropositionTemplate {
+  AndTemplate(this.leftTemplate, this.rightTemplate);
+
+  factory AndTemplate.fromJson(Map<String, dynamic> json) {
+    return AndTemplate(
+      PropositionTemplate.fromJson(
+          json['leftTemplate'] as Map<String, dynamic>),
+      PropositionTemplate.fromJson(
+          json['rightTemplate'] as Map<String, dynamic>),
+    );
+  }
   PropositionTemplate leftTemplate;
   PropositionTemplate rightTemplate;
-  AndTemplate(this.leftTemplate, this.rightTemplate);
 
   @override
   PropositionType get propositionType => PropositionType.and;
@@ -281,19 +293,21 @@ class AndTemplate implements PropositionTemplate {
         'leftTemplate': leftTemplate.toJson(),
         'rightTemplate': rightTemplate.toJson(),
       };
-
-  factory AndTemplate.fromJson(Map<String, dynamic> json) {
-    return AndTemplate(
-      PropositionTemplate.fromJson(json['leftTemplate'] as Map<String, dynamic>),
-      PropositionTemplate.fromJson(json['rightTemplate'] as Map<String, dynamic>),
-    );
-  }
 }
 
 class OrTemplate implements PropositionTemplate {
+  OrTemplate(this.leftTemplate, this.rightTemplate);
+
+  factory OrTemplate.fromJson(Map<String, dynamic> json) {
+    return OrTemplate(
+      PropositionTemplate.fromJson(
+          json['leftTemplate'] as Map<String, dynamic>),
+      PropositionTemplate.fromJson(
+          json['rightTemplate'] as Map<String, dynamic>),
+    );
+  }
   PropositionTemplate leftTemplate;
   PropositionTemplate rightTemplate;
-  OrTemplate(this.leftTemplate, this.rightTemplate);
 
   @override
   PropositionType get propositionType => PropositionType.or;
@@ -321,18 +335,18 @@ class OrTemplate implements PropositionTemplate {
         'leftTemplate': leftTemplate.toJson(),
         'rightTemplate': rightTemplate.toJson(),
       };
-
-  factory OrTemplate.fromJson(Map<String, dynamic> json) {
-    return OrTemplate(
-      PropositionTemplate.fromJson(json['leftTemplate'] as Map<String, dynamic>),
-      PropositionTemplate.fromJson(json['rightTemplate'] as Map<String, dynamic>),
-    );
-  }
 }
 
 class NotTemplate implements PropositionTemplate {
-  final PropositionTemplate innerTemplate;
   NotTemplate(this.innerTemplate);
+
+  factory NotTemplate.fromJson(Map<String, dynamic> json) {
+    return NotTemplate(
+      PropositionTemplate.fromJson(
+          json['innerTemplate'] as Map<String, dynamic>),
+    );
+  }
+  final PropositionTemplate innerTemplate;
 
   @override
   PropositionType get propositionType => PropositionType.not;
@@ -352,18 +366,21 @@ class NotTemplate implements PropositionTemplate {
         'propositionType': propositionType.label,
         'innerTemplate': innerTemplate.toJson(),
       };
-
-  factory NotTemplate.fromJson(Map<String, dynamic> json) {
-    return NotTemplate(
-      PropositionTemplate.fromJson(json['innerTemplate'] as Map<String, dynamic>),
-    );
-  }
 }
 
 class ThresholdTemplate implements PropositionTemplate {
+  ThresholdTemplate(this.innerTemplates, this.threshold);
+
+  factory ThresholdTemplate.fromJson(Map<String, dynamic> json) {
+    return ThresholdTemplate(
+      (json['innerTemplates'] as List<dynamic>)
+          .map((e) => PropositionTemplate.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      json['threshold'] as int,
+    );
+  }
   final List<PropositionTemplate> innerTemplates;
   final int threshold;
-  ThresholdTemplate(this.innerTemplates, this.threshold);
 
   @override
   PropositionType get propositionType => PropositionType.threshold;
@@ -392,8 +409,8 @@ class ThresholdTemplate implements PropositionTemplate {
     }
 
     try {
-      return buildInner(innerTemplates, Either.right([]))
-          .flatMap((props) => Either.right(Proposer.thresholdProposer(props, threshold)));
+      return buildInner(innerTemplates, Either.right([])).flatMap((props) =>
+          Either.right(Proposer.thresholdProposer(props, threshold)));
     } on Exception catch (e) {
       return Either.left(BuilderError(e.toString(), exception: e));
     }
@@ -405,13 +422,4 @@ class ThresholdTemplate implements PropositionTemplate {
         'innerTemplates': innerTemplates.map((e) => e.toJson()).toList(),
         'threshold': threshold,
       };
-
-  factory ThresholdTemplate.fromJson(Map<String, dynamic> json) {
-    return ThresholdTemplate(
-      (json['innerTemplates'] as List<dynamic>)
-          .map((e) => PropositionTemplate.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      json['threshold'] as int,
-    );
-  }
 }

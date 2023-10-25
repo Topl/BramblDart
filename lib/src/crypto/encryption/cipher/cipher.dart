@@ -1,10 +1,24 @@
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/crypto/encryption/cipher/aes.dart';
+import 'package:meta/meta.dart';
 
 /// Ciphers are used to encrypt and decrypt data.
 /// @see [[https://en.wikipedia.org/wiki/Cipher]]
+@immutable
 abstract class Cipher {
+  /// JSON decoder for a Cipher
+  factory Cipher.fromJson(Map<String, dynamic> json) {
+    final cipher = json['cipher'] as String;
+    switch (cipher) {
+      case 'aes':
+        final aesParams = AesParams.fromJson(json);
+        return Aes(params: aesParams);
+      default:
+        throw UnknownCipherException();
+    }
+  }
+
   Params get params;
 
   /// Encrypt data.
@@ -21,25 +35,16 @@ abstract class Cipher {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Cipher && runtimeType == other.runtimeType && params == other.params;
+      identical(this, other) ||
+      other is Cipher &&
+          runtimeType == other.runtimeType &&
+          params == other.params;
 
   @override
   int get hashCode => params.hashCode;
 
   /// JSON encoder for a Cipher
   Map<String, dynamic> toJson();
-
-  /// JSON decoder for a Cipher
-  factory Cipher.fromJson(Map<String, dynamic> json) {
-    final cipher = json['cipher'] as String;
-    switch (cipher) {
-      case 'aes':
-        final aesParams = AesParams.fromJson(json);
-        return Aes(params: aesParams);
-      default:
-        throw UnknownCipherException();
-    }
-  }
 }
 
 /// Cipher parameters.

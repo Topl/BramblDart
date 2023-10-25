@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-
 import 'package:brambl_dart/src/crypto/hash/blake2b.dart';
 import 'package:brambl_dart/src/crypto/hash/sha.dart';
 
@@ -37,7 +36,8 @@ abstract class Hash {
   /// [prefix] the prefix byte of the hashed message
   /// [messages] the set of messages to iteratively hash
   /// Returns the hash digest
-  Digest hashWithPrefix(int prefix, List<Message> messages) => hashComplex(prefix: prefix, messages: messages);
+  Digest hashWithPrefix(int prefix, List<Message> messages) =>
+      hashComplex(prefix: prefix, messages: messages);
 
   /// Hashes a message.
   ///

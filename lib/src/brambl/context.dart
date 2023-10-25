@@ -58,8 +58,12 @@ import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 import '../quivr/common/parsable_data_interface.dart';
 
-final Map<String, DigestVerifier> _hashingRoutines = {'Blake2b256': Blake2b256DigestInterpreter()};
-final Map<String, SignatureVerifier> _signingRoutines = {'ExtendedEd25519': ExtendedEd25519SignatureInterpreter()};
+final Map<String, DigestVerifier> _hashingRoutines = {
+  'Blake2b256': Blake2b256DigestInterpreter()
+};
+final Map<String, SignatureVerifier> _signingRoutines = {
+  'ExtendedEd25519': ExtendedEd25519SignatureInterpreter()
+};
 final Map<String, ParsableDataInterface> _interfaces = {}; // Arbitrary
 
 Int64? _heightOf(String label, Datum? Function(String) heightDatums) {
@@ -72,10 +76,10 @@ Int64? _heightOf(String label, Datum? Function(String) heightDatums) {
 }
 
 class Context extends DynamicContext {
-  final IoTransaction tx;
-  final Int64 curTick;
-  final Map<String, Datum?> heightDatums;
   Context(this.tx, this.curTick, this.heightDatums)
       : super(heightDatums, _interfaces, _signingRoutines, _hashingRoutines,
             SignableBytes.fromBuffer(tx.writeToBuffer()), curTick, _heightOf);
+  final IoTransaction tx;
+  final Int64 curTick;
+  final Map<String, Datum?> heightDatums;
 }

@@ -10,12 +10,14 @@ void main() {
     for (final v in entropyToSeedVectors) {
       final vector = EntropyToSeedVector.fromJson(v);
 
-      test('Generate 96 byte seed from entropy: ${vector.entropyString}', () async {
-        final entropyToSeed = Pbkdf2Sha512();
-        final seed = entropyToSeed.toSeed(vector.entropy, vector.password, seedLength: 96);
+      test('Generate 96 byte seed from entropy: ${vector.entropyString}',
+          () async {
+        const entropyToSeed = Pbkdf2Sha512();
+        final seed = entropyToSeed.toSeed(vector.entropy, vector.password,
+            seedLength: 96);
 
         final expectedSeed = vector.seed96.toHexUint8List();
-        expect(ListEquality().equals(seed, expectedSeed), true);
+        expect(const ListEquality().equals(seed, expectedSeed), true);
       });
     }
   });
