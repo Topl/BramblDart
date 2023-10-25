@@ -1,5 +1,5 @@
-import 'package:brambl_dart/src/crypto/generation/entropy_to_seed.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambldart/src/crypto/generation/entropy_to_seed.dart';
+import 'package:brambldart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
@@ -10,11 +10,9 @@ void main() {
     for (final v in entropyToSeedVectors) {
       final vector = EntropyToSeedVector.fromJson(v);
 
-      test('Generate 96 byte seed from entropy: ${vector.entropyString}',
-          () async {
+      test('Generate 96 byte seed from entropy: ${vector.entropyString}', () async {
         const entropyToSeed = Pbkdf2Sha512();
-        final seed = entropyToSeed.toSeed(vector.entropy, vector.password,
-            seedLength: 96);
+        final seed = entropyToSeed.toSeed(vector.entropy, vector.password, seedLength: 96);
 
         final expectedSeed = vector.seed96.toHexUint8List();
         expect(const ListEquality().equals(seed, expectedSeed), true);

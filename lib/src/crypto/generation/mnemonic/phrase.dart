@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:brambl_dart/brambl_dart.dart';
-import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
-import 'package:brambl_dart/src/crypto/generation/mnemonic/language.dart';
-import 'package:brambl_dart/src/crypto/generation/mnemonic/mnemonic.dart';
-import 'package:brambl_dart/src/crypto/hash/sha.dart';
+import 'package:brambldart/brambldart.dart';
+import 'package:brambldart/src/crypto/generation/mnemonic/entropy.dart';
+import 'package:brambldart/src/crypto/generation/mnemonic/language.dart';
+import 'package:brambldart/src/crypto/generation/mnemonic/mnemonic.dart';
+import 'package:brambldart/src/crypto/hash/sha.dart';
 
 class Phrase {
   Phrase({
@@ -34,11 +34,7 @@ class Phrase {
     final size = sizeResult.right!;
 
     final phrase = Phrase(
-      value: words
-          .toLowerCase()
-          .split(RegExp(r'\s+'))
-          .map((w) => w.trim())
-          .toList(),
+      value: words.toLowerCase().split(RegExp(r'\s+')).map((w) => w.trim()).toList(),
       size: size,
       languageWords: wordList,
     );
@@ -58,8 +54,7 @@ class Phrase {
         left: PhraseFailure.invalidChecksum(context: words), right: phrase);
   }
 
-  static String _calculateChecksum(
-      String entropyBinaryString, MnemonicSize size) {
+  static String _calculateChecksum(String entropyBinaryString, MnemonicSize size) {
     // Get the first `entropyLength` number of bits from the entropy binary string
     final entropyBits = entropyBinaryString.substring(0, size.entropyLength);
 
@@ -80,8 +75,7 @@ class Phrase {
     }
 
     final hashBinaryString = hashBits.join();
-    final checksumBinaryString =
-        hashBinaryString.substring(0, size.checksumLength);
+    final checksumBinaryString = hashBinaryString.substring(0, size.checksumLength);
     return checksumBinaryString;
   }
 
@@ -94,8 +88,8 @@ class Phrase {
       return Either.left(PhraseFailure.invalidEntropyLength());
     }
 
-    final wordListResult = (await LanguageWordList.validated(language))
-        .flatMapLeft((p0) => Either.left(PhraseFailure.wordListFailure()));
+    final wordListResult =
+        (await LanguageWordList.validated(language)).flatMapLeft((p0) => Either.left(PhraseFailure.wordListFailure()));
 
     if (wordListResult.isLeft && wordListResult.left != null) {
       return Either.left(wordListResult.left);
@@ -110,8 +104,7 @@ class Phrase {
     final phraseBinaryString = entropyBinaryString + checksum;
     final phraseWords = <String>[];
     for (var i = 0; i < phraseBinaryString.length; i += 11) {
-      final index =
-          int.parse(phraseBinaryString.substring(i, i + 11), radix: 2);
+      final index = int.parse(phraseBinaryString.substring(i, i + 11), radix: 2);
       phraseWords.add(wordList.value[index]);
     }
     return Either.right(Phrase(
@@ -146,11 +139,9 @@ class PhraseFailure implements Exception {
   factory PhraseFailure.invalidWordLength({String? context}) =>
       PhraseFailure(PhraseFailureType.invalidWordLength, context);
 
-  factory PhraseFailure.invalidWords({String? context}) =>
-      PhraseFailure(PhraseFailureType.invalidWords, context);
+  factory PhraseFailure.invalidWords({String? context}) => PhraseFailure(PhraseFailureType.invalidWords, context);
 
-  factory PhraseFailure.invalidChecksum({String? context}) =>
-      PhraseFailure(PhraseFailureType.invalidChecksum, context);
+  factory PhraseFailure.invalidChecksum({String? context}) => PhraseFailure(PhraseFailureType.invalidChecksum, context);
 
   factory PhraseFailure.invalidEntropyLength({String? context}) =>
       PhraseFailure(PhraseFailureType.invalidEntropyLength, context);

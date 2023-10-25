@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:brambl_dart/src/crypto/encryption/cipher/aes.dart';
-import 'package:brambl_dart/src/crypto/encryption/cipher/cipher.dart';
-import 'package:brambl_dart/src/crypto/encryption/kdf/kdf.dart';
-import 'package:brambl_dart/src/crypto/encryption/kdf/scrypt.dart';
-import 'package:brambl_dart/src/crypto/encryption/vault_store.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
-import 'package:brambl_dart/src/utils/json.dart';
+import 'package:brambldart/src/crypto/encryption/cipher/aes.dart';
+import 'package:brambldart/src/crypto/encryption/cipher/cipher.dart';
+import 'package:brambldart/src/crypto/encryption/kdf/kdf.dart';
+import 'package:brambldart/src/crypto/encryption/kdf/scrypt.dart';
+import 'package:brambldart/src/crypto/encryption/vault_store.dart';
+import 'package:brambldart/src/utils/extensions.dart';
+import 'package:brambldart/src/utils/json.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -32,8 +32,7 @@ void main() {
 
     test('AES Params > Decode fails with invalid JSON', () {
       final invalidJson = {'iv': 10}; // IV should be a string
-      expect(() => AesParams.fromJson(invalidJson),
-          throwsA(const TypeMatcher<TypeError>()));
+      expect(() => AesParams.fromJson(invalidJson), throwsA(const TypeMatcher<TypeError>()));
     });
 
     test('SCrypt Params > Encode and Decode', () {
@@ -64,8 +63,7 @@ void main() {
         'p': 10,
         'dkLen': 10,
       };
-      expect(() => SCryptParams.fromJson(invalidJson),
-          throwsA(const TypeMatcher<FormatException>()));
+      expect(() => SCryptParams.fromJson(invalidJson), throwsA(const TypeMatcher<FormatException>()));
     });
 
     test('Cipher > AES > Encode and Decode', () {
@@ -91,12 +89,10 @@ void main() {
     test('Cipher > AES > Decode fails with invalid label', () {
       final expected = Helpers.expectedAesParams();
 
-      final fields = Map<String, dynamic>.from(expected.fields)
-        ..['cipher'] = 'invalid-label';
+      final fields = Map<String, dynamic>.from(expected.fields)..['cipher'] = 'invalid-label';
       final invalidJson = jsonEncode(fields);
 
-      expect(() => Cipher.fromJson(jsonDecode(invalidJson)),
-          throwsA(const TypeMatcher<UnknownCipherException>()));
+      expect(() => Cipher.fromJson(jsonDecode(invalidJson)), throwsA(const TypeMatcher<UnknownCipherException>()));
     });
 
     test('Cipher > AES > Decode fails with invalid JSON', () {
@@ -106,8 +102,7 @@ void main() {
       final fields = {'cipher': expected.value.cipher}; // IV is missing
       final invalidJson = jsonEncode(fields);
 
-      expect(() => Cipher.fromJson(jsonDecode(invalidJson)),
-          throwsA(const TypeMatcher<TypeError>()));
+      expect(() => Cipher.fromJson(jsonDecode(invalidJson)), throwsA(const TypeMatcher<TypeError>()));
     });
 
     test('KDF > SCrypt > Encode and Decode', () {
@@ -135,8 +130,7 @@ void main() {
 
       final invalidJson = jsonEncode(expected.fields); // label is missing
 
-      expect(() => Kdf.fromJson(jsonDecode(invalidJson)),
-          throwsA(const TypeMatcher<TypeError>()));
+      expect(() => Kdf.fromJson(jsonDecode(invalidJson)), throwsA(const TypeMatcher<TypeError>()));
     });
 
     test('KDF > SCrypt > Decode fails with invalid JSON', () {
@@ -148,16 +142,14 @@ void main() {
         ..remove("salt"); // salt is missing
       final invalidJson = jsonEncode(fields);
 
-      expect(() => Kdf.fromJson(jsonDecode(invalidJson)),
-          throwsA(const TypeMatcher<TypeError>()));
+      expect(() => Kdf.fromJson(jsonDecode(invalidJson)), throwsA(const TypeMatcher<TypeError>()));
     });
 
     test('VaultStore > Encode and Decode', () {
       final expected = Helpers.expectedVaultStore();
 
       // Decode test
-      final testVaultStore =
-          VaultStore.fromJson(jsonDecode(expected.json)).get();
+      final testVaultStore = VaultStore.fromJson(jsonDecode(expected.json)).get();
       expect(testVaultStore, expected.value);
 
       // Encode test
@@ -169,8 +161,7 @@ void main() {
       expect(encodedFromDecoded, expected.json);
 
       // Encode then Decode test
-      final decodedFromEncoded =
-          VaultStore.fromJson(jsonDecode(testJson)).get();
+      final decodedFromEncoded = VaultStore.fromJson(jsonDecode(testJson)).get();
       expect(decodedFromEncoded, expected.value);
     });
 
@@ -181,10 +172,7 @@ void main() {
         ..remove('salt') // salt is mising
         ..addAll({'kdf': 'invalid-kdf'});
 
-      final fields = {
-        "kdf": jsonEncode(invalidKdfParams),
-        ...expected.fields..remove("salt")
-      };
+      final fields = {"kdf": jsonEncode(invalidKdfParams), ...expected.fields..remove("salt")};
       final invalidJson = jsonEncode(fields);
 
       final result = VaultStore.fromJson(jsonDecode(invalidJson));
@@ -194,8 +182,7 @@ void main() {
 }
 
 class Helpers {
-  static ({AesParams value, Map<String, String> fields, String json})
-      expectedAesParams() {
+  static ({AesParams value, Map<String, String> fields, String json}) expectedAesParams() {
     final iv = 'iv'.toCodeUnitUint8List();
     final value = AesParams(iv);
 
@@ -209,8 +196,7 @@ class Helpers {
     );
   }
 
-  static ({SCryptParams value, Map<String, String> fields, String json})
-      expectedSCryptParams() {
+  static ({SCryptParams value, Map<String, String> fields, String json}) expectedSCryptParams() {
     final salt = 'salt'.toCodeUnitUint8List();
     final value = SCryptParams(salt: salt);
     final fields = {
@@ -228,8 +214,7 @@ class Helpers {
     );
   }
 
-  static ({Cipher value, Map<String, String> fields, String json})
-      expectedCipher() {
+  static ({Cipher value, Map<String, String> fields, String json}) expectedCipher() {
     final e = Helpers.expectedAesParams();
     final value = Aes(params: e.value);
 
@@ -257,8 +242,7 @@ class Helpers {
     );
   }
 
-  static ({VaultStore value, Map<String, String> fields, String json})
-      expectedVaultStore() {
+  static ({VaultStore value, Map<String, String> fields, String json}) expectedVaultStore() {
     final c = Helpers.expectedCipher();
     final k = Helpers.expectedKdf();
     final cipherText = 'cipherText'.toCodeUnitUint8List();

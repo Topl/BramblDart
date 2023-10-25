@@ -2,7 +2,7 @@
 
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/crypto/signing/eddsa/ec.dart';
+import 'package:brambldart/src/crypto/signing/eddsa/ec.dart';
 import 'package:fixnum/fixnum.dart';
 
 /// AMS 2021:
@@ -143,12 +143,9 @@ void decode128(Uint8List bs, int off, Int32List z, int zOff) {
   final t2 = decode32(bs, off + 8);
   final t3 = decode32(bs, off + 12);
   z[zOff + 0] = (t0 & M26).toInt32().toInt();
-  z[zOff + 1] =
-      (((t1 << 6) | (t0.shiftRightUnsigned(26))) & M26).toInt32().toInt();
-  z[zOff + 2] =
-      (((t2 << 12) | (t1.shiftRightUnsigned(20))) & M25).toInt32().toInt();
-  z[zOff + 3] =
-      (((t3 << 19) | (t2.shiftRightUnsigned(13))) & M26).toInt32().toInt();
+  z[zOff + 1] = (((t1 << 6) | (t0.shiftRightUnsigned(26))) & M26).toInt32().toInt();
+  z[zOff + 2] = (((t2 << 12) | (t1.shiftRightUnsigned(20))) & M25).toInt32().toInt();
+  z[zOff + 3] = (((t3 << 19) | (t2.shiftRightUnsigned(13))) & M26).toInt32().toInt();
   z[zOff + 4] = t3.shiftRightUnsigned(7).toInt32().toInt();
 }
 

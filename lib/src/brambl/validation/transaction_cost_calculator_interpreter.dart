@@ -1,4 +1,4 @@
-import 'package:brambl_dart/src/brambl/common/contains_immutable.dart';
+import 'package:brambldart/src/brambl/common/contains_immutable.dart';
 import 'package:collection/collection.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_output.pb.dart';
@@ -19,10 +19,8 @@ class TransactionCostCalculator<F> {
     final baseCost = transactionCostConfig.baseCost;
     final dataCost = transactionDataCost(transaction);
 
-    final inputCost =
-        transaction.inputs.map((e) => transactionInputCost(e)).sum;
-    final outputCost =
-        transaction.outputs.map((e) => transactionOutputCost(e)).sum;
+    final inputCost = transaction.inputs.map((e) => transactionInputCost(e)).sum;
+    final outputCost = transaction.outputs.map((e) => transactionOutputCost(e)).sum;
     return baseCost + dataCost + inputCost + outputCost;
   }
 
@@ -33,10 +31,8 @@ class TransactionCostCalculator<F> {
   ///
   /// Returns a cost, represented as an integer.
   int transactionDataCost(IoTransaction transaction) {
-    final bytes =
-        ContainsImmutable.ioTransaction(transaction).immutableBytes.value;
-    return (bytes.length * transactionCostConfig.dataCostPerMB / 1024 / 1024)
-        .floor();
+    final bytes = ContainsImmutable.ioTransaction(transaction).immutableBytes.value;
+    return (bytes.length * transactionCostConfig.dataCostPerMB / 1024 / 1024).floor();
   }
 
   /// Calculates the cost of consuming a UTxO.
@@ -50,16 +46,11 @@ class TransactionCostCalculator<F> {
     var cost = transactionCostConfig.inputCost;
     final attestation = input.attestation;
     if (attestation.hasPredicate()) {
-      cost += attestation.predicate.responses
-          .map(proofCost)
-          .reduce((a, b) => a + b);
+      cost += attestation.predicate.responses.map(proofCost).reduce((a, b) => a + b);
     } else if (attestation.hasImage()) {
-      cost +=
-          attestation.image.responses.map(proofCost).reduce((a, b) => a + b);
+      cost += attestation.image.responses.map(proofCost).reduce((a, b) => a + b);
     } else if (attestation.hasCommitment()) {
-      cost += attestation.commitment.responses
-          .map(proofCost)
-          .reduce((a, b) => a + b);
+      cost += attestation.commitment.responses.map(proofCost).reduce((a, b) => a + b);
     }
     return cost;
   }
@@ -76,29 +67,22 @@ class TransactionCostCalculator<F> {
     if (value.hasLocked()) {
       cost += transactionCostConfig.proofCostConfig.lockedCost;
     } else if (value.hasDigest()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.digestCost;
+      cost += transactionCostConfig.proofCostConfig.txBindCost + transactionCostConfig.proofCostConfig.digestCost;
     } else if (value.hasDigitalSignature()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.digitalSignatureCost;
+      cost +=
+          transactionCostConfig.proofCostConfig.txBindCost + transactionCostConfig.proofCostConfig.digitalSignatureCost;
     } else if (value.hasHeightRange()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.heightRangeCost;
+      cost += transactionCostConfig.proofCostConfig.txBindCost + transactionCostConfig.proofCostConfig.heightRangeCost;
     } else if (value.hasTickRange()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.tickRangeCost;
+      cost += transactionCostConfig.proofCostConfig.txBindCost + transactionCostConfig.proofCostConfig.tickRangeCost;
     } else if (value.hasExactMatch()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.exactMatchCost;
+      cost += transactionCostConfig.proofCostConfig.txBindCost + transactionCostConfig.proofCostConfig.exactMatchCost;
     } else if (value.hasLessThan()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.lessThanCost;
+      cost += transactionCostConfig.proofCostConfig.txBindCost + transactionCostConfig.proofCostConfig.lessThanCost;
     } else if (value.hasGreaterThan()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.greaterThanCost;
+      cost += transactionCostConfig.proofCostConfig.txBindCost + transactionCostConfig.proofCostConfig.greaterThanCost;
     } else if (value.hasEqualTo()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.equalToCost;
+      cost += transactionCostConfig.proofCostConfig.txBindCost + transactionCostConfig.proofCostConfig.equalToCost;
     } else if (value.hasThreshold()) {
       cost += transactionCostConfig.proofCostConfig.txBindCost +
           transactionCostConfig.proofCostConfig.thresholdCost +

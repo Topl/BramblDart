@@ -1,6 +1,6 @@
-import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
-import 'package:brambl_dart/src/crypto/generation/mnemonic/language.dart';
-import 'package:brambl_dart/src/crypto/generation/mnemonic/phrase.dart';
+import 'package:brambldart/src/crypto/generation/mnemonic/entropy.dart';
+import 'package:brambldart/src/crypto/generation/mnemonic/language.dart';
+import 'package:brambldart/src/crypto/generation/mnemonic/phrase.dart';
 import 'package:test/test.dart';
 
 import '../../helpers/generators.dart';
@@ -29,8 +29,7 @@ main() {
       test('phrases should be generated in $language', () async {
         final size = Generators.getGeneratedMnemonicSize;
         final entropy = Entropy.generate(size: size);
-        final phrase = await Phrase.fromEntropy(
-            entropy: entropy, size: size, language: language);
+        final phrase = await Phrase.fromEntropy(entropy: entropy, size: size, language: language);
         expect(phrase.isRight, true);
       });
     }

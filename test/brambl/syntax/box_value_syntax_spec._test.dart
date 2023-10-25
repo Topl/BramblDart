@@ -1,5 +1,5 @@
-import 'package:brambl_dart/brambl_dart.dart';
-import 'package:brambl_dart/src/brambl/syntax/box_value_syntax.dart';
+import 'package:brambldart/brambldart.dart';
+import 'package:brambldart/src/brambl/syntax/box_value_syntax.dart';
 import 'package:test/test.dart';
 import 'package:topl_common/proto/brambl/models/box/box.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/value.pb.dart';
@@ -47,8 +47,7 @@ void main() {
       final v4 = assetGroupSeries.setQuantity(mockNewQuantity);
       expect(v4.quantity, mockNewQuantity);
       final v5 = Box(value: Value(topl: Value_TOPL(quantity: mockNewQuantity)));
-      expect(() => v5.value.lvl.quantity = mockNewQuantity,
-          throwsA(isA<UnsupportedError>()));
+      expect(() => v5.value.lvl.quantity = mockNewQuantity, throwsA(isA<UnsupportedError>()));
     });
   });
 }

@@ -1,5 +1,5 @@
-import 'package:brambl_dart/src/crypto/generation/entropy_to_seed.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambldart/src/crypto/generation/entropy_to_seed.dart';
+import 'package:brambldart/src/utils/extensions.dart';
 import 'package:convert/convert.dart';
 import 'package:test/test.dart';
 

@@ -1,13 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/brambl/builders/builder_error.dart';
-import 'package:brambl_dart/src/brambl/codecs/address_codecs.dart';
-import 'package:brambl_dart/src/brambl/common/contains_evidence.dart';
-import 'package:brambl_dart/src/brambl/syntax/group_policy_syntax.dart';
-import 'package:brambl_dart/src/brambl/syntax/series_policy_syntax.dart';
-import 'package:brambl_dart/src/brambl/syntax/token_type_identifier_syntax.dart';
-import 'package:brambl_dart/src/common/types/byte_string.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambldart/src/brambl/builders/builder_error.dart';
+import 'package:brambldart/src/brambl/codecs/address_codecs.dart';
+import 'package:brambldart/src/brambl/common/contains_evidence.dart';
+import 'package:brambldart/src/brambl/syntax/group_policy_syntax.dart';
+import 'package:brambldart/src/brambl/syntax/series_policy_syntax.dart';
+import 'package:brambldart/src/brambl/syntax/token_type_identifier_syntax.dart';
+import 'package:brambldart/src/common/types/byte_string.dart';
+import 'package:brambldart/src/utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/genus/data_extensions.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
@@ -49,15 +49,13 @@ abstract class TransactionBuilderApiDefinition {
   ///
   /// Uses the [predicate] and [amount] to build the lvl output
   /// returns an unspent transaction output containing lvls
-  Future<UnspentTransactionOutput> lvlOutput(
-      Lock_Predicate predicate, Int128 amount);
+  Future<UnspentTransactionOutput> lvlOutput(Lock_Predicate predicate, Int128 amount);
 
   /// Builds a lvl unspent transaction output for the given lock address and amount
   ///
   /// uses [lockAddress] and [amount] to build the lvl output
   /// returns an unspent transaction output containing lvls
-  Future<UnspentTransactionOutput> lvlOutputWithLockAddress(
-      LockAddress lockAddress, Int128 amount);
+  Future<UnspentTransactionOutput> lvlOutputWithLockAddress(LockAddress lockAddress, Int128 amount);
 
   /// Builds an unspent transaction output containing group constructor tokens for the given parameters.
   ///
@@ -195,8 +193,7 @@ abstract class TransactionBuilderApiDefinition {
   /// [quantityToMint] The quantity of constructor tokens to mint
   /// [mintedConstructorLockAddress] The LockAddress to send the minted constructor tokens to.
   /// return An unproven Group Constructor minting transaction if possible. Else, an error
-  Future<Either<BuilderError, IoTransaction>>
-      buildSimpleGroupMintingTransaction(
+  Future<Either<BuilderError, IoTransaction>> buildSimpleGroupMintingTransaction(
     Txo registrationTxo,
     Lock_Predicate registrationLock,
     Event_GroupPolicy groupPolicy,
@@ -218,8 +215,7 @@ abstract class TransactionBuilderApiDefinition {
   /// [quantityToMint] The quantity of constructor tokens to mint
   /// [mintedConstructorLockAddress] The LockAddress to send the minted constructor tokens to.
   /// return An unproven Series Constructor minting transaction if possible. Else, an error
-  Future<Either<BuilderError, IoTransaction>>
-      buildSimpleSeriesMintingTransaction(
+  Future<Either<BuilderError, IoTransaction>> buildSimpleSeriesMintingTransaction(
     Txo registrationTxo,
     Lock_Predicate registrationLock,
     Event_SeriesPolicy seriesPolicy,
@@ -255,8 +251,7 @@ abstract class TransactionBuilderApiDefinition {
   /// - [commitment]: Optional commitment to include in the minted asset tokens.
   ///
   /// Returns an unproven asset minting transaction if possible. Else, an error.
-  Future<Either<BuilderError, IoTransaction>>
-      buildSimpleAssetMintingTransaction(
+  Future<Either<BuilderError, IoTransaction>> buildSimpleAssetMintingTransaction(
     AssetMintingStatement mintingStatement,
     Txo groupTxo,
     Txo seriesTxo,
@@ -281,13 +276,10 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     LockAddress recipientLockAddress,
     int amount,
   ) async {
-    final unprovenAttestationToProve =
-        await unprovenAttestation(lockPredicateFrom);
+    final unprovenAttestationToProve = await unprovenAttestation(lockPredicateFrom);
     final BigInt totalValues = lvlTxos.fold(BigInt.zero, (acc, x) {
       final y = x.transactionOutput.value;
-      return y.hasLvl() && y.lvl.hasQuantity()
-          ? acc + y.lvl.quantity.toBigInt()
-          : acc;
+      return y.hasLvl() && y.lvl.hasQuantity() ? acc + y.lvl.quantity.toBigInt() : acc;
     });
 
     final d = await datum();
@@ -318,16 +310,14 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
   }
 
   @override
-  Future<Either<BuilderError, IoTransaction>>
-      buildSimpleGroupMintingTransaction(
+  Future<Either<BuilderError, IoTransaction>> buildSimpleGroupMintingTransaction(
     Txo registrationTxo,
     Lock_Predicate registrationLock,
     Event_GroupPolicy groupPolicy,
     Int128 quantityToMint,
     LockAddress mintedConstructorLockAddress,
   ) async {
-    final registrationLockAddr =
-        await lockAddress(Lock()..predicate = registrationLock);
+    final registrationLockAddr = await lockAddress(Lock()..predicate = registrationLock);
     final validationResult = validateConstructorMintingParams(
       registrationTxo,
       registrationLockAddr,
@@ -336,15 +326,13 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     );
     if (validationResult.isLeft) {
       return Either.left(UnableToBuildTransaction(
-          "Unable to build transaction to mint group constructor tokens",
-          validationResult.left!));
+          "Unable to build transaction to mint group constructor tokens", validationResult.left!));
     }
 
     final stxoAttestation = await unprovenAttestation(registrationLock);
     final d = await datum();
 
-    final utxoMinted = await groupOutput(
-        mintedConstructorLockAddress, quantityToMint, groupPolicy.computeId);
+    final utxoMinted = await groupOutput(mintedConstructorLockAddress, quantityToMint, groupPolicy.computeId);
     return Either.right(IoTransaction(
       inputs: [
         SpentTransactionOutput(
@@ -360,16 +348,14 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
   }
 
   @override
-  Future<Either<BuilderError, IoTransaction>>
-      buildSimpleSeriesMintingTransaction(
+  Future<Either<BuilderError, IoTransaction>> buildSimpleSeriesMintingTransaction(
     Txo registrationTxo,
     Lock_Predicate registrationLock,
     Event_SeriesPolicy seriesPolicy,
     Int128 quantityToMint,
     LockAddress mintedConstructorLockAddress,
   ) async {
-    final registrationLockAddr =
-        await lockAddress(Lock()..predicate = registrationLock);
+    final registrationLockAddr = await lockAddress(Lock()..predicate = registrationLock);
     final validationResult = validateConstructorMintingParams(
       registrationTxo,
       registrationLockAddr,
@@ -378,8 +364,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     );
     if (validationResult.isLeft) {
       return Either.left(UnableToBuildTransaction(
-          "Unable to build transaction to mint series constructor tokens",
-          validationResult.left!));
+          "Unable to build transaction to mint series constructor tokens", validationResult.left!));
     }
     final stxoAttestation = await unprovenAttestation(registrationLock);
     final d = await datum();
@@ -412,17 +397,12 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     Int128 quantityToMint,
   ) {
     if (registrationTxo.outputAddress != policyRegistrationUtxo) {
-      return Either.left(
-          UserInputError("registrationTxo does not match registrationUtxo"));
+      return Either.left(UserInputError("registrationTxo does not match registrationUtxo"));
     } else if (!registrationTxo.transactionOutput.value.hasLvl()) {
-      return Either.left(
-          UserInputError("registrationUtxo does not contain LVLs"));
-    } else if (registrationLockAddr !=
-        registrationTxo.transactionOutput.address) {
-      return Either.left(UserInputError(
-          "registrationLock does not correspond to registrationTxo"));
-    } else if (quantityToMint.value.toBigInt.isNegative ||
-        quantityToMint.value.toBigInt == BigInt.zero) {
+      return Either.left(UserInputError("registrationUtxo does not contain LVLs"));
+    } else if (registrationLockAddr != registrationTxo.transactionOutput.address) {
+      return Either.left(UserInputError("registrationLock does not correspond to registrationTxo"));
+    } else if (quantityToMint.value.toBigInt.isNegative || quantityToMint.value.toBigInt == BigInt.zero) {
       return Either.left(UserInputError("quantityToMint must be positive"));
     } else {
       return Either.unit();
@@ -443,9 +423,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     GroupId groupId, {
     SeriesId? fixedSeries,
   }) async {
-    final value = Value.getDefault()
-      ..group =
-          Value_Group(groupId: groupId, quantity: quantity.value.toInt128);
+    final value = Value.getDefault()..group = Value_Group(groupId: groupId, quantity: quantity.value.toInt128);
     return UnspentTransactionOutput(address: lockAddress, value: value);
   }
 
@@ -521,10 +499,8 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
   Future<Datum_IoTransaction> datum() async {
     return Datum_IoTransaction(
       event: Event_IoTransaction(
-        schedule: Schedule(
-            min: Int64.ZERO,
-            max: Int64.MAX_VALUE,
-            timestamp: Int64(DateTime.now().millisecondsSinceEpoch)),
+        schedule:
+            Schedule(min: Int64.ZERO, max: Int64.MAX_VALUE, timestamp: Int64(DateTime.now().millisecondsSinceEpoch)),
         metadata: SmallData(),
       ),
     );
@@ -533,9 +509,8 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
   @override
   Future<Attestation> unprovenAttestation(Lock_Predicate predicate) async {
     return Attestation(
-        predicate: Attestation_Predicate(
-            lock: predicate,
-            responses: List.filled(predicate.challenges.length, Proof())));
+        predicate:
+            Attestation_Predicate(lock: predicate, responses: List.filled(predicate.challenges.length, Proof())));
   }
 
   @override
@@ -554,27 +529,22 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
   }
 
   @override
-  Future<Either<BuilderError, IoTransaction>>
-      buildSimpleAssetMintingTransaction(
-          AssetMintingStatement mintingStatement,
-          Txo groupTxo,
-          Txo seriesTxo,
-          Lock_Predicate groupLock,
-          Lock_Predicate seriesLock,
-          LockAddress mintedAssetLockAddress,
-          {ByteString? ephemeralMetadata,
-          Uint8List? commitment}) {
+  Future<Either<BuilderError, IoTransaction>> buildSimpleAssetMintingTransaction(
+      AssetMintingStatement mintingStatement,
+      Txo groupTxo,
+      Txo seriesTxo,
+      Lock_Predicate groupLock,
+      Lock_Predicate seriesLock,
+      LockAddress mintedAssetLockAddress,
+      {ByteString? ephemeralMetadata,
+      Uint8List? commitment}) {
     // TODO(ultimaterex): implement buildSimpleAssetMintingTransaction
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<BuilderError, IoTransaction>> buildTransferAllTransaction(
-      List<Txo> txos,
-      Lock_Predicate lockPredicateFrom,
-      LockAddress recipientLockAddress,
-      LockAddress changeLockAddress,
-      int fee,
+  Future<Either<BuilderError, IoTransaction>> buildTransferAllTransaction(List<Txo> txos,
+      Lock_Predicate lockPredicateFrom, LockAddress recipientLockAddress, LockAddress changeLockAddress, int fee,
       {ValueTypeIdentifier? tokenIdentifier}) {
     // TODO(ultimaterex): implement buildTransferAllTransaction
     throw UnimplementedError();
@@ -612,8 +582,7 @@ class UserInputError extends BuilderError {
 }
 
 class UnableToBuildTransaction extends BuilderError {
-  UnableToBuildTransaction(String super.message, Exception cause)
-      : super(exception: cause);
+  UnableToBuildTransaction(String super.message, Exception cause) : super(exception: cause);
 }
 
 extension Int128IntListExtension on List<int> {

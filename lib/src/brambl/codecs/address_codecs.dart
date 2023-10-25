@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/brambl/utils/encoding.dart';
-import 'package:brambl_dart/src/common/functional/either.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambldart/src/brambl/utils/encoding.dart';
+import 'package:brambldart/src/common/functional/either.dart';
+import 'package:brambldart/src/utils/extensions.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 

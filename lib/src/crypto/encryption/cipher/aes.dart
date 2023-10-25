@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/crypto/encryption/cipher/cipher.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
-import 'package:brambl_dart/src/utils/json.dart';
+import 'package:brambldart/src/crypto/encryption/cipher/cipher.dart';
+import 'package:brambldart/src/utils/extensions.dart';
+import 'package:brambldart/src/utils/json.dart';
 import 'package:convert/convert.dart';
 import 'package:meta/meta.dart';
 import 'package:pointycastle/api.dart';

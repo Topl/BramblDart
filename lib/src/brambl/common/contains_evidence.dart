@@ -1,8 +1,8 @@
-import 'package:brambl_dart/src/brambl/common/contains_immutable.dart';
-import 'package:brambl_dart/src/crypto/accumulators/accumulators.dart';
-import 'package:brambl_dart/src/crypto/accumulators/merkle/merkle_tree.dart';
-import 'package:brambl_dart/src/crypto/hash/blake2b.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambldart/src/brambl/common/contains_immutable.dart';
+import 'package:brambldart/src/crypto/accumulators/accumulators.dart';
+import 'package:brambldart/src/crypto/accumulators/merkle/merkle_tree.dart';
+import 'package:brambldart/src/crypto/hash/blake2b.dart';
+import 'package:brambldart/src/utils/extensions.dart';
 import 'package:topl_common/proto/brambl/models/evidence.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
 
@@ -36,6 +36,5 @@ class ContainsEvidence {
 
 extension SizedEvidence on dynamic {
   /// converts a dynamic value to a sized evidence via blake 2b hash
-  Evidence get sizedEvidence =>
-      ContainsEvidence.blake2bEvidenceFromImmutable(this).evidence;
+  Evidence get sizedEvidence => ContainsEvidence.blake2bEvidenceFromImmutable(this).evidence;
 }

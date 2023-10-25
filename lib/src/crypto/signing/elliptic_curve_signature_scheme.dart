@@ -1,11 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/crypto/generation/entropy_to_seed.dart';
-import 'package:brambl_dart/src/crypto/generation/mnemonic/entropy.dart';
-import 'package:brambl_dart/src/crypto/signing/signing.dart';
+import 'package:brambldart/src/crypto/generation/entropy_to_seed.dart';
+import 'package:brambldart/src/crypto/generation/mnemonic/entropy.dart';
+import 'package:brambldart/src/crypto/signing/signing.dart';
 
-abstract class EllipticCurveSignatureScheme<SK extends SigningKey,
-    VK extends VerificationKey> {
+abstract class EllipticCurveSignatureScheme<SK extends SigningKey, VK extends VerificationKey> {
   const EllipticCurveSignatureScheme({required this.seedLength});
   final int seedLength;
 
@@ -15,8 +14,7 @@ abstract class EllipticCurveSignatureScheme<SK extends SigningKey,
     String? passphrase, {
     EntropyToSeed entropyToSeed = const Pbkdf2Sha512(),
   }) {
-    final seed =
-        entropyToSeed.toSeed(entropy, passphrase, seedLength: seedLength);
+    final seed = entropyToSeed.toSeed(entropy, passphrase, seedLength: seedLength);
     return deriveKeyPairFromSeed(seed);
   }
 

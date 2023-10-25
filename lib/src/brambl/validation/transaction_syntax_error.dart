@@ -1,4 +1,4 @@
-import 'package:brambl_dart/src/brambl/validation/validation_error.dart';
+import 'package:brambldart/src/brambl/validation/validation_error.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/value.pb.dart';
@@ -49,22 +49,15 @@ class TransactionSyntaxError implements ValidationError {
   //     TransactionSyntaxError(TransactionSyntaxErrorType.invalidDataLength, null);
 
   static EmptyInputsError emptyInputs() => EmptyInputsError();
-  static DuplicateInputError duplicateInput(
-          TransactionOutputAddress knownIdentifier) =>
+  static DuplicateInputError duplicateInput(TransactionOutputAddress knownIdentifier) =>
       DuplicateInputError(knownIdentifier);
-  static ExcessiveOutputsCountError excessiveOutputsCount() =>
-      ExcessiveOutputsCountError();
-  static InvalidTimestampError invalidTimestamp(Int64 timestamp) =>
-      InvalidTimestampError(timestamp);
-  static InvalidScheduleError invalidSchedule(Schedule schedule) =>
-      InvalidScheduleError(schedule);
-  static NonPositiveOutputValueError nonPositiveOutputValue(Value value) =>
-      NonPositiveOutputValueError(value);
-  static InsufficientInputFundsError insufficientInputFunds(
-          List<Value> inputs, List<Value> outputs) =>
+  static ExcessiveOutputsCountError excessiveOutputsCount() => ExcessiveOutputsCountError();
+  static InvalidTimestampError invalidTimestamp(Int64 timestamp) => InvalidTimestampError(timestamp);
+  static InvalidScheduleError invalidSchedule(Schedule schedule) => InvalidScheduleError(schedule);
+  static NonPositiveOutputValueError nonPositiveOutputValue(Value value) => NonPositiveOutputValueError(value);
+  static InsufficientInputFundsError insufficientInputFunds(List<Value> inputs, List<Value> outputs) =>
       InsufficientInputFundsError(inputs, outputs);
-  static InvalidProofTypeError invalidProofType(
-          Proposition proposition, Proof proof) =>
+  static InvalidProofTypeError invalidProofType(Proposition proposition, Proof proof) =>
       InvalidProofTypeError(proposition, proof);
   static InvalidDataLengthError invalidDataLength() => InvalidDataLengthError();
 
@@ -93,43 +86,37 @@ class EmptyInputsError extends TransactionSyntaxError {
 
 /// A Syntax error indicating that this transaction multiple inputs referring to the same KnownIdentifier.
 class DuplicateInputError extends TransactionSyntaxError {
-  DuplicateInputError(this.knownIdentifier)
-      : super(TransactionSyntaxErrorType.duplicateInput, knownIdentifier);
+  DuplicateInputError(this.knownIdentifier) : super(TransactionSyntaxErrorType.duplicateInput, knownIdentifier);
   final TransactionOutputAddress knownIdentifier;
 }
 
 /// A Syntax error indicating that this transaction contains too many outputs.
 class ExcessiveOutputsCountError extends TransactionSyntaxError {
-  ExcessiveOutputsCountError()
-      : super(TransactionSyntaxErrorType.excessiveOutputsCount, null);
+  ExcessiveOutputsCountError() : super(TransactionSyntaxErrorType.excessiveOutputsCount, null);
 }
 
 /// A Syntax error indicating that this transaction contains an invalid timestamp.
 class InvalidTimestampError extends TransactionSyntaxError {
-  InvalidTimestampError(this.timestamp)
-      : super(TransactionSyntaxErrorType.invalidTimestamp, timestamp);
+  InvalidTimestampError(this.timestamp) : super(TransactionSyntaxErrorType.invalidTimestamp, timestamp);
   final Int64 timestamp;
 }
 
 /// A Syntax error indicating that this transaction contains an invalid schedule.
 class InvalidScheduleError extends TransactionSyntaxError {
-  InvalidScheduleError(this.schedule)
-      : super(TransactionSyntaxErrorType.invalidSchedule, schedule);
+  InvalidScheduleError(this.schedule) : super(TransactionSyntaxErrorType.invalidSchedule, schedule);
   final Schedule schedule;
 }
 
 /// A Syntax error indicating that this transaction contains an output with a non-positive quantity value.
 class NonPositiveOutputValueError extends TransactionSyntaxError {
-  NonPositiveOutputValueError(this.value)
-      : super(TransactionSyntaxErrorType.nonPositiveOutputValue, value);
+  NonPositiveOutputValueError(this.value) : super(TransactionSyntaxErrorType.nonPositiveOutputValue, value);
   final Value value;
 }
 
 /// A Syntax error indicating that the inputs of this transaction cannot satisfy the outputs.
 class InsufficientInputFundsError extends TransactionSyntaxError {
   InsufficientInputFundsError(this.inputs, this.outputs)
-      : super(TransactionSyntaxErrorType.insufficientInputFunds,
-            (inputs, outputs));
+      : super(TransactionSyntaxErrorType.insufficientInputFunds, (inputs, outputs));
   final List<Value> inputs;
   final List<Value> outputs;
 }
@@ -137,14 +124,12 @@ class InsufficientInputFundsError extends TransactionSyntaxError {
 /// A Syntax error indicating that this transaction contains a proof whose type does not match its corresponding proposition.
 class InvalidProofTypeError extends TransactionSyntaxError {
   InvalidProofTypeError(this.proposition, this.proof)
-      : super(
-            TransactionSyntaxErrorType.invalidProofType, (proposition, proof));
+      : super(TransactionSyntaxErrorType.invalidProofType, (proposition, proof));
   final Proposition proposition;
   final Proof proof;
 }
 
 /// A Syntax error indicating that the size of this transaction is invalid.
 class InvalidDataLengthError extends TransactionSyntaxError {
-  InvalidDataLengthError()
-      : super(TransactionSyntaxErrorType.invalidDataLength, null);
+  InvalidDataLengthError() : super(TransactionSyntaxErrorType.invalidDataLength, null);
 }

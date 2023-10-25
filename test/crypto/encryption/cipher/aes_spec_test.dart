@@ -1,15 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/crypto/encryption/cipher/aes.dart';
-import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:brambldart/src/crypto/encryption/cipher/aes.dart';
+import 'package:brambldart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Aes Spec', () {
-    test(
-        'Encrypting the same secret with different keys produces different ciphertexts',
-        () {
+    test('Encrypting the same secret with different keys produces different ciphertexts', () {
       final aes = Aes();
       final encryptKey1 = 'encryptKey1'.toCodeUnitUint8List().pad(16);
       final encryptKey2 = 'encryptKey2'.toCodeUnitUint8List().pad(16);
@@ -19,9 +17,7 @@ void main() {
       expect(const ListEquality().equals(cipherText1, cipherText2), isFalse);
     });
 
-    test(
-        'encrypting the same secret with different key lengths produces different ciphertexts',
-        () {
+    test('encrypting the same secret with different key lengths produces different ciphertexts', () {
       final aes = Aes();
       final encryptKey1 = 'encryptKey'.toCodeUnitUint8List().pad(16);
       final encryptKey2 = 'encryptKey'.toCodeUnitUint8List().pad(32);
@@ -31,9 +27,7 @@ void main() {
       expect(const ListEquality().equals(cipherText1, cipherText2), isFalse);
     });
 
-    test(
-        'encrypting the same secret with different ivs produces different ciphertexts',
-        () {
+    test('encrypting the same secret with different ivs produces different ciphertexts', () {
       final params1 = Aes.generateIv();
       var params2 = Aes.generateIv();
       while (const ListEquality().equals(params2, params1)) {
@@ -61,8 +55,7 @@ void main() {
       }
     });
 
-    test('encrypt and decrypt is successful with different sizes of messages',
-        () {
+    test('encrypt and decrypt is successful with different sizes of messages', () {
       // The purpose is to test the padding of the message (to be a multiple of 16) and the removal of the padding when
       // decrypting. We should test with different sizes of messages to ensure the padding is done correctly.
       for (final messageSize in [

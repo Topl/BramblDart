@@ -2,19 +2,16 @@ import "dart:collection" show HashMap;
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:brambl_dart/src/common/functional/either.dart';
-import 'package:brambl_dart/src/crypto/accumulators/accumulators.dart';
-import 'package:brambl_dart/src/crypto/accumulators/merkle/merkle_proof.dart';
-import 'package:brambl_dart/src/crypto/accumulators/merkle/node.dart';
-import 'package:brambl_dart/src/crypto/hash/digest/digest.dart';
-import 'package:brambl_dart/src/crypto/hash/hash.dart';
+import 'package:brambldart/src/common/functional/either.dart';
+import 'package:brambldart/src/crypto/accumulators/accumulators.dart';
+import 'package:brambldart/src/crypto/accumulators/merkle/merkle_proof.dart';
+import 'package:brambldart/src/crypto/accumulators/merkle/node.dart';
+import 'package:brambldart/src/crypto/hash/digest/digest.dart';
+import 'package:brambldart/src/crypto/hash/hash.dart';
 import 'package:collection/collection.dart';
 
 final class MerkleTree {
-  MerkleTree(
-      {required this.topNode,
-      required elementsHashIndex,
-      required this.hashFunction}) {
+  MerkleTree({required this.topNode, required elementsHashIndex, required this.hashFunction}) {
     /// custom logic for equality override in order to compare hash values for Collections
     const equality = ListEquality();
     bool equals(Uint8List a, Uint8List b) => equality.equals(a, b);
@@ -33,13 +30,10 @@ final class MerkleTree {
   factory MerkleTree.fromLeafs(List<LeafData> payload, Hash h) {
     final leafs = payload.map((d) => Leaf(data: d, h: h)).toList();
 
-    final elementsToIndex = leafs
-        .asMap()
-        .map((leafIndex, leaf) => MapEntry(leaf.hash.bytes, leafIndex));
+    final elementsToIndex = leafs.asMap().map((leafIndex, leaf) => MapEntry(leaf.hash.bytes, leafIndex));
 
     final topNode = calcTopNode(leafs, h);
-    return MerkleTree(
-        topNode: topNode, elementsHashIndex: elementsToIndex, hashFunction: h);
+    return MerkleTree(topNode: topNode, elementsHashIndex: elementsToIndex, hashFunction: h);
   }
   static const leafPrefix = 0;
   static const internalNodePrefix = 1;
@@ -54,8 +48,7 @@ final class MerkleTree {
 
   int get length => elementsHashIndex.length;
 
-  Option<MerkleProof> proofByElement(Leaf element) =>
-      proofByElementHash(element.hash);
+  Option<MerkleProof> proofByElement(Leaf element) => proofByElementHash(element.hash);
 
   Option<MerkleProof> proofByElementHash(Digest hash) {
     final res = elementsHashIndex[hash.bytes];
@@ -67,10 +60,8 @@ final class MerkleTree {
 
   Option<MerkleProof> proofByIndex(int index) {
     if (index >= 0 && index < length) {
-      final leafWithProofs =
-          loop(topNode, index, lengthWithEmptyLeafs, []).fold(
-        (lp) => MerkleProof(
-            leafData: lp.$1.data, levels: lp.$2, hashFunction: hashFunction),
+      final leafWithProofs = loop(topNode, index, lengthWithEmptyLeafs, []).fold(
+        (lp) => MerkleProof(leafData: lp.$1.data, levels: lp.$2, hashFunction: hashFunction),
         () => null,
       );
 
@@ -131,8 +122,7 @@ final class MerkleTree {
       final nextNodes = <Node>[];
       for (var i = 0; i < nodes.length; i += 2) {
         /// Get the left and right nodes for the current pair.
-        final lr =
-            nodes.length < (2 + i) ? [nodes[i]] : nodes.sublist(i, i + 2);
+        final lr = nodes.length < (2 + i) ? [nodes[i]] : nodes.sublist(i, i + 2);
         final left = lr.first;
         final right = lr.length == 2 ? lr.last : null;
         final node = InternalNode(left, right, h);

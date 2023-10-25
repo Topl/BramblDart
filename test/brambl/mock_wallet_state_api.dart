@@ -1,7 +1,7 @@
-import 'package:brambl_dart/src/brambl/builders/locks/lock_template.dart';
-import 'package:brambl_dart/src/brambl/common/contains_evidence.dart';
-import 'package:brambl_dart/src/brambl/data_api/wallet_state_algebra.dart';
-import 'package:brambl_dart/src/common/functional/either.dart';
+import 'package:brambldart/src/brambl/builders/locks/lock_template.dart';
+import 'package:brambldart/src/brambl/common/contains_evidence.dart';
+import 'package:brambldart/src/brambl/data_api/wallet_state_algebra.dart';
+import 'package:brambldart/src/common/functional/either.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
@@ -45,8 +45,7 @@ class MockWalletStateApi extends WalletStateAlgebra {
   }
 
   @override
-  Indices? getCurrentIndicesForFunds(
-      String party, String contract, int? someState) {
+  Indices? getCurrentIndicesForFunds(String party, String contract, int? someState) {
     throw UnimplementedError();
   }
 
@@ -56,8 +55,7 @@ class MockWalletStateApi extends WalletStateAlgebra {
   }
 
   @override
-  Indices? getIndicesBySignature(
-      Proposition_DigitalSignature signatureProposition) {
+  Indices? getIndicesBySignature(Proposition_DigitalSignature signatureProposition) {
     return propEvidenceToIdx[signatureProposition.sizedEvidence];
   }
 
@@ -87,8 +85,8 @@ class MockWalletStateApi extends WalletStateAlgebra {
   }
 
   @override
-  Future<void> updateWalletState(String lockPredicate, String lockAddress,
-      String? routine, String? vk, Indices indices) {
+  Future<void> updateWalletState(
+      String lockPredicate, String lockAddress, String? routine, String? vk, Indices indices) {
     throw UnimplementedError();
   }
 
@@ -98,8 +96,7 @@ class MockWalletStateApi extends WalletStateAlgebra {
   }
 
   @override
-  Either<String, Indices> validateCurrentIndicesForFunds(
-      String party, String contract, int? someState) {
+  Either<String, Indices> validateCurrentIndicesForFunds(String party, String contract, int? someState) {
     throw UnimplementedError();
   }
 }

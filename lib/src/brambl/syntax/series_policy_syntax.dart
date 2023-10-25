@@ -1,5 +1,5 @@
-import 'package:brambl_dart/src/brambl/common/contains_immutable.dart';
-import 'package:brambl_dart/src/crypto/hash/hash.dart';
+import 'package:brambldart/src/brambl/common/contains_immutable.dart';
+import 'package:brambldart/src/crypto/hash/hash.dart';
 import 'package:topl_common/proto/brambl/models/event.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 
@@ -9,9 +9,7 @@ typedef SeriesPolicy = Event_SeriesPolicy;
 class SeriesPolicySyntax {
   /// Computes the [GroupId] of the [GroupPolicy].
   static SeriesId computeId(SeriesPolicy seriesPolicy) {
-    final digest = ContainsImmutable.seriesPolicyEvent(seriesPolicy)
-        .immutableBytes
-        .writeToBuffer();
+    final digest = ContainsImmutable.seriesPolicyEvent(seriesPolicy).immutableBytes.writeToBuffer();
     final sha256 = SHA256().hash(digest);
     return SeriesId(value: sha256);
   }

@@ -1,4 +1,4 @@
-import 'package:brambl_dart/src/common/functional/either.dart';
+import 'package:brambldart/src/common/functional/either.dart';
 
 /// A list wrapper for `Either` objects.
 /// Made as a alternative for Cats Validated NEC (Non Empty Chain) which is not available in Dart.
@@ -29,12 +29,10 @@ class ListEither<L, R> {
   }
 
   /// Returns a list of all the right values in the list.
-  List<R> get rights =>
-      _list.where((e) => e.isRight).map((e) => e.right!).toList();
+  List<R> get rights => _list.where((e) => e.isRight).map((e) => e.right!).toList();
 
   /// Returns a list of all the left values in the list.
-  List<L> get lefts =>
-      _list.where((e) => e.isLeft).map((e) => e.left!).toList();
+  List<L> get lefts => _list.where((e) => e.isLeft).map((e) => e.left!).toList();
 
   /// Applies the given function to each element in the list and returns a new `ListEither` with the results.
   ListEither<L2, R2> map<L2, R2>(Either<L2, R2> Function(Either<L, R>) f) {
@@ -53,8 +51,8 @@ class ListEither<L, R> {
 
   /// Applies the given function to each right element in the list and returns a new `ListEither` with the concatenated results.
   ListEither<L, R2> flatMap<R2>(ListEither<L, R2> Function(R) f) {
-    return ListEither(_list.fold<List<Either<L, R2>>>(
-        [], (acc, e) => e.fold((l) => acc, (r) => [...acc, ...f(r)._list])));
+    return ListEither(
+        _list.fold<List<Either<L, R2>>>([], (acc, e) => e.fold((l) => acc, (r) => [...acc, ...f(r)._list])));
   }
 
   /// Filters the list by the given predicate and returns a new `ListEither` with the filtered results.
@@ -74,13 +72,11 @@ class ListEither<L, R> {
 
   /// Converts the list of `Either` objects into an `Either` object of a list of values or a list of errors.
   Either<List<L>, List<R>> sequence() {
-    final rights = _list
-        .fold<List<R>>([], (acc, e) => e.fold((l) => acc, (r) => [...acc, r]));
+    final rights = _list.fold<List<R>>([], (acc, e) => e.fold((l) => acc, (r) => [...acc, r]));
     if (rights.length == _list.length) {
       return Either.right(rights);
     } else {
-      final lefts = _list.fold<List<L>>(
-          [], (acc, e) => e.fold((l) => [...acc, l], (r) => acc));
+      final lefts = _list.fold<List<L>>([], (acc, e) => e.fold((l) => [...acc, l], (r) => acc));
       return Either.left(lefts);
     }
   }
