@@ -40,4 +40,4 @@ doc/api/
 .metals/
 
 # Generated Dart Files
-*g.dart
+*.g.dart
