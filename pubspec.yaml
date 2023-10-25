@@ -1,5 +1,5 @@
 name: brambl_dart
-description: A starting point for Dart libraries or applications.
+description: Topl's Brambl SDK implemented in Dart for building the next blockchain for good.
 version: 2.0.0-alpha.1
 repository: https://github.com/Topl/BramblDart
 
