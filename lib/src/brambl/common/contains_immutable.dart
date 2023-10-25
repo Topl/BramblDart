@@ -54,7 +54,7 @@ class ContainsImmutable {
         );
   }
 
-  /// TODO evaluate necessity of this list rewrite
+  // TODO(ultimaterex): evaluate necessity of this list rewrite
   factory ContainsImmutable.seq(List seq) {
     var acc = ContainsImmutable.empty();
     for (int i = 0; i < seq.length; i++) {
@@ -237,17 +237,17 @@ class ContainsImmutable {
       ContainsImmutable.struct(asset.ephemeralMetadata) +
       asset.commitment.value.immutable;
 
-  factory ContainsImmutable.seriesValue(Value_Series _) =>
-      ContainsImmutable.seriesIdValue(_.seriesId) +
-      ContainsImmutable.int128(_.quantity) +
-      ContainsImmutable.int(_.tokenSupply.value) +
-      ContainsImmutable.quantityDescriptor(_.quantityDescriptor) +
-      ContainsImmutable.fungibility(_.fungibility);
+  factory ContainsImmutable.seriesValue(Value_Series vs) =>
+      ContainsImmutable.seriesIdValue(vs.seriesId) +
+      ContainsImmutable.int128(vs.quantity) +
+      ContainsImmutable.int(vs.tokenSupply.value) +
+      ContainsImmutable.quantityDescriptor(vs.quantityDescriptor) +
+      ContainsImmutable.fungibility(vs.fungibility);
 
-  factory ContainsImmutable.groupValue(Value_Group _) =>
-      ContainsImmutable.groupIdentifier(_.groupId) +
-      ContainsImmutable.int128(_.quantity) +
-      ContainsImmutable.seriesIdValue(_.fixedSeries);
+  factory ContainsImmutable.groupValue(Value_Group vg) =>
+      ContainsImmutable.groupIdentifier(vg.groupId) +
+      ContainsImmutable.int128(vg.quantity) +
+      ContainsImmutable.seriesIdValue(vg.fixedSeries);
 
   factory ContainsImmutable.ratio(Ratio r) =>
       ContainsImmutable.int128(r.numerator) +
@@ -270,11 +270,11 @@ class ContainsImmutable {
       up.kesKeyHours.value.immutable +
       up.kesKeyMinutes.value.immutable;
 
-  factory ContainsImmutable.fungibility(FungibilityType _) =>
-      ContainsImmutable.int(_.value);
+  factory ContainsImmutable.fungibility(FungibilityType f) =>
+      ContainsImmutable.int(f.value);
 
-  factory ContainsImmutable.quantityDescriptor(QuantityDescriptorType _) =>
-      ContainsImmutable.int(_.value);
+  factory ContainsImmutable.quantityDescriptor(QuantityDescriptorType qdt) =>
+      ContainsImmutable.int(qdt.value);
 
   factory ContainsImmutable.stakingAddress(StakingAddress v) =>
       v.value.immutable;
@@ -315,7 +315,7 @@ class ContainsImmutable {
       ContainsImmutable.int(v.ledger) +
       ContainsImmutable.boxLock32Identifier(v.id);
 
-  // TODO: figure out why witness is List<List<Int>>
+  // TODO(ultimaterex): figure out why witness is List<List<Int>>
   factory ContainsImmutable.signatureKesSum(SignatureKesSum v) =>
       v.verificationKey.immutable +
       v.signature.immutable +
@@ -426,17 +426,17 @@ class ContainsImmutable {
       ContainsImmutable.iotxSchedule(event.schedule) +
       ContainsImmutable.small(event.metadata);
 
-  factory ContainsImmutable.groupPolicyEvent(Event_GroupPolicy _) =>
-      ContainsImmutable.string(_.label) +
-      ContainsImmutable.seriesIdValue(_.fixedSeries) +
-      ContainsImmutable.transactionOutputAddress(_.registrationUtxo);
+  factory ContainsImmutable.groupPolicyEvent(Event_GroupPolicy eg) =>
+      ContainsImmutable.string(eg.label) +
+      ContainsImmutable.seriesIdValue(eg.fixedSeries) +
+      ContainsImmutable.transactionOutputAddress(eg.registrationUtxo);
 
-  factory ContainsImmutable.seriesPolicyEvent(Event_SeriesPolicy _) =>
-      ContainsImmutable.string(_.label) +
-      ContainsImmutable.int(_.tokenSupply.value) +
-      ContainsImmutable.transactionOutputAddress(_.registrationUtxo) +
-      ContainsImmutable.fungibility(_.fungibility) +
-      ContainsImmutable.quantityDescriptor(_.quantityDescriptor);
+  factory ContainsImmutable.seriesPolicyEvent(Event_SeriesPolicy es) =>
+      ContainsImmutable.string(es.label) +
+      ContainsImmutable.int(es.tokenSupply.value) +
+      ContainsImmutable.transactionOutputAddress(es.registrationUtxo) +
+      ContainsImmutable.fungibility(es.fungibility) +
+      ContainsImmutable.quantityDescriptor(es.quantityDescriptor);
 
   factory ContainsImmutable.eventImmutable(Event event) =>
       switch (event.whichValue()) {

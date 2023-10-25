@@ -6,6 +6,5 @@ void main() {
   /// encode String to blake2b256
   const input = "Foobar";
 
-  final byteArray = Blake2b256().hash(input.toUtf8Uint8List());
-  print(byteArray.toHexString());
+  Blake2b256().hash(input.toUtf8Uint8List());
 }

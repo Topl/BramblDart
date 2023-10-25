@@ -549,7 +549,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     struct.Struct? metadata,
     ByteString? commitment,
   }) {
-    // TODO: implement assetOutput
+    // TODO(ultimaterex): implement assetOutput
     throw UnimplementedError();
   }
 
@@ -589,7 +589,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
       LockAddress recipientLockAddress,
       LockAddress changeLockAddress,
       int fee) {
-    // TODO: implement buildTransferAmountTransaction
+    // TODO(ultimaterex): implement buildTransferAmountTransaction
     throw UnimplementedError();
   }
 }

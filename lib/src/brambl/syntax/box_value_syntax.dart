@@ -29,8 +29,12 @@ extension ValueToQuantitySyntaxOps on Value {
         return series.quantity;
       case Value_Value.asset:
         return asset.quantity;
-      default:
-        throw Exception('Invalid value type');
+      case Value_Value.topl:
+        return topl.quantity;
+      case Value_Value.updateProposal:
+        throw Exception('UpdateProposal does not have a quantity');
+      case Value_Value.notSet:
+        throw Exception('Value is not set');
     }
   }
 
@@ -45,8 +49,12 @@ extension ValueToQuantitySyntaxOps on Value {
         return copy..series = (copy.series..quantity = quantity);
       case Value_Value.asset:
         return copy..asset = (copy.asset..quantity = quantity);
-      default:
-        throw Exception('Invalid value type');
+      case Value_Value.topl:
+        return copy..topl = (copy.topl..quantity = quantity);
+      case Value_Value.updateProposal:
+        throw Exception('UpdateProposal does not have a quantity');
+      case Value_Value.notSet:
+        throw Exception('Value is not set');
     }
   }
 }

@@ -200,8 +200,8 @@ main() {
       }
       expect(evaluationAuthorizationFailure, isTrue);
 
-      final provenAttestation =
-          provenTxWrapped.inputs.first.attestation.predicate;
+      // final provenAttestation =
+      //     provenTxWrapped.inputs.first.attestation.predicate;
       // TODO: add  remaining expects
     });
 
