@@ -42,7 +42,7 @@ void main() {
       expect(result, true);
     });
 
-    // TODO: it's BIG and slow?
+    // TODO(ultimaterex): it's BIG and slow?
     // consider increasing efficiency of checks used or adding async to improve testing;
     // alternatively consider removing this test
 
@@ -113,7 +113,7 @@ void main() {
       final tokenValueIn = Value(lvl: Value_LVL(quantity: 100.toInt128()));
       final tokenValueOut = Value(lvl: Value_LVL(quantity: 101.toInt128()));
 
-      // TODO: solve mappedListIteration issue
+      // TODO(ultimaterex): solve mappedListIteration issue
       bool testTx(Value inputValue, Value outputValue) {
         final tx = txFull.rebuild((p0) {
           p0.inputs.update(p0.inputs
@@ -144,7 +144,7 @@ void main() {
   });
 }
 
-// TODO: move to test suite or to containing error class
+// TODO(ultimaterex): move to test suite or to containing error class
 extension ContainsErrorExtension on List<TransactionSyntaxError> {
   bool containsError(TransactionSyntaxError match) =>
       _containsError(this, match);
@@ -162,7 +162,7 @@ extension ContainsErrorExtension on List<TransactionSyntaxError> {
       {bool exactMatch = true}) {
     for (final error in this) {
       if (exactMatch) {
-        // TODO remove exact match or generize this helper method to actually use it
+        // TODO(ultimaterex): remove exact match or generize this helper method to actually use it
         if (error.type == match.type) {
           final cond = switch (error.type) {
             (TransactionSyntaxErrorType.emptyInputs) => true,
@@ -177,7 +177,7 @@ extension ContainsErrorExtension on List<TransactionSyntaxError> {
               (error as InvalidScheduleError).schedule ==
                   (match as InvalidScheduleError).schedule,
             (TransactionSyntaxErrorType.nonPositiveOutputValue) =>
-              // todo: expand on value checking, currently does not check correctly
+              // TODO(ultimaterex): expand on value checking, currently does not check correctly
               (error as NonPositiveOutputValueError).value ==
                   (match as NonPositiveOutputValueError).value,
             (TransactionSyntaxErrorType.insufficientInputFunds) =>

@@ -137,7 +137,7 @@ void decode(Uint8List x, int xOff, Int32List z) {
   z[9] = (Int32(z[9]) & M24).toInt();
 }
 
-void decode128(Uint8List bs, int off, Int32List z, zOff) {
+void decode128(Uint8List bs, int off, Int32List z, int zOff) {
   final t0 = decode32(bs, off + 0);
   final t1 = decode32(bs, off + 4);
   final t2 = decode32(bs, off + 8);

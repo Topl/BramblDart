@@ -30,7 +30,9 @@ extension ValueToQuantitySyntaxOps on Value {
       case Value_Value.asset:
         return asset.quantity;
       case Value_Value.topl:
-        return topl.quantity;
+        // return topl.quantity;
+        // TODO(ultimaterex): figure out if topl's should have a quantity
+        throw Exception('Topl does not have a quantity?');
       case Value_Value.updateProposal:
         throw Exception('UpdateProposal does not have a quantity');
       case Value_Value.notSet:
@@ -50,7 +52,9 @@ extension ValueToQuantitySyntaxOps on Value {
       case Value_Value.asset:
         return copy..asset = (copy.asset..quantity = quantity);
       case Value_Value.topl:
-        return copy..topl = (copy.topl..quantity = quantity);
+        // return copy..topl = (copy.topl..quantity = quantity);
+        // TODO(ultimaterex): figure out if topl's should have a quantity
+        throw Exception('Topl does not have a quantity?');
       case Value_Value.updateProposal:
         throw Exception('UpdateProposal does not have a quantity');
       case Value_Value.notSet:

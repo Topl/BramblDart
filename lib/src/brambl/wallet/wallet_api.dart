@@ -12,6 +12,7 @@ import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart'
     as x_spec;
 import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:meta/meta.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
@@ -440,6 +441,7 @@ class NewWalletResult {
   }
 }
 
+@immutable
 class WalletApiFailure implements Exception {
   const WalletApiFailure(this.type, this.message);
 

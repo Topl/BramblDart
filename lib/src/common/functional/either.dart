@@ -2,6 +2,8 @@
 // Basic Functional Logic Types that allow us to use simple functional programming concepts
 // **************************************************************************
 
+import 'package:meta/meta.dart';
+
 /// A container class that represents one of two possible values.
 /// An `Either` instance is either a `Left` value, or a `Right` value.
 /// This class has supporting functions for `void` types, however it's use is against spec
@@ -89,13 +91,14 @@ class Either<L, R> {
   R get() => getOrThrow();
 
   /// Returns the value on the left of the Either if it exists, otherwise throws the provided exception
-  L getLeftOrThrow(Object exception) => isLeft ? left! : throw exception;
+  L getLeftOrThrow(Exception exception) => isLeft ? left! : throw exception;
 
   /// Returns the value on the right of the Either if it exists, otherwise throws the left value unless an exception is provided
   ///
   /// Don't use this on Right of [void]
   R getOrThrow({Object? exception}) => exception == null
       ? getRightOrThrowLeft()
+      // ignore: only_throw_errors
       : (isRight ? right! : throw exception);
 
   /// Attempts to get R but will throw left value as an error if the right value does not exist
@@ -106,6 +109,7 @@ class Either<L, R> {
   /// `Either<Exception, void>` is the ideal use case as this is incompatible with [get] or [getOrThrow]
   void throwIfLeft({Object? exception}) {
     if (isLeft) {
+      // ignore: only_throw_errors
       throw exception ??
           (left is Exception
               ? left! as Exception
@@ -132,6 +136,7 @@ class Either<L, R> {
   }
 
   bool exists(bool Function(R) predicate) {
+    // ignore: avoid_bool_literals_in_conditional_expressions
     return isRight ? predicate(get()) : false;
   }
 
@@ -166,6 +171,7 @@ class Some<T> extends Option<T> {
   }
 }
 
+@immutable
 class None<T> extends Option<T> {
   None();
 

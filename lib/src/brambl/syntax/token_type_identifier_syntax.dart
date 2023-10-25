@@ -1,4 +1,5 @@
 import 'package:brambl_dart/src/common/types/byte_string.dart';
+import 'package:meta/meta.dart';
 import 'package:topl_common/proto/brambl/models/box/asset.pbenum.dart';
 import 'package:topl_common/proto/brambl/models/box/value.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
@@ -99,8 +100,9 @@ class LvlType implements ValueTypeIdentifier {}
 /// A Group Constructor Token value type, identified by a GroupId
 ///
 /// [groupId] The GroupId of the Group Constructor Token
+@immutable
 class GroupType implements ValueTypeIdentifier {
-  GroupType(this.groupId);
+  const GroupType(this.groupId);
   final GroupId groupId;
 
   @override
@@ -116,8 +118,9 @@ class GroupType implements ValueTypeIdentifier {
 
 /// A Series Constructor Token value type, identified by a SeriesId
 /// [seriesId] The SeriesId of the Series Constructor Token
+@immutable
 class SeriesType implements ValueTypeIdentifier {
-  SeriesType(this.seriesId);
+  const SeriesType(this.seriesId);
   final SeriesId seriesId;
 
   @override
@@ -138,8 +141,9 @@ abstract class AssetType implements ValueTypeIdentifier {}
 /// [groupId] The GroupId of the asset
 /// [seriesId] The SeriesId of the asset
 /// [qdType] The QuantityDescriptorType of the asset
+@immutable
 class GroupAndSeriesFungible implements AssetType {
-  GroupAndSeriesFungible(this.groupId, this.seriesId, this.qdType);
+  const GroupAndSeriesFungible(this.groupId, this.seriesId, this.qdType);
   final GroupId groupId;
   final SeriesId seriesId;
   final QuantityDescriptorType qdType;
@@ -163,8 +167,10 @@ class GroupAndSeriesFungible implements AssetType {
 /// [groupId]  The GroupId of the asset
 /// [seriesAlloyOrId] If the asset is an alloy, the Series alloy. Else the SeriesId of the asset
 /// [qdType] The QuantityDescriptorType of the asset
+@immutable
+@immutable
 class GroupFungible implements AssetType {
-  GroupFungible(this.groupId, this.seriesAlloyOrId, this.qdType);
+  const GroupFungible(this.groupId, this.seriesAlloyOrId, this.qdType);
   final GroupId groupId;
   final ByteString seriesAlloyOrId;
   final QuantityDescriptorType qdType;
@@ -189,8 +195,9 @@ class GroupFungible implements AssetType {
 /// [seriesId] The SeriesId of the asset
 /// [groupAlloyOrId] If the asset is an alloy, the Group alloy. Else the GroupId of the asset
 /// [qdType] The QuantityDescriptorType of the asset
+@immutable
 class SeriesFungible implements AssetType {
-  SeriesFungible(this.seriesId, this.groupAlloyOrId, this.qdType);
+  const SeriesFungible(this.seriesId, this.groupAlloyOrId, this.qdType);
   final SeriesId seriesId;
   final ByteString groupAlloyOrId;
   final QuantityDescriptorType qdType;

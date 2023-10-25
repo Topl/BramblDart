@@ -155,7 +155,7 @@ void main() {
 
       final result = TransactionSyntaxInterpreter.validate(testTx).swap();
 
-      // TODO: Fix by implementing new validators in the [TransactionSyntaxInterpreter] specifically [assetEqualFundsValidation]
+      // TODO(ultimaterex): Fix by implementing new validators in the [TransactionSyntaxInterpreter] specifically [assetEqualFundsValidation]
       bool assertError = false;
       if (result.isRight) {
         result.get().map((e) {

@@ -1,4 +1,4 @@
-import 'package:brambl_dart/src/common/functional/either.dart';
+import 'package:brambl_dart/brambl_dart.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
 import 'package:brambl_dart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
 import 'package:brambl_dart/src/quivr/common/quivr_result.dart';
@@ -16,25 +16,28 @@ class ExtendedEd25519SignatureInterpreter implements SignatureVerifier {
   /// Returns the SignatureVerification object if the signature is valid, otherwise an error.
   @override
   QuivrResult<SignatureVerification> validate(t) {
-    if (t.verificationKey.hasExtendedEd25519()) {
-      final extendedVk = PublicKey.proto(t.verificationKey.extendedEd25519);
+    if (t! is SignatureVerification) throw Exception('validation target is not a SignatureVerification');
+
+    // promote
+    final s = t as SignatureVerification;
+    if (s.verificationKey.hasExtendedEd25519()) {
+      final extendedVk = PublicKey.proto(s.verificationKey.extendedEd25519);
       if (ExtendedEd25519().verify(
-        t.signature.value.toUint8List(),
-        t.message.value.toUint8List(),
+        s.signature.value.toUint8List(),
+        s.message.value.toUint8List(),
         extendedVk,
       )) {
-        return Either.right(t);
+        return Either.right(s);
       } else {
-        // TODO: replace with correct error. Verification failed.
+        // TODO(ultimaterex): replace with correct error. Verification failed.
         return Either.left(ValidationError.lockedPropositionIsUnsatisfiable());
       }
     } else {
-      // TODO: replace with correct error. SignatureVerification is malformed.
+      // TODO(ultimaterex): replace with correct error. SignatureVerification is malformed.
       return Either.left(ValidationError.lockedPropositionIsUnsatisfiable());
     }
   }
 
   @override
-  dynamic Function(dynamic p1) get definedFunction =>
-      throw UnimplementedError();
+  dynamic Function(dynamic p1) get definedFunction => throw UnimplementedError();
 }

@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 
@@ -41,6 +42,7 @@ sealed class QuivrRunTimeError implements Exception {
 }
 
 /// A Validation error indicates that the evaluation of the proof failed for the given proposition within the provided context.
+@immutable
 class ValidationError extends QuivrRunTimeError {
   ValidationError(this.type, this.message, {this.proof, this.proposition});
 
@@ -66,8 +68,8 @@ class ValidationError extends QuivrRunTimeError {
   final String? message;
   final ValidationErrorType type;
 
-  Proof? proof;
-  Proposition? proposition;
+  final Proof? proof;
+  final Proposition? proposition;
 
   @override
   String toString() {
@@ -94,6 +96,7 @@ enum ValidationErrorType {
 }
 
 /// A Context error indicates that the Dynamic context failed to retrieve an instance of a requested member
+@immutable
 class ContextError extends QuivrRunTimeError {
   ContextError(this.type, this.message);
 

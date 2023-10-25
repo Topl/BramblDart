@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/utils/extensions.dart';
+import 'package:meta/meta.dart';
 import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
 
 /// A class that represents a sequence of bytes. uses [Uint8List] under the hood
+@immutable
 class ByteString {
   /// Creates a new [ByteString] object from the given [Uint8List]
   const ByteString(this._bytes);

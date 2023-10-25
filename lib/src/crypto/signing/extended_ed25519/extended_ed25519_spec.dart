@@ -6,6 +6,7 @@ import 'package:brambl_dart/src/crypto/signing/ed25519/ed25519_spec.dart'
 import 'package:brambl_dart/src/crypto/signing/signing.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
+import 'package:meta/meta.dart';
 import 'package:pointycastle/export.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
 
@@ -62,6 +63,7 @@ mixin ExtendedEd25519Spec {
   }
 }
 
+@immutable
 class SecretKey extends SigningKey with ExtendedEd25519Spec {
   SecretKey(this.leftKey, this.rightKey, this.chainCode) {
     if (leftKey.length != ExtendedEd25519Spec.keyLength) {
@@ -109,6 +111,7 @@ class SecretKey extends SigningKey with ExtendedEd25519Spec {
       const ListEquality().hash(chainCode);
 }
 
+@immutable
 class PublicKey extends VerificationKey with ExtendedEd25519Spec {
   PublicKey(this.vk, this.chainCode) {
     if (chainCode.length != ExtendedEd25519Spec.keyLength) {

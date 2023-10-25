@@ -6,8 +6,10 @@ import 'package:brambl_dart/src/utils/extensions.dart';
 
 sealed class Language {
   const Language(this.filePath, this.hash);
+  
   final String filePath;
   final String hash;
+  // ignore: avoid_field_initializers_in_const_classes
   final String wordlistDirectory = 'bip-0039';
 }
 
@@ -77,6 +79,8 @@ class LanguageWordList {
 
   static const _hexDigits = '0123456789abcdef';
 
+
+  // ignore: unused_element
   static String _toHexString(List<int> bytes) {
     final buffer = StringBuffer();
     for (final byte in bytes) {

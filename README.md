@@ -30,11 +30,12 @@
 [dart]: https://www.dartlang.org
 [topl]: topl.co
 
-This package and it's dependencies can be found on pub.dev
+This package, it's dependencies and extensions can be found on pub.dev
 
 | brambldart  | [![pub package](https://img.shields.io/pub/v/brambldart?label=brambldart&color=blue)](https://pub.dev/packages/brambldart)        |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | topl_common | [![pub package](https://img.shields.io/pub/v/topl_common.svg?label=topl_common&color=blue)](https://pub.dev/packages/topl_common) |
+| servicekit  | [![pub package](https://img.shields.io/pub/v/servicekit.svg?label=topl_common&color=blue)](https://pub.dev/packages/servicekit)   |
 
 
 

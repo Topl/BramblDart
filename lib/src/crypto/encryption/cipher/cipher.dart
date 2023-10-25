@@ -1,9 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:brambl_dart/src/crypto/encryption/cipher/aes.dart';
+import 'package:meta/meta.dart';
 
 /// Ciphers are used to encrypt and decrypt data.
 /// @see [[https://en.wikipedia.org/wiki/Cipher]]
+@immutable
 abstract class Cipher {
   /// JSON decoder for a Cipher
   factory Cipher.fromJson(Map<String, dynamic> json) {
@@ -16,6 +18,7 @@ abstract class Cipher {
         throw UnknownCipherException();
     }
   }
+
   Params get params;
 
   /// Encrypt data.

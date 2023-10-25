@@ -11,7 +11,7 @@ class TransactionSyntaxError implements ValidationError {
   final TransactionSyntaxErrorType type;
   final dynamic param;
 
-  //todo: refactor error system from factory constructors to polymorphic constructors
+  // TODO(ultimaterex): reconsider if error system from factory constructors to polymorphic constructors is worth it
 
   // /// A Syntax error indicating that this transaction does not contain at least 1 input.
   // factory TransactionSyntaxError.emptyInputs() => TransactionSyntaxError(TransactionSyntaxErrorType.emptyInputs, null);

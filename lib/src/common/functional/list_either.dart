@@ -6,7 +6,7 @@ class ListEither<L, R> {
   ListEither(this._list);
   final List<Either<L, R>> _list;
 
-  // TODO: restore factory methods once casting issue has been solved, for now static class Accessors are used
+  // TODO(ultimaterex): restore factory methods once casting issue has been solved, for now static class Accessors are used
 
   // ListEither.right(List<R> list) : _list = list.map((r) => Either.right(r)).toList() as List<Either<L, R>>;
 

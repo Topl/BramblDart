@@ -32,7 +32,7 @@ void main() {
       final proofsImmutableSize =
           immutableFull.length - immutableNoProofs.length;
       // The only difference between immutableFull and immutableEmpty is the Proofs
-      // todo: ask about this test
+      // TODO(ultimaterex): ask about this test
       // expect(proofsImmutableSize > 0, isTrue);
       expect(signableFull.length,
           equals(immutableFull.length - proofsImmutableSize));

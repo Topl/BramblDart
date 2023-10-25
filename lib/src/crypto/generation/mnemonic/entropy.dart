@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:uuid/uuid.dart';
 
 import 'package:brambl_dart/src/common/functional/either.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/language.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/mnemonic.dart';
 import 'package:brambl_dart/src/crypto/generation/mnemonic/phrase.dart';
+import 'package:uuid/uuid.dart';
 
 const defaultMnemonicSize = MnemonicSize.words12();
 

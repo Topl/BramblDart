@@ -120,7 +120,7 @@ main() {
           isTrue);
     });
 
-    //TODO: Fix this test
+    // TODO(ultimaterex): Fix this test
 
     test(
         'validate: Single Input Transaction with Attestation.Predicate > Validation successful',
@@ -202,7 +202,7 @@ main() {
 
       // final provenAttestation =
       //     provenTxWrapped.inputs.first.attestation.predicate;
-      // TODO: add  remaining expects
+      // TODO(ultimaterex): add  remaining expects
     });
 
     test(
@@ -370,7 +370,7 @@ main() {
         () {
       final testProposition = Proposer.thresholdProposer(
               [mockTickProposition, mockHeightProposition], 2)
-          .withResult((_) => Challenge(revealed: _));
+          .withResult((p) => Challenge(revealed: p));
       final testTx = txFull.rebuild((p0) {
         p0.inputs.update([
           inputFull.rebuild((p1) => p1.attestation = Attestation(
@@ -415,7 +415,7 @@ main() {
         () async {
       final testProposition =
           Proposer.andProposer(mockTickProposition, mockHeightProposition)
-              .withResult((_) => Challenge(revealed: _));
+              .withResult((p) => Challenge(revealed: p));
       final testTx = txFull.rebuild((p0) {
         p0.inputs.update([
           inputFull.rebuild((p1) => p1.attestation = Attestation(
@@ -460,7 +460,7 @@ main() {
         () async {
       final testProposition =
           Proposer.orProposer(mockTickProposition, mockHeightProposition)
-              .withResult((_) => Challenge(revealed: _));
+              .withResult((p) => Challenge(revealed: p));
       final testTx = txFull.rebuild((p0) {
         p0.inputs.update([
           inputFull.rebuild((p1) => p1.attestation = Attestation(

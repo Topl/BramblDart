@@ -69,7 +69,7 @@ void main() {
 }
 
 int expectedDataCost(IoTransaction tx) {
-  // TODO: investigate odd expectedDataCostLogic and if truncation is a fair estimation to make
+  // TODO(ultimaterex): investigate odd expectedDataCostLogic and if truncation is a fair estimation to make
   // byteArray size does seem to be different from scala's interpretation
   final bytes = tx.immutable.value.toInt8List();
   return bytes.length ~/ 1024 + 1;

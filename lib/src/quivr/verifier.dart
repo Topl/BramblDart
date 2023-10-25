@@ -44,6 +44,7 @@ class Verifier {
     required Proof proof,
   }) =>
       (messageResult.isRight &&
+              // ignore: use_if_null_to_convert_nulls_to_bools
               messageResult.right == true &&
               evalResult.isRight)
           ? QuivrResult.right(true)
@@ -384,8 +385,7 @@ class Verifier {
     // return rightResult;
   }
 
-  // TODO: Remove this alias for evaluate
-  /// does not satisfy context in all scenarios
+  // TODO(ultimaterex): Remove this alias for evaluate does not satisfy context in all scenarios
 
   static QuivrResult<bool> verify(
           Proposition proposition, Proof proof, DynamicContext context) =>

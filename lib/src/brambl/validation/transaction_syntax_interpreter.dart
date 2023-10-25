@@ -43,7 +43,7 @@ class TransactionSyntaxInterpreter {
     attestationValidation,
     dataLengthValidation,
 
-    // todo: implement new validators
+    // TODO(ultimaterex): implement new validators
     // assetEqualFundsValidation,
     // groupEqualFundsValidation,
     // seriesEqualFundsValidation,
@@ -141,7 +141,7 @@ class TransactionSyntaxInterpreter {
       Value_Value.series => value.series.quantity.value.toBigInt,
       Value_Value.group => value.group.quantity.value.toBigInt,
       Value_Value.updateProposal =>
-        // todo evaluate if this switch is right
+        // TODO(ultimaterex): evaluate if this switch is right
         BigInt.zero,
       Value_Value.notSet => BigInt.zero,
     };
@@ -150,7 +150,7 @@ class TransactionSyntaxInterpreter {
   /// Ensure the input value quantities exceed or equal the (non-minting) output value quantities
   static Either<TransactionSyntaxError, Unit> sufficientFundsValidation(
       IoTransaction transaction) {
-    // TODO: figure out correct implementation for quantity (include series, group asset)
+    // TODO(ultimaterex): figure out correct implementation for quantity (include series, group asset)
     // BigInt? getQuantity(Value value) {
     //   if (value.hasLvl()) {
     //     return value.lvl.quantity.value.toBigInt;

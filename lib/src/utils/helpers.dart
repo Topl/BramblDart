@@ -14,7 +14,7 @@ import 'package:brambl_dart/src/common/functional/either.dart';
 /// final zipped = zip(list1, list2);
 /// print(zipped); // Output: [(1, 'a'), (2, 'b'), (3, 'c')]
 /// ```
-/// TODO: Schedule for removal in favour of list extension method.
+// TODO(ultimaterex): Schedule for removal in favour of list extension method.
 List<(A, B)> zip<A, B>(List<A> list1, List<B> list2) {
   final length = min(list1.length, list2.length);
   return List.generate(length, (i) => (list1[i], list2[i]));
@@ -28,7 +28,7 @@ List<(A, B)> zip<A, B>(List<A> list1, List<B> list2) {
 ///
 /// Returns a tuple of two lists, one containing the elements that satisfy the predicate and the other
 /// containing the elements that do not satisfy the predicate.
-/// TODO: Schedule for removal in favour of list extension method.
+// TODO(ultimaterex): Schedule for removal in favour of list extension method.
 (List<A>, List<B>) partitionMap<A, B>(
   List<dynamic> list,
   Either<A, B> Function(dynamic) f,

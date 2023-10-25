@@ -6,12 +6,14 @@ import 'package:brambl_dart/src/crypto/encryption/kdf/kdf.dart';
 import 'package:brambl_dart/src/utils/extensions.dart';
 import 'package:brambl_dart/src/utils/json.dart';
 import 'package:convert/convert.dart';
+import 'package:meta/meta.dart';
 import 'package:pointycastle/export.dart';
 
 /// SCrypt is a key derivation function.
 /// @see [[https://en.wikipedia.org/wiki/Scrypt]]
+@immutable
 class SCrypt implements Kdf {
-  SCrypt(this.params);
+  const SCrypt(this.params);
 
   /// Create a SCrypt with generated salt.
   SCrypt.withGeneratedSalt() : this(SCryptParams.withGeneratedSalt());
@@ -58,6 +60,7 @@ class SCrypt implements Kdf {
   int get hashCode => params.hashCode;
 }
 
+@immutable
 class SCryptParams extends Params {
   /// SCrypt parameters.
   ///

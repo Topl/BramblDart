@@ -1,11 +1,15 @@
+import 'package:meta/meta.dart';
+
 abstract class SigningKey {}
 
 abstract class VerificationKey {}
 
+@immutable
 class KeyPair<SigningKey, VerificationKey> {
-  KeyPair(this.signingKey, this.verificationKey);
-  SigningKey signingKey;
-  VerificationKey verificationKey;
+  const KeyPair(this.signingKey, this.verificationKey);
+
+  final SigningKey signingKey;
+  final VerificationKey verificationKey;
 
   @override
   bool operator ==(Object other) =>

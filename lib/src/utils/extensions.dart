@@ -323,6 +323,6 @@ extension WithResultExtension<T> on T {
   /// final result = await number.withResultAsync((value) async => value * 2); // returns 84
   /// ```
   Future<B> withResultAsync<B>(Future<B> Function(T) f) async {
-    return await f(this);
+    return f(this);
   }
 }
