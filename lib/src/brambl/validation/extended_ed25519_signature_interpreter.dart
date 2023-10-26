@@ -1,11 +1,12 @@
 import 'package:brambldart/brambldart.dart';
+import 'package:brambldart/src/common/functional/either.dart';
 import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
 import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
+import 'package:brambldart/src/quivr/algebras/signature_verifier.dart';
 import 'package:brambldart/src/quivr/common/quivr_result.dart';
 import 'package:brambldart/src/quivr/runtime/quivr_runtime_error.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
-import '../../quivr/algebras/signature_verifier.dart';
 
 /// Validates that an Ed25519 signature is valid.
 class ExtendedEd25519SignatureInterpreter implements SignatureVerifier {

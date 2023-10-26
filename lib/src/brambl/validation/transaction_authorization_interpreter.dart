@@ -1,5 +1,6 @@
 import 'package:brambldart/brambldart.dart';
 import 'package:brambldart/src/brambl/validation/transaction_authorization_error.dart';
+import 'package:brambldart/src/common/functional/either.dart';
 import 'package:brambldart/src/quivr/runtime/dynamic_context.dart';
 import 'package:brambldart/src/quivr/runtime/quivr_runtime_error.dart';
 import 'package:brambldart/src/utils/helpers.dart';

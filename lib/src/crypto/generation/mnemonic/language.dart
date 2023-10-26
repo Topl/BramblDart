@@ -77,7 +77,7 @@ class LanguageWordList {
       final words = await file.readAsLines();
 
       final hash = LanguageWordList.validateChecksum(words, language.hash);
-      return hash.isRight ? Either.right(LanguageWordList(words)) : Either.left(InvalidChecksum());
+      return hash.isRight ? Either.right(LanguageWordList(words)) : Either.left(InvalidLanguageChecksum());
     } catch (e) {
       return Either.left(FileReadFailure(e));
     }
@@ -89,7 +89,7 @@ class LanguageWordList {
   ) {
     final hash = SHA256().hash(words.join().toUtf8Uint8List());
     final hashString = hash.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
-    return hashString == expectedHash ? Either.right(words) : Either.left(InvalidChecksum());
+    return hashString == expectedHash ? Either.right(words) : Either.left(InvalidLanguageChecksum());
   }
 }
 
@@ -100,4 +100,4 @@ class FileReadFailure implements ValidationFailure {
   final Object exception;
 }
 
-class InvalidChecksum implements ValidationFailure {}
+class InvalidLanguageChecksum implements ValidationFailure {}

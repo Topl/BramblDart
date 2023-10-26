@@ -1,6 +1,5 @@
 import 'package:brambldart/brambldart.dart';
 import 'package:test/test.dart';
-import 'package:topl_common/genus/data_extensions.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 void main() {

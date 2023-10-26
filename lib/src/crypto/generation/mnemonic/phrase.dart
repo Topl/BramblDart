@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:brambldart/brambldart.dart';
+import 'package:brambldart/src/common/functional/either.dart';
 import 'package:brambldart/src/crypto/generation/mnemonic/entropy.dart';
 import 'package:brambldart/src/crypto/generation/mnemonic/language.dart';
 import 'package:brambldart/src/crypto/generation/mnemonic/mnemonic.dart';
