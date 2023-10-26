@@ -3,6 +3,8 @@ library brambldart;
 
 /// --- Brambl ---
 export "src/brambl/brambl.dart";
+/// --- Common ---
+export 'src/common/common.dart';
 /// --- Crypto ---
 export 'src/crypto/crypto.dart';
 /// --- Quivr ---
