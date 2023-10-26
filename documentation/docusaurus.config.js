@@ -21,7 +21,7 @@ const config = {
   organizationName: 'Topl', // Usually your GitHub org/user name.
   projectName: 'BramblDart', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internalization, you can use this field to set useful
@@ -72,18 +72,18 @@ const config = {
             position: 'left',
             label: 'Reference',
           },
-          {
-            type: 'docSidebar',
-            sidebarId: 'tutorialsSidebar',
-            position: 'left',
-            label: 'Tutorials',
-          },
-          {
-            type: 'docSidebar',
-            sidebarId: 'conceptsSidebar',
-            position: 'left',
-            label: 'Concepts',
-          },
+          // {
+          //   type: 'docSidebar',
+          //   sidebarId: 'tutorialsSidebar',
+          //   position: 'left',
+          //   label: 'Tutorials',
+          // },
+          // {
+          //   type: 'docSidebar',
+          //   sidebarId: 'conceptsSidebar',
+          //   position: 'left',
+          //   label: 'Concepts',
+          // },
           {
             href: 'https://github.com/Topl/BramblDart',
             label: 'GitHub',
@@ -103,7 +103,7 @@ const config = {
               },
               {
                 label: 'Discord',
-                href: 'https://discord.gg/topl',
+                href: 'https://discord.gg/Gp7fFq6Wck',
               },
               {
                 label: 'Twitter',
