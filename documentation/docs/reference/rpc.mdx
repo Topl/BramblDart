@@ -1,6 +1,37 @@
 ---
 sidebar_position: 2
-title: Getting Started
+title: RPC
 ---
 
-Coming Soon
+import Link from '@docusaurus/Link';
+
+The SDK provides a set of functions to perform some common RPC calls to interact with the blockchain. To see all the RPC
+functions available on the SDK, see the Dartdoc
+for <Link href="https://pub.dev/documentation/brambldart/2.0.0-alpha.1/brambldart/BifrostQueryAlgebra-class.html"><code>BifrostQueryAlgebra</code></Link>
+and <Link href="https://pub.dev/documentation/brambldart/2.0.0-alpha.1/brambldart/GenusQueryAlgebra-class.html"><code>GenusQueryAlgebra</code></Link>.
+To see all the RPC functions available on the Bifrost and Genus nodes, see the protocol buffer definitions
+for <Link href="https://github.com/Topl/protobuf-specs/blob/main/proto/node/services/bifrost_rpc.proto">Bifrost</Link>
+and <Link href="https://github.com/Topl/protobuf-specs/blob/main/proto/genus/genus_rpc.proto">Genus</Link>.
+
+## Querying UTXOs
+
+You can query the existing UTXOs on the blockchain using the `queryUtxo` function of a Genus Query instance.
+
+```dart
+Future<List<Txo>> queryUtxo({required LockAddress fromAddress, TxoState txoState = TxoState.UNSPENT})
+```
+
+This function queries a Genus node for all UTXOs that are encumbered by a given address and are of a specified state.
+
+The parameters are as follows:
+- `fromAddress` - The LockAddress of the UTXOs we are querying.
+- `txoState` - The state of the UTXOs we are querying. The default value is `UNSPENT`.
+
+You can initialize an instance of a Genus Query using the following snippet:
+
+```dart
+final genusQuery = GenusQueryAlgebra(channel);
+```
+
+Where  `channel` is a native or web grpc channel
+providing the connection with a Genus node. See the constructor <Link href="https://pub.dev/documentation/brambldart/2.0.0-alpha.1/brambldart/GenusQueryAlgebra-class.html">signature</Link>.
