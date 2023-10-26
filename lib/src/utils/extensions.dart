@@ -323,3 +323,17 @@ extension WithResultExtension<T> on T {
     return f(this);
   }
 }
+
+
+/// required for null support on [WithResultExtension]
+extension WithNullableResultExtension<T> on T? {
+
+  /// Applies the function [f] to this object and returns the result.
+  /// 
+  /// The function [f] is a transformation function that takes an object of
+  /// type `T` and returns an object of type `B`.
+  /// 
+  /// This method can be used to apply a transformation to an object in a
+  /// fluent style. implementation similar to Scala's map function.
+  B withResult<B>(B Function(T?) f) => f(this);
+}
