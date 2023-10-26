@@ -4,6 +4,8 @@ library brambl;
 
 /// --- Builders ---
 export 'builders/builders.dart';
+/// --- Codecs ---
+export 'codecs/address_codecs.dart';
 /// --- Common ---
 export 'common/common.dart';
 /// --- Brambl ---
