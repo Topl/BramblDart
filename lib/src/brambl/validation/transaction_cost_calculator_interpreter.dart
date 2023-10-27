@@ -1,9 +1,10 @@
-import 'package:brambldart/src/brambl/common/contains_immutable.dart';
 import 'package:collection/collection.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_output.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/unspent_transaction_output.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
+
+import '../common/contains_immutable.dart';
 
 /// A transaction cost calculator.
 class TransactionCostCalculator<F> {

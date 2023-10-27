@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/crypto/accumulators/accumulators.dart';
-import 'package:brambldart/src/crypto/accumulators/merkle/merkle_tree.dart';
-import 'package:brambldart/src/crypto/hash/digest/digest.dart';
-import 'package:brambldart/src/crypto/hash/hash.dart';
-import 'package:brambldart/src/utils/extensions.dart';
+import '../../../utils/extensions.dart';
+import '../../hash/digest/digest.dart';
+import '../../hash/hash.dart';
+import '../accumulators.dart';
+import 'merkle_tree.dart';
 
 sealed class Node {
   Digest get hash;

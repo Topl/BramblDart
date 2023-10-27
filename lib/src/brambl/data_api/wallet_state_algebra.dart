@@ -1,9 +1,10 @@
-import 'package:brambldart/src/brambl/builders/locks/lock_template.dart';
-import 'package:brambldart/src/common/functional/either.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import '../../common/functional/either.dart';
+import '../builders/locks/lock_template.dart';
 
 /// Defines a data API for storing and retrieving wallet state.
 abstract class WalletStateAlgebra {

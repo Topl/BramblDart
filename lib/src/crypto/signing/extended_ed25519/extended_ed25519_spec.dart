@@ -1,13 +1,14 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/crypto/signing/ed25519/ed25519_spec.dart' as spec;
-import 'package:brambldart/src/crypto/signing/signing.dart';
-import 'package:brambldart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:pointycastle/export.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
+
+import '../../../common/functional/either.dart';
+import '../../../utils/extensions.dart';
+import '../ed25519/ed25519_spec.dart' as spec;
+import '../signing.dart';
 
 mixin ExtendedEd25519Spec {
   static const int signatureLength = 64;
@@ -105,7 +106,9 @@ class SecretKey extends SigningKey with ExtendedEd25519Spec {
 
   @override
   int get hashCode =>
-      const ListEquality().hash(leftKey) ^ const ListEquality().hash(rightKey) ^ const ListEquality().hash(chainCode);
+      const ListEquality().hash(leftKey) ^
+      const ListEquality().hash(rightKey) ^
+      const ListEquality().hash(chainCode);
 }
 
 @immutable
@@ -131,7 +134,8 @@ class PublicKey extends VerificationKey with ExtendedEd25519Spec {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is PublicKey && vk == other.vk && chainCode.equals(other.chainCode);
+      identical(this, other) ||
+      other is PublicKey && vk == other.vk && chainCode.equals(other.chainCode);
 
   @override
   // ignore: inference_failure_on_instance_creation

@@ -1,6 +1,7 @@
-import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart' as xspec;
-import 'package:brambldart/src/crypto/signing/signing.dart' as s;
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import '../../crypto/signing/extended_ed25519/extended_ed25519_spec.dart' as xspec;
+import '../../crypto/signing/signing.dart' as s;
 
 class ProtoConverters {
   static VerificationKey publicKeyToProto(xspec.PublicKey pk) {

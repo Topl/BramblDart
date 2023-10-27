@@ -1,7 +1,8 @@
-import 'package:brambldart/src/brambl/common/contains_evidence.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
+
+import '../common/contains_evidence.dart';
 
 class LockSyntaxOps {
   LockSyntaxOps(this.lock);

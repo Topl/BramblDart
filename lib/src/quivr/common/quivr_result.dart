@@ -1,5 +1,5 @@
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/quivr/runtime/quivr_runtime_error.dart';
+import '../../common/functional/either.dart';
+import '../runtime/quivr_runtime_error.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 
@@ -7,7 +7,8 @@ import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 typedef QuivrResult<T> = Either<QuivrRunTimeError, T>;
 
 /// provides a simple instance of [QuivrResult] for the [QuivrRunTimeError] [ValidationError.evaluationAuthorizationFailure]
-Either<QuivrRunTimeError, T> quivrEvaluationAuthorizationFailure<T>({dynamic proof, dynamic proposition}) {
+Either<QuivrRunTimeError, T> quivrEvaluationAuthorizationFailure<T>(
+    {dynamic proof, dynamic proposition}) {
   return QuivrResult<T>.left(ValidationError.evaluationAuthorizationFailure(
       proof: proofFromType(proof),
       proposition: propositionFromType(proposition),

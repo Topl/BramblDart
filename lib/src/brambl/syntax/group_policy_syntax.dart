@@ -1,7 +1,8 @@
-import 'package:brambldart/src/brambl/common/contains_immutable.dart';
-import 'package:brambldart/src/crypto/hash/hash.dart';
 import 'package:topl_common/proto/brambl/models/event.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
+
+import '../../crypto/hash/hash.dart';
+import '../common/contains_immutable.dart';
 
 typedef GroupPolicy = Event_GroupPolicy;
 

@@ -1,12 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/brambl/builders/builder_error.dart';
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/quivr/proposer.dart';
-import 'package:brambldart/src/utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import '../../../common/functional/either.dart';
+import '../../../quivr/proposer.dart';
+import '../../../utils/extensions.dart';
+import '../builder_error.dart';
 
 enum PropositionType {
   locked('locked'),

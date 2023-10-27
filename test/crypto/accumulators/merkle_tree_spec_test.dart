@@ -16,13 +16,15 @@ void main() {
   group('Merkle Tree Spec', () {
     test('Proof generation by element', () {
       for (var n = 1; n <= 15; n++) {
-        final d = List.generate(n, (_) => LeafData(Generators.genByteArrayOfSize(leafSize)));
+        final d = List.generate(
+            n, (_) => LeafData(Generators.genByteArrayOfSize(leafSize)));
         final leafs = d.map((data) => Leaf(data: data, h: hf));
         final tree = MerkleTree.fromLeafs(d, hf);
         final treeRootHash = tree.rootHash;
 
         for (final l in leafs) {
-          final proof = tree.proofByElement(l).getOrThrow(Exception("Proof is invalid"));
+          final proof =
+              tree.proofByElement(l).getOrThrow(Exception("Proof is invalid"));
 
           expect(proof.leafData, l.data);
 
@@ -33,13 +35,16 @@ void main() {
 
     test('Proof generation by index', () {
       for (var n = 1; n <= 15; n++) {
-        final d = List.generate(n, (_) => LeafData(Generators.genByteArrayOfSize(leafSize)));
+        final d = List.generate(
+            n, (_) => LeafData(Generators.genByteArrayOfSize(leafSize)));
         final tree = MerkleTree.fromLeafs(d, hf);
 
         for (var i = 0; i < n; i++) {
-          final proof = tree.proofByIndex(i).getOrThrow(Exception("Proof is invalid"));
+          final proof =
+              tree.proofByIndex(i).getOrThrow(Exception("Proof is invalid"));
 
-          expect(const ListEquality().equals(proof.leafData.value, d[i].value), isTrue);
+          expect(const ListEquality().equals(proof.leafData.value, d[i].value),
+              isTrue);
           expect(proof.valid(tree.rootHash), isTrue);
         }
 
@@ -66,7 +71,8 @@ void main() {
         if (d.isNotEmpty) {
           final tree = MerkleTree.fromLeafs([LeafData(d)], hf);
           final lfp = hf.hashWithPrefix(MerkleTree.leafPrefix, [d]);
-          final inp = hf.hashWithPrefix(MerkleTree.internalNodePrefix, [lfp.bytes]);
+          final inp =
+              hf.hashWithPrefix(MerkleTree.internalNodePrefix, [lfp.bytes]);
 
           expect(tree.rootHash, inp);
         }
@@ -80,12 +86,17 @@ void main() {
           final leafs = List.generate(5, (_) => LeafData(d));
           final tree = MerkleTree.fromLeafs(leafs, hf);
           final h0x = hf.hashWithPrefix(MerkleTree.leafPrefix, [d]);
-          final h10 = hf.hashWithPrefix(MerkleTree.internalNodePrefix, [h0x.bytes, h0x.bytes]);
+          final h10 = hf.hashWithPrefix(
+              MerkleTree.internalNodePrefix, [h0x.bytes, h0x.bytes]);
           final h11 = h10;
-          final h12 = hf.hashWithPrefix(MerkleTree.internalNodePrefix, [h0x.bytes]);
-          final h20 = hf.hashWithPrefix(MerkleTree.internalNodePrefix, [h10.bytes, h11.bytes]);
-          final h21 = hf.hashWithPrefix(MerkleTree.internalNodePrefix, [h12.bytes]);
-          final h30 = hf.hashWithPrefix(MerkleTree.internalNodePrefix, [h20.bytes, h21.bytes]);
+          final h12 =
+              hf.hashWithPrefix(MerkleTree.internalNodePrefix, [h0x.bytes]);
+          final h20 = hf.hashWithPrefix(
+              MerkleTree.internalNodePrefix, [h10.bytes, h11.bytes]);
+          final h21 =
+              hf.hashWithPrefix(MerkleTree.internalNodePrefix, [h12.bytes]);
+          final h30 = hf.hashWithPrefix(
+              MerkleTree.internalNodePrefix, [h20.bytes, h21.bytes]);
           expect(tree.rootHash, h30);
         }
       }
@@ -99,7 +110,8 @@ void main() {
         final tree = MerkleTree.fromLeafs(leafs, hf);
         final h0x1 = hf.hashWithPrefix(MerkleTree.leafPrefix, [d1]);
         final h0x2 = hf.hashWithPrefix(MerkleTree.leafPrefix, [d2]);
-        final h10 = hf.hashWithPrefix(MerkleTree.internalNodePrefix, [h0x1.bytes, h0x2.bytes]);
+        final h10 = hf.hashWithPrefix(
+            MerkleTree.internalNodePrefix, [h0x1.bytes, h0x2.bytes]);
 
         expect(tree.rootHash, h10);
       }

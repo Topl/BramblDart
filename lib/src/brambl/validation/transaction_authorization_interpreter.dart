@@ -1,14 +1,14 @@
-import 'package:brambldart/brambldart.dart';
-import 'package:brambldart/src/brambl/validation/transaction_authorization_error.dart';
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/quivr/runtime/dynamic_context.dart';
-import 'package:brambldart/src/quivr/runtime/quivr_runtime_error.dart';
-import 'package:brambldart/src/utils/helpers.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
+
+import '../../../brambldart.dart';
+import '../../quivr/runtime/dynamic_context.dart';
+import '../../quivr/runtime/quivr_runtime_error.dart';
+import '../../utils/helpers.dart';
+import 'transaction_authorization_error.dart';
 
 class TransactionAuthorizationInterpreter<F> {
   TransactionAuthorizationInterpreter(this.verifier);

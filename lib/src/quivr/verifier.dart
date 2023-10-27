@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:brambldart/brambldart.dart' show Tokens;
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/crypto/hash/hash.dart' show blake2b256;
-import 'package:brambldart/src/quivr/common/quivr_result.dart';
-import 'package:brambldart/src/quivr/runtime/dynamic_context.dart';
-import 'package:brambldart/src/quivr/runtime/quivr_runtime_error.dart';
-import 'package:brambldart/src/utils/extensions.dart';
+import '../../brambldart.dart' show Tokens;
+import '../common/functional/either.dart';
+import '../crypto/hash/hash.dart' show blake2b256;
+import 'common/quivr_result.dart';
+import 'runtime/dynamic_context.dart';
+import 'runtime/quivr_runtime_error.dart';
+import '../utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/brambl/models/datum.pb.dart';
@@ -27,11 +27,13 @@ class Verifier {
     final merge = utf8.encode(tag) + sb.value.toUint8List();
     final verifierTxBind = blake2b256.hash(merge.toUint8List());
 
-    final result = const ListEquality().equals(verifierTxBind, proofTxBind.value.toUint8List());
+    final result = const ListEquality()
+        .equals(verifierTxBind, proofTxBind.value.toUint8List());
 
     return result
         ? QuivrResult.right(result)
-        : QuivrResult.left(ValidationError.messageAuthorizationFailure(proof: proof));
+        : QuivrResult.left(
+            ValidationError.messageAuthorizationFailure(proof: proof));
   }
 
   static QuivrResult<bool> evaluateResult(
@@ -46,7 +48,8 @@ class Verifier {
               messageResult.right == true &&
               evalResult.isRight)
           ? QuivrResult.right(true)
-          : quivrEvaluationAuthorizationFailure(proof: proof, proposition: proposition);
+          : quivrEvaluationAuthorizationFailure(
+              proof: proof, proposition: proposition);
 
   /// Verifies whether the given proof satisfies the given proposition
   /// Always returns Left [QuivrRuntimeError.lockedPropositionIsUnsatisfiable]
@@ -54,28 +57,38 @@ class Verifier {
     return QuivrResult.left(ValidationError.lockedPropositionIsUnsatisfiable());
   }
 
-  static QuivrResult<bool> verifyDigest(Proposition_Digest proposition, Proof_Digest proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) = (Proposition()..digest = proposition, Proof()..digest = proof);
+  static QuivrResult<bool> verifyDigest(Proposition_Digest proposition,
+      Proof_Digest proof, DynamicContext context) {
+    final (wrappedProposition, wrappedProof) =
+        (Proposition()..digest = proposition, Proof()..digest = proof);
 
-    final messageResult = _evaluateBlake2b256Bind(Tokens.digest, wrappedProof, proof.transactionBind, context);
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.digest, wrappedProof, proof.transactionBind, context);
 
     if (messageResult.isLeft) {
       return messageResult;
     }
 
     final evalResult = context.digestVerify(
-        proposition.routine, DigestVerification(digest: proposition.digest, preimage: proof.preimage));
+        proposition.routine,
+        DigestVerification(
+            digest: proposition.digest, preimage: proof.preimage));
 
-    return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
+    return evaluateResult(messageResult, evalResult,
+        proposition: wrappedProposition, proof: wrappedProof);
   }
 
   static QuivrResult<bool> verifySignature(
-      Proposition_DigitalSignature proposition, Proof_DigitalSignature proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) =
-        (Proposition()..digitalSignature = proposition, Proof()..digitalSignature = proof);
+      Proposition_DigitalSignature proposition,
+      Proof_DigitalSignature proof,
+      DynamicContext context) {
+    final (wrappedProposition, wrappedProof) = (
+      Proposition()..digitalSignature = proposition,
+      Proof()..digitalSignature = proof
+    );
 
-    final messageResult =
-        _evaluateBlake2b256Bind(Tokens.digitalSignature, wrappedProof, proof.transactionBind, context);
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.digitalSignature, wrappedProof, proof.transactionBind, context);
 
     if (messageResult.isLeft) {
       return messageResult;
@@ -87,16 +100,24 @@ class Verifier {
         signature: proof.witness,
         message: Message(value: signedMessage.value.toList()));
 
-    final evalResult = context.signatureVerify(proposition.routine, verification);
+    final evalResult =
+        context.signatureVerify(proposition.routine, verification);
 
-    return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
+    return evaluateResult(messageResult, evalResult,
+        proposition: wrappedProposition, proof: wrappedProof);
   }
 
   static QuivrResult<bool> verifyHeightRange(
-      Proposition_HeightRange proposition, Proof_HeightRange proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) = (Proposition()..heightRange = proposition, Proof()..heightRange = proof);
+      Proposition_HeightRange proposition,
+      Proof_HeightRange proof,
+      DynamicContext context) {
+    final (wrappedProposition, wrappedProof) = (
+      Proposition()..heightRange = proposition,
+      Proof()..heightRange = proof
+    );
 
-    final messageResult = _evaluateBlake2b256Bind(Tokens.heightRange, wrappedProof, proof.transactionBind, context);
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.heightRange, wrappedProof, proof.transactionBind, context);
 
     if (messageResult.isLeft) {
       return messageResult;
@@ -105,7 +126,8 @@ class Verifier {
     final x = context.heightOf(proposition.chain, (test) => Datum());
     final QuivrResult<Int64> chainHeight = x != null
         ? QuivrResult<Int64>.right(x)
-        : quivrEvaluationAuthorizationFailure<Int64>(proof: proof, proposition: proposition);
+        : quivrEvaluationAuthorizationFailure<Int64>(
+            proof: proof, proposition: proposition);
 
     if (chainHeight.isLeft) {
       return QuivrResult<bool>.left(chainHeight.left);
@@ -113,99 +135,131 @@ class Verifier {
 
     final height = chainHeight.right!;
 
-    final evalResult = (proposition.max >= height) && (proposition.min <= height)
-        ? QuivrResult<bool>.right(true)
-        : quivrEvaluationAuthorizationFailure(proof: proof, proposition: proposition);
+    final evalResult =
+        (proposition.max >= height) && (proposition.min <= height)
+            ? QuivrResult<bool>.right(true)
+            : quivrEvaluationAuthorizationFailure(
+                proof: proof, proposition: proposition);
 
-    return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
+    return evaluateResult(messageResult, evalResult,
+        proposition: wrappedProposition, proof: wrappedProof);
   }
 
-  static QuivrResult<bool> verifyTickRange(
-      Proposition_TickRange proposition, Proof_TickRange proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) = (Proposition()..tickRange = proposition, Proof()..tickRange = proof);
+  static QuivrResult<bool> verifyTickRange(Proposition_TickRange proposition,
+      Proof_TickRange proof, DynamicContext context) {
+    final (wrappedProposition, wrappedProof) =
+        (Proposition()..tickRange = proposition, Proof()..tickRange = proof);
 
-    final messageResult = _evaluateBlake2b256Bind(Tokens.tickRange, wrappedProof, proof.transactionBind, context);
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.tickRange, wrappedProof, proof.transactionBind, context);
 
     if (messageResult.isLeft) {
       return messageResult;
     }
 
-    if (context.currentTick < proposition.min || context.currentTick > proposition.max) {
-      return quivrEvaluationAuthorizationFailure(proof: proof, proposition: proposition);
+    if (context.currentTick < proposition.min ||
+        context.currentTick > proposition.max) {
+      return quivrEvaluationAuthorizationFailure(
+          proof: proof, proposition: proposition);
     }
     final tick = context.currentTick;
 
     final evalResult = ((proposition.min <= tick) && (tick <= proposition.max))
         ? QuivrResult<bool>.right(true)
-        : quivrEvaluationAuthorizationFailure(proof: proof, proposition: proposition);
+        : quivrEvaluationAuthorizationFailure(
+            proof: proof, proposition: proposition);
 
-    return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
+    return evaluateResult(messageResult, evalResult,
+        proposition: wrappedProposition, proof: wrappedProof);
   }
 
-  static QuivrResult<bool> verifyExactMatch(
-      Proposition_ExactMatch proposition, Proof_ExactMatch proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) = (Proposition()..exactMatch = proposition, Proof()..exactMatch = proof);
+  static QuivrResult<bool> verifyExactMatch(Proposition_ExactMatch proposition,
+      Proof_ExactMatch proof, DynamicContext context) {
+    final (wrappedProposition, wrappedProof) =
+        (Proposition()..exactMatch = proposition, Proof()..exactMatch = proof);
 
-    final messageResult = _evaluateBlake2b256Bind(Tokens.exactMatch, wrappedProof, proof.transactionBind, context);
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.exactMatch, wrappedProof, proof.transactionBind, context);
 
     if (messageResult.isLeft) {
       return messageResult;
     }
 
-    final evalResult = context.exactMatch(proposition.location, proposition.compareTo);
+    final evalResult =
+        context.exactMatch(proposition.location, proposition.compareTo);
 
-    return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
+    return evaluateResult(messageResult, evalResult,
+        proposition: wrappedProposition, proof: wrappedProof);
   }
 
-  static QuivrResult<bool> verifyLessThan(
-      Proposition_LessThan proposition, Proof_LessThan proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) = (Proposition()..lessThan = proposition, Proof()..lessThan = proof);
+  static QuivrResult<bool> verifyLessThan(Proposition_LessThan proposition,
+      Proof_LessThan proof, DynamicContext context) {
+    final (wrappedProposition, wrappedProof) =
+        (Proposition()..lessThan = proposition, Proof()..lessThan = proof);
 
-    final messageResult = _evaluateBlake2b256Bind(Tokens.lessThan, wrappedProof, proof.transactionBind, context);
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.lessThan, wrappedProof, proof.transactionBind, context);
 
     if (messageResult.isLeft) {
       return messageResult;
     }
 
-    final evalResult = context.lessThan(proposition.location, proposition.compareTo.value.toBigInt);
+    final evalResult = context.lessThan(
+        proposition.location, proposition.compareTo.value.toBigInt);
 
-    return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
+    return evaluateResult(messageResult, evalResult,
+        proposition: wrappedProposition, proof: wrappedProof);
   }
 
   static QuivrResult<bool> verifyGreaterThan(
-      Proposition_GreaterThan proposition, Proof_GreaterThan proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) = (Proposition()..greaterThan = proposition, Proof()..greaterThan = proof);
+      Proposition_GreaterThan proposition,
+      Proof_GreaterThan proof,
+      DynamicContext context) {
+    final (wrappedProposition, wrappedProof) = (
+      Proposition()..greaterThan = proposition,
+      Proof()..greaterThan = proof
+    );
 
-    final messageResult = _evaluateBlake2b256Bind(Tokens.greaterThan, wrappedProof, proof.transactionBind, context);
-
-    if (messageResult.isLeft) {
-      return messageResult;
-    }
-
-    final evalResult = context.greaterThan(proposition.location, proposition.compareTo.value.toBigInt);
-
-    return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
-  }
-
-  static QuivrResult<bool> verifyEqualTo(Proposition_EqualTo proposition, Proof_EqualTo proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) = (Proposition()..equalTo = proposition, Proof()..equalTo = proof);
-
-    final messageResult = _evaluateBlake2b256Bind(Tokens.equalTo, wrappedProof, proof.transactionBind, context);
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.greaterThan, wrappedProof, proof.transactionBind, context);
 
     if (messageResult.isLeft) {
       return messageResult;
     }
 
-    final evalResult = context.equalTo(proposition.location, proposition.compareTo.value.toBigInt);
+    final evalResult = context.greaterThan(
+        proposition.location, proposition.compareTo.value.toBigInt);
 
-    return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
+    return evaluateResult(messageResult, evalResult,
+        proposition: wrappedProposition, proof: wrappedProof);
   }
 
-  static QuivrResult<bool> verifyThreshold(
-      Proposition_Threshold proposition, Proof_Threshold proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) = (Proposition()..threshold = proposition, Proof()..threshold = proof);
+  static QuivrResult<bool> verifyEqualTo(Proposition_EqualTo proposition,
+      Proof_EqualTo proof, DynamicContext context) {
+    final (wrappedProposition, wrappedProof) =
+        (Proposition()..equalTo = proposition, Proof()..equalTo = proof);
 
-    final messageResult = _evaluateBlake2b256Bind(Tokens.threshold, wrappedProof, proof.transactionBind, context);
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.equalTo, wrappedProof, proof.transactionBind, context);
+
+    if (messageResult.isLeft) {
+      return messageResult;
+    }
+
+    final evalResult = context.equalTo(
+        proposition.location, proposition.compareTo.value.toBigInt);
+
+    return evaluateResult(messageResult, evalResult,
+        proposition: wrappedProposition, proof: wrappedProof);
+  }
+
+  static QuivrResult<bool> verifyThreshold(Proposition_Threshold proposition,
+      Proof_Threshold proof, DynamicContext context) {
+    final (wrappedProposition, wrappedProof) =
+        (Proposition()..threshold = proposition, Proof()..threshold = proof);
+
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.threshold, wrappedProof, proof.transactionBind, context);
 
     if (messageResult.isLeft) {
       return messageResult;
@@ -219,10 +273,14 @@ class Verifier {
     } else if (proposition.threshold > proposition.challenges.length ||
         proof.responses.isEmpty ||
         proof.responses.length != proposition.challenges.length) {
-      evalResult = quivrEvaluationAuthorizationFailure(proof: proof, proposition: proposition);
+      evalResult = quivrEvaluationAuthorizationFailure(
+          proof: proof, proposition: proposition);
     } else {
       int successCount = 0;
-      for (int i = 0; i < proposition.challenges.length && successCount < proposition.threshold; i++) {
+      for (int i = 0;
+          i < proposition.challenges.length &&
+              successCount < proposition.threshold;
+          i++) {
         final challenge = proposition.challenges[i];
         final response = proof.responses[i];
         final verifyResult = verify(challenge, response, context);
@@ -231,35 +289,44 @@ class Verifier {
         }
       }
       if (successCount < proposition.threshold) {
-        evalResult = quivrEvaluationAuthorizationFailure(proof: proof, proposition: proposition);
+        evalResult = quivrEvaluationAuthorizationFailure(
+            proof: proof, proposition: proposition);
       }
     }
 
-    return evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
+    return evaluateResult(messageResult, evalResult,
+        proposition: wrappedProposition, proof: wrappedProof);
   }
 
-  static QuivrResult<bool> verifyNot(Proposition_Not proposition, Proof_Not proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) = (Proposition()..not = proposition, Proof()..not = proof);
+  static QuivrResult<bool> verifyNot(
+      Proposition_Not proposition, Proof_Not proof, DynamicContext context) {
+    final (wrappedProposition, wrappedProof) =
+        (Proposition()..not = proposition, Proof()..not = proof);
 
-    final messageResult = _evaluateBlake2b256Bind(Tokens.not, wrappedProof, proof.transactionBind, context);
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.not, wrappedProof, proof.transactionBind, context);
     if (messageResult.isLeft) {
       return messageResult;
     }
 
     final evalResult = verify(proposition.proposition, proof.proof, context);
 
-    final beforeReturn =
-        evaluateResult(messageResult, evalResult, proposition: wrappedProposition, proof: wrappedProof);
+    final beforeReturn = evaluateResult(messageResult, evalResult,
+        proposition: wrappedProposition, proof: wrappedProof);
 
     return beforeReturn.isRight
-        ? quivrEvaluationAuthorizationFailure(proof: proof, proposition: proposition)
+        ? quivrEvaluationAuthorizationFailure(
+            proof: proof, proposition: proposition)
         : QuivrResult.right(true);
   }
 
-  static QuivrResult<bool> verifyAnd(Proposition_And proposition, Proof_And proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) = (Proposition()..and = proposition, Proof()..and = proof);
+  static QuivrResult<bool> verifyAnd(
+      Proposition_And proposition, Proof_And proof, DynamicContext context) {
+    final (wrappedProposition, wrappedProof) =
+        (Proposition()..and = proposition, Proof()..and = proof);
 
-    final messageResult = _evaluateBlake2b256Bind(Tokens.and, wrappedProof, proof.transactionBind, context);
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.and, wrappedProof, proof.transactionBind, context);
     if (messageResult.isLeft) {
       return messageResult;
     }
@@ -279,13 +346,17 @@ class Verifier {
       return QuivrResult.right(true);
     }
 
-    return quivrEvaluationAuthorizationFailure(proposition: wrappedProposition, proof: wrappedProof);
+    return quivrEvaluationAuthorizationFailure(
+        proposition: wrappedProposition, proof: wrappedProof);
   }
 
-  static QuivrResult<bool> verifyOr(Proposition_Or proposition, Proof_Or proof, DynamicContext context) {
-    final (wrappedProposition, wrappedProof) = (Proposition()..or = proposition, Proof()..or = proof);
+  static QuivrResult<bool> verifyOr(
+      Proposition_Or proposition, Proof_Or proof, DynamicContext context) {
+    final (wrappedProposition, wrappedProof) =
+        (Proposition()..or = proposition, Proof()..or = proof);
 
-    final messageResult = _evaluateBlake2b256Bind(Tokens.or, wrappedProof, proof.transactionBind, context);
+    final messageResult = _evaluateBlake2b256Bind(
+        Tokens.or, wrappedProof, proof.transactionBind, context);
     final leftResult = verify(proposition.left, proof.left, context);
     final rightResult = verify(proposition.right, proof.right, context);
 
@@ -303,7 +374,8 @@ class Verifier {
     if (a.isRight) {
       return b;
     }
-    return quivrEvaluationAuthorizationFailure(proposition: wrappedProposition, proof: wrappedProof);
+    return quivrEvaluationAuthorizationFailure(
+        proposition: wrappedProposition, proof: wrappedProof);
 
     // evalutate results
     // if (messageResult.isLeft) return messageResult;
@@ -315,24 +387,29 @@ class Verifier {
 
   // TODO(ultimaterex): Remove this alias for evaluate does not satisfy context in all scenarios
 
-  static QuivrResult<bool> verify(Proposition proposition, Proof proof, DynamicContext context) =>
+  static QuivrResult<bool> verify(
+          Proposition proposition, Proof proof, DynamicContext context) =>
       evaluate(proposition, proof, context);
-  static QuivrResult<bool> evaluate(Proposition proposition, Proof proof, DynamicContext context) {
+  static QuivrResult<bool> evaluate(
+      Proposition proposition, Proof proof, DynamicContext context) {
     switch ((proposition.whichValue(), proof.whichValue())) {
       case (Proposition_Value.locked, Proof_Value.locked):
         return verifyLocked();
       case (Proposition_Value.digest, Proof_Value.digest):
         return verifyDigest(proposition.digest, proof.digest, context);
       case (Proposition_Value.digitalSignature, Proof_Value.digitalSignature):
-        return verifySignature(proposition.digitalSignature, proof.digitalSignature, context);
+        return verifySignature(
+            proposition.digitalSignature, proof.digitalSignature, context);
       case (Proposition_Value.heightRange, Proof_Value.heightRange):
-        return verifyHeightRange(proposition.heightRange, proof.heightRange, context);
+        return verifyHeightRange(
+            proposition.heightRange, proof.heightRange, context);
       case (Proposition_Value.tickRange, Proof_Value.tickRange):
         return verifyTickRange(proposition.tickRange, proof.tickRange, context);
       case (Proposition_Value.lessThan, Proof_Value.lessThan):
         return verifyLessThan(proposition.lessThan, proof.lessThan, context);
       case (Proposition_Value.greaterThan, Proof_Value.greaterThan):
-        return verifyGreaterThan(proposition.greaterThan, proof.greaterThan, context);
+        return verifyGreaterThan(
+            proposition.greaterThan, proof.greaterThan, context);
       case (Proposition_Value.equalTo, Proof_Value.equalTo):
         return verifyEqualTo(proposition.equalTo, proof.equalTo, context);
       case (Proposition_Value.threshold, Proof_Value.threshold):
@@ -344,7 +421,8 @@ class Verifier {
       case (Proposition_Value.or, Proof_Value.or):
         return verifyOr(proposition.or, proof.or, context);
       default:
-        return quivrEvaluationAuthorizationFailure(proof: proof, proposition: proposition);
+        return quivrEvaluationAuthorizationFailure(
+            proof: proof, proposition: proposition);
     }
   }
 }

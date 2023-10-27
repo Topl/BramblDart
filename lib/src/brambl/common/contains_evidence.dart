@@ -1,10 +1,11 @@
-import 'package:brambldart/src/brambl/common/contains_immutable.dart';
-import 'package:brambldart/src/crypto/accumulators/accumulators.dart';
-import 'package:brambldart/src/crypto/accumulators/merkle/merkle_tree.dart';
-import 'package:brambldart/src/crypto/hash/blake2b.dart';
-import 'package:brambldart/src/utils/extensions.dart';
 import 'package:topl_common/proto/brambl/models/evidence.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
+
+import '../../crypto/accumulators/accumulators.dart';
+import '../../crypto/accumulators/merkle/merkle_tree.dart';
+import '../../crypto/hash/blake2b.dart';
+import '../../utils/extensions.dart';
+import 'contains_immutable.dart';
 
 /// Contains signable bytes and has methods to get evidence of those bytes in the form of a 32 or 64 byte hash.
 class ContainsEvidence {

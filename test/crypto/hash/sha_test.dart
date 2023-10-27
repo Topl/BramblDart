@@ -15,22 +15,34 @@ main() {
     group("hashes 256 correctly", () {
       test('hash "test"', () {
         final hash = _doHashCheck("test", SHA256());
-        expect(hash, equals("9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"));
+        expect(
+            hash,
+            equals(
+                "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"));
       });
 
       test('hash "topl"', () {
         final hash = _doHashCheck("topl", SHA256());
-        expect(hash, equals("8a475240db931554ab61d117d791711f38728fa45c7d39d18d49b7ceaf983ae8"));
+        expect(
+            hash,
+            equals(
+                "8a475240db931554ab61d117d791711f38728fa45c7d39d18d49b7ceaf983ae8"));
       });
 
       test('hash "dart"', () {
         final hash = _doHashCheck("dart", SHA256());
-        expect(hash, equals("b775a2a2139069969e0cc3ed738cfc464b386fba2fc68d8c1a7e8fddf07b34b7"));
+        expect(
+            hash,
+            equals(
+                "b775a2a2139069969e0cc3ed738cfc464b386fba2fc68d8c1a7e8fddf07b34b7"));
       });
 
       test('hash ""', () {
         final hash = _doHashCheck("", SHA256());
-        expect(hash, equals("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+        expect(
+            hash,
+            equals(
+                "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
       });
     });
 

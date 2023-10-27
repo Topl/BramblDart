@@ -1,9 +1,10 @@
-import 'package:brambldart/src/common/types/byte_string.dart';
 import 'package:meta/meta.dart';
 import 'package:topl_common/proto/brambl/models/box/asset.pbenum.dart';
 import 'package:topl_common/proto/brambl/models/box/value.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
+
+import '../../common/types/byte_string.dart';
 
 extension TokenTypeIdentifierExtension on Value {
   ValueToTypeIdentifierSyntaxOps get toTypeIdentifierSyntaxOps => ValueToTypeIdentifierSyntaxOps(this);

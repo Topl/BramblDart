@@ -1,10 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/brambl/common/tags.dart';
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/common/types/byte_string.dart';
-import 'package:brambldart/src/quivr/tokens.dart';
-import 'package:brambldart/src/utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/asset.pbenum.dart';
@@ -30,6 +25,12 @@ import 'package:topl_common/proto/node/models/ratio.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import '../../common/functional/either.dart';
+import '../../common/types/byte_string.dart';
+import '../../quivr/tokens.dart';
+import '../../utils/extensions.dart';
+import 'tags.dart';
 
 /// provides factory methods for creating [ContainsImmutable] [ImmutableBytes] objects
 class ContainsImmutable {

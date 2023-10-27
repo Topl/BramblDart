@@ -2,8 +2,8 @@
 
 import 'dart:typed_data';
 
-import 'package:brambldart/src/crypto/signing/eddsa/x25519_field.dart' as x25519_field;
-import 'package:brambldart/src/utils/extensions.dart';
+import 'x25519_field.dart' as x25519_field;
+import '../../../utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 
 /*
@@ -176,7 +176,8 @@ class EC {
   }
 
   bool checkContextVar(Uint8List ctx, int phflag) {
-    return (ctx.isEmpty && phflag == 0x00) || (ctx.isNotEmpty && ctx.length < 256);
+    return (ctx.isEmpty && phflag == 0x00) ||
+        (ctx.isNotEmpty && ctx.length < 256);
   }
 
   bool checkPointVar(Uint8List p) {
@@ -215,7 +216,8 @@ class EC {
     }
   }
 
-  bool decodePointVar(Uint8List p, int pOff, {required bool negate, required PointExt r}) {
+  bool decodePointVar(Uint8List p, int pOff,
+      {required bool negate, required PointExt r}) {
     final py = Uint8List.fromList(p.sublist(pOff, pOff + POINT_BYTES));
     if (!checkPointVar(py)) return false;
     final x_0 = (py[POINT_BYTES - 1] & 0x80) >>> 7;
@@ -235,7 +237,8 @@ class EC {
     return true;
   }
 
-  void decodeScalar(Uint8List k, int kOff, Int32List n) => decode32(k, kOff, n, 0, SCALAR_INTS);
+  void decodeScalar(Uint8List k, int kOff, Int32List n) =>
+      decode32(k, kOff, n, 0, SCALAR_INTS);
 
   void encode24(int n, Uint8List bs, int off) {
     bs[off] = n.toByte;
@@ -264,7 +267,8 @@ class EC {
     x25519_field.normalize(x);
     x25519_field.normalize(y);
     x25519_field.encode(y, r, rOff);
-    r[rOff + POINT_BYTES - 1] = (r[rOff + POINT_BYTES - 1] | ((x[0] & 1) << 7)).toByte;
+    r[rOff + POINT_BYTES - 1] =
+        (r[rOff + POINT_BYTES - 1] | ((x[0] & 1) << 7)).toByte;
   }
 
   Uint8List getWNAF(Int32List n, int width) {
@@ -522,7 +526,8 @@ class EC {
     x25519_field.copy(B_x, 0, p.x, 0);
     x25519_field.copy(B_y, 0, p.y, 0);
     pointExtendXYAccum(p);
-    final precompBase = Int32List(PRECOMP_BLOCKS * PRECOMP_POINTS * 3 * x25519_field.SIZE);
+    final precompBase =
+        Int32List(PRECOMP_BLOCKS * PRECOMP_POINTS * 3 * x25519_field.SIZE);
     var off = 0;
     for (int b = 0; b < PRECOMP_BLOCKS; b++) {
       final List<PointExt> ds = [];
@@ -774,7 +779,8 @@ class EC {
   }
 
   // This function performs scalar multiplication of a point on an elliptic curve using the Strauss algorithm with variable-time windowing.
-  void scalarMultStraussVar(Int32List nb, Int32List np, PointExt p, PointAccum r) {
+  void scalarMultStraussVar(
+      Int32List nb, Int32List np, PointExt p, PointAccum r) {
     // Set the window size to 5.
     const width = 5;
 
@@ -831,10 +837,26 @@ const PUBLIC_KEY_SIZE = POINT_BYTES;
 const SECRET_KEY_SIZE = 32;
 const SIGNATURE_SIZE = POINT_BYTES + SCALAR_BYTES;
 const DOM2_PREFIX = "SigEd25519 no Ed25519 collisions";
-final P = Int32List.fromList(
-    [0xffffffed, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0x7fffffff]);
-final L = Int32List.fromList(
-    [0x5cf5d3ed, 0x5812631a, 0xa2f79cd6, 0x14def9de, 0x00000000, 0x00000000, 0x00000000, 0x10000000]);
+final P = Int32List.fromList([
+  0xffffffed,
+  0xffffffff,
+  0xffffffff,
+  0xffffffff,
+  0xffffffff,
+  0xffffffff,
+  0xffffffff,
+  0x7fffffff
+]);
+final L = Int32List.fromList([
+  0x5cf5d3ed,
+  0x5812631a,
+  0xa2f79cd6,
+  0x14def9de,
+  0x00000000,
+  0x00000000,
+  0x00000000,
+  0x10000000
+]);
 
 final B_x = Int32List.fromList([
   0x0325d51a,

@@ -1,10 +1,11 @@
-import 'package:brambldart/src/brambl/validation/validation_error.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/value.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/schedule.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
+
+import 'validation_error.dart';
 
 class TransactionSyntaxError implements ValidationError {
   const TransactionSyntaxError(this.type, this.param);

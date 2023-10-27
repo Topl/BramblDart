@@ -1,6 +1,5 @@
-import 'package:brambldart/src/crypto/generation/mnemonic/phrase.dart';
-
 import '../../../common/functional/either.dart';
+import 'phrase.dart';
 
 /// A mnemonic represents a set of random entropy that can be used to derive a private key or other type of value.
 /// This implementation follows a combination of BIP-0039 and SLIP-0023.
@@ -58,7 +57,8 @@ class MnemonicSize {
   final int checksumLength;
   final int entropyLength;
 
-  static Either<PhraseFailure, MnemonicSize> fromNumberOfWords(int numberOfWords) {
+  static Either<PhraseFailure, MnemonicSize> fromNumberOfWords(
+      int numberOfWords) {
     switch (numberOfWords) {
       case 12:
         return Either.right(const MnemonicSize.words12());
@@ -71,7 +71,8 @@ class MnemonicSize {
       case 24:
         return Either.right(const MnemonicSize.words24());
       default:
-        return Either.left(PhraseFailure(PhraseFailureType.invalidWordLength, 'Invalid number of words'));
+        return Either.left(PhraseFailure(
+            PhraseFailureType.invalidWordLength, 'Invalid number of words'));
     }
   }
 }

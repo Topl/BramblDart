@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/crypto/encryption/cipher/cipher.dart';
-import 'package:brambldart/src/crypto/encryption/kdf/kdf.dart';
-import 'package:brambldart/src/crypto/encryption/mac.dart';
-import 'package:brambldart/src/utils/json.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
+
+import '../../common/functional/either.dart';
+import '../../utils/json.dart';
+import 'cipher/cipher.dart';
+import 'kdf/kdf.dart';
+import 'mac.dart';
 
 /// A VaultStore is a JSON encode-able object that contains the KDF and Cipher necessary to decrypt the cipher text.
 @immutable
@@ -35,7 +36,10 @@ class VaultStore {
 
   @override
   int get hashCode =>
-      kdf.hashCode ^ cipher.hashCode ^ const ListEquality().hash(cipherText) ^ const ListEquality().hash(mac);
+      kdf.hashCode ^
+      cipher.hashCode ^
+      const ListEquality().hash(cipherText) ^
+      const ListEquality().hash(mac);
 
   /// Create a copy of the VaultStore with the provided parameters.
   VaultStore copyWith({

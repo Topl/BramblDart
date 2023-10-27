@@ -1,10 +1,11 @@
-import 'package:brambldart/src/brambl/builders/builder_error.dart';
-import 'package:brambldart/src/brambl/builders/locks/proposition_template.dart';
-import 'package:brambldart/src/common/functional/either.dart';
 import 'package:topl_common/proto/brambl/models/box/challenge.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import '../../../common/functional/either.dart';
+import '../builder_error.dart';
+import 'proposition_template.dart';
 
 sealed class LockTemplate {
   LockType get lockType;

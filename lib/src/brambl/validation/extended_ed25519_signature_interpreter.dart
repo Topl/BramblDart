@@ -1,12 +1,10 @@
-import 'package:brambldart/brambldart.dart';
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
-import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
-import 'package:brambldart/src/quivr/algebras/signature_verifier.dart';
-import 'package:brambldart/src/quivr/common/quivr_result.dart';
-import 'package:brambldart/src/quivr/runtime/quivr_runtime_error.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
+import '../../../brambldart.dart';
+import '../../crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
+import '../../quivr/algebras/signature_verifier.dart';
+import '../../quivr/common/quivr_result.dart';
+import '../../quivr/runtime/quivr_runtime_error.dart';
 
 /// Validates that an Ed25519 signature is valid.
 class ExtendedEd25519SignatureInterpreter implements SignatureVerifier {
@@ -17,7 +15,9 @@ class ExtendedEd25519SignatureInterpreter implements SignatureVerifier {
   /// Returns the SignatureVerification object if the signature is valid, otherwise an error.
   @override
   QuivrResult<SignatureVerification> validate(t) {
-    if (t! is SignatureVerification) throw Exception('validation target is not a SignatureVerification');
+    if (t! is SignatureVerification) {
+      throw Exception('validation target is not a SignatureVerification');
+    }
 
     // promote
     final s = t as SignatureVerification;

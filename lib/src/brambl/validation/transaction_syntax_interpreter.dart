@@ -1,14 +1,15 @@
-import 'package:brambldart/src/brambl/common/contains_immutable.dart';
-import 'package:brambldart/src/brambl/validation/transaction_syntax_error.dart';
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/common/functional/list_either.dart';
-import 'package:brambldart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/value.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
+
+import '../../common/functional/either.dart';
+import '../../common/functional/list_either.dart';
+import '../../utils/extensions.dart';
+import '../common/contains_immutable.dart';
+import 'transaction_syntax_error.dart';
 
 class TransactionSyntaxInterpreter {
   static const int maxDataLength = 15360;

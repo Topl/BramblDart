@@ -1,8 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:pointycastle/digests/blake2b.dart';
+
+import '../../utils/extensions.dart';
 
 /// Message authentication codes (MACs) are used to verify the integrity of data.
 ///
@@ -33,8 +34,10 @@ class Mac {
   /// returns `true` if this MAC matches the expectedMac, false otherwise
   bool validateMac({Mac? expectedMac, Uint8List? expectedMacList}) {
     // if neither or both are supplied, throw exception
-    if ((expectedMac == null && expectedMacList == null) || (expectedMac != null && expectedMacList != null)) {
-      throw Exception('Either expectedMac or ExpectedMacList must be supplied, but not both');
+    if ((expectedMac == null && expectedMacList == null) ||
+        (expectedMac != null && expectedMacList != null)) {
+      throw Exception(
+          'Either expectedMac or ExpectedMacList must be supplied, but not both');
     }
     if (expectedMac != null) {
       return const ListEquality().equals(value, expectedMac.value);

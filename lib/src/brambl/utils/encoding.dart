@@ -1,9 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/crypto/hash/hash.dart';
-import 'package:brambldart/src/utils/extensions.dart';
 import 'package:fast_base58/fast_base58.dart';
+
+import '../../common/functional/either.dart';
+import '../../crypto/hash/hash.dart';
+import '../../utils/extensions.dart';
 
 sealed class EncodingError implements Exception {}
 

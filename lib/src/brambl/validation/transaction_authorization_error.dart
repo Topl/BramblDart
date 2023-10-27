@@ -1,7 +1,8 @@
-import 'package:brambldart/src/brambl/validation/validation_error.dart';
-import 'package:brambldart/src/quivr/runtime/quivr_runtime_error.dart' as quivr;
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
+
+import '../../quivr/runtime/quivr_runtime_error.dart' as quivr;
+import 'validation_error.dart';
 
 @immutable
 class TransactionAuthorizationError implements ValidationError {

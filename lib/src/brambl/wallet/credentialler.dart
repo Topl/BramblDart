@@ -1,15 +1,3 @@
-import 'package:brambldart/src/brambl/common/contains_signable.dart';
-import 'package:brambldart/src/brambl/context.dart';
-import 'package:brambldart/src/brambl/data_api/wallet_state_algebra.dart';
-import 'package:brambldart/src/brambl/utils/proto_converters.dart';
-import 'package:brambldart/src/brambl/validation/transaction_authorization_interpreter.dart';
-import 'package:brambldart/src/brambl/validation/transaction_syntax_interpreter.dart';
-import 'package:brambldart/src/brambl/validation/validation_error.dart';
-import 'package:brambldart/src/brambl/wallet/wallet_api.dart';
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
-import 'package:brambldart/src/quivr/quivr.dart';
-import 'package:brambldart/src/utils/extensions.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';
@@ -18,6 +6,19 @@ import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_ou
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import '../../common/functional/either.dart';
+import '../../crypto/signing/extended_ed25519/extended_ed25519.dart';
+import '../../quivr/quivr.dart';
+import '../../utils/extensions.dart';
+import '../common/contains_signable.dart';
+import '../context.dart';
+import '../data_api/wallet_state_algebra.dart';
+import '../utils/proto_converters.dart';
+import '../validation/transaction_authorization_interpreter.dart';
+import '../validation/transaction_syntax_interpreter.dart';
+import '../validation/validation_error.dart';
+import 'wallet_api.dart';
 
 /// Defines a [Credentialler]. A [Credentialler] is responsible for proving and verifying transactions.
 abstract class Credentialler {

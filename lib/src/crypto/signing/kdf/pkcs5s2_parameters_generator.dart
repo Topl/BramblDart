@@ -1,8 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/crypto/signing/kdf/pbe_parameters_generator.dart' as brambl;
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/macs/hmac.dart';
+
+import 'pbe_parameters_generator.dart' as brambl;
 
 /// Generator for PBE derived keys and ivs as defined by PKCS 5 V2.0 Scheme 2.
 /// This generator uses a SHA-1 HMac as the calculation function.
@@ -22,7 +23,8 @@ class PKCS5S2ParametersGenerator extends brambl.PBEParametersGenerator {
   late Mac _hmac;
   late Uint8List _state;
 
-  void _process(Uint8List? S, int c, Uint8List iBuf, Uint8List out, int outOff) {
+  void _process(
+      Uint8List? S, int c, Uint8List iBuf, Uint8List out, int outOff) {
     if (c == 0) {
       throw ArgumentError('iteration count must be at least 1.');
     }
@@ -91,7 +93,8 @@ class PKCS5S2ParametersGenerator extends brambl.PBEParametersGenerator {
   /// [keySizeBits] the size of the key we want (in bits)
   /// [ivSizeBits] the size of the iv we want (in bits)
   @override
-  CipherParameters generateDerivedParametersWithIV(int keySizeBits, int ivSizeBits) {
+  CipherParameters generateDerivedParametersWithIV(
+      int keySizeBits, int ivSizeBits) {
     keySizeBits = keySizeBits ~/ 8;
     ivSizeBits = ivSizeBits ~/ 8;
 

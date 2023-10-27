@@ -1,7 +1,8 @@
 import 'package:brambldart/src/common/functional/either.dart';
 import 'package:brambldart/src/crypto/generation/bip32_index.dart';
 import 'package:brambldart/src/crypto/generation/key_initializer/extended_ed25519_initializer.dart';
-import 'package:brambldart/src/crypto/signing/ed25519/ed25519_spec.dart' as spec;
+import 'package:brambldart/src/crypto/signing/ed25519/ed25519_spec.dart'
+    as spec;
 import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
 import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
 import 'package:brambldart/src/utils/extensions.dart';
@@ -80,7 +81,8 @@ class CkdEd25519TestVector {
 
 final ckdEd25519Vectors = [
   {
-    "description": "test vector 1 - Derive the correct child keys at path ` m/0 ` given a root extended secret key",
+    "description":
+        "test vector 1 - Derive the correct child keys at path ` m/0 ` given a root extended secret key",
     "inputs": {
       "rootSecretKey":
           "c05377ef282279549898c5a15fe202bc9416c8a26fe81ffe1e19c147c2493549d61547691b72d73947e588ded4967688f82db9628be9bb00c5ad16b5dfaf602ac5f419bd575f8ea23fa1a599b103f85e6325bf2d34b018ff6f2b8cf3f915e19c",
@@ -98,7 +100,8 @@ final ckdEd25519Vectors = [
     }
   },
   {
-    "description": "test vector 2 - Derive the correct child keys at path ` m/1 ` given a root extended secret key",
+    "description":
+        "test vector 2 - Derive the correct child keys at path ` m/1 ` given a root extended secret key",
     "inputs": {
       "rootSecretKey":
           "c05377ef282279549898c5a15fe202bc9416c8a26fe81ffe1e19c147c2493549d61547691b72d73947e588ded4967688f82db9628be9bb00c5ad16b5dfaf602ac5f419bd575f8ea23fa1a599b103f85e6325bf2d34b018ff6f2b8cf3f915e19c",
@@ -116,7 +119,8 @@ final ckdEd25519Vectors = [
     }
   },
   {
-    "description": "test vector 3 - Derive the correct child keys at path ` m/2 ` given a root extended secret key",
+    "description":
+        "test vector 3 - Derive the correct child keys at path ` m/2 ` given a root extended secret key",
     "inputs": {
       "rootSecretKey":
           "c05377ef282279549898c5a15fe202bc9416c8a26fe81ffe1e19c147c2493549d61547691b72d73947e588ded4967688f82db9628be9bb00c5ad16b5dfaf602ac5f419bd575f8ea23fa1a599b103f85e6325bf2d34b018ff6f2b8cf3f915e19c",
@@ -134,7 +138,8 @@ final ckdEd25519Vectors = [
     }
   },
   {
-    "description": "test vector 4 - Derive the correct child keys at path ` m/0' ` given a root extended secret key",
+    "description":
+        "test vector 4 - Derive the correct child keys at path ` m/0' ` given a root extended secret key",
     "inputs": {
       "rootSecretKey":
           "f0d0f18e6ab029166fe4e89519ab64f42aa870fc2791fc472840c3a1ba507347fee30dcae1ae3941bde71e9ddd19eef33d0a7b91aaa4137cea6ef4ea3c27f96a1189e5ec0628974ed7846b594ed0ee2d3ef2d8f5b91d1860ffb0a065159df8be",
