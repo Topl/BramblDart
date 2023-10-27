@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import '../common/functional/either.dart';
 import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:fixnum/fixnum.dart';
+
+import '../common/functional/either.dart';
 
 extension StringExtension on String {
   /// Converts string  to a UTF-8 [Uint8List].
