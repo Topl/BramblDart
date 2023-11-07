@@ -1,6 +1,6 @@
 /// Defines a wallet entity with an X coordinate and a name.
-class WalletEntity {
-  WalletEntity(this.xIdx, this.name);
+class WalletFellowship {
+  WalletFellowship(this.xIdx, this.name);
 
   /// The X coordinate associated with the entity.
   final int xIdx;
@@ -14,10 +14,10 @@ abstract class FellowshipStorageAlgebra {
   /// Fetches all fellowships.
   ///
   /// Returns the fetched fellowships.
-  Future<List<WalletEntity>> findFellowships(List<WalletEntity> walletEntities);
+  Future<List<WalletFellowship>> findFellowships(List<WalletFellowship> walletEntities);
 
   /// Add a new fellowship.
   ///
-  /// [walletEntity] The wallet entity to add.
-  Future<int> addFellowship(WalletEntity walletEntity);
+  /// [walletFellowship] The wallet entity to add.
+  Future<int> addFellowship(WalletFellowship walletFellowship);
 }
