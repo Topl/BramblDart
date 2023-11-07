@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:brambldart/brambldart.dart';
-import 'package:brambldart/src/crypto/hash/blake2b.dart';
 import 'package:brambldart/src/quivr/algebras/digest_verifier.dart';
 import 'package:brambldart/src/quivr/algebras/signature_verifier.dart';
 import 'package:brambldart/src/quivr/common/parsable_data_interface.dart';
@@ -24,34 +23,41 @@ class MockHelpers {
   static const saltString = "I am a digest";
   static const preimageString = "I am a preimage";
 
-  static final signableBytes = SignableBytes()..value = Uint8List.fromList("someSignableBytes".codeUnits);
+  static final signableBytes = SignableBytes()
+    ..value = Uint8List.fromList("someSignableBytes".codeUnits);
 
   static DynamicContext dynamicContext(Proposition proposition, Proof proof) {
     final Map<String, Datum> mapOfDatums = {
-      heightString: Datum()..header = Datum_Header(event: Event_Header(height: Int64(999)))
+      heightString: Datum()
+        ..header = Datum_Header(event: Event_Header(height: Int64(999)))
     };
 
     final Map<String, ParsableDataInterface> mapOfInterfaces = {};
 
     final Map<String, SignatureVerifier> mapOfSigningRoutines = {
       signatureString: SignatureVerifier<SignatureVerification>((v) {
-        if (VerySecureSignatureRoutine.verify(v.signature.value.toUint8List(), v.message.value.toUint8List(),
+        if (VerySecureSignatureRoutine.verify(
+            v.signature.value.toUint8List(),
+            v.message.value.toUint8List(),
             v.verificationKey.ed25519.value.toUint8List())) {
           return QuivrResult<SignatureVerification>.right(v);
         } else {
-          return QuivrResult<SignatureVerification>.left(ValidationError.messageAuthorizationFailure(proof: proof));
+          return QuivrResult<SignatureVerification>.left(
+              ValidationError.messageAuthorizationFailure(proof: proof));
         }
       })
     };
 
     final Map<String, DigestVerifier> mapOfHashingRoutines = {
       hashString: DigestVerifier<DigestVerification>((v) {
-        final test = Blake2b256().hash(Uint8List.fromList(v.preimage.input + v.preimage.salt));
+        final test = Blake2b256()
+            .hash(Uint8List.fromList(v.preimage.input + v.preimage.salt));
         if (v.digest.value.toUint8List() == test) {
           return QuivrResult<DigestVerification>.right(v);
         } else {
           return QuivrResult<DigestVerification>.left(
-              ValidationError.lockedPropositionIsUnsatisfiable(context: v.toString()));
+              ValidationError.lockedPropositionIsUnsatisfiable(
+                  context: v.toString()));
         }
       })
     };
@@ -68,7 +74,7 @@ class MockHelpers {
       return null;
     }
 
-    return DynamicContext(
-        mapOfDatums, mapOfInterfaces, mapOfSigningRoutines, mapOfHashingRoutines, signableBytes, currentTick, heightOf);
+    return DynamicContext(mapOfDatums, mapOfInterfaces, mapOfSigningRoutines,
+        mapOfHashingRoutines, signableBytes, currentTick, heightOf);
   }
 }

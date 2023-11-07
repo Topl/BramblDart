@@ -1,5 +1,5 @@
 /// export quivr libraries
-library;
+library brambldart.quivr;
 
 export 'proposer.dart';
 export 'prover.dart';

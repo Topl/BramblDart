@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/brambl/utils/encoding.dart';
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/utils/extensions.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
+
+import '../../common/functional/either.dart';
+import '../../utils/extensions.dart';
+import '../utils/encoding.dart';
 
 class AddressCodecs {
   /// Decodes a base58 string into a [LockAddress].

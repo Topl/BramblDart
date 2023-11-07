@@ -15,8 +15,13 @@ import 'test_vectors/ed25519_vectors.dart';
 main() {
   group('Ed25519 Topl test vectors', () {
     group('ed25519 spec tests', () {
-      (Uint8List secretKey, Uint8List message, Uint8List verificationKey, Uint8List signature) hexConvert(
-          String secretKey, String message, String verificationKey, String signature) {
+      (
+        Uint8List secretKey,
+        Uint8List message,
+        Uint8List verificationKey,
+        Uint8List signature
+      ) hexConvert(String secretKey, String message, String verificationKey,
+          String signature) {
         return (
           // non-ambiguous extension access
           IntList(hex.decode(secretKey)).toUint8List(),
@@ -30,8 +35,8 @@ main() {
       for (final v in ed25519TestVectors) {
         final vector = parseVector(v);
         test("ed25519: ${vector.description}", () {
-          final (sk, m, vk, sig) =
-              hexConvert(vector.secretKey, vector.message, vector.verificationKey, vector.signature);
+          final (sk, m, vk, sig) = hexConvert(vector.secretKey, vector.message,
+              vector.verificationKey, vector.signature);
 
           final signingKey = SecretKey(sk);
           final verifyKey = ed25519.getVerificationKey(signingKey);
@@ -44,8 +49,11 @@ main() {
       }
     });
 
-    test("with Ed25519, signed message should be verifiable with appropriate public key", () {
-      Future<void> forAll(void Function(Entropy, Entropy, Uint8List, Uint8List) f) async {
+    test(
+        "with Ed25519, signed message should be verifiable with appropriate public key",
+        () {
+      Future<void> forAll(
+          void Function(Entropy, Entropy, Uint8List, Uint8List) f) async {
         for (var i = 0; i < 10; i++) {
           final seed1 = Entropy.generate();
           final seed2 = Entropy.generate();
@@ -76,7 +84,9 @@ main() {
       });
     });
 
-    test("with Ed25519, keyPairs generated with the same seed should be the same", () {
+    test(
+        "with Ed25519, keyPairs generated with the same seed should be the same",
+        () {
       void forAll(Function(Entropy) f) {
         for (var i = 0; i < 10; i++) {
           final entropy = Entropy.generate();
@@ -95,14 +105,19 @@ main() {
       });
     });
 
-    test("Topl specific seed generation mechanism should generate a fixed secret key given an entropy and password",
+    test(
+        "Topl specific seed generation mechanism should generate a fixed secret key given an entropy and password",
         () {
       final ed25519 = Ed25519();
       final e = Entropy("topl".toUtf8Uint8List());
       const p = "topl";
 
-      final specOutSk = "d8f0ad4d22ec1a143905af150e87c7f0dadd13749ef56fbd1bb380c37bc18cf8".toHexUint8List();
-      final specOutVk = "8ecfec14ce183dd6e747724993a9ae30328058fd85fa1e3c6f996b61bb164fa8".toHexUint8List();
+      final specOutSk =
+          "d8f0ad4d22ec1a143905af150e87c7f0dadd13749ef56fbd1bb380c37bc18cf8"
+              .toHexUint8List();
+      final specOutVk =
+          "8ecfec14ce183dd6e747724993a9ae30328058fd85fa1e3c6f996b61bb164fa8"
+              .toHexUint8List();
 
       final specOut = KeyPair(SecretKey(specOutSk), PublicKey(specOutVk));
 

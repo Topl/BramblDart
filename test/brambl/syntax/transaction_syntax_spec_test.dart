@@ -13,7 +13,8 @@ void main() {
       final transaction = dummyTx;
       expect(transaction.transactionId.value, isEmpty);
 
-      final signableBytes = ContainsSignable.ioTransaction(transaction).signableBytes;
+      final signableBytes =
+          ContainsSignable.ioTransaction(transaction).signableBytes;
       final immutable = ImmutableBytes(value: signableBytes.value);
       final evidence = immutable.sizedEvidence;
       final expectedId = TransactionId(value: evidence.digest.value);

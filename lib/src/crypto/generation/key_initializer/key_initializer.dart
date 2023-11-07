@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/crypto/generation/key_initializer/initialization_failure.dart';
-import 'package:brambldart/src/crypto/generation/mnemonic/entropy.dart';
-import 'package:brambldart/src/crypto/generation/mnemonic/language.dart';
-import 'package:brambldart/src/crypto/signing/signing.dart';
+import '../../../common/functional/either.dart';
+import '../../signing/signing.dart';
+import '../mnemonic/entropy.dart';
+import '../mnemonic/language.dart';
+import 'initialization_failure.dart';
 
 /// Provides functionality for creating secret keys
 abstract class KeyInitializer<SK extends SigningKey> {
@@ -21,6 +21,8 @@ abstract class KeyInitializer<SK extends SigningKey> {
   ///
   /// [mnemonicString] is the string used to create the key in combination with
   /// the [language] and optional [password]
-  Future<Either<InitializationFailure, SK>> fromMnemonicString(String mnemonicString,
-      {Language language = const English(), String? password});
+  Future<Either<InitializationFailure, SK>> fromMnemonicString(
+      String mnemonicString,
+      {Language language = const English(),
+      String? password});
 }

@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/crypto/encryption/kdf/scrypt.dart';
+import 'scrypt.dart';
 
 abstract class Kdf {
   factory Kdf.fromJson(Map<String, dynamic> json) {

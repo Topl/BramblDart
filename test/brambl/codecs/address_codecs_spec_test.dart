@@ -16,7 +16,8 @@ void main() {
     final decodedId = decodedAddress.id.value;
     final expectedId = lockAddress.id.value;
     final idEquality =
-        List.generate(decodedId.length, (i) => decodedId[i] == expectedId[i]).fold(true, (a, b) => a && b);
+        List.generate(decodedId.length, (i) => decodedId[i] == expectedId[i])
+            .fold(true, (a, b) => a && b);
     final ledgerEquality = decodedAddress.ledger == lockAddress.ledger;
     final networkEquality = decodedAddress.network == lockAddress.network;
     return idEquality && ledgerEquality && networkEquality;
@@ -32,7 +33,8 @@ void main() {
 
     test('Main Network Main Ledger Zero Test Decode', () {
       expect(
-        checkEquality(tc.testMainLockZeroLockAddressEncoded, tc.testMainLockZeroLockAddress),
+        checkEquality(tc.testMainLockZeroLockAddressEncoded,
+            tc.testMainLockZeroLockAddress),
         isTrue,
       );
     });
@@ -46,7 +48,8 @@ void main() {
 
     test('Valhalla Network Main Ledger Zero Test Decode', () {
       expect(
-        checkEquality(tc.testTestLockZeroLockAddressEncoded, tc.testTestLockZeroLockAddress),
+        checkEquality(tc.testTestLockZeroLockAddressEncoded,
+            tc.testTestLockZeroLockAddress),
         isTrue,
       );
     });
@@ -60,7 +63,8 @@ void main() {
 
     test('Private Network Main Ledger Zero Test Decode', () {
       expect(
-        checkEquality(tc.testPrivateLockZeroLockAddressEncoded, tc.testPrivateLockZeroLockAddress),
+        checkEquality(tc.testPrivateLockZeroLockAddressEncoded,
+            tc.testPrivateLockZeroLockAddress),
         isTrue,
       );
     });
@@ -74,7 +78,8 @@ void main() {
 
     test('Main Network Main Ledger All One Test Decode', () {
       expect(
-        checkEquality(tc.testMainLockAllOneLockAddressEncoded, tc.testMainLockAllOneLockAddress),
+        checkEquality(tc.testMainLockAllOneLockAddressEncoded,
+            tc.testMainLockAllOneLockAddress),
         isTrue,
       );
     });
@@ -88,7 +93,8 @@ void main() {
 
     test('Valhalla Network Main Ledger All One Test Decode', () {
       expect(
-        checkEquality(tc.testTestLockAllOneLockAddressEncoded, tc.testTestLockAllOneLockAddress),
+        checkEquality(tc.testTestLockAllOneLockAddressEncoded,
+            tc.testTestLockAllOneLockAddress),
         isTrue,
       );
     });
@@ -102,7 +108,8 @@ void main() {
 
     test('Private Network Main Ledger All One Test Decode', () {
       expect(
-        checkEquality(tc.testPrivateLockAllOneLockAddressEncoded, tc.testPrivateLockAllOneLockAddress),
+        checkEquality(tc.testPrivateLockAllOneLockAddressEncoded,
+            tc.testPrivateLockAllOneLockAddress),
         isTrue,
       );
     });

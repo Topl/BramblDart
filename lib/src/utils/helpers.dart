@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:brambldart/src/common/functional/either.dart';
+import '../common/functional/either.dart';
 
 /// Zips two lists into a list of pairs.
 ///

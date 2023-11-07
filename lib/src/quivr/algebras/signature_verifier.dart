@@ -1,5 +1,5 @@
-import 'package:brambldart/src/quivr/common/contextless_validation.dart';
-import 'package:brambldart/src/quivr/common/quivr_result.dart';
+import '../common/contextless_validation.dart';
+import '../common/quivr_result.dart';
 
 class SignatureVerifier<T> implements ContextlessValidation<T> {
   SignatureVerifier(this.definedFunction);

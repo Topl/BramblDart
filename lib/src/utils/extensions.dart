@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:brambldart/src/common/functional/either.dart';
 import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:fixnum/fixnum.dart';
+
+import '../common/functional/either.dart';
 
 extension StringExtension on String {
   /// Converts string  to a UTF-8 [Uint8List].
@@ -20,7 +21,8 @@ extension StringExtension on String {
     return Int8List.fromList(bytes);
   }
 
-  (String, String) splitAt(int index) => (substring(0, index), substring(index));
+  (String, String) splitAt(int index) =>
+      (substring(0, index), substring(index));
 
   /// Converts List<string> to a hex encoded [Uint8List].
   Uint8List toHexUint8List() => Uint8List.fromList(hex.decode(this));
@@ -72,7 +74,8 @@ extension Uint8ListExtension on Uint8List {
   /// Returns a [BigInt] representation of the [Uint8List] in little-endian byte order.
   BigInt fromLittleEndian() {
     final reversed = this.reversed.toList();
-    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    final hex =
+        reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 
@@ -142,7 +145,8 @@ extension Int8ListExtension on Int8List {
 
   BigInt fromLittleEndian() {
     final reversed = this.reversed.toList();
-    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    final hex =
+        reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 }
@@ -303,23 +307,6 @@ extension WithResultExtension<T> on T {
   /// This method can be used to apply a transformation to an object in a
   /// fluent style. implementation similar to Scala's map function.
   B withResult<B>(B Function(T) f) {
-    return f(this);
-  }
-
-  /// Applies the asynchronous function [f] to this object and returns the result.
-  ///
-  /// The function [f] is a transformation function that takes an object of
-  /// type `T` and returns a `Future` of an object of type `B`.
-  ///
-  /// This method can be used to apply a transformation to an object in a
-  /// fluent style with asynchronous operations.
-  ///
-  /// Example usage:
-  /// ```dart
-  /// final number = Future.delayed(Duration(seconds: 2), () => 42);
-  /// final result = await number.withResultAsync((value) async => value * 2); // returns 84
-  /// ```
-  Future<B> withResultAsync<B>(Future<B> Function(T) f) async {
     return f(this);
   }
 }

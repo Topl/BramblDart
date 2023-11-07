@@ -1,10 +1,11 @@
-import 'package:brambldart/src/brambl/builders/builder_error.dart';
-import 'package:brambldart/src/brambl/builders/locks/proposition_template.dart';
-import 'package:brambldart/src/common/functional/either.dart';
 import 'package:topl_common/proto/brambl/models/box/challenge.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import '../../../common/functional/either.dart';
+import '../builder_error.dart';
+import 'proposition_template.dart';
 
 sealed class LockTemplate {
   LockType get lockType;
@@ -35,8 +36,9 @@ class PredicateTemplate implements LockTemplate {
 
   factory PredicateTemplate.fromJson(Map<String, dynamic> json) {
     final threshold = json['threshold'] as int;
-    final innerTemplates =
-        (json['innerTemplates'] as List<dynamic>).map((e) => PropositionTemplate.fromJson(e)).toList();
+    final innerTemplates = (json['innerTemplates'] as List<dynamic>)
+        .map((e) => PropositionTemplate.fromJson(e))
+        .toList();
     return PredicateTemplate(innerTemplates, threshold);
   }
   List<PropositionTemplate> innerTemplates;
@@ -44,7 +46,8 @@ class PredicateTemplate implements LockTemplate {
 
   @override
   Either<BuilderError, Lock> build(List<VerificationKey> entityVks) {
-    final result = ThresholdTemplate(innerTemplates, threshold).build(entityVks);
+    final result =
+        ThresholdTemplate(innerTemplates, threshold).build(entityVks);
     return result.flatMap((ip) {
       if (ip is Proposition_Threshold) {
         final innerPropositions = ip.threshold.challenges;
@@ -56,7 +59,8 @@ class PredicateTemplate implements LockTemplate {
               threshold: threshold),
         ));
       } else {
-        return Either.left(BuilderError('Unexpected inner proposition type: ${ip.runtimeType}'));
+        return Either.left(BuilderError(
+            'Unexpected inner proposition type: ${ip.runtimeType}'));
       }
     });
   }

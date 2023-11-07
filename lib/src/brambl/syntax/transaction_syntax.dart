@@ -1,9 +1,10 @@
-import 'package:brambldart/src/brambl/common/contains_evidence.dart';
-import 'package:brambldart/src/brambl/common/contains_signable.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:topl_common/proto/brambl/models/common.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
+
+import '../common/contains_evidence.dart';
+import '../common/contains_signable.dart';
 
 class TransactionSyntax {
   TransactionSyntax(this.transaction);
@@ -13,7 +14,8 @@ class TransactionSyntax {
   ///
   /// If an ID was pre-computed and saved in the Transaction, it is restored.
   /// Otherwise, a new ID is computed (but not saved in the Transaction).
-  TransactionId get id => transaction.hasTransactionId() ? transaction.transactionId : computeId();
+  TransactionId get id =>
+      transaction.hasTransactionId() ? transaction.transactionId : computeId();
 
   /// Computes what the ID _should_ be for this Transaction.
   TransactionId computeId() {
