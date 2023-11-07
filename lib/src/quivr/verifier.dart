@@ -1,18 +1,19 @@
 import 'dart:convert';
 
-import '../../brambldart.dart' show Tokens;
-import '../common/functional/either.dart';
-import '../crypto/hash/hash.dart' show blake2b256;
-import 'common/quivr_result.dart';
-import 'runtime/dynamic_context.dart';
-import 'runtime/quivr_runtime_error.dart';
-import '../utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/brambl/models/datum.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import '../../brambldart.dart' show Tokens;
+import '../common/functional/either.dart';
+import '../crypto/hash/hash.dart' show blake2b256;
+import '../utils/extensions.dart';
+import 'common/quivr_result.dart';
+import 'runtime/dynamic_context.dart';
+import 'runtime/quivr_runtime_error.dart';
 
 /// A Verifier evaluates whether a given Proof satisfies a certain Proposition
 class Verifier {

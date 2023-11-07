@@ -1,16 +1,16 @@
 import 'dart:typed_data';
 
-import '../../../common/functional/either.dart';
-import 'initialization_failure.dart';
-import '../mnemonic/entropy.dart';
-import '../mnemonic/language.dart';
-import '../../signing/extended_ed25519/extended_ed25519.dart';
-import '../../signing/extended_ed25519/extended_ed25519_spec.dart' as spec;
-import '../../signing/signing.dart';
-import '../../../utils/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../common/functional/either.dart';
+import '../../../utils/extensions.dart';
+import '../../signing/extended_ed25519/extended_ed25519.dart';
+import '../../signing/extended_ed25519/extended_ed25519_spec.dart' as spec;
+import '../../signing/signing.dart';
+import '../mnemonic/entropy.dart';
+import '../mnemonic/language.dart';
+import 'initialization_failure.dart';
 import 'key_initializer.dart';
 
 class ExtendedEd25519Intializer implements KeyInitializer {

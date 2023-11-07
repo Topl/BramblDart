@@ -1,13 +1,5 @@
 import 'dart:typed_data';
 
-import 'builder_error.dart';
-import '../codecs/address_codecs.dart';
-import '../common/contains_evidence.dart';
-import '../syntax/group_policy_syntax.dart';
-import '../syntax/series_policy_syntax.dart';
-import '../syntax/token_type_identifier_syntax.dart';
-import '../../common/types/byte_string.dart';
-import '../../utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/genus/data_extensions.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
@@ -30,6 +22,14 @@ import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 import '../../common/functional/either.dart';
+import '../../common/types/byte_string.dart';
+import '../../utils/extensions.dart';
+import '../codecs/address_codecs.dart';
+import '../common/contains_evidence.dart';
+import '../syntax/group_policy_syntax.dart';
+import '../syntax/series_policy_syntax.dart';
+import '../syntax/token_type_identifier_syntax.dart';
+import 'builder_error.dart';
 
 /// Defines a builder for [IoTransaction]s
 abstract class TransactionBuilderApiDefinition {

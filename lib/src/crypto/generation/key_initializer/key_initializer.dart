@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import '../../../common/functional/either.dart';
-import 'initialization_failure.dart';
+import '../../signing/signing.dart';
 import '../mnemonic/entropy.dart';
 import '../mnemonic/language.dart';
-import '../../signing/signing.dart';
+import 'initialization_failure.dart';
 
 /// Provides functionality for creating secret keys
 abstract class KeyInitializer<SK extends SigningKey> {

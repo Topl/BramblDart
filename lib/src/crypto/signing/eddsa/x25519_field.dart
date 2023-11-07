@@ -2,8 +2,9 @@
 
 import 'dart:typed_data';
 
-import 'ec.dart';
 import 'package:fixnum/fixnum.dart';
+
+import 'ec.dart';
 
 /// AMS 2021:
 /// Curve point operations ported from BouncyCastle used in all EC primitives in crypto.primitives.eddsa

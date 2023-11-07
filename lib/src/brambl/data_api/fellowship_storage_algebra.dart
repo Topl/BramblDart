@@ -14,7 +14,8 @@ abstract class FellowshipStorageAlgebra {
   /// Fetches all fellowships.
   ///
   /// Returns the fetched fellowships.
-  Future<List<WalletFellowship>> findFellowships(List<WalletFellowship> walletEntities);
+  Future<List<WalletFellowship>> findFellowships(
+      List<WalletFellowship> walletEntities);
 
   /// Add a new fellowship.
   ///

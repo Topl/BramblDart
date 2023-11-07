@@ -1,10 +1,11 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
+
+import '../../../utils/extensions.dart';
 import '../../hash/sha.dart';
 import 'ec.dart';
-import '../../../utils/extensions.dart';
-import 'package:collection/collection.dart';
 
 class Ed25519 extends EC {
   final defaultDigest = SHA512();

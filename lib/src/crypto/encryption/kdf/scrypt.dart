@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'kdf.dart';
-import '../../../utils/extensions.dart';
-import '../../../utils/json.dart';
 import 'package:convert/convert.dart';
 import 'package:meta/meta.dart';
 import 'package:pointycastle/export.dart';
+
+import '../../../utils/extensions.dart';
+import '../../../utils/json.dart';
+import 'kdf.dart';
 
 /// SCrypt is a key derivation function.
 /// @see [[https://en.wikipedia.org/wiki/Scrypt]]

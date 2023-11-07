@@ -10,7 +10,9 @@ typedef SeriesPolicy = Event_SeriesPolicy;
 class SeriesPolicySyntax {
   /// Computes the [GroupId] of the [GroupPolicy].
   static SeriesId computeId(SeriesPolicy seriesPolicy) {
-    final digest = ContainsImmutable.seriesPolicyEvent(seriesPolicy).immutableBytes.writeToBuffer();
+    final digest = ContainsImmutable.seriesPolicyEvent(seriesPolicy)
+        .immutableBytes
+        .writeToBuffer();
     final sha256 = SHA256().hash(digest);
     return SeriesId(value: sha256);
   }

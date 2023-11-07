@@ -5,7 +5,6 @@ import '../elliptic_curve_signature_scheme.dart';
 import 'ed25519_spec.dart';
 import 'ed25519_spec.dart' as spec;
 
-
 /// Ed25519 native implementation ported from BramblSC Scala.
 class Ed25519
     extends EllipticCurveSignatureScheme<spec.SecretKey, spec.PublicKey> {

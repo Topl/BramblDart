@@ -1,9 +1,8 @@
 import 'dart:typed_data';
 
 import 'blake2b.dart';
-import 'sha.dart';
-
 import 'digest/digest.dart';
+import 'sha.dart';
 
 export 'package:brambldart/src/crypto/hash/blake2b.dart';
 export 'package:brambldart/src/crypto/hash/sha.dart';

@@ -31,5 +31,6 @@ class Blake2b256DigestInterpreter implements DigestVerifier {
 
   @override
   // TODO(ultimaterex): implement definedFunction
-  dynamic Function(dynamic p1) get definedFunction => throw UnimplementedError();
+  dynamic Function(dynamic p1) get definedFunction =>
+      throw UnimplementedError();
 }

@@ -6,7 +6,6 @@ import 'package:brambldart/src/brambl/wallet/wallet_api.dart';
 import 'package:brambldart/src/crypto/encryption/vault_store.dart';
 import 'package:brambldart/src/crypto/generation/mnemonic/mnemonic.dart';
 import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
-import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
 import 'package:brambldart/src/utils/extensions.dart';
 import 'package:test/test.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';

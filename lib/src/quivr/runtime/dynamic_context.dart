@@ -1,14 +1,14 @@
-import '../../../brambldart.dart';
-import '../algebras/signature_verifier.dart';
-import '../common/parsable_data_interface.dart';
-import '../common/quivr_result.dart';
-import 'quivr_runtime_error.dart';
 import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/brambl/models/datum.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
+import '../../../brambldart.dart';
 import '../algebras/digest_verifier.dart';
+import '../algebras/signature_verifier.dart';
+import '../common/parsable_data_interface.dart';
+import '../common/quivr_result.dart';
+import 'quivr_runtime_error.dart';
 
 class DynamicContext {
   DynamicContext(

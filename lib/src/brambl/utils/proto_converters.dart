@@ -1,6 +1,7 @@
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
-import '../../crypto/signing/extended_ed25519/extended_ed25519_spec.dart' as xspec;
+import '../../crypto/signing/extended_ed25519/extended_ed25519_spec.dart'
+    as xspec;
 import '../../crypto/signing/signing.dart' as s;
 
 class ProtoConverters {
@@ -13,11 +14,13 @@ class ProtoConverters {
     );
   }
 
-  static xspec.PublicKey publicKeyfromProto(VerificationKey_ExtendedEd25519Vk pbVk) {
+  static xspec.PublicKey publicKeyfromProto(
+      VerificationKey_ExtendedEd25519Vk pbVk) {
     return xspec.PublicKey.proto(pbVk);
   }
 
-  static KeyPair keyPairToProto(s.KeyPair<xspec.SecretKey, xspec.PublicKey> kp) {
+  static KeyPair keyPairToProto(
+      s.KeyPair<xspec.SecretKey, xspec.PublicKey> kp) {
     return KeyPair(
       vk: VerificationKey(
         extendedEd25519: VerificationKey_ExtendedEd25519Vk(
@@ -35,7 +38,8 @@ class ProtoConverters {
     );
   }
 
-  static s.KeyPair<xspec.SecretKey, xspec.PublicKey> keyPairFromProto(KeyPair keyPair) {
+  static s.KeyPair<xspec.SecretKey, xspec.PublicKey> keyPairFromProto(
+      KeyPair keyPair) {
     final sk = xspec.SecretKey.proto(keyPair.sk.extendedEd25519);
     final vk = xspec.PublicKey.proto(keyPair.vk.extendedEd25519);
     return s.KeyPair(sk, vk);

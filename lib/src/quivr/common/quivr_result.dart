@@ -1,7 +1,8 @@
-import '../../common/functional/either.dart';
-import '../runtime/quivr_runtime_error.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
+
+import '../../common/functional/either.dart';
+import '../runtime/quivr_runtime_error.dart';
 
 /// A QuivrResult is a type alias for an [Either] of [QuivrRunTimeError] and [T]
 typedef QuivrResult<T> = Either<QuivrRunTimeError, T>;

@@ -4,7 +4,6 @@ import 'package:brambldart/src/crypto/generation/key_initializer/extended_ed2551
 import 'package:brambldart/src/crypto/signing/ed25519/ed25519_spec.dart'
     as spec;
 import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519.dart';
-import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
 import 'package:brambldart/src/utils/extensions.dart';
 
 class Bip32Ed25519CkdTestVector {

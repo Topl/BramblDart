@@ -2,9 +2,10 @@
 
 import 'dart:typed_data';
 
-import 'x25519_field.dart' as x25519_field;
-import '../../../utils/extensions.dart';
 import 'package:fixnum/fixnum.dart';
+
+import '../../../utils/extensions.dart';
+import 'x25519_field.dart' as x25519_field;
 
 /*
   Ed25519 is EdDSA instantiated with:

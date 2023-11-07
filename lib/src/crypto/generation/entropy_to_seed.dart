@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
-import 'mnemonic/entropy.dart';
-import '../signing/kdf/pkcs5s2_parameters_generator.dart';
-import '../../utils/extensions.dart';
 import 'package:pointycastle/api.dart';
 import 'package:pointycastle/digests/sha512.dart';
+
+import '../../utils/extensions.dart';
+import '../signing/kdf/pkcs5s2_parameters_generator.dart';
+import 'mnemonic/entropy.dart';
 
 abstract class EntropyToSeed {
   const EntropyToSeed();

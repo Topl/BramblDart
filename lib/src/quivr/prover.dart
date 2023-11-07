@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'tokens.dart';
 import 'package:hashlib/hashlib.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import 'tokens.dart';
 
 /// Provers create proofs that are bound to the transaction which executes the proof.
 ///

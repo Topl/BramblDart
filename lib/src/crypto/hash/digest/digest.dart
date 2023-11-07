@@ -1,8 +1,9 @@
 import 'dart:typed_data';
 
-import '../../../common/functional/either.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
+
+import '../../../common/functional/either.dart';
 
 /// Represents a digest with a size
 @immutable

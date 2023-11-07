@@ -1,7 +1,6 @@
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 import '../../../brambldart.dart';
-import '../../crypto/signing/extended_ed25519/extended_ed25519_spec.dart';
 import '../../quivr/algebras/signature_verifier.dart';
 import '../../quivr/common/quivr_result.dart';
 import '../../quivr/runtime/quivr_runtime_error.dart';
@@ -40,5 +39,6 @@ class ExtendedEd25519SignatureInterpreter implements SignatureVerifier {
   }
 
   @override
-  dynamic Function(dynamic p1) get definedFunction => throw UnimplementedError();
+  dynamic Function(dynamic p1) get definedFunction =>
+      throw UnimplementedError();
 }

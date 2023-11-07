@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import '../../utils/extensions.dart';
 import 'package:meta/meta.dart';
 import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
+
+import '../../utils/extensions.dart';
 
 /// A class that represents a sequence of bytes. uses [Uint8List] under the hood
 @immutable

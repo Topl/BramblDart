@@ -5,8 +5,6 @@ import 'package:meta/meta.dart';
 
 import '../signing.dart';
 
-
-
 mixin Ed25519Spec {
   static const int signatureLength = 64;
   static const int keyLength = 32;

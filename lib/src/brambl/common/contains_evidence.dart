@@ -37,5 +37,6 @@ class ContainsEvidence {
 
 extension SizedEvidence on dynamic {
   /// converts a dynamic value to a sized evidence via blake 2b hash
-  Evidence get sizedEvidence => ContainsEvidence.blake2bEvidenceFromImmutable(this).evidence;
+  Evidence get sizedEvidence =>
+      ContainsEvidence.blake2bEvidenceFromImmutable(this).evidence;
 }

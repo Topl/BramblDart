@@ -1,12 +1,13 @@
 import 'dart:typed_data';
 
-import '../../common/functional/either.dart';
-import 'digest/digest.dart';
-import 'hash.dart';
-import '../../utils/extensions.dart';
 import 'package:pointycastle/api.dart' as pc;
 import 'package:pointycastle/digests/sha256.dart';
 import 'package:pointycastle/digests/sha512.dart';
+
+import '../../common/functional/either.dart';
+import '../../utils/extensions.dart';
+import 'digest/digest.dart';
+import 'hash.dart';
 
 /// An interface for Sha hash functions.
 sealed class SHA extends Hash {
