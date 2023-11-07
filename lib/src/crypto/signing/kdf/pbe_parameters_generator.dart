@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 
-import '../../../utils/extensions.dart';
 import 'package:pointycastle/api.dart';
+
+import '../../../utils/extensions.dart';
 
 /// super class for all Password Based Encryption (PBE) parameter generator classes.
 /// Port from Bouncy Castle Java
