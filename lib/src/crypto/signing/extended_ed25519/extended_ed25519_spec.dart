@@ -10,9 +10,6 @@ import '../../../utils/extensions.dart';
 import '../ed25519/ed25519_spec.dart' as spec;
 import '../signing.dart';
 
-export '../ed25519/ed25519_spec.dart';
-
-
 mixin ExtendedEd25519Spec {
   static const int signatureLength = 64;
   static const int keyLength = 32;
