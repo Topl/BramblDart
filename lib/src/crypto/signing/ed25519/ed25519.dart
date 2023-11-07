@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
-import 'ed25519_spec.dart';
 import '../eddsa/ed25519.dart' as eddsa;
 import '../elliptic_curve_signature_scheme.dart';
-
+import 'ed25519_spec.dart';
 import 'ed25519_spec.dart' as spec;
+
 
 /// Ed25519 native implementation ported from BramblSC Scala.
 class Ed25519
