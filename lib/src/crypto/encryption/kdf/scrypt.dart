@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:brambldart/src/crypto/encryption/kdf/kdf.dart';
-import 'package:brambldart/src/utils/extensions.dart';
-import 'package:brambldart/src/utils/json.dart';
 import 'package:convert/convert.dart';
 import 'package:meta/meta.dart';
 import 'package:pointycastle/export.dart';
+
+import '../../../utils/extensions.dart';
+import '../../../utils/json.dart';
+import 'kdf.dart';
 
 /// SCrypt is a key derivation function.
 /// @see [[https://en.wikipedia.org/wiki/Scrypt]]
@@ -32,7 +33,8 @@ class SCrypt implements Kdf {
   @override
   Uint8List deriveKey(Uint8List secret) {
     final scrypt = Scrypt();
-    scrypt.init(ScryptParameters(params.n, params.r, params.p, params.dkLen, params.salt));
+    scrypt.init(ScryptParameters(
+        params.n, params.r, params.p, params.dkLen, params.salt));
     return scrypt.process(secret);
   }
 
@@ -50,7 +52,10 @@ class SCrypt implements Kdf {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is SCrypt && runtimeType == other.runtimeType && params == other.params;
+      identical(this, other) ||
+      other is SCrypt &&
+          runtimeType == other.runtimeType &&
+          params == other.params;
 
   @override
   int get hashCode => params.hashCode;
@@ -122,5 +127,10 @@ class SCryptParams extends Params {
           dkLen == other.dkLen;
 
   @override
-  int get hashCode => hex.encode(salt).hashCode ^ n.hashCode ^ r.hashCode ^ p.hashCode ^ dkLen.hashCode;
+  int get hashCode =>
+      hex.encode(salt).hashCode ^
+      n.hashCode ^
+      r.hashCode ^
+      p.hashCode ^
+      dkLen.hashCode;
 }

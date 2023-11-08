@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/crypto/encryption/cipher/aes.dart';
 import 'package:meta/meta.dart';
+
+import 'aes.dart';
 
 /// Ciphers are used to encrypt and decrypt data.
 /// @see [[https://en.wikipedia.org/wiki/Cipher]]
@@ -35,7 +36,10 @@ abstract class Cipher {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Cipher && runtimeType == other.runtimeType && params == other.params;
+      identical(this, other) ||
+      other is Cipher &&
+          runtimeType == other.runtimeType &&
+          params == other.params;
 
   @override
   int get hashCode => params.hashCode;

@@ -1,13 +1,14 @@
-import 'package:brambldart/brambldart.dart';
-import 'package:brambldart/src/brambl/validation/transaction_authorization_error.dart';
-import 'package:brambldart/src/quivr/runtime/dynamic_context.dart';
-import 'package:brambldart/src/quivr/runtime/quivr_runtime_error.dart';
-import 'package:brambldart/src/utils/helpers.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
 import 'package:topl_common/proto/brambl/models/identifier.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
+
+import '../../../brambldart.dart';
+import '../../quivr/runtime/dynamic_context.dart';
+import '../../quivr/runtime/quivr_runtime_error.dart';
+import '../../utils/helpers.dart';
+import 'transaction_authorization_error.dart';
 
 class TransactionAuthorizationInterpreter<F> {
   TransactionAuthorizationInterpreter(this.verifier);
@@ -17,7 +18,8 @@ class TransactionAuthorizationInterpreter<F> {
     DynamicContext context,
     IoTransaction transaction,
   ) {
-    var acc = Either<TransactionAuthorizationError, IoTransaction>.right(transaction);
+    var acc =
+        Either<TransactionAuthorizationError, IoTransaction>.right(transaction);
 
     for (var i = 0; i < transaction.inputs.length; i++) {
       final input = transaction.inputs[i];
@@ -54,7 +56,8 @@ class TransactionAuthorizationInterpreter<F> {
           );
           acc = r.map((p0) => transaction);
         default:
-          acc = Either.left(TransactionAuthorizationError.authorizationFailed(const []));
+          acc = Either.left(
+              TransactionAuthorizationError.authorizationFailed(const []));
           break;
       }
     }
@@ -79,21 +82,29 @@ class TransactionAuthorizationInterpreter<F> {
     if (threshold == 0) {
       return Either.right(true);
     } else if (threshold > propositions.length) {
-      return Either.left(TransactionAuthorizationError.authorizationFailed(const []));
+      return Either.left(
+          TransactionAuthorizationError.authorizationFailed(const []));
     } else if (proofs.isEmpty) {
-      return Either.left(TransactionAuthorizationError.authorizationFailed(const []));
+      return Either.left(
+          TransactionAuthorizationError.authorizationFailed(const []));
     }
     // We assume a one-to-one pairing of sub-proposition to sub-proof with the assumption that some of the proofs
     // may be Proofs.False
     else if (proofs.length != propositions.length) {
-      return Either.left(TransactionAuthorizationError.authorizationFailed(const []));
+      return Either.left(
+          TransactionAuthorizationError.authorizationFailed(const []));
     } else {
-      final eval = propositions.zip(proofs).map((p) => Verifier.evaluate(p.$1, p.$2, context)).toList();
-      final partitionedResults = partitionMap<QuivrRunTimeError, bool>(eval, (r) => r);
+      final eval = propositions
+          .zip(proofs)
+          .map((p) => Verifier.evaluate(p.$1, p.$2, context))
+          .toList();
+      final partitionedResults =
+          partitionMap<QuivrRunTimeError, bool>(eval, (r) => r);
       if (partitionedResults.$2.length >= threshold) {
         return Either.right(true);
       } else {
-        return Either.left(TransactionAuthorizationError.authorizationFailed(partitionedResults.$1));
+        return Either.left(TransactionAuthorizationError.authorizationFailed(
+            partitionedResults.$1));
       }
     }
   }

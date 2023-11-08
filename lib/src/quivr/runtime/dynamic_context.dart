@@ -1,18 +1,24 @@
-import 'package:brambldart/brambldart.dart';
-import 'package:brambldart/src/quivr/algebras/signature_verifier.dart';
-import 'package:brambldart/src/quivr/common/parsable_data_interface.dart';
-import 'package:brambldart/src/quivr/common/quivr_result.dart';
-import 'package:brambldart/src/quivr/runtime/quivr_runtime_error.dart';
 import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:topl_common/proto/brambl/models/datum.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
+import '../../../brambldart.dart';
 import '../algebras/digest_verifier.dart';
+import '../algebras/signature_verifier.dart';
+import '../common/parsable_data_interface.dart';
+import '../common/quivr_result.dart';
+import 'quivr_runtime_error.dart';
 
 class DynamicContext {
-  DynamicContext(this.datum, this.interfaces, this.signingRoutines, this.hashingRoutines, this.signableBytes,
-      this.currentTick, this.heightOf);
+  DynamicContext(
+      this.datum,
+      this.interfaces,
+      this.signingRoutines,
+      this.hashingRoutines,
+      this.signableBytes,
+      this.currentTick,
+      this.heightOf);
   Map<String, Datum?> datum;
 
   Map<String, ParsableDataInterface> interfaces;
@@ -27,30 +33,36 @@ class DynamicContext {
   Int64? Function(String, Datum? Function(String) heightDatums) heightOf;
 
   /// can return wrapped[ContextError.failedToFindDigestVerifier]
-  QuivrResult<DigestVerification> digestVerify(String routine, DigestVerification verification) {
-    final verifier = hashingRoutines.containsKey(routine) ? hashingRoutines[routine] : null;
+  QuivrResult<DigestVerification> digestVerify(
+      String routine, DigestVerification verification) {
+    final verifier =
+        hashingRoutines.containsKey(routine) ? hashingRoutines[routine] : null;
 
     // uses equality operator instead of .isNull for type promotion
     if (verifier == null) {
       return QuivrResult.left(ContextError.failedToFindDigestVerifier());
     }
 
-    final result = verifier.validate(verification) as QuivrResult<DigestVerification>;
+    final result =
+        verifier.validate(verification) as QuivrResult<DigestVerification>;
     if (result.isLeft) return result;
 
     return QuivrResult<DigestVerification>.right(result.right);
   }
 
   /// can return wrapped [ContextError.failedToFindSignatureVerifier]
-  QuivrResult<SignatureVerification> signatureVerify(String routine, SignatureVerification verification) {
-    final verifier = signingRoutines.containsKey(routine) ? signingRoutines[routine] : null;
+  QuivrResult<SignatureVerification> signatureVerify(
+      String routine, SignatureVerification verification) {
+    final verifier =
+        signingRoutines.containsKey(routine) ? signingRoutines[routine] : null;
 
     // uses equality operator instead of .isNull for type promotion
     if (verifier == null) {
       return QuivrResult.left(ContextError.failedToFindSignatureVerifier());
     }
 
-    final result = verifier.validate(verification) as QuivrResult<SignatureVerification>;
+    final result =
+        verifier.validate(verification) as QuivrResult<SignatureVerification>;
     if (result.isLeft) return result;
 
     return QuivrResult<SignatureVerification>.right(result.right);

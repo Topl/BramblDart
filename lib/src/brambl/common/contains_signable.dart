@@ -1,9 +1,10 @@
-import 'package:brambldart/brambldart.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:topl_common/proto/brambl/models/common.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_output.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import '../../../brambldart.dart';
 
 // Long -> longSignable -> longSignableEvidence -> longSignableEvidenceId
 // Long -> longSignable -> longSignableEvidence -> longSingableEvidenceSignable -> longSingableEvidenceSignableEvidence
@@ -43,15 +44,16 @@ class ContainsSignable {
 
     // copies then freezes not to impact the original object
     final st = iotx.deepCopy()..freeze();
-    return ContainsSignable.immutable(
-        ContainsImmutable.apply(st.rebuild((p0) => p0.inputs.update(iotx.inputs.map(stripInput).toList())))
-            .immutableBytes);
+    return ContainsSignable.immutable(ContainsImmutable.apply(st.rebuild(
+            (p0) => p0.inputs.update(iotx.inputs.map(stripInput).toList())))
+        .immutableBytes);
   }
   final SignableBytes signableBytes;
 }
 
 extension IoTransactionContainsSignableExtensions on IoTransaction {
-  SignableBytes get signable => ContainsSignable.ioTransaction(this).signableBytes;
+  SignableBytes get signable =>
+      ContainsSignable.ioTransaction(this).signableBytes;
 }
 
 extension ImmutableBytesContainsSignableExtension on ImmutableBytes {

@@ -1,9 +1,10 @@
-import 'package:brambldart/src/brambl/builders/locks/lock_template.dart';
-import 'package:brambldart/src/common/functional/either.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/indices.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import '../../common/functional/either.dart';
+import '../builders/locks/lock_template.dart';
 
 /// Defines a data API for storing and retrieving wallet state.
 abstract class WalletStateAlgebra {
@@ -18,7 +19,8 @@ abstract class WalletStateAlgebra {
   ///
   /// [signatureProposition] The signature proposition to get the indices for
   /// Returns the indices associated to the signature proposition if it exists. Else null
-  Indices? getIndicesBySignature(Proposition_DigitalSignature signatureProposition);
+  Indices? getIndicesBySignature(
+      Proposition_DigitalSignature signatureProposition);
 
   /// Get the preimage secret associated to a digest proposition.
   ///
@@ -38,33 +40,36 @@ abstract class WalletStateAlgebra {
   /// [routine] The routine to add to the wallet state
   /// [vk] The verification key to add to the wallet state
   /// [indices] The indices to add to the wallet state
-  void updateWalletState(String lockPredicate, String lockAddress, String? routine, String? vk, Indices indices);
+  void updateWalletState(String lockPredicate, String lockAddress,
+      String? routine, String? vk, Indices indices);
 
-  /// Get the current indices for the given party, contract and optional state
+  /// Get the current indices for the given fellowship, contract and optional state
   ///
-  /// [party] A String label of the party to get the indices for
+  /// [fellowship] A String label of the fellowship to get the indices for
   /// [contract] A String label of the contract to get the indices for
-  /// [someState] The optional state index of the indices. If not provided, the next state index for the given party
+  /// [someState] The optional state index of the indices. If not provided, the next state index for the given fellowship
   /// and contract pair will be used
-  /// Returns the indices for the given party, contract and optional state if possible. Else null
-  Indices? getCurrentIndicesForFunds(String party, String contract, int? someState);
+  /// Returns the indices for the given fellowship, contract and optional state if possible. Else null
+  Indices? getCurrentIndicesForFunds(
+      String fellowship, String contract, int? someState);
 
-  /// Validate that the supplied party, contract and optional state exist and are associated with each other in the
+  /// Validate that the supplied fellowship, contract and optional state exist and are associated with each other in the
   /// current wallet state
   ///
-  /// [party] A String label of the party to validate with
+  /// [fellowship] A String label of the fellowship to validate with
   /// [contract] A String label of the contract to validate with
-  /// [someState] The optional state index to validate with. If not provided, the next state for the given party
+  /// [someState] The optional state index to validate with. If not provided, the next state for the given fellowship
   /// and contract pair will be used
-  /// Returns the indices for the given party, contract and optional state if valid. If not, the relevant errors
-  Either<String, Indices> validateCurrentIndicesForFunds(String party, String contract, int? someState);
+  /// Returns the indices for the given fellowship, contract and optional state if valid. If not, the relevant errors
+  Either<String, Indices> validateCurrentIndicesForFunds(
+      String fellowship, String contract, int? someState);
 
-  /// Get the next available indices for the given party and contract
+  /// Get the next available indices for the given fellowship and contract
   ///
-  /// [party] A String label of the party to get the next indices for
+  /// [fellowship] A String label of the fellowship to get the next indices for
   /// [contract] A String label of the contract to get the next indices for
-  /// Returns the next indices for the given party and contract if possible. Else null
-  Indices? getNextIndicesForFunds(String party, String contract);
+  /// Returns the next indices for the given fellowship and contract if possible. Else null
+  Indices? getNextIndicesForFunds(String fellowship, String contract);
 
   /// Get the lock predicate associated to the given indices
   ///
@@ -79,31 +84,31 @@ abstract class WalletStateAlgebra {
   /// Returns the lock predicate for the lockAddress if possible. Else null.
   Lock_Predicate? getLockByAddress(String lockAddress);
 
-  /// Get the lock address associated to the given party, contract and optional state
+  /// Get the lock address associated to the given fellowship, contract and optional state
   ///
-  /// [party] A String label of the party to get the lock address for
+  /// [fellowship] A String label of the fellowship to get the lock address for
   /// [contract] A String label of the contract to get the lock address for
   /// [someState] The optional state index to get the lock address for. If not provided, the next state for the
-  /// given party and contract pair will be used
+  /// given fellowship and contract pair will be used
   /// Returns the lock address for the given indices if possible. Else null
-  String? getAddress(String party, String contract, int? someState);
+  String? getAddress(String fellowship, String contract, int? someState);
 
   /// Add a new entry of entity verification keys to the wallet state's cartesian indexing. Entities are at a pair of
-  /// x (party) and y (contract) layers and thus represent a Child verification key at a participants own x/y path.
-  /// The respective x and y indices of the specified party and contract labels must already exist.
+  /// x (fellowship) and y (contract) layers and thus represent a Child verification key at a participants own x/y path.
+  /// The respective x and y indices of the specified fellowship and contract labels must already exist.
   ///
-  /// [party] A String label of the party to associate the new verification keys with
+  /// [fellowship] A String label of the fellowship to associate the new verification keys with
   /// [contract] A String label of the contract to associate the new verification keys with
   /// [entities] The list of Verification Keys in base58 format to add
-  void addEntityVks(String party, String contract, List<String> entities);
+  void addEntityVks(String fellowship, String contract, List<String> entities);
 
-  /// Get the list of verification keys associated to the given pair of party and contract
+  /// Get the list of verification keys associated to the given pair of fellowship and contract
   ///
-  /// [party] A String label of the party to get the verification keys for
+  /// [fellowship] A String label of the fellowship to get the verification keys for
   /// [contract] A String label of the contract to get the verification keys for
-  /// Returns the list of verification keys in base58 format associated to the given party and contract if possible.
+  /// Returns the list of verification keys in base58 format associated to the given fellowship and contract if possible.
   /// Else null. It is possible that the list of entities is empty.
-  List<String>? getEntityVks(String party, String contract);
+  List<String>? getEntityVks(String fellowship, String contract);
 
   /// Add a new lock template entry to the wallet state's cartesian indexing. Lock templates are at the y (contract)
   /// layer. This new entry will be associated to the label given by contract. The index of the new entry (and thus
@@ -119,12 +124,12 @@ abstract class WalletStateAlgebra {
   /// Returns the lock template associated to the given contract if possible. Else null.
   LockTemplate? getLockTemplate(String contract);
 
-  /// Using the template associated the given contract, the verification keys associated to the party and contract pair,
+  /// Using the template associated the given contract, the verification keys associated to the fellowship and contract pair,
   /// and the z state given by nextState, build a Lock
   ///
-  /// [party] A String label of the party to get the Lock verification keys for
+  /// [fellowship] A String label of the fellowship to get the Lock verification keys for
   /// [contract] A String label of the contract to get the verification keys and template for
   /// [nextState] The z index state to build the lock for
   /// Returns a built lock, if possible. Else null
-  Lock? getLock(String party, String contract, int nextState);
+  Lock? getLock(String fellowship, String contract, int nextState);
 }

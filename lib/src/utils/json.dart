@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:brambldart/src/utils/extensions.dart';
+import 'extensions.dart';
 
 class Json {
   static Uint8List decodeUint8List(String encoded) {

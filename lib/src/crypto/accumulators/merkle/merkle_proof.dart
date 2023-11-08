@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
-import 'package:brambldart/src/common/functional/either.dart';
-import 'package:brambldart/src/crypto/accumulators/accumulators.dart';
-import 'package:brambldart/src/crypto/accumulators/merkle/merkle_tree.dart';
-import 'package:brambldart/src/crypto/hash/digest/digest.dart';
-import 'package:brambldart/src/crypto/hash/hash.dart';
-import 'package:brambldart/src/utils/extensions.dart';
+import '../../../common/functional/either.dart';
+import '../../../utils/extensions.dart';
+import '../../hash/digest/digest.dart';
+import '../../hash/hash.dart';
+import '../accumulators.dart';
+import 'merkle_tree.dart';
 
 /// Proof is given leaf data, leaf hash sibling and also siblings for parent nodes. Using this data, it is possible to
 /// compute nodes on the path to root hash, and the hash itself. The picture of a proof given below. In the picture,
@@ -37,7 +37,8 @@ class MerkleProof {
   static const rightSide = Side(1);
 
   bool valid(Digest expectedRootHash) {
-    final leafHash = hashFunction.hashWithPrefix(MerkleTree.leafPrefix, [leafData.value.toUint8List()]);
+    final leafHash = hashFunction
+        .hashWithPrefix(MerkleTree.leafPrefix, [leafData.value.toUint8List()]);
 
     Digest result = leafHash;
     for (final (hash, side) in levels) {
@@ -54,7 +55,8 @@ class MerkleProof {
       } else {
         nodeBytes = prevHash.bytes;
       }
-      result = hashFunction.hashWithPrefix(MerkleTree.internalNodePrefix, [Uint8List.fromList(nodeBytes)]);
+      result = hashFunction.hashWithPrefix(
+          MerkleTree.internalNodePrefix, [Uint8List.fromList(nodeBytes)]);
     }
     return result == expectedRootHash;
   }
