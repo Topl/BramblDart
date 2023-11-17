@@ -24,6 +24,10 @@ extension StringExtension on String {
   (String, String) splitAt(int index) =>
       (substring(0, index), substring(index));
 
+  List<String> splitAtNewline() {
+    return split('\n');
+  }
+
   /// Converts List<string> to a hex encoded [Uint8List].
   Uint8List toHexUint8List() => Uint8List.fromList(hex.decode(this));
 
