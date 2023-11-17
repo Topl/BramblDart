@@ -49,7 +49,7 @@ class PredicateTemplate implements LockTemplate {
     final result =
         ThresholdTemplate(innerTemplates, threshold).build(entityVks);
     return result.flatMap((ip) {
-      if (ip is Proposition_Threshold) {
+      if (ip.hasThreshold()) {
         final innerPropositions = ip.threshold.challenges;
         return Either.right(Lock(
           predicate: Lock_Predicate(
