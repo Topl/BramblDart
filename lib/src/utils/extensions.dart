@@ -207,6 +207,17 @@ extension IterableExtensions<T> on Iterable<T> {
       yield chunk;
     }
   }
+
+  Iterable<T> takeRight(int count) {
+    if (count >= length) return this;
+    return skip(length - count);
+  }
+}
+
+extension IterableToUint8List on Iterable<int> {
+  Uint8List toUint8List() {
+    return Uint8List.fromList(toList());
+  }
 }
 
 extension ListExtensions<T> on List<T> {
