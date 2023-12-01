@@ -2,9 +2,13 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:brambldart/src/crypto/signing/ed25519/ed25519_spec.dart' as spec_e;
+import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart' as spec_xe;
+import 'package:brambldart/src/crypto/signing/signing.dart' as spec;
 import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:fixnum/fixnum.dart';
+import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
 
 import '../common/functional/either.dart';
 
@@ -21,8 +25,11 @@ extension StringExtension on String {
     return Int8List.fromList(bytes);
   }
 
-  (String, String) splitAt(int index) =>
-      (substring(0, index), substring(index));
+  (String, String) splitAt(int index) => (substring(0, index), substring(index));
+
+  List<String> splitAtNewline() {
+    return split('\n');
+  }
 
   /// Converts List<string> to a hex encoded [Uint8List].
   Uint8List toHexUint8List() => Uint8List.fromList(hex.decode(this));
@@ -74,8 +81,7 @@ extension Uint8ListExtension on Uint8List {
   /// Returns a [BigInt] representation of the [Uint8List] in little-endian byte order.
   BigInt fromLittleEndian() {
     final reversed = this.reversed.toList();
-    final hex =
-        reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 
@@ -145,8 +151,7 @@ extension Int8ListExtension on Int8List {
 
   BigInt fromLittleEndian() {
     final reversed = this.reversed.toList();
-    final hex =
-        reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 }
@@ -201,6 +206,17 @@ extension IterableExtensions<T> on Iterable<T> {
       }
       yield chunk;
     }
+  }
+
+  Iterable<T> takeRight(int count) {
+    if (count >= length) return this;
+    return skip(length - count);
+  }
+}
+
+extension IterableToUint8List on Iterable<int> {
+  Uint8List toUint8List() {
+    return Uint8List.fromList(toList());
   }
 }
 
@@ -284,6 +300,49 @@ extension EitherTSwapExtension<L, R> on Either<L, R> {
   /// Swaps the left and right values of an [Either].
   Either<R, L> swap() {
     return fold((l) => Either<R, L>.right(l), (r) => Either<R, L>.left(r));
+  }
+}
+
+extension CryptoVerificationKeyExtensions on spec.VerificationKey {
+  /// Converts a Crypto VerificationKey to a Protobuf Verification key
+  pb.VerificationKey toProto() {
+    if (this is spec_e.PublicKey) {
+      final ePK = this as spec_e.PublicKey;
+      return pb.VerificationKey(ed25519: pb.VerificationKey_Ed25519Vk(value: ePK.bytes));
+    } else if (this is spec_xe.PublicKey) {
+      final xePK = this as spec_xe.PublicKey;
+      return pb.VerificationKey(
+          extendedEd25519: pb.VerificationKey_ExtendedEd25519Vk(
+        chainCode: xePK.chainCode,
+        vk: pb.VerificationKey_Ed25519Vk(value: xePK.vk.bytes),
+      ));
+    } else {
+      throw Exception('Unknown VerificationKey type: $runtimeType');
+    }
+  }
+}
+
+extension ListCryptoVerificationKeyExtensions on List<spec.VerificationKey> {
+  /// Converts a List of Crypto VerificationKeys to a List of Protobuf VerificationKeys
+  List<pb.VerificationKey> toProto() {
+    return map((vk) => vk.toProto()).toList();
+  }
+}
+
+extension ProtoVerificationKeyExtensions on pb.VerificationKey {
+  /// Converts a Protobuf VerificationKey to a Crypto VerificationKey
+  spec.VerificationKey toCrypto() {
+    if (hasEd25519()) {
+      return spec_e.PublicKey(ed25519.value.toUint8List());
+    } else if (hasExtendedEd25519()) {
+      final xeVK = extendedEd25519;
+      return spec_xe.PublicKey(
+        spec_e.PublicKey(xeVK.vk.value.toUint8List()),
+        xeVK.chainCode.toUint8List(),
+      );
+    } else {
+      throw Exception('Unknown VerificationKey type: $runtimeType');
+    }
   }
 }
 

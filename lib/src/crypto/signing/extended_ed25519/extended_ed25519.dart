@@ -8,8 +8,7 @@ import '../elliptic_curve_signature_scheme.dart';
 
 export 'extended_ed25519_spec.dart';
 
-class ExtendedEd25519
-    extends EllipticCurveSignatureScheme<SecretKey, PublicKey> {
+class ExtendedEd25519 extends EllipticCurveSignatureScheme<SecretKey, PublicKey> {
   ExtendedEd25519() : super(seedLength: ExtendedEd25519Spec.seedLength);
   final impl = eddsa.Ed25519();
 
@@ -60,8 +59,7 @@ class ExtendedEd25519
   /// [message] - the message that the signature is expected to verify
   /// [verifyKey] - The key to use for verification
   /// Returns true if the signature is verified; otherwise false.
-  Future<bool> verifyWithEd25519Pk(Uint8List signature, Uint8List message,
-      ed25519_spec.PublicKey verifyKey) async {
+  Future<bool> verifyWithEd25519Pk(Uint8List signature, Uint8List message, ed25519_spec.PublicKey verifyKey) async {
     if (signature.length != ed25519_spec.Ed25519Spec.signatureLength) {
       return false;
     }
@@ -129,16 +127,10 @@ class ExtendedEd25519
     // Construct the HMAC data for z
     final zHmacData = index is SoftIndex
         ? Uint8List.fromList([0x02, ...public.vk.bytes, ...index.bytes])
-        : Uint8List.fromList([
-            0x00,
-            ...secretKey.leftKey,
-            ...secretKey.rightKey,
-            ...index.bytes
-          ]);
+        : Uint8List.fromList([0x00, ...secretKey.leftKey, ...secretKey.rightKey, ...index.bytes]);
 
     // Compute z using HMAC-SHA-512 with the chain code as the key
-    final z =
-        ExtendedEd25519Spec.hmac512WithKey(secretKey.chainCode, zHmacData);
+    final z = ExtendedEd25519Spec.hmac512WithKey(secretKey.chainCode, zHmacData);
     // Parse the left and right halves of z as big integers
     final zLeft = z.sublist(0, 28).fromLittleEndian();
 
@@ -146,28 +138,32 @@ class ExtendedEd25519
 
     // Compute the next left key by adding zLeft * 8 to the current left key
     final nextLeftBigInt = zLeft * BigInt.from(8) + lNum;
-    final nextLeftPre = nextLeftBigInt.toUint8List();
-    final nextLeft = nextLeftPre.reversed.toList().sublist(0, 32).toUint8List();
+
+    // serialize numbers to 32 byte array and transform to little endian
+    // as required
+    final nextLeft = _sec256(nextLeftBigInt).reversed.toUint8List();
+
+    // TODO(ultimaterex): old/remove
+    // final nextLeftPre = nextLeftBigInt.toUint8List();
+    // final nextLeft = nextLeftPre.reversed.toList().sublist(0, 32).toUint8List();
 
     // Compute the next right key by adding zRight to the current right key
     final nextRightBigInt = (zRight + rNum) % BigInt.two.pow(256);
-    final nextRightPre = nextRightBigInt.toUint8List();
-    final nextRight =
-        nextRightPre.reversed.toList().sublist(0, 32).toUint8List();
+
+    // serialize numbers to 32 byte array and transform to little endian
+    // as required
+    final nextRight = _sec256(nextRightBigInt).reversed.toUint8List();
+
+    // TODO(ultimaterex): old/remove
+    // final nextRightPre = nextRightBigInt.toUint8List();
+    // final nextRight = nextRightPre.reversed.toList().sublist(0, 32).toUint8List();
 
     // Compute the next chain code using HMAC-SHA-512 with the chain code as the key
     final chaincodeHmacData = index is SoftIndex
         ? Uint8List.fromList([0x03, ...public.vk.bytes, ...index.bytes])
-        : Uint8List.fromList([
-            0x01,
-            ...secretKey.leftKey,
-            ...secretKey.rightKey,
-            ...index.bytes
-          ]);
+        : Uint8List.fromList([0x01, ...secretKey.leftKey, ...secretKey.rightKey, ...index.bytes]);
 
-    final nextChainCode = ExtendedEd25519Spec.hmac512WithKey(
-            secretKey.chainCode, chaincodeHmacData)
-        .sublist(32, 64);
+    final nextChainCode = ExtendedEd25519Spec.hmac512WithKey(secretKey.chainCode, chaincodeHmacData).sublist(32, 64);
 
     // Return the new secret key
     return SecretKey(nextLeft, nextRight, nextChainCode);
@@ -179,13 +175,11 @@ class ExtendedEd25519
   ///
   /// Returns:
   /// A new `PublicKey` object representing the derived child public key.
-  PublicKey deriveChildVerificationKey(
-      PublicKey verificationKey, SoftIndex index) {
+  PublicKey deriveChildVerificationKey(PublicKey verificationKey, SoftIndex index) {
     // Compute the HMAC-SHA-512 of the parent chain code
     final z = ExtendedEd25519Spec.hmac512WithKey(
       verificationKey.chainCode,
-      ([0x02] + verificationKey.vk.bytes.toList() + index.bytes.toList())
-          .toUint8List(),
+      ([0x02] + verificationKey.vk.bytes.toList() + index.bytes.toList()).toUint8List(),
     );
 
     // Extract the first 28 bytes of the HMAC-SHA-512 output as zL.
@@ -203,8 +197,7 @@ class ExtendedEd25519
 
     // Decode the parent public key into a point and add scaledZL to it to obtain the next public key point.
     final publicKeyPoint = PointExt.create();
-    impl.decodePointVar(verificationKey.vk.bytes, 0,
-        negate: false, r: publicKeyPoint);
+    impl.decodePointVar(verificationKey.vk.bytes, 0, negate: false, r: publicKeyPoint);
     impl.pointAddVar1(false, publicKeyPoint, scaledZL);
 
     // Encode the next public key point as a byte array and compute the HMAC-SHA-512 of the parent chain code
@@ -213,8 +206,7 @@ class ExtendedEd25519
 
     final nextChainCode = ExtendedEd25519Spec.hmac512WithKey(
       verificationKey.chainCode,
-      ([0x03] + verificationKey.vk.bytes.toList() + index.bytes.toList())
-          .toUint8List(),
+      ([0x03] + verificationKey.vk.bytes.toList() + index.bytes.toList()).toUint8List(),
     ).sublist(32, 64);
 
     // Return the next public key and chain code as a PublicKey object.
@@ -254,8 +246,7 @@ class ExtendedEd25519
   @override
   SecretKey deriveSecretKeyFromSeed(Uint8List seed) {
     if (seed.length != ExtendedEd25519Spec.seedLength) {
-      throw ArgumentError(
-          "Invalid seed length. Expected: ${ExtendedEd25519Spec.seedLength}, Received: ${seed.length}");
+      throw ArgumentError("Invalid seed length. Expected: ${ExtendedEd25519Spec.seedLength}, Received: ${seed.length}");
     }
     return ExtendedEd25519Spec.clampBits(seed);
   }
@@ -268,13 +259,11 @@ class ExtendedEd25519
   /// [secretKey] - the secret key to derive the child key from
   /// [indices] - list of indices representing the path of the key to derive
   /// Returns an extended secret key
-  SecretKey deriveSecretKeyFromChildPath(
-      SecretKey secretKey, List<Bip32Index> indices) {
+  SecretKey deriveSecretKeyFromChildPath(SecretKey secretKey, List<Bip32Index> indices) {
     if (indices.length == 1) {
       return deriveChildSecretKey(secretKey, indices.first);
     } else {
-      return deriveSecretKeyFromChildPath(
-          deriveChildSecretKey(secretKey, indices.first), indices.sublist(1));
+      return deriveSecretKeyFromChildPath(deriveChildSecretKey(secretKey, indices.first), indices.sublist(1));
     }
   }
 
@@ -286,9 +275,33 @@ class ExtendedEd25519
   /// [secretKey] - the secret key to derive the child key pair from
   /// [indices] - list of indices representing the path of the key pair to derive
   /// Returns the key pair
-  KeyPair<SecretKey, PublicKey> deriveKeyPairFromChildPath(
-      SecretKey secretKey, List<Bip32Index> indices) {
+  KeyPair<SecretKey, PublicKey> deriveKeyPairFromChildPath(SecretKey secretKey, List<Bip32Index> indices) {
     final derivedSecretKey = deriveSecretKeyFromChildPath(secretKey, indices);
     return KeyPair(derivedSecretKey, getVerificationKey(derivedSecretKey));
+  }
+
+// Serialize a 32 byte BigInt to a 32 byte array according to the standard
+// in https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki
+// (see standard conversion functions)
+// example Java implementation at:
+// https://github.com/bloxbean/cardano-client-lib/blob/00f69a0c909770b919c4cc4834898cfd099f38e9/crypto/src/main/java/com/bloxbean/cardano/client/crypto/bip32/util/BytesUtil.java#L61
+// PORT NOTE: literal translation of the Scala implementation, not confirmed to work
+  Uint8List _sec256AsScala(BigInt p) {
+    return p.toUint8List().reversed.toUint8List().sublist(0, 32).reversed.takeRight(32).toUint8List();
+  }
+
+// Serialize a 32 byte BigInt to a 32 byte array according to the standard
+// in https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki
+// (see standard conversion functions)
+// Ported from:
+// https://github.com/bloxbean/cardano-client-lib/blob/00f69a0c909770b919c4cc4834898cfd099f38e9/crypto/src/main/java/com/bloxbean/cardano/client/crypto/bip32/util/BytesUtil.java#L61
+  Uint8List _sec256(BigInt p) {
+    final byteArray = p.toRadixString(16).padLeft(64, '0');
+    final sec = Uint8List(32);
+    for (var i = 0; i < byteArray.length; i += 2) {
+      final byte = int.parse(byteArray.substring(i, i + 2), radix: 16);
+      sec[i ~/ 2] = byte;
+    }
+    return sec;
   }
 }
