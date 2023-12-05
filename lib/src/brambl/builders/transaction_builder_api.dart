@@ -269,7 +269,7 @@ abstract class TransactionBuilderApiDefinition {
 }
 
 class TransactionBuilderApi implements TransactionBuilderApiDefinition {
-  TransactionBuilderApi(this.networkId, this.ledgerId);
+  const TransactionBuilderApi(this.networkId, this.ledgerId);
   final int networkId;
   final int ledgerId;
 
