@@ -1,4 +1,5 @@
 import 'package:protobuf/protobuf.dart';
+import 'package:topl_common/proto/brambl/models/box/asset.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/value.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
@@ -59,6 +60,33 @@ extension ValueToQuantitySyntaxOps on Value {
         throw Exception('UpdateProposal does not have a quantity');
       case Value_Value.notSet:
         throw Exception('Value is not set');
+    }
+  }
+}
+
+
+class ValueToQuantityDescriptorSyntaxOps {
+  ValueToQuantityDescriptorSyntaxOps(this.value);
+  final Value value;
+
+  QuantityDescriptorType? get quantityDescriptor {
+    if (value.hasAsset()) {
+      return value.asset.quantityDescriptor;
+    } else {
+      return null;
+    }
+  }
+}
+
+class ValueToFungibilitySyntaxOps {
+  ValueToFungibilitySyntaxOps(this.value);
+  final Value value;
+
+  FungibilityType? get fungibility {
+    if (value.hasAsset()) {
+      return value.asset.fungibility;
+    } else {
+      return null;
     }
   }
 }

@@ -212,6 +212,9 @@ extension IterableExtensions<T> on Iterable<T> {
     if (count >= length) return this;
     return skip(length - count);
   }
+
+  Iterable<T> sortedAlphabetically(Comparable Function(T e) key) =>
+      toList()..sort((a, b) => key(a).compareTo(key(b)));
 }
 
 extension IterableToUint8List on Iterable<int> {
