@@ -90,12 +90,12 @@ class TransactionBuilderInterpreterBase {
     });
   }
 
-  List<SpentTransactionOutput> buildStxos({List<Txo> txos = mockTxos}) {
-    return txos
-        .map((txo) => SpentTransactionOutput(
-            address: txo.outputAddress, attestation: attFull, value: txo.transactionOutput.value))
-        .toList();
-  }
+  // List<SpentTransactionOutput> buildStxos({List<Txo> txos = mockTxos}) {
+  //   return txos
+  //       .map((txo) => SpentTransactionOutput(
+  //           address: txo.outputAddress, attestation: attFull, value: txo.transactionOutput.value))
+  //       .toList();
+  // }
 
   List<UnspentTransactionOutput> buildUtxos(List<Value> values, LockAddress lockAddr) {
     return values.map((value) => valToUtxo(value, lockAddress: lockAddr)).toList();
@@ -170,3 +170,4 @@ class TransactionBuilderInterpreterBase {
 //       )),
 //   );
 // }
+}

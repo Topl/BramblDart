@@ -9,7 +9,7 @@ extension Int128AsBigInt on Int128 {
 }
 
 extension BigIntAsInt128 on BigInt {
-  Int128 toInt128() => Int128(value: toUint8List());
+  Int128 toInt128() => Int128(value: toTwosComplement());
 }
 
 extension LongAsInt128 on int {

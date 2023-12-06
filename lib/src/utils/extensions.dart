@@ -48,7 +48,11 @@ extension StringListExtension on List<String> {
 
 extension BigIntExtensions on BigInt {
   /// Converts a [BigInt] to a [Uint8List]
+  /// Warning: Will drop the sign of the BigInt, resulting in invalid data for negative BigInts
   Uint8List toUint8List() => toByteData().buffer.asUint8List();
+
+  /// Converts a [BigInt] to an [Int8List]
+  Int8List toInt8List() => toByteData().buffer.asInt8List();
 
   /// Converts a [BigInt] to a [ByteData]
   ByteData toByteData() {
@@ -61,6 +65,28 @@ extension BigIntExtensions on BigInt {
     }
 
     return data;
+  }
+
+  Uint8List toTwosComplement() {
+    // Calculate the number of bytes needed to represent the BigInt
+    final bytes = Uint8List((bitLength + 7) ~/ 8 + 1);
+    for (var i = 0; i < bytes.length; i++) {
+      bytes[bytes.length - i - 1] = (this >> (8 * i)).toInt() & 0xff;
+    }
+    if (isNegative) {
+      // Compute the two's complement for negative numbers
+      for (var i = 0; i < bytes.length; i++) {
+        bytes[i] = ~bytes[i] & 0xff;
+      }
+      for (var i = bytes.length - 1; i >= 0; i--) {
+        bytes[i]++;
+        if (bytes[i] <= 0xff) {
+          break;
+        }
+        bytes[i] = 0;
+      }
+    }
+    return bytes;
   }
 }
 
@@ -213,8 +239,7 @@ extension IterableExtensions<T> on Iterable<T> {
     return skip(length - count);
   }
 
-  Iterable<T> sortedAlphabetically(Comparable Function(T e) key) =>
-      toList()..sort((a, b) => key(a).compareTo(key(b)));
+  Iterable<T> sortedAlphabetically(Comparable Function(T e) key) => toList()..sort((a, b) => key(a).compareTo(key(b)));
 }
 
 extension IterableToUint8List on Iterable<int> {
