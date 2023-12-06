@@ -158,8 +158,8 @@ void main() {
     // print(bigInt2.toByteData().buffer.asInt8List());
     // print(bigInt2.toByteData().buffer.asUint8List());
 
-    print(Int128(value: bigIntToTwosComplement(bigInt)));
-    print(Int128(value: bigIntToTwosComplement(bigInt2)).value);
+    print(Int128(value: bigInt.toTwosComplement()));
+    print(Int128(value: bigInt2.toTwosComplement()));
 
     // print(bigInt);
     // print(bigInt.toUint8List());
