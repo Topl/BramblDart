@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:fixnum/fixnum.dart';
-import 'package:topl_common/genus/data_extensions.dart';
 import 'package:topl_common/proto/brambl/models/address.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/asset.pbenum.dart';
 import 'package:topl_common/proto/brambl/models/box/assets_statements.pb.dart';
@@ -28,6 +27,7 @@ import '../codecs/address_codecs.dart';
 import '../common/contains_evidence.dart';
 import '../syntax/group_policy_syntax.dart';
 import '../syntax/series_policy_syntax.dart';
+import '../syntax/syntax.dart';
 import '../syntax/token_type_identifier_syntax.dart';
 import 'builder_error.dart';
 
@@ -285,7 +285,7 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     final d = await datum();
     final lvlOutputForChange = await lvlOutput(
       lockPredicateForChange,
-      Int128(value: (totalValues - amount.toBigInt).toUint8List()),
+      (totalValues - amount.toBigInt).toInt128(),
     );
     final lvlOutputForRecipient = await lvlOutputWithLockAddress(
       recipientLockAddress,
