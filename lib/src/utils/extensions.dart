@@ -91,7 +91,8 @@ extension BigIntExtensions on BigInt {
 }
 
 extension IntExtensions on int {
-  Uint8List get toBytes => Uint8List.fromList([this]);
+  Int8List get toBytes => Int8List.fromList([this]);
+  Uint8List get toUint8List => Uint8List.fromList([this]);
 
   BigInt get toBigInt => BigInt.from(this);
 }
