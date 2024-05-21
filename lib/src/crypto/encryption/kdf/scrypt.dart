@@ -33,8 +33,7 @@ class SCrypt implements Kdf {
   @override
   Uint8List deriveKey(Uint8List secret) {
     final scrypt = Scrypt();
-    scrypt.init(ScryptParameters(
-        params.n, params.r, params.p, params.dkLen, params.salt));
+    scrypt.init(ScryptParameters(params.n, params.r, params.p, params.dkLen, params.salt));
     return scrypt.process(secret);
   }
 
@@ -52,10 +51,7 @@ class SCrypt implements Kdf {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is SCrypt &&
-          runtimeType == other.runtimeType &&
-          params == other.params;
+      identical(this, other) || other is SCrypt && runtimeType == other.runtimeType && params == other.params;
 
   @override
   int get hashCode => params.hashCode;
@@ -127,10 +123,5 @@ class SCryptParams extends Params {
           dkLen == other.dkLen;
 
   @override
-  int get hashCode =>
-      hex.encode(salt).hashCode ^
-      n.hashCode ^
-      r.hashCode ^
-      p.hashCode ^
-      dkLen.hashCode;
+  int get hashCode => hex.encode(salt).hashCode ^ n.hashCode ^ r.hashCode ^ p.hashCode ^ dkLen.hashCode;
 }

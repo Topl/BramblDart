@@ -49,7 +49,7 @@ class DefaultAggregationOps implements AggregationOpsDefinition {
           throw Exception('Aggregation of IMMUTABLE, FRACTIONABLE, or ACCUMULATOR assets is not allowed');
         }
       } else if (value.typeIdentifier is ToplType) {
-          throw Exception('Aggregation of TOPL with staking registration is not allowed');
+        throw Exception('Aggregation of TOPL with staking registration is not allowed');
       }
       return value.setQuantity(value.quantity + other.quantity);
     } else {

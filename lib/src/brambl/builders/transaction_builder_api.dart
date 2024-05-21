@@ -576,16 +576,56 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     throw UnimplementedError();
   }
 
+  // @override
+  // Future<Either<BuilderError, IoTransaction>> buildTransferAmountTransaction(
+  //     ValueTypeIdentifier tokenIdentifier,
+  //     List<Txo> txos,
+  //     Lock_Predicate lockPredicateFrom,
+  //     Int128 amount,
+  //     LockAddress recipientLockAddress,
+  //     LockAddress changeLockAddress,
+  //     int fee) {
+  //   // TODO(ultimaterex): implement buildTransferAmountTransaction
+  //   throw UnimplementedError();
+  // }
+
+  @override
+  Future<Either<BuilderError, IoTransaction>> buildAssetMintingTransaction(
+      AssetMintingStatement mintingStatement,
+      List<Txo> txos,
+      Map<LockAddress, Lock_Predicate> locks,
+      int fee,
+      LockAddress mintedAssetLockAddress,
+      LockAddress changeAddress,
+      {ByteString? ephemeralMetadata,
+      Uint8List? commitment}) {
+    // TODO: implement buildAssetMintingTransaction
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<BuilderError, IoTransaction>> buildSeriesMintingTransaction(
+      List<Txo> txos,
+      Lock_Predicate lockPredicateFrom,
+      SeriesPolicy seriesPolicy,
+      int quantityToMint,
+      LockAddress mintedAddress,
+      LockAddress changeAddress,
+      int fee) {
+    // TODO: implement buildSeriesMintingTransaction
+    throw UnimplementedError();
+  }
+
   @override
   Future<Either<BuilderError, IoTransaction>> buildTransferAmountTransaction(
       ValueTypeIdentifier tokenIdentifier,
       List<Txo> txos,
       Lock_Predicate lockPredicateFrom,
-      Int128 amount,
+      int amount,
       LockAddress recipientLockAddress,
       LockAddress changeLockAddress,
       int fee) {
-    // TODO(ultimaterex): implement buildTransferAmountTransaction
+    // TODO: implement buildTransferAmountTransaction
     throw UnimplementedError();
   }
 }

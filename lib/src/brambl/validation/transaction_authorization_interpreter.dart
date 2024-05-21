@@ -10,6 +10,8 @@ import '../../quivr/runtime/quivr_runtime_error.dart';
 import '../../utils/helpers.dart';
 import 'transaction_authorization_error.dart';
 
+
+// TODO revisit logic?????
 class TransactionAuthorizationInterpreter<F> {
   TransactionAuthorizationInterpreter(this.verifier);
   final Verifier verifier;
@@ -18,8 +20,7 @@ class TransactionAuthorizationInterpreter<F> {
     DynamicContext context,
     IoTransaction transaction,
   ) {
-    var acc =
-        Either<TransactionAuthorizationError, IoTransaction>.right(transaction);
+    var acc = Either<TransactionAuthorizationError, IoTransaction>.right(transaction);
 
     for (var i = 0; i < transaction.inputs.length; i++) {
       final input = transaction.inputs[i];
@@ -56,8 +57,7 @@ class TransactionAuthorizationInterpreter<F> {
           );
           acc = r.map((p0) => transaction);
         default:
-          acc = Either.left(
-              TransactionAuthorizationError.authorizationFailed(const []));
+          acc = Either.left(TransactionAuthorizationError.authorizationFailed(const []));
           break;
       }
     }
@@ -82,29 +82,22 @@ class TransactionAuthorizationInterpreter<F> {
     if (threshold == 0) {
       return Either.right(true);
     } else if (threshold > propositions.length) {
-      return Either.left(
-          TransactionAuthorizationError.authorizationFailed(const []));
+      return Either.left(TransactionAuthorizationError.authorizationFailed(const []));
     } else if (proofs.isEmpty) {
-      return Either.left(
-          TransactionAuthorizationError.authorizationFailed(const []));
+      return Either.left(TransactionAuthorizationError.authorizationFailed(const []));
     }
     // We assume a one-to-one pairing of sub-proposition to sub-proof with the assumption that some of the proofs
     // may be Proofs.False
     else if (proofs.length != propositions.length) {
-      return Either.left(
-          TransactionAuthorizationError.authorizationFailed(const []));
+      return Either.left(TransactionAuthorizationError.authorizationFailed(const []));
     } else {
-      final eval = propositions
-          .zip(proofs)
-          .map((p) => Verifier.evaluate(p.$1, p.$2, context))
-          .toList();
-      final partitionedResults =
-          partitionMap<QuivrRunTimeError, bool>(eval, (r) => r);
+      final eval = propositions.zip(proofs).map((p) => Verifier.evaluate(p.$1, p.$2, context)).toList();
+
+      final partitionedResults = partitionMap<QuivrRunTimeError, bool>(eval, (r) => r);
       if (partitionedResults.$2.length >= threshold) {
         return Either.right(true);
       } else {
-        return Either.left(TransactionAuthorizationError.authorizationFailed(
-            partitionedResults.$1));
+        return Either.left(TransactionAuthorizationError.authorizationFailed(partitionedResults.$1));
       }
     }
   }

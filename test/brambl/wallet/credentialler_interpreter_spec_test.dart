@@ -24,8 +24,8 @@ import '../mock_wallet_state_api.dart';
 
 main() {
   final walletApi = WalletApi(MockWalletKeyApi());
-  final mockCI = CredentiallerInterpreter(walletApi, MockWalletStateApi(),
-      ProtoConverters.keyPairToProto(mockMainKeyPair));
+  final mockCI =
+      CredentiallerInterpreter(walletApi, MockWalletStateApi(), ProtoConverters.keyPairToProto(mockMainKeyPair));
 
   group('Credentialler Interpreter Spec', () {
     test('prove: other fields on transaction are preserved', () {
@@ -33,51 +33,33 @@ main() {
         ..groupPolicies.add(Datum_GroupPolicy(event: mockGroupPolicy))
         ..seriesPolicies.add(Datum_SeriesPolicy(event: mockSeriesPolicy))
         ..mintingStatements.add(AssetMintingStatement(
-            groupTokenUtxo: dummyTxoAddress,
-            seriesTokenUtxo: dummyTxoAddress,
-            quantity: quantity));
+            groupTokenUtxo: dummyTxoAddress, seriesTokenUtxo: dummyTxoAddress, quantity: quantity));
 
       final provenTx = mockCI.prove(testTx);
 
       final provenPredicate = provenTx.inputs.first.attestation.predicate;
 
-      final sameLen = provenPredicate.lock.challenges.length ==
-          provenPredicate.responses.length;
-      final nonEmpty = provenPredicate.responses
-          .every((proof) => proof.whichValue() != Proof_Value.notSet);
+      final sameLen = provenPredicate.lock.challenges.length == provenPredicate.responses.length;
+      final nonEmpty = provenPredicate.responses.every((proof) => proof.whichValue() != Proof_Value.notSet);
       expect(
-          sameLen &&
-              nonEmpty &&
-              (const ListEquality()
-                  .equals(provenTx.signable.value, testTx.signable.value)),
-          isTrue);
+          sameLen && nonEmpty && (const ListEquality().equals(provenTx.signable.value, testTx.signable.value)), isTrue);
     });
 
-    test(
-        'prove: Single Input Transaction with Attestation.Predicate > Provable propositions have non-empty proofs',
+    test('prove: Single Input Transaction with Attestation.Predicate > Provable propositions have non-empty proofs',
         () async {
       final provenTx = mockCI.prove(txFull);
       final provenPredicate = provenTx.inputs.first.attestation.predicate;
-      final sameLen = provenPredicate.lock.challenges.length ==
-          provenPredicate.responses.length;
-      final nonEmpty = provenPredicate.responses
-          .every((proof) => proof.whichValue() != Proof_Value.notSet);
+      final sameLen = provenPredicate.lock.challenges.length == provenPredicate.responses.length;
+      final nonEmpty = provenPredicate.responses.every((proof) => proof.whichValue() != Proof_Value.notSet);
       expect(
-          sameLen &&
-              nonEmpty &&
-              (const ListEquality()
-                  .equals(provenTx.signable.value, txFull.signable.value)),
-          isTrue);
+          sameLen && nonEmpty && (const ListEquality().equals(provenTx.signable.value, txFull.signable.value)), isTrue);
     });
 
-    test(
-        'prove: Single Input Transaction with Attestation.Predicate > Unprovable propositions have empty proofs',
+    test('prove: Single Input Transaction with Attestation.Predicate > Unprovable propositions have empty proofs',
         () async {
-      final testSignatureProposition = Proposer.signatureProposer(
-          'invalid-routine',
-          ProtoConverters.keyPairToProto(mockChildKeyPair).vk);
-      final testDigestProposition =
-          Proposer.digestProposer('invalid-routine', mockDigest);
+      final testSignatureProposition =
+          Proposer.signatureProposer('invalid-routine', ProtoConverters.keyPairToProto(mockChildKeyPair).vk);
+      final testDigestProposition = Proposer.digestProposer('invalid-routine', mockDigest);
 
       final testAttestation = Attestation(
           predicate: Attestation_Predicate(
@@ -105,40 +87,29 @@ main() {
       final provenTx = mockCI.prove(testTx);
 
       final provenPredicate = provenTx.inputs.first.attestation.predicate;
-      final sameLen = provenPredicate.lock.challenges.length ==
-          provenPredicate.responses.length;
+      final sameLen = provenPredicate.lock.challenges.length == provenPredicate.responses.length;
       final correctLen = provenPredicate.lock.challenges.length == 2;
-      final allEmpty = provenPredicate.responses
-          .every((proof) => proof.whichValue() == Proof_Value.notSet);
+      final allEmpty = provenPredicate.responses.every((proof) => proof.whichValue() == Proof_Value.notSet);
       expect(
           sameLen &&
               correctLen &&
               allEmpty &&
-              (const ListEquality()
-                  .equals(provenTx.signable.value, testTx.signable.value)),
+              (const ListEquality().equals(provenTx.signable.value, testTx.signable.value)),
           isTrue);
     });
 
     // TODO(ultimaterex): Fix this test
 
-    test(
-        'validate: Single Input Transaction with Attestation.Predicate > Validation successful',
-        () async {
-      final ctx =
-          Context(txFull, Int64(50), {}); // Tick satisfies a proposition
+    test('validate: Single Input Transaction with Attestation.Predicate > Validation successful', () async {
+      final ctx = Context(txFull, Int64(50), {}); // Tick satisfies a proposition
       final credentialler = mockCI;
       final provenTx = credentialler.prove(txFull);
       final errs = credentialler.validate(provenTx, ctx);
       expect(errs.isEmpty, isTrue);
     });
 
-    test(
-        'validate: Single Input Transaction with Attestation.Predicate > Validation failed',
-        () async {
-      final negativeValue = Value(
-          lvl: Value_LVL(
-              quantity:
-                  Int128(value: (BigInt.zero - BigInt.one).toUint8List())));
+    test('validate: Single Input Transaction with Attestation.Predicate > Validation failed', () async {
+      final negativeValue = Value(lvl: Value_LVL(quantity: Int128(value: (BigInt.zero - BigInt.one).toUint8List())));
       final testTx = txFull.rebuild(
         (p0) => p0.outputs.update(output.rebuild(
           (p1) => p1.value = negativeValue,
@@ -146,8 +117,7 @@ main() {
       );
       final credentialler = mockCI;
 
-      final ctx =
-          Context(testTx, Int64(500), {}); // Tick does not satisfy proposition
+      final ctx = Context(testTx, Int64(500), {}); // Tick does not satisfy proposition
 
       final provenTxWrapped = credentialler.prove(testTx);
 
@@ -167,20 +137,14 @@ main() {
       expect(containsNonPositiveOutputValue, isTrue);
 
       // Investigate why failure  returns 5 errors, same issue as in the above test
-      expect(
-          (errsWrapped.tail().first as TransactionAuthorizationError)
-                  .errors
-                  .length ==
-              3,
-          isTrue);
+      expect((errsWrapped.tail().first as TransactionAuthorizationError).errors.length == 3, isTrue);
 
       // lockedPropositionIsUnsatisfiable
       var lockedPropositionIsUnsatisfiable = false;
       for (final e in errsWrapped.tail()) {
         if (e is ValidationError) {
           final ValidationError cast = e as ValidationError;
-          if (cast.type ==
-              ValidationErrorType.lockedPropositionIsUnsatisfiable) {
+          if (cast.type == ValidationErrorType.lockedPropositionIsUnsatisfiable) {
             lockedPropositionIsUnsatisfiable = true;
           }
         }
@@ -204,33 +168,23 @@ main() {
       // TODO(ultimaterex): add  remaining expects
     });
 
-    test(
-        'proveAndValidate: Single Input Transaction with Attestation.Predicate > Validation successful',
-        () async {
+    test('proveAndValidate: Single Input Transaction with Attestation.Predicate > Validation successful', () async {
       final credentialler = mockCI;
-      final ctx =
-          Context(txFull, Int64(50), {}); // Tick satisfies a proposition
+      final ctx = Context(txFull, Int64(50), {}); // Tick satisfies a proposition
       final result = credentialler.proveAndValidate(txFull, ctx);
       expect(result.isRight, isTrue);
     });
 
-    test(
-        'proveAndValidate: Single Input Transaction with Attestation.Predicate > Validation failed',
-        () async {
-      final negativeValue = Value(
-          lvl: Value_LVL(
-              quantity:
-                  Int128(value: (BigInt.zero - BigInt.one).toUint8List())));
+    test('proveAndValidate: Single Input Transaction with Attestation.Predicate > Validation failed', () async {
+      final negativeValue = Value(lvl: Value_LVL(quantity: Int128(value: (BigInt.zero - BigInt.one).toUint8List())));
       final credentialler = mockCI;
       final a = output.rebuild((p0) => p0.value = negativeValue);
       final testTx = txFull.rebuild((p0) => p0.outputs.update(a));
 
-      final ctx =
-          Context(testTx, Int64(500), {}); // Tick does not satisfy proposition
+      final ctx = Context(testTx, Int64(500), {}); // Tick does not satisfy proposition
 
       final result = credentialler.proveAndValidate(testTx, ctx);
-      expect(
-          result.isLeft && (result.swap().getOrElse([]).length == 2), isTrue);
+      expect(result.isLeft && (result.swap().getOrElse([]).length == 2), isTrue);
     });
 
     test(
@@ -238,31 +192,24 @@ main() {
       () async {
         // Tick satisfies its proposition. Height does not.
         final ctx = Context(txFull, Int64(50), {});
-        final differentKeyPair = walletApi.deriveChildKeys(
-            ProtoConverters.keyPairToProto(mockMainKeyPair),
-            Indices(x: 0, y: 0, z: 1));
+        final differentKeyPair =
+            walletApi.deriveChildKeys(ProtoConverters.keyPairToProto(mockMainKeyPair), Indices(x: 0, y: 0, z: 1));
 
-        final credentialler = CredentiallerInterpreter(
-            walletApi, MockWalletStateApi(), differentKeyPair);
+        final credentialler = CredentiallerInterpreter(walletApi, MockWalletStateApi(), differentKeyPair);
         final res = credentialler.proveAndValidate(txFull, ctx);
         // The DigitalSignature proof fails. Including Locked and Height failure, 3 errors are expected
         final errs = res.getLeftOrElse([]);
-        expect(res.isLeft, isTrue,
-            reason: 'Result expecting to be left. Received $res');
+        expect(res.isLeft, isTrue, reason: 'Result expecting to be left. Received $res');
         expect(errs.length == 3, isTrue,
-            reason:
-                'AuthorizationFailed errors expects exactly 3 errors. Received: ${errs.length}');
+            reason: 'AuthorizationFailed errors expects exactly 3 errors. Received: ${errs.length}');
         // expect(errs.any((err) => err is EvaluationAuthorizationFailed && err.proposition.value is DigitalSignature),
         //     isTrue,
         //     reason: 'AuthorizationFailed errors expects a DigitalSignature error. Received: $errs');
       },
     );
 
-    test(
-        'prove: Transaction with Threshold Proposition > Threshold Proof is correctly generated',
-        () async {
-      final proposed = Proposer.thresholdProposer(
-          [mockTickProposition, mockHeightProposition], 2);
+    test('prove: Transaction with Threshold Proposition > Threshold Proof is correctly generated', () async {
+      final proposed = Proposer.thresholdProposer([mockTickProposition, mockHeightProposition], 2);
       final testProposition = Challenge(revealed: proposed);
 
       final testTx = txFull.rebuild((p0) {
@@ -284,27 +231,20 @@ main() {
       final validLength = provenPredicate.responses.length == 1;
       final threshProof = provenPredicate.responses.first;
 
-      final validThreshold =
-          (threshProof.whichValue() == Proof_Value.threshold) &&
-              (threshProof.hasThreshold());
+      final validThreshold = (threshProof.whichValue() == Proof_Value.threshold) && (threshProof.hasThreshold());
       final innerProofs = threshProof.threshold.responses;
 
       final validProofs = (innerProofs.length == 2) &&
           (innerProofs.first.whichValue() == Proof_Value.tickRange) &&
           (innerProofs[1].whichValue() == Proof_Value.heightRange);
 
-      final validSignable = const ListEquality()
-          .equals(provenTx.signable.value, testTx.signable.value);
+      final validSignable = const ListEquality().equals(provenTx.signable.value, testTx.signable.value);
 
-      expect(validLength && validThreshold && validProofs && validSignable,
-          isTrue);
+      expect(validLength && validThreshold && validProofs && validSignable, isTrue);
     });
 
-    test(
-        'prove: Transaction with And Proposition > And Proof is correctly generated',
-        () {
-      final tp =
-          Proposer.andProposer(mockTickProposition, mockHeightProposition);
+    test('prove: Transaction with And Proposition > And Proof is correctly generated', () {
+      final tp = Proposer.andProposer(mockTickProposition, mockHeightProposition);
       final testProposition = Challenge(revealed: tp);
 
       final testTx = txFull.rebuild((p0) {
@@ -330,17 +270,13 @@ main() {
           (andProof.and.left.whichValue() == Proof_Value.tickRange) &&
           (andProof.and.right.whichValue() == Proof_Value.heightRange);
 
-      final validSignable = const ListEquality()
-          .equals(provenTx.signable.value, testTx.signable.value);
+      final validSignable = const ListEquality().equals(provenTx.signable.value, testTx.signable.value);
 
       expect(validLength && validAnd && validSignable, isTrue);
     });
 
-    test(
-        'prove: Transaction with Not Proposition > Not Proof is correctly generated',
-        () {
-      final testProposition = Proposer.notProposer(mockTickProposition)
-          .withResult((p) => Challenge(revealed: p));
+    test('prove: Transaction with Not Proposition > Not Proof is correctly generated', () {
+      final testProposition = Proposer.notProposer(mockTickProposition).withResult((p) => Challenge(revealed: p));
       final testTx = txFull.rebuild((p0) {
         p0.inputs.update(inputFull.rebuild((p0) {
           p0.attestation = Attestation(
@@ -358,29 +294,22 @@ main() {
       final validLength = provenPredicate.responses.length == 1;
       final notProof = provenPredicate.responses.first;
       final validAnd = notProof.hasNot() && notProof.not.proof.hasTickRange();
-      final validSignable =
-          provenTx.signable.value.equals(testTx.signable.value);
+      final validSignable = provenTx.signable.value.equals(testTx.signable.value);
 
       expect(validLength && validAnd && validSignable, true);
     });
 
-    test(
-        'proveAndValidate: Transaction with Threshold Proposition > Unmet Threshold fails validation',
-        () {
-      final testProposition = Proposer.thresholdProposer(
-              [mockTickProposition, mockHeightProposition], 2)
+    test('proveAndValidate: Transaction with Threshold Proposition > Unmet Threshold fails validation', () {
+      final testProposition = Proposer.thresholdProposer([mockTickProposition, mockHeightProposition], 2)
           .withResult((p) => Challenge(revealed: p));
       final testTx = txFull.rebuild((p0) {
         p0.inputs.update([
           inputFull.rebuild((p1) => p1.attestation = Attestation(
               predicate: Attestation_Predicate(
-                  lock: Lock_Predicate(
-                      challenges: [testProposition], threshold: 1),
-                  responses: [Proof()])))
+                  lock: Lock_Predicate(challenges: [testProposition], threshold: 1), responses: [Proof()])))
         ]);
       });
-      final ctx = Context(
-          testTx, 50.toInt64, {}); // Tick should pass, height should fail
+      final ctx = Context(testTx, 50.toInt64, {}); // Tick should pass, height should fail
 
       final provenTx = mockCI.proveAndValidate(testTx, ctx);
 
@@ -396,9 +325,8 @@ main() {
         }
       }
 
-      final validQuivrErrs = errors.length == 1 &&
-          errors.first.checkForError(
-              ValidationErrorType.evaluationAuthorizationFailure);
+      final validQuivrErrs =
+          errors.length == 1 && errors.first.checkForError(ValidationErrorType.evaluationAuthorizationFailure);
 
       final err = errors.first as ValidationError;
       final validThreshold = err.proposition == testProposition.revealed &&
@@ -409,24 +337,19 @@ main() {
       expect(validLength && validQuivrErrs && validThreshold, true);
     });
 
-    test(
-        'proveAndValidate: Transaction with And Proposition > If one inner proof fails, the And proof fails',
+    test('proveAndValidate: Transaction with And Proposition > If one inner proof fails, the And proof fails',
         () async {
       final testProposition =
-          Proposer.andProposer(mockTickProposition, mockHeightProposition)
-              .withResult((p) => Challenge(revealed: p));
+          Proposer.andProposer(mockTickProposition, mockHeightProposition).withResult((p) => Challenge(revealed: p));
       final testTx = txFull.rebuild((p0) {
         p0.inputs.update([
           inputFull.rebuild((p1) => p1.attestation = Attestation(
               predicate: Attestation_Predicate(
-                  lock: Lock_Predicate(
-                      challenges: [testProposition], threshold: 1),
-                  responses: [Proof()])))
+                  lock: Lock_Predicate(challenges: [testProposition], threshold: 1), responses: [Proof()])))
         ]);
       });
 
-      final ctx = Context(
-          testTx, 50.toInt64, {}); // Tick should pass, height should fail
+      final ctx = Context(testTx, 50.toInt64, {}); // Tick should pass, height should fail
       final provenTx = mockCI.proveAndValidate(testTx, ctx);
 
       final validationErrs = provenTx.getLeftOrElse([]);
@@ -441,37 +364,29 @@ main() {
         }
       }
 
-      final validQuivrErrs = errors.length == 1 &&
-          errors.first.checkForError(
-              ValidationErrorType.evaluationAuthorizationFailure);
+      final validQuivrErrs =
+          errors.length == 1 && errors.first.checkForError(ValidationErrorType.evaluationAuthorizationFailure);
 
       final err = errors.first as ValidationError;
 
       // If an AND proposition fails, the error of the failed inner proof is returned. In this case it is the Height
-      final validAnd = err.proposition == mockHeightProposition &&
-          err.proof!.hasHeightRange();
+      final validAnd = err.proposition == mockHeightProposition && err.proof!.hasHeightRange();
 
       expect(validLength && validQuivrErrs && validAnd, true);
     });
 
-    test(
-        'proveAndValidate: Transaction with Or Proposition > If both inner proofs fail, the Or proof fails',
-        () async {
+    test('proveAndValidate: Transaction with Or Proposition > If both inner proofs fail, the Or proof fails', () async {
       final testProposition =
-          Proposer.orProposer(mockTickProposition, mockHeightProposition)
-              .withResult((p) => Challenge(revealed: p));
+          Proposer.orProposer(mockTickProposition, mockHeightProposition).withResult((p) => Challenge(revealed: p));
       final testTx = txFull.rebuild((p0) {
         p0.inputs.update([
           inputFull.rebuild((p1) => p1.attestation = Attestation(
               predicate: Attestation_Predicate(
-                  lock: Lock_Predicate(
-                      challenges: [testProposition], threshold: 1),
-                  responses: [Proof()])))
+                  lock: Lock_Predicate(challenges: [testProposition], threshold: 1), responses: [Proof()])))
         ]);
       });
 
-      final ctx =
-          Context(testTx, 500.toInt64, {}); // Tick and height should fail
+      final ctx = Context(testTx, 500.toInt64, {}); // Tick and height should fail
 
       final provenTx = mockCI.proveAndValidate(testTx, ctx);
 
@@ -481,15 +396,13 @@ main() {
       final List<quivr.QuivrRunTimeError> errors = [];
       final f = validationErrs.first;
       if (f is TransactionAuthorizationError) {
-        if (f
-            .checkType(TransactionAuthorizationErrorType.authorizationFailed)) {
+        if (f.checkType(TransactionAuthorizationErrorType.authorizationFailed)) {
           errors.update(f.errors);
         }
       }
 
-      final validQuivrErrs = errors.length == 1 &&
-          errors.first.checkForError(
-              ValidationErrorType.evaluationAuthorizationFailure);
+      final validQuivrErrs =
+          errors.length == 1 && errors.first.checkForError(ValidationErrorType.evaluationAuthorizationFailure);
 
       final err = errors.first as ValidationError;
       final validOr = err.proposition == testProposition.revealed &&

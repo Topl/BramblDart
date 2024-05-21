@@ -106,9 +106,7 @@ class SecretKey extends SigningKey with ExtendedEd25519Spec {
 
   @override
   int get hashCode =>
-      const ListEquality().hash(leftKey) ^
-      const ListEquality().hash(rightKey) ^
-      const ListEquality().hash(chainCode);
+      const ListEquality().hash(leftKey) ^ const ListEquality().hash(rightKey) ^ const ListEquality().hash(chainCode);
 }
 
 @immutable
@@ -134,8 +132,7 @@ class PublicKey extends VerificationKey with ExtendedEd25519Spec {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is PublicKey && vk == other.vk && chainCode.equals(other.chainCode);
+      identical(this, other) || other is PublicKey && vk == other.vk && chainCode.equals(other.chainCode);
 
   @override
   // ignore: inference_failure_on_instance_creation

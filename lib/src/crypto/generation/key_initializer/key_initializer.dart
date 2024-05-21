@@ -21,8 +21,6 @@ abstract class KeyInitializer<SK extends SigningKey> {
   ///
   /// [mnemonicString] is the string used to create the key in combination with
   /// the [language] and optional [password]
-  Future<Either<InitializationFailure, SK>> fromMnemonicString(
-      String mnemonicString,
-      {Language language = const English(),
-      String? password});
+  Future<Either<InitializationFailure, SK>> fromMnemonicString(String mnemonicString,
+      {Language language = const English(), String? password});
 }

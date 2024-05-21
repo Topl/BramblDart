@@ -8,8 +8,7 @@ import '../runtime/quivr_runtime_error.dart';
 typedef QuivrResult<T> = Either<QuivrRunTimeError, T>;
 
 /// provides a simple instance of [QuivrResult] for the [QuivrRunTimeError] [ValidationError.evaluationAuthorizationFailure]
-Either<QuivrRunTimeError, T> quivrEvaluationAuthorizationFailure<T>(
-    {dynamic proof, dynamic proposition}) {
+Either<QuivrRunTimeError, T> quivrEvaluationAuthorizationFailure<T>({dynamic proof, dynamic proposition}) {
   return QuivrResult<T>.left(ValidationError.evaluationAuthorizationFailure(
       proof: proofFromType(proof),
       proposition: propositionFromType(proposition),

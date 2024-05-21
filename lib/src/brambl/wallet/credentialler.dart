@@ -50,16 +50,13 @@ abstract class Credentialler {
   /// [ctx] - Context to validate the transaction in.
   ///
   /// Returns the proven version of the input if valid. Else the validation errors.
-  Either<List<ValidationError>, IoTransaction> proveAndValidate(
-      IoTransaction unprovenTx, Context ctx);
+  Either<List<ValidationError>, IoTransaction> proveAndValidate(IoTransaction unprovenTx, Context ctx);
 }
 
 class CredentiallerInterpreter implements Credentialler {
   CredentiallerInterpreter(this.walletApi, this.walletStateApi, this.mainKey)
-      : assert(mainKey.vk.hasExtendedEd25519(),
-            "mainKey must be an extended Ed25519 key"),
-        assert(mainKey.sk.hasExtendedEd25519(),
-            "mainKey must be an extended Ed25519 key");
+      : assert(mainKey.vk.hasExtendedEd25519(), "mainKey must be an extended Ed25519 key"),
+        assert(mainKey.sk.hasExtendedEd25519(), "mainKey must be an extended Ed25519 key");
 
   WalletApi walletApi;
   WalletStateAlgebra walletStateApi;
@@ -81,14 +78,8 @@ class CredentiallerInterpreter implements Credentialler {
 
   @override
   List<ValidationError> validate(IoTransaction tx, Context ctx) {
-    final syntaxErrs = TransactionSyntaxInterpreter.validate(tx)
-        .swap()
-        .map((p0) => p0.toList())
-        .getOrElse([]);
-    final authErrs = TransactionAuthorizationInterpreter.validate(ctx, tx)
-        .swap()
-        .map((p0) => [p0])
-        .getOrElse([]);
+    final syntaxErrs = TransactionSyntaxInterpreter.validate(tx).swap().map((p0) => p0.toList()).getOrElse([]);
+    final authErrs = TransactionAuthorizationInterpreter.validate(ctx, tx).swap().map((p0) => [p0]).getOrElse([]);
     return [
       ...syntaxErrs,
       ...authErrs, // TODO(ultimaterex): figure out why this is failing for ever proof
@@ -96,15 +87,13 @@ class CredentiallerInterpreter implements Credentialler {
   }
 
   @override
-  Either<List<ValidationError>, IoTransaction> proveAndValidate(
-      IoTransaction unprovenTx, Context ctx) {
+  Either<List<ValidationError>, IoTransaction> proveAndValidate(IoTransaction unprovenTx, Context ctx) {
     final provenTx = prove(unprovenTx);
     final vErrs = validate(provenTx, ctx);
     return vErrs.isEmpty ? Either.right(provenTx) : Either.left(vErrs);
   }
 
-  SpentTransactionOutput proveInput(
-      SpentTransactionOutput input, SignableBytes msg) {
+  SpentTransactionOutput proveInput(SpentTransactionOutput input, SignableBytes msg) {
     Attestation attestation = input.attestation.deepCopy();
 
     switch (attestation.whichValue()) {
@@ -120,14 +109,11 @@ class CredentiallerInterpreter implements Credentialler {
           final proof = getProof(msg, pair.$1, pair.$2);
           newProofs.add(proof);
         }
-        attestation = Attestation(
-            predicate:
-                Attestation_Predicate(lock: pred.lock, responses: newProofs));
+        attestation = Attestation(predicate: Attestation_Predicate(lock: pred.lock, responses: newProofs));
       default:
         throw UnimplementedError();
     }
-    return SpentTransactionOutput(
-        address: input.address, attestation: attestation, value: input.value);
+    return SpentTransactionOutput(address: input.address, attestation: attestation, value: input.value);
   }
 
   Proof getProof(SignableBytes msg, Proposition prop, Proof existingProof) {
@@ -179,8 +165,7 @@ class CredentiallerInterpreter implements Credentialler {
     }
   }
 
-  Proof getDigestProof(
-      Proof existingProof, SignableBytes msg, Proposition_Digest digest) {
+  Proof getDigestProof(Proof existingProof, SignableBytes msg, Proposition_Digest digest) {
     if (existingProof.hasDigest()) {
       return existingProof;
     } else {
@@ -230,14 +215,10 @@ class CredentiallerInterpreter implements Credentialler {
   /// @param idx     Indices for which the proof's secret data can be obtained from
   /// @param msg     Signable bytes to bind to the proof
   /// @return The Proof
-  Proof getSignatureProofForRoutine(
-      String routine, Indices idx, SignableBytes msg) {
+  Proof getSignatureProofForRoutine(String routine, Indices idx, SignableBytes msg) {
     if (routine == "ExtendedEd25519") {
-      final kp = ProtoConverters.keyPairFromProto(
-          walletApi.deriveChildKeys(mainKey, idx));
-      final witness = Witness(
-          value:
-              ExtendedEd25519().sign(kp.signingKey, msg.value.toUint8List()));
+      final kp = ProtoConverters.keyPairFromProto(walletApi.deriveChildKeys(mainKey, idx));
+      final witness = Witness(value: ExtendedEd25519().sign(kp.signingKey, msg.value.toUint8List()));
       return Prover.signatureProver(witness, msg);
     } else {
       return Proof();
@@ -252,10 +233,8 @@ class CredentiallerInterpreter implements Credentialler {
   /// @param msg           Signable bytes to bind to the proof
   /// @param innerProposition  The inner Proposition contained in the Not Proposition to prove
   /// @return The Proof
-  Proof getNotProof(
-      Proof existingProof, SignableBytes msg, Proposition innerProposition) {
-    final Proof innerProof =
-        existingProof.hasNot() ? existingProof.not.proof : Proof();
+  Proof getNotProof(Proof existingProof, SignableBytes msg, Proposition innerProposition) {
+    final Proof innerProof = existingProof.hasNot() ? existingProof.not.proof : Proof();
 
     final Proof proof = getProof(msg, innerProposition, innerProof);
     return Prover.notProver(proof, msg);
@@ -327,8 +306,7 @@ class CredentiallerInterpreter implements Credentialler {
   /// @param msg               Signable bytes to bind to the proof
   /// @param innerPropositions Inner Propositions contained in the Threshold Proposition to prove
   /// @return The Proof
-  Proof getThresholdProof(Proof existingProof, SignableBytes msg,
-      List<Proposition> innerPropositions) {
+  Proof getThresholdProof(Proof existingProof, SignableBytes msg, List<Proposition> innerPropositions) {
     final List<Proof> responses;
     if (existingProof.hasThreshold()) {
       responses = existingProof.threshold.responses;

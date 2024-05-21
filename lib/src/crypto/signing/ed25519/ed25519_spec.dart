@@ -26,9 +26,7 @@ class SecretKey extends SigningKey with Ed25519Spec {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SecretKey &&
-          runtimeType == other.runtimeType &&
-          const ListEquality().equals(bytes, other.bytes);
+      other is SecretKey && runtimeType == other.runtimeType && const ListEquality().equals(bytes, other.bytes);
 
   @override
   int get hashCode => const ListEquality().hash(bytes);
@@ -48,9 +46,7 @@ class PublicKey extends VerificationKey with Ed25519Spec {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PublicKey &&
-          runtimeType == other.runtimeType &&
-          const ListEquality().equals(bytes, other.bytes);
+      other is PublicKey && runtimeType == other.runtimeType && const ListEquality().equals(bytes, other.bytes);
 
   @override
   int get hashCode => const ListEquality().hash(bytes);

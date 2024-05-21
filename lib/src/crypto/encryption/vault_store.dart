@@ -36,10 +36,7 @@ class VaultStore {
 
   @override
   int get hashCode =>
-      kdf.hashCode ^
-      cipher.hashCode ^
-      const ListEquality().hash(cipherText) ^
-      const ListEquality().hash(mac);
+      kdf.hashCode ^ cipher.hashCode ^ const ListEquality().hash(cipherText) ^ const ListEquality().hash(mac);
 
   /// Create a copy of the VaultStore with the provided parameters.
   VaultStore copyWith({

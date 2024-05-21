@@ -45,8 +45,7 @@ class MockWalletStateApi extends WalletStateAlgebra {
   }
 
   @override
-  Indices? getCurrentIndicesForFunds(
-      String fellowship, String contract, int? someState) {
+  Indices? getCurrentIndicesForFunds(String fellowship, String contract, int? someState) {
     throw UnimplementedError();
   }
 
@@ -56,8 +55,7 @@ class MockWalletStateApi extends WalletStateAlgebra {
   }
 
   @override
-  Indices? getIndicesBySignature(
-      Proposition_DigitalSignature signatureProposition) {
+  Indices? getIndicesBySignature(Proposition_DigitalSignature signatureProposition) {
     return propEvidenceToIdx[signatureProposition.sizedEvidence];
   }
 
@@ -87,8 +85,8 @@ class MockWalletStateApi extends WalletStateAlgebra {
   }
 
   @override
-  Future<void> updateWalletState(String lockPredicate, String lockAddress,
-      String? routine, String? vk, Indices indices) {
+  Future<void> updateWalletState(
+      String lockPredicate, String lockAddress, String? routine, String? vk, Indices indices) {
     throw UnimplementedError();
   }
 
@@ -98,8 +96,7 @@ class MockWalletStateApi extends WalletStateAlgebra {
   }
 
   @override
-  Either<String, Indices> validateCurrentIndicesForFunds(
-      String fellowship, String contract, int? someState) {
+  Either<String, Indices> validateCurrentIndicesForFunds(String fellowship, String contract, int? someState) {
     throw UnimplementedError();
   }
 }
