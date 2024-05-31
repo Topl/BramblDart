@@ -1,3 +1,4 @@
+import 'package:brambldart/src/crypto/crypto.dart';
 import 'package:brambldart/src/crypto/generation/mnemonic/entropy.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
@@ -29,14 +30,25 @@ main() {
     });
 
     test('Entropy can be generated and results in valid mnemonic strings', () async {
-      for (var i = 0; i < 10; i++) {
-        final mnemonicSize = Generators.getGeneratedMnemonicSize;
+    for (final mnemonicSize in Generators.mnemonicSizes) {
         final entropy1 = Entropy.generate(size: mnemonicSize);
         final entropy2Res = await Entropy.toMnemonicString(entropy1);
         final entropy2String = entropy2Res.right!.join(" ");
         final entropy2 = await Entropy.fromMnemonicString(entropy2String);
 
         expect(const ListEquality().equals(entropy1.value, entropy2.right!.value), isTrue);
+      }
+    });
+
+    test(
+        'Entropy can be generated, transformed to a mnemonic phrase string, and converted back to the original entropy value',
+        () async {
+      for (final mnemonicSize in Generators.mnemonicSizes) {
+        final entropy1 = Entropy.generate(size: mnemonicSize);
+        final entropy2String = await Entropy.toMnemonicString(entropy1);
+        final entropy2 = await Entropy.fromMnemonicString(entropy2String.right!.join(' '));
+
+        expect(entropy1.value, equals(entropy2.right!.value));
       }
     });
 

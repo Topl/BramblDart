@@ -50,12 +50,14 @@ class Generators {
     return chars.join();
   }
 
-  /// Generate a random mnemonic size
-  static MnemonicSize get getGeneratedMnemonicSize => [
+  static final mnemonicSizes = [
         const MnemonicSize.words12(),
         const MnemonicSize.words15(),
         const MnemonicSize.words18(),
         const MnemonicSize.words21(),
         const MnemonicSize.words24(),
-      ][_random.nextInt(5)];
+      ];
+
+  /// Generate a random mnemonic size
+  static MnemonicSize get getGeneratedMnemonicSize => mnemonicSizes[_random.nextInt(5)];
 }
