@@ -5,6 +5,7 @@ import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_ou
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 import '../../../brambldart.dart';
+import '../../crypto/signing/eddsa/ec.dart';
 
 // Long -> longSignable -> longSignableEvidence -> longSignableEvidenceId
 // Long -> longSignable -> longSignableEvidence -> longSingableEvidenceSignable -> longSingableEvidenceSignableEvidence
@@ -42,11 +43,24 @@ class ContainsSignable {
       }
     }
 
+    final x = iotx.rebuild((p0) {
+      p0.inputs.clear();
+      p0.inputs.addAll(iotx.inputs.map(stripInput));
+    });
+
     // copies then freezes not to impact the original object
-    final st = iotx.deepCopy()..freeze();
-    return ContainsSignable.immutable(
-        ContainsImmutable.apply(st.rebuild((p0) => p0.inputs.update(iotx.inputs.map(stripInput).toList())))
-            .immutableBytes);
+    final updatedIotx = iotx.rebuild((p0) {
+      p0.inputs.clear();
+      final inp = iotx.inputs.map(stripInput);
+      p0.inputs.addAll(inp);
+    });
+
+    return ContainsSignable.immutable(updatedIotx.immutable);
+
+    // final st = iotx.deepCopy()..freeze();
+    // return ContainsSignable.immutable(
+    //     ContainsImmutable.apply(st.rebuild((p0) => p0.inputs.update(iotx.inputs.map(stripInput).toList())))
+    //         .immutableBytes);
   }
   final SignableBytes signableBytes;
 }

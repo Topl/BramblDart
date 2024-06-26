@@ -1,5 +1,4 @@
-import 'package:brambldart/src/brambl/common/contains_immutable.dart';
-import 'package:brambldart/src/brambl/common/contains_signable.dart';
+import 'package:brambldart/brambldart.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:test/test.dart';
 import 'package:topl_common/proto/brambl/models/box/attestation.pb.dart';
@@ -22,8 +21,13 @@ void main() {
       final noProofs = withProofs;
 
       final signableFull = withProofs.signable.value;
+
       final immutableFull = withProofs.immutable.value;
       final immutableNoProofs = noProofs.immutable.value;
+
+      print(immutableFull.length);
+      print(immutableNoProofs.length);
+
       final proofsImmutableSize = immutableFull.length - immutableNoProofs.length;
       // The only difference between immutableFull and immutableEmpty is the Proofs
       // TODO(ultimaterex): ask about this test

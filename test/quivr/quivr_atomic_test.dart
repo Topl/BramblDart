@@ -30,7 +30,8 @@ main() {
 
     test("A tick proposition must evaluate to true when tick is in range", () {
       final tickProposition = Proposer.tickProposer(Int64(900), Int64(1000));
-      final tickerProverProof = Prover.tickProver(MockHelpers.signableBytes);
+      final sb = MockHelpers.signableBytes;
+      final tickerProverProof = Prover.tickProver(sb);
 
       final result = Verifier.verify(
           tickProposition, tickerProverProof, MockHelpers.dynamicContext(tickProposition, tickerProverProof));

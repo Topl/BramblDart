@@ -376,6 +376,9 @@ class WalletApi extends WalletApiDefinition {
   }
 }
 
+
+
+
 class NewWalletResult {
   NewWalletResult({required this.mnemonic, required this.mainKeyVaultStore});
   final List<String> mnemonic;

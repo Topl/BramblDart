@@ -98,6 +98,8 @@ main() {
           isTrue);
     });
 
+    /// TODO: missing proveAndValidate: Single Input Transaction with Digest Propositions (Blake2b256 and Sha256)
+
     // TODO(ultimaterex): Fix this test
 
     test('validate: Single Input Transaction with Attestation.Predicate > Validation successful', () async {
