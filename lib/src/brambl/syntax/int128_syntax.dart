@@ -9,9 +9,37 @@ extension Int128AsBigInt on Int128 {
 }
 
 extension BigIntAsInt128 on BigInt {
-  Int128 toInt128() => Int128(value: toUint8List());
+  Int128 toInt128() => Int128(value: toTwosComplement());
 }
 
 extension LongAsInt128 on int {
   Int128 toInt128() => Int128(value: toBytes);
+}
+
+extension Int128Operations on Int128 {
+  Int128 operator +(Int128 other) {
+    final result = toBigInt() + other.toBigInt();
+    return result.toInt128();
+  }
+
+  Int128 operator -(Int128 other) {
+    final result = toBigInt() - other.toBigInt();
+    return result.toInt128();
+  }
+
+  bool operator >(Int128 other) {
+    return toBigInt() > other.toBigInt();
+  }
+
+  bool operator <(Int128 other) {
+    return toBigInt() < other.toBigInt();
+  }
+
+  bool operator >=(Int128 other) {
+    return toBigInt() >= other.toBigInt();
+  }
+
+  bool operator <=(Int128 other) {
+    return toBigInt() <= other.toBigInt();
+  }
 }

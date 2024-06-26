@@ -19,8 +19,7 @@ import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_ou
 import 'package:topl_common/proto/brambl/models/transaction/unspent_transaction_output.pb.dart';
 import 'package:topl_common/proto/consensus/models/operational_certificate.pb.dart';
 import 'package:topl_common/proto/consensus/models/staking.pb.dart';
-import 'package:topl_common/proto/google/protobuf/duration.pb.dart' as pb_d
-    show Duration;
+import 'package:topl_common/proto/google/protobuf/duration.pb.dart' as pb_d show Duration;
 import 'package:topl_common/proto/google/protobuf/struct.pb.dart' as str;
 import 'package:topl_common/proto/node/models/ratio.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
@@ -42,16 +41,13 @@ class ContainsImmutable {
   /// handler function is ideally a Contains immutable factory method.
   ///
   /// Processes any list, potentially funky problems with nested lists.
-  factory ContainsImmutable.list(List list,
-      {ContainsImmutable Function(dynamic)? handler}) {
+  factory ContainsImmutable.list(List list, {ContainsImmutable Function(dynamic)? handler}) {
     return list.asMap().entries.fold(
           ContainsImmutable.empty(),
           (acc, entry) =>
               acc +
               ContainsImmutable.int(entry.key) +
-              (handler == null
-                  ? ContainsImmutable.apply(entry.value)
-                  : handler(entry.value)),
+              (handler == null ? ContainsImmutable.apply(entry.value) : handler(entry.value)),
         );
   }
 
@@ -72,16 +68,13 @@ class ContainsImmutable {
   factory ContainsImmutable.int(int i) => i.toBytes.immutable;
 
   /// Creates an ContainsImmutable object from a [String]
-  factory ContainsImmutable.string(String string) =>
-      string.toUtf8Uint8List().immutable;
+  factory ContainsImmutable.string(String string) => string.toUtf8Uint8List().immutable;
 
   /// Creates an ContainsImmutable object from a [Uint8List]
-  factory ContainsImmutable.struct(str.Struct struct) =>
-      struct.writeToBuffer().immutable;
+  factory ContainsImmutable.struct(str.Struct struct) => struct.writeToBuffer().immutable;
 
   /// Wrapper object for ByteString
-  factory ContainsImmutable.byteString(ByteString byteString) =>
-      byteString.bytes.immutable;
+  factory ContainsImmutable.byteString(ByteString byteString) => byteString.bytes.immutable;
 
   /// Creates an [ContainsImmutable] from a [Int64]
   factory ContainsImmutable.int64(Int64 i) => i.toBytes().immutable;
@@ -90,8 +83,7 @@ class ContainsImmutable {
   factory ContainsImmutable.int128(Int128 i) => i.value.immutable;
 
   /// Ensures an [ImmutableBytes] from a nullable [ContainsImmutable]
-  factory ContainsImmutable.nullable(ContainsImmutable? nullable) =>
-      nullable ?? [0xff].immutable;
+  factory ContainsImmutable.nullable(ContainsImmutable? nullable) => nullable ?? [0xff].immutable;
 
   /// Ensures an [ImmutableBytes] from a optional [ContainsImmutable]
   factory ContainsImmutable.option(Option<ContainsImmutable> option) =>
@@ -108,8 +100,7 @@ class ContainsImmutable {
     if (vk.hasEd25519()) {
       return ContainsImmutable.ed25519VerificationKey(vk.ed25519);
     } else if (vk.hasExtendedEd25519()) {
-      return ContainsImmutable.extendedEd25519VerificationKey(
-          vk.extendedEd25519);
+      return ContainsImmutable.extendedEd25519VerificationKey(vk.extendedEd25519);
     } else {
       apply(null);
       throw Exception('Invalid VerificationKey type ${vk.runtimeType}');
@@ -117,13 +108,10 @@ class ContainsImmutable {
   }
 
   /// Creates an [ImmutableBytes] from a [VerificationKey_Ed25519Vk]
-  factory ContainsImmutable.ed25519VerificationKey(
-          VerificationKey_Ed25519Vk vk) =>
-      vk.value.immutable;
+  factory ContainsImmutable.ed25519VerificationKey(VerificationKey_Ed25519Vk vk) => vk.value.immutable;
 
   /// Creates an [ImmutableBytes] from a [VerificationKey_ExtendedEd25519Vk]
-  factory ContainsImmutable.extendedEd25519VerificationKey(
-          VerificationKey_ExtendedEd25519Vk vkey) =>
+  factory ContainsImmutable.extendedEd25519VerificationKey(VerificationKey_ExtendedEd25519Vk vkey) =>
       vkey.vk.value.immutable + vkey.chainCode.immutable;
 
   /// Creates an [ImmutableBytes] from a [Witness]
@@ -150,21 +138,14 @@ class ContainsImmutable {
     }
   }
 
-  factory ContainsImmutable.eonDatum(Datum_Eon eon) =>
-      ContainsImmutable.eonEvent(eon.event);
-  factory ContainsImmutable.eraDatum(Datum_Era era) =>
-      ContainsImmutable.eraEvent(era.event);
-  factory ContainsImmutable.epochDatum(Datum_Epoch epoch) =>
-      ContainsImmutable.epochEvent(epoch.event);
-  factory ContainsImmutable.headerDatum(Datum_Header header) =>
-      ContainsImmutable.headerEvent(header.event);
-  factory ContainsImmutable.ioTransactionDatum(
-          Datum_IoTransaction ioTransaction) =>
+  factory ContainsImmutable.eonDatum(Datum_Eon eon) => ContainsImmutable.eonEvent(eon.event);
+  factory ContainsImmutable.eraDatum(Datum_Era era) => ContainsImmutable.eraEvent(era.event);
+  factory ContainsImmutable.epochDatum(Datum_Epoch epoch) => ContainsImmutable.epochEvent(epoch.event);
+  factory ContainsImmutable.headerDatum(Datum_Header header) => ContainsImmutable.headerEvent(header.event);
+  factory ContainsImmutable.ioTransactionDatum(Datum_IoTransaction ioTransaction) =>
       ContainsImmutable.iotxEventImmutable(ioTransaction.event);
-  factory ContainsImmutable.groupPolicyDatum(Datum_GroupPolicy gp) =>
-      ContainsImmutable.groupPolicyEvent(gp.event);
-  factory ContainsImmutable.seriesPolicyDatum(Datum_SeriesPolicy sp) =>
-      ContainsImmutable.seriesPolicyEvent(sp.event);
+  factory ContainsImmutable.groupPolicyDatum(Datum_GroupPolicy gp) => ContainsImmutable.groupPolicyEvent(gp.event);
+  factory ContainsImmutable.seriesPolicyDatum(Datum_SeriesPolicy sp) => ContainsImmutable.seriesPolicyEvent(sp.event);
 
   factory ContainsImmutable.ioTransaction(IoTransaction iotx) =>
       ContainsImmutable.list(iotx.inputs) +
@@ -186,8 +167,7 @@ class ContainsImmutable {
       ContainsImmutable.list(iotx.seriesPolicies);
 
   factory ContainsImmutable.iotxSchedule(Schedule schedule) =>
-      ContainsImmutable.int64(schedule.min) +
-      ContainsImmutable.int64(schedule.max);
+      ContainsImmutable.int64(schedule.min) + ContainsImmutable.int64(schedule.max);
 
   factory ContainsImmutable.spentOutput(SpentTransactionOutput stxo) =>
       ContainsImmutable.transactionOutputAddress(stxo.address) +
@@ -195,11 +175,9 @@ class ContainsImmutable {
       ContainsImmutable.value(stxo.value);
 
   factory ContainsImmutable.unspentOutput(UnspentTransactionOutput utxo) =>
-      ContainsImmutable.lockAddress(utxo.address) +
-      ContainsImmutable.value(utxo.value);
+      ContainsImmutable.lockAddress(utxo.address) + ContainsImmutable.value(utxo.value);
 
-  factory ContainsImmutable.box(Box box) =>
-      ContainsImmutable.lock(box.lock) + ContainsImmutable.value(box.value);
+  factory ContainsImmutable.box(Box box) => ContainsImmutable.lock(box.lock) + ContainsImmutable.value(box.value);
 
   factory ContainsImmutable.value(Value v) {
     switch (v.whichValue()) {
@@ -220,12 +198,10 @@ class ContainsImmutable {
     }
   }
 
-  factory ContainsImmutable.lvlValue(Value_LVL v) =>
-      ContainsImmutable.int128(v.quantity);
+  factory ContainsImmutable.lvlValue(Value_LVL v) => ContainsImmutable.int128(v.quantity);
 
   factory ContainsImmutable.toplValue(Value_TOPL v) =>
-      ContainsImmutable.int128(v.quantity) +
-      ContainsImmutable.stakingRegistration(v.registration);
+      ContainsImmutable.int128(v.quantity) + ContainsImmutable.stakingRegistration(v.registration);
 
   factory ContainsImmutable.assetValue(Value_Asset asset) =>
       ContainsImmutable.groupIdentifier(asset.groupId) +
@@ -251,8 +227,7 @@ class ContainsImmutable {
       ContainsImmutable.seriesIdValue(vg.fixedSeries);
 
   factory ContainsImmutable.ratio(Ratio r) =>
-      ContainsImmutable.int128(r.numerator) +
-      ContainsImmutable.int128(r.denominator);
+      ContainsImmutable.int128(r.numerator) + ContainsImmutable.int128(r.denominator);
 
   factory ContainsImmutable.duration(pb_d.Duration d) =>
       ContainsImmutable.int64(d.seconds) + ContainsImmutable.int(d.nanos);
@@ -271,26 +246,20 @@ class ContainsImmutable {
       up.kesKeyHours.value.immutable +
       up.kesKeyMinutes.value.immutable;
 
-  factory ContainsImmutable.fungibility(FungibilityType f) =>
-      ContainsImmutable.int(f.value);
+  factory ContainsImmutable.fungibility(FungibilityType f) => ContainsImmutable.int(f.value);
 
-  factory ContainsImmutable.quantityDescriptor(QuantityDescriptorType qdt) =>
-      ContainsImmutable.int(qdt.value);
+  factory ContainsImmutable.quantityDescriptor(QuantityDescriptorType qdt) => ContainsImmutable.int(qdt.value);
 
-  factory ContainsImmutable.stakingAddress(StakingAddress v) =>
-      v.value.immutable;
+  factory ContainsImmutable.stakingAddress(StakingAddress v) => v.value.immutable;
 
-  factory ContainsImmutable.evidence(Evidence e) =>
-      ContainsImmutable.digest(e.digest);
+  factory ContainsImmutable.evidence(Evidence e) => ContainsImmutable.digest(e.digest);
 
   factory ContainsImmutable.digest(Digest d) => d.value.immutable;
 
-  factory ContainsImmutable.preimage(Preimage pre) =>
-      pre.input.immutable + pre.salt.immutable;
+  factory ContainsImmutable.preimage(Preimage pre) => pre.input.immutable + pre.salt.immutable;
 
   factory ContainsImmutable.accumulatorRoot32Identifier(AccumulatorRootId id) =>
-      ContainsImmutable.string(Identifier.accumulatorRoot32) +
-      id.value.immutable;
+      ContainsImmutable.string(Identifier.accumulatorRoot32) + id.value.immutable;
 
   factory ContainsImmutable.boxLock32Identifier(LockId id) =>
       ContainsImmutable.string(Identifier.lock32) + id.value.immutable;
@@ -304,23 +273,18 @@ class ContainsImmutable {
   factory ContainsImmutable.seriesIdValue(SeriesId sid) =>
       ContainsImmutable.string(Tags.series32) + sid.value.immutable;
 
-  factory ContainsImmutable.transactionOutputAddress(
-          TransactionOutputAddress v) =>
+  factory ContainsImmutable.transactionOutputAddress(TransactionOutputAddress v) =>
       ContainsImmutable.int(v.network) +
       ContainsImmutable.int(v.ledger) +
       ContainsImmutable.int(v.index) +
       ContainsImmutable.transactionIdentifier(v.id);
 
   factory ContainsImmutable.lockAddress(LockAddress v) =>
-      ContainsImmutable.int(v.network) +
-      ContainsImmutable.int(v.ledger) +
-      ContainsImmutable.boxLock32Identifier(v.id);
+      ContainsImmutable.int(v.network) + ContainsImmutable.int(v.ledger) + ContainsImmutable.boxLock32Identifier(v.id);
 
   // TODO(ultimaterex): figure out why witness is List<List<Int>>
   factory ContainsImmutable.signatureKesSum(SignatureKesSum v) =>
-      v.verificationKey.immutable +
-      v.signature.immutable +
-      ContainsImmutable.list(v.witness);
+      v.verificationKey.immutable + v.signature.immutable + ContainsImmutable.list(v.witness);
 
   factory ContainsImmutable.signatureKesProduct(SignatureKesProduct v) =>
       ContainsImmutable.signatureKesSum(v.superSignature) +
@@ -328,16 +292,13 @@ class ContainsImmutable {
       v.subRoot.immutable;
 
   factory ContainsImmutable.stakingRegistration(StakingRegistration v) =>
-      ContainsImmutable.signatureKesProduct(v.signature) +
-      ContainsImmutable.stakingAddress(v.address);
+      ContainsImmutable.signatureKesProduct(v.signature) + ContainsImmutable.stakingAddress(v.address);
 
   factory ContainsImmutable.predicateLock(Lock_Predicate predicate) =>
-      ContainsImmutable.int(predicate.threshold) +
-      ContainsImmutable.list(predicate.challenges);
+      ContainsImmutable.int(predicate.threshold) + ContainsImmutable.list(predicate.challenges);
 
   factory ContainsImmutable.imageLock(Lock_Image image) =>
-      ContainsImmutable.int(image.threshold) +
-      ContainsImmutable.list(image.leaves);
+      ContainsImmutable.int(image.threshold) + ContainsImmutable.list(image.leaves);
 
   factory ContainsImmutable.commitmentLock(Lock_Commitment commitment) =>
       ContainsImmutable.int(commitment.threshold) +
@@ -357,18 +318,15 @@ class ContainsImmutable {
     }
   }
 
-  factory ContainsImmutable.predicateAttestation(
-          Attestation_Predicate attestation) =>
-      ContainsImmutable.predicateLock(attestation.lock) +
-      ContainsImmutable.list(attestation.responses);
+  factory ContainsImmutable.predicateAttestation(Attestation_Predicate attestation) =>
+      ContainsImmutable.predicateLock(attestation.lock) + ContainsImmutable.list(attestation.responses);
 
   factory ContainsImmutable.imageAttestation(Attestation_Image attestation) =>
       ContainsImmutable.imageLock(attestation.lock) +
       ContainsImmutable.list(attestation.known) +
       ContainsImmutable.list(attestation.responses);
 
-  factory ContainsImmutable.commitmentAttestation(
-          Attestation_Commitment attestation) =>
+  factory ContainsImmutable.commitmentAttestation(Attestation_Commitment attestation) =>
       ContainsImmutable.commitmentLock(attestation.lock) +
       ContainsImmutable.list(attestation.known) +
       ContainsImmutable.list(attestation.responses);
@@ -386,46 +344,34 @@ class ContainsImmutable {
     }
   }
 
-  factory ContainsImmutable.transactionInputAddressContains(
-          TransactionInputAddress address) =>
+  factory ContainsImmutable.transactionInputAddressContains(TransactionInputAddress address) =>
       ContainsImmutable.int(address.network) +
       ContainsImmutable.int(address.ledger) +
       ContainsImmutable.int(address.index) +
       ContainsImmutable.transactionIdentifier(address.id);
 
-  factory ContainsImmutable.previousPropositionChallengeContains(
-          Challenge_PreviousProposition p) =>
-      ContainsImmutable.transactionInputAddressContains(p.address) +
-      ContainsImmutable.int(p.index);
+  factory ContainsImmutable.previousPropositionChallengeContains(Challenge_PreviousProposition p) =>
+      ContainsImmutable.transactionInputAddressContains(p.address) + ContainsImmutable.int(p.index);
 
-  factory ContainsImmutable.challengeContains(Challenge c) =>
-      switch (c.whichProposition()) {
-        Challenge_Proposition.revealed =>
-          ContainsImmutable.proposition(c.revealed),
-        Challenge_Proposition.previous =>
-          ContainsImmutable.previousPropositionChallengeContains(c.previous),
-        Challenge_Proposition.notSet =>
-          throw Exception('Invalid Challenge proposition')
+  factory ContainsImmutable.challengeContains(Challenge c) => switch (c.whichProposition()) {
+        Challenge_Proposition.revealed => ContainsImmutable.proposition(c.revealed),
+        Challenge_Proposition.previous => ContainsImmutable.previousPropositionChallengeContains(c.previous),
+        Challenge_Proposition.notSet => throw Exception('Invalid Challenge proposition')
       };
 
   factory ContainsImmutable.eonEvent(Event_Eon event) =>
-      ContainsImmutable.int64(event.beginSlot) +
-      ContainsImmutable.int64(event.height);
+      ContainsImmutable.int64(event.beginSlot) + ContainsImmutable.int64(event.height);
 
   factory ContainsImmutable.eraEvent(Event_Era event) =>
-      ContainsImmutable.int64(event.beginSlot) +
-      ContainsImmutable.int64(event.height);
+      ContainsImmutable.int64(event.beginSlot) + ContainsImmutable.int64(event.height);
 
   factory ContainsImmutable.epochEvent(Event_Epoch event) =>
-      ContainsImmutable.int64(event.beginSlot) +
-      ContainsImmutable.int64(event.height);
+      ContainsImmutable.int64(event.beginSlot) + ContainsImmutable.int64(event.height);
 
-  factory ContainsImmutable.headerEvent(Event_Header event) =>
-      ContainsImmutable.int64(event.height);
+  factory ContainsImmutable.headerEvent(Event_Header event) => ContainsImmutable.int64(event.height);
 
   factory ContainsImmutable.iotxEventImmutable(Event_IoTransaction event) =>
-      ContainsImmutable.iotxSchedule(event.schedule) +
-      ContainsImmutable.small(event.metadata);
+      ContainsImmutable.iotxSchedule(event.schedule) + ContainsImmutable.small(event.metadata);
 
   factory ContainsImmutable.groupPolicyEvent(Event_GroupPolicy eg) =>
       ContainsImmutable.string(eg.label) +
@@ -439,29 +385,22 @@ class ContainsImmutable {
       ContainsImmutable.fungibility(es.fungibility) +
       ContainsImmutable.quantityDescriptor(es.quantityDescriptor);
 
-  factory ContainsImmutable.eventImmutable(Event event) =>
-      switch (event.whichValue()) {
+  factory ContainsImmutable.eventImmutable(Event event) => switch (event.whichValue()) {
         Event_Value.eon => ContainsImmutable.eonEvent(event.eon),
         Event_Value.era => ContainsImmutable.eraEvent(event.era),
         Event_Value.epoch => ContainsImmutable.epochEvent(event.epoch),
         Event_Value.header => ContainsImmutable.headerEvent(event.header),
-        Event_Value.ioTransaction =>
-          ContainsImmutable.iotxEventImmutable(event.ioTransaction),
-        Event_Value.groupPolicy =>
-          ContainsImmutable.groupPolicyEvent(event.groupPolicy),
-        Event_Value.seriesPolicy =>
-          ContainsImmutable.seriesPolicyEvent(event.seriesPolicy),
-        Event_Value.notSet =>
-          throw Exception('Invalid Event type ${event.runtimeType}')
+        Event_Value.ioTransaction => ContainsImmutable.iotxEventImmutable(event.ioTransaction),
+        Event_Value.groupPolicy => ContainsImmutable.groupPolicyEvent(event.groupPolicy),
+        Event_Value.seriesPolicy => ContainsImmutable.seriesPolicyEvent(event.seriesPolicy),
+        Event_Value.notSet => throw Exception('Invalid Event type ${event.runtimeType}')
       };
 
   factory ContainsImmutable.txBind(TxBind txBind) => txBind.value.immutable;
 
-  factory ContainsImmutable.locked(Proposition_Locked _) =>
-      ContainsImmutable.string(Tokens.locked);
+  factory ContainsImmutable.locked(Proposition_Locked _) => ContainsImmutable.string(Tokens.locked);
 
-  factory ContainsImmutable.lockedProof(Proof_Locked _) =>
-      ContainsImmutable.empty();
+  factory ContainsImmutable.lockedProof(Proof_Locked _) => ContainsImmutable.empty();
 
   factory ContainsImmutable.digestProposition(Proposition_Digest p) =>
       ContainsImmutable.string(Tokens.digest) +
@@ -469,8 +408,7 @@ class ContainsImmutable {
       ContainsImmutable.digest(p.digest);
 
   factory ContainsImmutable.digestProof(Proof_Digest p) =>
-      ContainsImmutable.txBind(p.transactionBind) +
-      ContainsImmutable.preimage(p.preimage);
+      ContainsImmutable.txBind(p.transactionBind) + ContainsImmutable.preimage(p.preimage);
 
   factory ContainsImmutable.signature(Proposition_DigitalSignature p) =>
       ContainsImmutable.string(Tokens.digitalSignature) +
@@ -478,8 +416,7 @@ class ContainsImmutable {
       ContainsImmutable.verificationKey(p.verificationKey);
 
   factory ContainsImmutable.signatureProof(Proof_DigitalSignature p) =>
-      ContainsImmutable.txBind(p.transactionBind) +
-      ContainsImmutable.witness(p.witness);
+      ContainsImmutable.txBind(p.transactionBind) + ContainsImmutable.witness(p.witness);
 
   factory ContainsImmutable.heightRange(Proposition_HeightRange p) =>
       ContainsImmutable.string(Tokens.heightRange) +
@@ -487,48 +424,38 @@ class ContainsImmutable {
       ContainsImmutable.int64(p.min) +
       ContainsImmutable.int64(p.max);
 
-  factory ContainsImmutable.heightRangeProof(Proof_HeightRange p) =>
-      ContainsImmutable.txBind(p.transactionBind);
+  factory ContainsImmutable.heightRangeProof(Proof_HeightRange p) => ContainsImmutable.txBind(p.transactionBind);
 
   factory ContainsImmutable.tickRange(Proposition_TickRange p) =>
-      ContainsImmutable.string(Tokens.tickRange) +
-      ContainsImmutable.int64(p.min) +
-      ContainsImmutable.int64(p.max);
+      ContainsImmutable.string(Tokens.tickRange) + ContainsImmutable.int64(p.min) + ContainsImmutable.int64(p.max);
 
-  factory ContainsImmutable.tickRangeProof(Proof_TickRange p) =>
-      ContainsImmutable.txBind(p.transactionBind);
+  factory ContainsImmutable.tickRangeProof(Proof_TickRange p) => ContainsImmutable.txBind(p.transactionBind);
 
   factory ContainsImmutable.exactMatch(Proposition_ExactMatch p) =>
-      ContainsImmutable.string(Tokens.exactMatch) +
-      ContainsImmutable.string(p.location) +
-      p.compareTo.immutable;
+      ContainsImmutable.string(Tokens.exactMatch) + ContainsImmutable.string(p.location) + p.compareTo.immutable;
 
-  factory ContainsImmutable.exactMatchProof(Proof_ExactMatch p) =>
-      ContainsImmutable.txBind(p.transactionBind);
+  factory ContainsImmutable.exactMatchProof(Proof_ExactMatch p) => ContainsImmutable.txBind(p.transactionBind);
 
   factory ContainsImmutable.lessThan(Proposition_LessThan p) =>
       ContainsImmutable.string(Tokens.lessThan) +
       ContainsImmutable.string(p.location) +
       ContainsImmutable.int128(p.compareTo);
 
-  factory ContainsImmutable.lessThanProof(Proof_LessThan p) =>
-      ContainsImmutable.txBind(p.transactionBind);
+  factory ContainsImmutable.lessThanProof(Proof_LessThan p) => ContainsImmutable.txBind(p.transactionBind);
 
   factory ContainsImmutable.greaterThan(Proposition_GreaterThan p) =>
       ContainsImmutable.string(Tokens.greaterThan) +
       ContainsImmutable.string(p.location) +
       ContainsImmutable.int128(p.compareTo);
 
-  factory ContainsImmutable.greaterThanProof(Proof_GreaterThan p) =>
-      ContainsImmutable.txBind(p.transactionBind);
+  factory ContainsImmutable.greaterThanProof(Proof_GreaterThan p) => ContainsImmutable.txBind(p.transactionBind);
 
   factory ContainsImmutable.equalTo(Proposition_EqualTo p) =>
       ContainsImmutable.string(Tokens.equalTo) +
       ContainsImmutable.string(p.location) +
       ContainsImmutable.int128(p.compareTo);
 
-  factory ContainsImmutable.equalToProof(Proof_EqualTo p) =>
-      ContainsImmutable.txBind(p.transactionBind);
+  factory ContainsImmutable.equalToProof(Proof_EqualTo p) => ContainsImmutable.txBind(p.transactionBind);
 
   factory ContainsImmutable.threshold(Proposition_Threshold p) =>
       ContainsImmutable.string(Tokens.threshold) +
@@ -536,16 +463,13 @@ class ContainsImmutable {
       ContainsImmutable.list(p.challenges);
 
   factory ContainsImmutable.thresholdProof(Proof_Threshold p) =>
-      ContainsImmutable.txBind(p.transactionBind) +
-      ContainsImmutable.list(p.responses);
+      ContainsImmutable.txBind(p.transactionBind) + ContainsImmutable.list(p.responses);
 
   factory ContainsImmutable.not(Proposition_Not p) =>
-      ContainsImmutable.string(Tokens.not) +
-      ContainsImmutable.proposition(p.proposition);
+      ContainsImmutable.string(Tokens.not) + ContainsImmutable.proposition(p.proposition);
 
   factory ContainsImmutable.notProof(Proof_Not p) =>
-      ContainsImmutable.txBind(p.transactionBind) +
-      ContainsImmutable.proof(p.proof);
+      ContainsImmutable.txBind(p.transactionBind) + ContainsImmutable.proof(p.proof);
 
   factory ContainsImmutable.and(Proposition_And p) =>
       ContainsImmutable.string(Tokens.and) +
@@ -553,9 +477,7 @@ class ContainsImmutable {
       ContainsImmutable.proposition(p.right);
 
   factory ContainsImmutable.andProof(Proof_And p) =>
-      ContainsImmutable.txBind(p.transactionBind) +
-      ContainsImmutable.proof(p.left) +
-      ContainsImmutable.proof(p.right);
+      ContainsImmutable.txBind(p.transactionBind) + ContainsImmutable.proof(p.left) + ContainsImmutable.proof(p.right);
 
   factory ContainsImmutable.or(Proposition_Or p) =>
       ContainsImmutable.string(Tokens.or) +
@@ -563,47 +485,34 @@ class ContainsImmutable {
       ContainsImmutable.proposition(p.right);
 
   factory ContainsImmutable.orProof(Proof_Or p) =>
-      ContainsImmutable.txBind(p.transactionBind) +
-      ContainsImmutable.proof(p.left) +
-      ContainsImmutable.proof(p.right);
+      ContainsImmutable.txBind(p.transactionBind) + ContainsImmutable.proof(p.left) + ContainsImmutable.proof(p.right);
 
-  factory ContainsImmutable.proposition(Proposition p) =>
-      switch (p.whichValue()) {
+  factory ContainsImmutable.proposition(Proposition p) => switch (p.whichValue()) {
         Proposition_Value.locked => ContainsImmutable.locked(p.locked),
-        Proposition_Value.digest =>
-          ContainsImmutable.digestProposition(p.digest),
-        Proposition_Value.digitalSignature =>
-          ContainsImmutable.signature(p.digitalSignature),
-        Proposition_Value.heightRange =>
-          ContainsImmutable.heightRange(p.heightRange),
+        Proposition_Value.digest => ContainsImmutable.digestProposition(p.digest),
+        Proposition_Value.digitalSignature => ContainsImmutable.signature(p.digitalSignature),
+        Proposition_Value.heightRange => ContainsImmutable.heightRange(p.heightRange),
         Proposition_Value.tickRange => ContainsImmutable.tickRange(p.tickRange),
-        Proposition_Value.exactMatch =>
-          ContainsImmutable.exactMatch(p.exactMatch),
+        Proposition_Value.exactMatch => ContainsImmutable.exactMatch(p.exactMatch),
         Proposition_Value.lessThan => ContainsImmutable.lessThan(p.lessThan),
-        Proposition_Value.greaterThan =>
-          ContainsImmutable.greaterThan(p.greaterThan),
+        Proposition_Value.greaterThan => ContainsImmutable.greaterThan(p.greaterThan),
         Proposition_Value.equalTo => ContainsImmutable.equalTo(p.equalTo),
         Proposition_Value.threshold => ContainsImmutable.threshold(p.threshold),
         Proposition_Value.not => ContainsImmutable.not(p.not),
         Proposition_Value.and => ContainsImmutable.and(p.and),
         Proposition_Value.or => ContainsImmutable.or(p.or),
-        Proposition_Value.notSet =>
-          throw Exception('Invalid Proposition type ${p.runtimeType}')
+        Proposition_Value.notSet => throw Exception('Invalid Proposition type ${p.runtimeType}')
       };
 
   factory ContainsImmutable.proof(Proof p) => switch (p.whichValue()) {
         Proof_Value.locked => ContainsImmutable.lockedProof(p.locked),
         Proof_Value.digest => ContainsImmutable.digestProof(p.digest),
-        Proof_Value.digitalSignature =>
-          ContainsImmutable.signatureProof(p.digitalSignature),
-        Proof_Value.heightRange =>
-          ContainsImmutable.heightRangeProof(p.heightRange),
+        Proof_Value.digitalSignature => ContainsImmutable.signatureProof(p.digitalSignature),
+        Proof_Value.heightRange => ContainsImmutable.heightRangeProof(p.heightRange),
         Proof_Value.tickRange => ContainsImmutable.tickRangeProof(p.tickRange),
-        Proof_Value.exactMatch =>
-          ContainsImmutable.exactMatchProof(p.exactMatch),
+        Proof_Value.exactMatch => ContainsImmutable.exactMatchProof(p.exactMatch),
         Proof_Value.lessThan => ContainsImmutable.lessThanProof(p.lessThan),
-        Proof_Value.greaterThan =>
-          ContainsImmutable.greaterThanProof(p.greaterThan),
+        Proof_Value.greaterThan => ContainsImmutable.greaterThanProof(p.greaterThan),
         Proof_Value.equalTo => ContainsImmutable.equalToProof(p.equalTo),
         Proof_Value.threshold => ContainsImmutable.thresholdProof(p.threshold),
         Proof_Value.not => ContainsImmutable.notProof(p.not),
@@ -860,13 +769,11 @@ class ContainsImmutable {
 }
 
 extension ImmutableByteExtensions on ImmutableBytes {
-  ImmutableBytes operator +(ImmutableBytes other) =>
-      ImmutableBytes(value: value + other.value);
+  ImmutableBytes operator +(ImmutableBytes other) => ImmutableBytes(value: value + other.value);
 }
 
 extension ContainsImmutableExtensions on ContainsImmutable {
-  ContainsImmutable operator +(ContainsImmutable other) =>
-      ContainsImmutable(immutableBytes + other.immutableBytes);
+  ContainsImmutable operator +(ContainsImmutable other) => ContainsImmutable(immutableBytes + other.immutableBytes);
 }
 
 extension ImmutableByteUint8ListExtensions on Uint8List {
@@ -895,6 +802,5 @@ extension ImmutableByteIntListExtensions on List<int> {
 
 extension IoTransactionContainsImmutableExtensions on IoTransaction {
   // ImmutableBytes get immutable => ContainsImmutable.ioTransaction(this).immutableBytes;
-  ImmutableBytes get immutable =>
-      ContainsImmutable.ioTransaction(this).immutableBytes;
+  ImmutableBytes get immutable => ContainsImmutable.ioTransaction(this).immutableBytes;
 }

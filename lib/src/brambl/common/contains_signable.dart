@@ -24,6 +24,7 @@ class ContainsSignable {
     return ContainsSignable(SignableBytes(value: bytes.value));
   }
 
+  
   factory ContainsSignable.ioTransaction(IoTransaction iotx) {
     /// Strips the proofs from a SpentTransactionOutput.
     /// This is needed because the proofs are not part of the transaction's signable bytes
@@ -42,18 +43,31 @@ class ContainsSignable {
       }
     }
 
+    // TODO: seems to be some issue with stripping  here
+    // final x = iotx.rebuild((p0) {
+    //   p0.inputs.clear();
+    //   p0.inputs.addAll(iotx.inputs.map(stripInput));
+    // });
+
     // copies then freezes not to impact the original object
-    final st = iotx.deepCopy()..freeze();
-    return ContainsSignable.immutable(ContainsImmutable.apply(st.rebuild(
-            (p0) => p0.inputs.update(iotx.inputs.map(stripInput).toList())))
-        .immutableBytes);
+    final updatedIotx = iotx.rebuild((p0) {
+      p0.inputs.clear();
+      final inp = iotx.inputs.map(stripInput);
+      p0.inputs.addAll(inp);
+    });
+
+    return ContainsSignable.immutable(updatedIotx.immutable);
+
+    // final st = iotx.deepCopy()..freeze();
+    // return ContainsSignable.immutable(
+    //     ContainsImmutable.apply(st.rebuild((p0) => p0.inputs.update(iotx.inputs.map(stripInput).toList())))
+    //         .immutableBytes);
   }
   final SignableBytes signableBytes;
 }
 
 extension IoTransactionContainsSignableExtensions on IoTransaction {
-  SignableBytes get signable =>
-      ContainsSignable.ioTransaction(this).signableBytes;
+  SignableBytes get signable => ContainsSignable.ioTransaction(this).signableBytes;
 }
 
 extension ImmutableBytesContainsSignableExtension on ImmutableBytes {

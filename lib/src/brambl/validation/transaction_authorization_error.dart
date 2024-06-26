@@ -8,18 +8,12 @@ import 'validation_error.dart';
 class TransactionAuthorizationError implements ValidationError {
   const TransactionAuthorizationError(this.type, this.errors);
 
-  factory TransactionAuthorizationError.authorizationFailed(
-          List<quivr.QuivrRunTimeError> errors) =>
-      TransactionAuthorizationError(
-          TransactionAuthorizationErrorType.authorizationFailed, errors);
-  factory TransactionAuthorizationError.contextual(
-          List<quivr.QuivrRunTimeError> errors) =>
-      TransactionAuthorizationError(
-          TransactionAuthorizationErrorType.authorizationFailed, errors);
-  factory TransactionAuthorizationError.permanent(
-          List<quivr.QuivrRunTimeError> errors) =>
-      TransactionAuthorizationError(
-          TransactionAuthorizationErrorType.authorizationFailed, errors);
+  factory TransactionAuthorizationError.authorizationFailed(List<quivr.QuivrRunTimeError> errors) =>
+      TransactionAuthorizationError(TransactionAuthorizationErrorType.authorizationFailed, errors);
+  factory TransactionAuthorizationError.contextual(List<quivr.QuivrRunTimeError> errors) =>
+      TransactionAuthorizationError(TransactionAuthorizationErrorType.authorizationFailed, errors);
+  factory TransactionAuthorizationError.permanent(List<quivr.QuivrRunTimeError> errors) =>
+      TransactionAuthorizationError(TransactionAuthorizationErrorType.authorizationFailed, errors);
   final List<quivr.QuivrRunTimeError> errors;
   final TransactionAuthorizationErrorType type;
 
@@ -32,9 +26,7 @@ class TransactionAuthorizationError implements ValidationError {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is TransactionAuthorizationError &&
-        other.type == type &&
-        errors.equals(other.errors);
+    return other is TransactionAuthorizationError && other.type == type && errors.equals(other.errors);
   }
 
   @override

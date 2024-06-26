@@ -1,6 +1,6 @@
 name: brambldart
 description: Topl's Brambl SDK implemented in Dart for building the next blockchain for good.
-version: 2.0.0-alpha.3
+version: 2.0.0-beta.0
 repository: https://github.com/Topl/BramblDart
 
 

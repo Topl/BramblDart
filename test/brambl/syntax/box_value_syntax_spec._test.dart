@@ -46,8 +46,7 @@ void main() {
       final v4 = assetGroupSeries.setQuantity(mockNewQuantity);
       expect(v4.quantity, mockNewQuantity);
       final v5 = Box(value: Value(topl: Value_TOPL(quantity: mockNewQuantity)));
-      expect(() => v5.value.lvl.quantity = mockNewQuantity,
-          throwsA(isA<UnsupportedError>()));
+      expect(() => v5.value.lvl.quantity = mockNewQuantity, throwsA(isA<UnsupportedError>()));
     });
   });
 }

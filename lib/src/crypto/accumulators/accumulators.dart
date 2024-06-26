@@ -12,10 +12,7 @@ class LeafData {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is LeafData &&
-          runtimeType == other.runtimeType &&
-          value == other.value;
+      identical(this, other) || other is LeafData && runtimeType == other.runtimeType && value == other.value;
 
   @override
   int get hashCode => value.hashCode;
@@ -27,8 +24,7 @@ class Side {
   final int value;
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) || other is Side && value == other.value;
+  bool operator ==(Object other) => identical(this, other) || other is Side && value == other.value;
 
   @override
   int get hashCode => value.hashCode;

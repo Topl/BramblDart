@@ -24,28 +24,22 @@ class ExtendedEd25519Intializer implements KeyInitializer {
 
   @override
   SigningKey fromBytes(Uint8List bytes) {
-    return spec.SecretKey(bytes.slice(0, 32).toUint8List(),
-        bytes.slice(32, 64).toUint8List(), bytes.slice(64, 96).toUint8List());
+    return spec.SecretKey(
+        bytes.slice(0, 32).toUint8List(), bytes.slice(32, 64).toUint8List(), bytes.slice(64, 96).toUint8List());
   }
 
   @override
   SigningKey fromEntropy(Entropy entropy, {String? password}) {
-    return extendedEd25519
-        .deriveKeyPairFromEntropy(entropy, password)
-        .signingKey;
+    return extendedEd25519.deriveKeyPairFromEntropy(entropy, password).signingKey;
   }
 
   @override
-  Future<Either<InitializationFailure, SigningKey>> fromMnemonicString(
-      String mnemonicString,
-      {Language language = const English(),
-      String? password}) async {
-    final entropyResult =
-        await Entropy.fromMnemonicString(mnemonicString, language: language);
+  Future<Either<InitializationFailure, SigningKey>> fromMnemonicString(String mnemonicString,
+      {Language language = const English(), String? password}) async {
+    final entropyResult = await Entropy.fromMnemonicString(mnemonicString, language: language);
 
     if (entropyResult.isLeft) {
-      return Either.left(InitializationFailure.failedToCreateEntropy(
-          context: entropyResult.left.toString()));
+      return Either.left(InitializationFailure.failedToCreateEntropy(context: entropyResult.left.toString()));
     }
 
     final entropy = entropyResult.right!;

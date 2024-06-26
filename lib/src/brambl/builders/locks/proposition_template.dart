@@ -202,7 +202,7 @@ class DigestTemplate implements PropositionTemplate {
     try {
       return Either.right(Proposer.digestProposer(routine, digest));
     } on Exception catch (e) {
-      return Either.left(UnableToBuildPropositionTemplate(e.toString(),exception:  e));
+      return Either.left(UnableToBuildPropositionTemplate(e.toString(), exception: e));
     }
   }
 

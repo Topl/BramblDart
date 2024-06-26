@@ -6,8 +6,7 @@ import 'ed25519_spec.dart';
 import 'ed25519_spec.dart' as spec;
 
 /// Ed25519 native implementation ported from BramblSC Scala.
-class Ed25519
-    extends EllipticCurveSignatureScheme<spec.SecretKey, spec.PublicKey> {
+class Ed25519 extends EllipticCurveSignatureScheme<spec.SecretKey, spec.PublicKey> {
   Ed25519() : super(seedLength: Ed25519Spec.seedLength);
   final impl = eddsa.Ed25519();
 
@@ -39,8 +38,7 @@ class Ed25519
   ///
   /// Returns `true` if the signature is verified; otherwise `false`.
   @override
-  bool verify(
-      Uint8List signature, Uint8List message, spec.PublicKey publicKey) {
+  bool verify(Uint8List signature, Uint8List message, spec.PublicKey publicKey) {
     final sigByteArray = signature;
     final vkByteArray = publicKey.bytes;
     final msgByteArray = message;

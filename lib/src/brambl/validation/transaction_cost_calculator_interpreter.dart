@@ -20,10 +20,8 @@ class TransactionCostCalculator<F> {
     final baseCost = transactionCostConfig.baseCost;
     final dataCost = transactionDataCost(transaction);
 
-    final inputCost =
-        transaction.inputs.map((e) => transactionInputCost(e)).sum;
-    final outputCost =
-        transaction.outputs.map((e) => transactionOutputCost(e)).sum;
+    final inputCost = transaction.inputs.map((e) => transactionInputCost(e)).sum;
+    final outputCost = transaction.outputs.map((e) => transactionOutputCost(e)).sum;
     return baseCost + dataCost + inputCost + outputCost;
   }
 
@@ -34,10 +32,8 @@ class TransactionCostCalculator<F> {
   ///
   /// Returns a cost, represented as an integer.
   int transactionDataCost(IoTransaction transaction) {
-    final bytes =
-        ContainsImmutable.ioTransaction(transaction).immutableBytes.value;
-    return (bytes.length * transactionCostConfig.dataCostPerMB / 1024 / 1024)
-        .floor();
+    final bytes = ContainsImmutable.ioTransaction(transaction).immutableBytes.value;
+    return (bytes.length * transactionCostConfig.dataCostPerMB / 1024 / 1024).floor();
   }
 
   /// Calculates the cost of consuming a UTxO.
@@ -51,16 +47,11 @@ class TransactionCostCalculator<F> {
     var cost = transactionCostConfig.inputCost;
     final attestation = input.attestation;
     if (attestation.hasPredicate()) {
-      cost += attestation.predicate.responses
-          .map(proofCost)
-          .reduce((a, b) => a + b);
+      cost += attestation.predicate.responses.map(proofCost).sum;
     } else if (attestation.hasImage()) {
-      cost +=
-          attestation.image.responses.map(proofCost).reduce((a, b) => a + b);
+      cost += attestation.image.responses.map(proofCost).sum;
     } else if (attestation.hasCommitment()) {
-      cost += attestation.commitment.responses
-          .map(proofCost)
-          .reduce((a, b) => a + b);
+      cost += attestation.commitment.responses.map(proofCost).sum;
     }
     return cost;
   }
@@ -71,57 +62,40 @@ class TransactionCostCalculator<F> {
   ///
   /// Returns a cost, represented as a Long.
   int proofCost(Proof proof) {
-    var cost = 0;
-    final value = proof;
+    final c = transactionCostConfig.proofCostConfig;
 
-    if (value.hasLocked()) {
-      cost += transactionCostConfig.proofCostConfig.lockedCost;
-    } else if (value.hasDigest()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.digestCost;
-    } else if (value.hasDigitalSignature()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.digitalSignatureCost;
-    } else if (value.hasHeightRange()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.heightRangeCost;
-    } else if (value.hasTickRange()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.tickRangeCost;
-    } else if (value.hasExactMatch()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.exactMatchCost;
-    } else if (value.hasLessThan()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.lessThanCost;
-    } else if (value.hasGreaterThan()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.greaterThanCost;
-    } else if (value.hasEqualTo()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.equalToCost;
-    } else if (value.hasThreshold()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.thresholdCost +
-          value.threshold.responses.map(proofCost).reduce((a, b) => a + b);
-    } else if (value.hasNot()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.notCost +
-          proofCost(value.not.proof);
-    } else if (value.hasAnd()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.andCost +
-          proofCost(value.and.left) +
-          proofCost(value.and.right);
-    } else if (value.hasOr()) {
-      cost += transactionCostConfig.proofCostConfig.txBindCost +
-          transactionCostConfig.proofCostConfig.orCost +
-          proofCost(value.or.left) +
-          proofCost(value.or.right);
-    } else {
-      cost += transactionCostConfig.proofCostConfig.emptyCost;
+    switch (proof.whichValue()) {
+      case Proof_Value.locked:
+        return c.lockedCost;
+      case Proof_Value.digest:
+        return c.txBindCost + c.digestCost;
+      case Proof_Value.digitalSignature:
+        return c.txBindCost + c.digitalSignatureCost;
+      case Proof_Value.heightRange:
+        return c.txBindCost + c.heightRangeCost;
+      case Proof_Value.tickRange:
+        return c.txBindCost + c.tickRangeCost;
+      case Proof_Value.exactMatch:
+        return c.txBindCost + c.exactMatchCost;
+      case Proof_Value.lessThan:
+        return c.txBindCost + c.lessThanCost;
+      case Proof_Value.greaterThan:
+        return c.txBindCost + c.greaterThanCost;
+      case Proof_Value.equalTo:
+        return c.txBindCost + c.equalToCost;
+      case Proof_Value.threshold:
+        return c.txBindCost + c.thresholdCost + proof.threshold.responses.map(proofCost).sum;
+      case Proof_Value.not:
+        return c.txBindCost + c.notCost + proofCost(proof);
+      case Proof_Value.and:
+        return c.txBindCost + c.andCost + proofCost(proof.and.left) + proofCost(proof.and.right);
+      case Proof_Value.or:
+        return c.txBindCost + c.orCost + proofCost(proof.or.left) + proofCost(proof.or.right);
+      case Proof_Value.notSet:
+        return c.emptyCost;
+      default:
+        throw Exception('Unknown proof type: ${proof.whichValue()}');
     }
-    return cost;
   }
 
   /// Calculates the cost of creating a UTxO.
@@ -143,10 +117,20 @@ class TransactionCostConfig {
     this.outputCost = 5,
     this.proofCostConfig = const ProofCostConfig(),
   });
+
+  /// a base value to pad to the transaction cost.
   final int baseCost;
+
+  ///  cost per megabyte of data of the transaction's immutable bytes.
   final int dataCostPerMB;
+
+  ///  base cost per each consumed input (consuming an input is a good thing) (proof costs are added on).
   final int inputCost;
+
+  /// base cost for each new output.
   final int outputCost;
+
+  /// configuration values for individual proofs.
   final ProofCostConfig proofCostConfig;
 }
 
@@ -169,19 +153,49 @@ class ProofCostConfig {
     this.orCost = 1,
     this.notCost = 1,
   });
+
+  /// The cost to verify a TxBind (hash verification).
   final int txBindCost;
+
+  /// The cost to verify an empty proof.
   final int emptyCost;
+
+  /// The cost to verify a locked proof.
   final int lockedCost;
+
+  /// The cost to verify a digest/hash.
   final int digestCost;
+
+  /// The cost to verify a digital signature (likely EC).
   final int digitalSignatureCost;
+
+  /// The cost to verify a height range (probably cheap, statically provided value).
   final int heightRangeCost;
+
+  /// The cost to verify a tick range (probably cheap, statically provided value).
   final int tickRangeCost;
+
+  /// The cost to verify an exact match (probably cheap, lookup function).
   final int exactMatchCost;
+
+  /// The cost to verify a less than (probably cheap, lookup function).
   final int lessThanCost;
+
+  /// The cost to verify a greater than (probably cheap, lookup function).
   final int greaterThanCost;
+
+  /// The cost to verify an equal to (probably cheap, lookup function).
   final int equalToCost;
+
+  /// The base cost to verify a threshold (recursive calls will be added).
   final int thresholdCost;
+
+  /// The base cost to verify an and (recursive calls will be added).
   final int andCost;
+
+  /// The base cost to verify an or (recursive calls will be added).
   final int orCost;
+
+  /// The base cost to verify a not (recursive call will be added).
   final int notCost;
 }

@@ -10,9 +10,7 @@ typedef GroupPolicy = Event_GroupPolicy;
 class GroupPolicySyntax {
   /// Computes the [GroupId] of the [GroupPolicy].
   static GroupId computeId(GroupPolicy groupPolicy) {
-    final digest = ContainsImmutable.groupPolicyEvent(groupPolicy)
-        .immutableBytes
-        .writeToBuffer();
+    final digest = ContainsImmutable.groupPolicyEvent(groupPolicy).immutableBytes.writeToBuffer();
     final sha256 = SHA256().hash(digest);
     return GroupId(value: sha256);
   }

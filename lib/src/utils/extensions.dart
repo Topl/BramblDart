@@ -8,6 +8,7 @@ import 'package:brambldart/src/crypto/signing/signing.dart' as spec;
 import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:fixnum/fixnum.dart';
+import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
 
 import '../common/functional/either.dart';
@@ -48,7 +49,11 @@ extension StringListExtension on List<String> {
 
 extension BigIntExtensions on BigInt {
   /// Converts a [BigInt] to a [Uint8List]
+  /// Warning: Will drop the sign of the BigInt, resulting in invalid data for negative BigInts
   Uint8List toUint8List() => toByteData().buffer.asUint8List();
+
+  /// Converts a [BigInt] to an [Int8List]
+  Int8List toInt8List() => toByteData().buffer.asInt8List();
 
   /// Converts a [BigInt] to a [ByteData]
   ByteData toByteData() {
@@ -62,12 +67,60 @@ extension BigIntExtensions on BigInt {
 
     return data;
   }
+
+  Uint8List toTwosComplement() {
+    // Calculate the number of bytes needed to represent the BigInt
+    final bytes = Uint8List((bitLength + 7) ~/ 8 + 1);
+    for (var i = 0; i < bytes.length; i++) {
+      bytes[bytes.length - i - 1] = (this >> (8 * i)).toInt() & 0xff;
+    }
+    if (isNegative) {
+      // Compute the two's complement for negative numbers
+      for (var i = 0; i < bytes.length; i++) {
+        bytes[i] = ~bytes[i] & 0xff;
+      }
+      for (var i = bytes.length - 1; i >= 0; i--) {
+        bytes[i]++;
+        if (bytes[i] <= 0xff) {
+          break;
+        }
+        bytes[i] = 0;
+      }
+    }
+    return bytes;
+  }
 }
 
 extension IntExtensions on int {
-  Uint8List get toBytes => Uint8List.fromList([this]);
+  Uint8List get toBytes => toUint8List;
+
+  // TODO: Flawed implementation
+  Int8List get toInt8List => Int8List.fromList([this]);
+
+  // TODO: Flawed implementation
+  Uint8List get toUint8List => Uint8List.fromList([this]);
 
   BigInt get toBigInt => BigInt.from(this);
+
+  //TODO(ultimaterex): SET TO LITTLE ENDIAN NOTATION AND REPLACE NON AUTO FLAWED INT TO UINT8LIST CONVERSION
+  // Uint8List get toUint8ListAuto {
+  //   if (this < 256) {
+  //     return toUint8List;
+  //   } else {
+  //     return BigInt.from(this).toUint8List().fromBigEndian().toUint8List();
+  //   }
+  // }
+
+  // seems to be a solid implementation
+  Uint8List get toUint8ListAuto {
+    final bytes = <int>[];
+    var value = this;
+    do {
+      bytes.add(value & 0xFF);
+      value >>= 8;
+    } while (value != 0);
+    return Uint8List.fromList(bytes);
+  }
 }
 
 extension Uint8ListExtension on Uint8List {
@@ -212,6 +265,8 @@ extension IterableExtensions<T> on Iterable<T> {
     if (count >= length) return this;
     return skip(length - count);
   }
+
+  Iterable<T> sortedAlphabetically(Comparable Function(T e) key) => toList()..sort((a, b) => key(a).compareTo(key(b)));
 }
 
 extension IterableToUint8List on Iterable<int> {
@@ -367,5 +422,15 @@ extension WithResultExtension<T> on T {
   /// fluent style. implementation similar to Scala's map function.
   B withResult<B>(B Function(T) f) {
     return f(this);
+  }
+}
+
+extension Uint32Extensions on UInt32Value {
+  BigInt toBigInt() {
+    // Access the underlying integer value
+    final int intValue = value;
+
+    // Convert to BigInt
+    return BigInt.from(intValue);
   }
 }

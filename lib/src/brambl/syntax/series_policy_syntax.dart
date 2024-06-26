@@ -6,13 +6,11 @@ import '../common/contains_immutable.dart';
 
 typedef SeriesPolicy = Event_SeriesPolicy;
 
-/// Provides syntax operations for working with [GroupPolicy]s.
+/// Provides syntax operations for working with [SeriesPolicy]s.
 class SeriesPolicySyntax {
-  /// Computes the [GroupId] of the [GroupPolicy].
+  /// Computes the [GroupId] of the [SeriesPolicy].
   static SeriesId computeId(SeriesPolicy seriesPolicy) {
-    final digest = ContainsImmutable.seriesPolicyEvent(seriesPolicy)
-        .immutableBytes
-        .writeToBuffer();
+    final digest = ContainsImmutable.seriesPolicyEvent(seriesPolicy).immutableBytes.writeToBuffer();
     final sha256 = SHA256().hash(digest);
     return SeriesId(value: sha256);
   }

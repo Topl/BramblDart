@@ -31,16 +31,12 @@ class Ed25519Initializer implements KeyInitializer {
   }
 
   @override
-  Future<Either<InitializationFailure, SigningKey>> fromMnemonicString(
-      String mnemonicString,
-      {Language language = const English(),
-      String? password}) async {
-    final entropyResult =
-        await Entropy.fromMnemonicString(mnemonicString, language: language);
+  Future<Either<InitializationFailure, SigningKey>> fromMnemonicString(String mnemonicString,
+      {Language language = const English(), String? password}) async {
+    final entropyResult = await Entropy.fromMnemonicString(mnemonicString, language: language);
 
     if (entropyResult.isLeft) {
-      return Either.left(InitializationFailure.failedToCreateEntropy(
-          context: entropyResult.left.toString()));
+      return Either.left(InitializationFailure.failedToCreateEntropy(context: entropyResult.left.toString()));
     }
 
     final entropy = entropyResult.right!;

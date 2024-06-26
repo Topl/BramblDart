@@ -19,8 +19,7 @@ abstract class ContractStorageAlgebra {
   /// Fetches all contracts.
   ///
   /// Returns the fetched contracts.
-  Future<List<WalletContract?>> findContracts(
-      List<WalletContract> walletContracts);
+  Future<List<WalletContract?>> findContracts(List<WalletContract> walletContracts);
 
   /// Add a new contract.
   ///

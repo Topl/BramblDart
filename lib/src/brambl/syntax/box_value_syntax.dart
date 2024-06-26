@@ -1,4 +1,5 @@
 import 'package:protobuf/protobuf.dart';
+import 'package:topl_common/proto/brambl/models/box/asset.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/value.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
@@ -23,20 +24,16 @@ extension ValueToQuantitySyntaxOps on Value {
     switch (whichValue()) {
       case Value_Value.lvl:
         return lvl.quantity;
+      case Value_Value.topl:
+        return topl.quantity;
+      case Value_Value.asset:
+        return asset.quantity;
       case Value_Value.group:
         return group.quantity;
       case Value_Value.series:
         return series.quantity;
-      case Value_Value.asset:
-        return asset.quantity;
-      case Value_Value.topl:
-        // return topl.quantity;
-        // TODO(ultimaterex): figure out if topl's should have a quantity
-        throw Exception('Topl does not have a quantity?');
-      case Value_Value.updateProposal:
-        throw Exception('UpdateProposal does not have a quantity');
-      case Value_Value.notSet:
-        throw Exception('Value is not set');
+      default:
+        throw Exception('Value does not have a quantity');
     }
   }
 
@@ -59,6 +56,40 @@ extension ValueToQuantitySyntaxOps on Value {
         throw Exception('UpdateProposal does not have a quantity');
       case Value_Value.notSet:
         throw Exception('Value is not set');
+    }
+  }
+}
+
+extension ValueToQuantityDescriptorSyntax on Value {
+  QuantityDescriptorType? quantityDescriptor() => ValueToQuantityDescriptorSyntaxOps(this).quantityDescriptor;
+}
+
+extension ValueToFungibilitySyntax on Value {
+  FungibilityType? fungibility() => ValueToFungibilitySyntaxOps(this).fungibility;
+}
+
+class ValueToQuantityDescriptorSyntaxOps {
+  ValueToQuantityDescriptorSyntaxOps(this.value);
+  final Value value;
+
+  QuantityDescriptorType? get quantityDescriptor {
+    if (value.hasAsset()) {
+      return value.asset.quantityDescriptor;
+    } else {
+      return null;
+    }
+  }
+}
+
+class ValueToFungibilitySyntaxOps {
+  ValueToFungibilitySyntaxOps(this.value);
+  final Value value;
+
+  FungibilityType? get fungibility {
+    if (value.hasAsset()) {
+      return value.asset.fungibility;
+    } else {
+      return null;
     }
   }
 }
