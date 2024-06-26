@@ -60,6 +60,14 @@ extension ValueToQuantitySyntaxOps on Value {
   }
 }
 
+extension ValueToQuantityDescriptorSyntax on Value {
+  QuantityDescriptorType? quantityDescriptor() => ValueToQuantityDescriptorSyntaxOps(this).quantityDescriptor;
+}
+
+extension ValueToFungibilitySyntax on Value {
+  FungibilityType? fungibility() => ValueToFungibilitySyntaxOps(this).fungibility;
+}
+
 class ValueToQuantityDescriptorSyntaxOps {
   ValueToQuantityDescriptorSyntaxOps(this.value);
   final Value value;

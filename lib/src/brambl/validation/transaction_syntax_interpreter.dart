@@ -1,14 +1,12 @@
 import 'package:collection/collection.dart';
+import 'package:topl_common/proto/brambl/models/box/assets_statements.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/lock.pb.dart';
 import 'package:topl_common/proto/brambl/models/box/value.pb.dart';
 import 'package:topl_common/proto/brambl/models/transaction/io_transaction.pb.dart';
 import 'package:topl_common/proto/quivr/models/proof.pb.dart';
 import 'package:topl_common/proto/quivr/models/proposition.pb.dart';
 
-import '../../common/functional/either.dart';
-import '../../common/functional/list_either.dart';
-import '../../utils/extensions.dart';
-import '../common/contains_immutable.dart';
+import '../../../brambldart.dart';
 import 'transaction_syntax_error.dart';
 
 class TransactionSyntaxInterpreter {
@@ -42,9 +40,7 @@ class TransactionSyntaxInterpreter {
     sufficientFundsValidation,
     attestationValidation,
     dataLengthValidation,
-
-    // TODO(ultimaterex): implement new validators
-    // assetEqualFundsValidation,
+    assetEqualFundsValidation,
     // groupEqualFundsValidation,
     // seriesEqualFundsValidation,
     // assetNoRepeatedUtxosValidation,
@@ -217,7 +213,7 @@ class TransactionSyntaxInterpreter {
       case (Proposition_Value.not, Proof_Value.not):
       case (Proposition_Value.and, Proof_Value.and):
       case (Proposition_Value.or, Proof_Value.or):
-      // TODO(ultimaterex): evaulate, this should return invalid NEC
+        // TODO(ultimaterex): evaulate, this should return invalid NEC
         // cascade all preceding cases to this case
         return Either.unit();
       default:
@@ -234,6 +230,92 @@ class TransactionSyntaxInterpreter {
         ? Either.unit()
         : Either.left(TransactionSyntaxError.invalidDataLength());
   }
-}
 
-//todo: add more validators?
+  static Either<TransactionSyntaxError, Unit> assetEqualFundsValidation(IoTransaction transaction) {
+    final inputAssets = transaction.inputs
+        .where((input) => input.value.hasAsset())
+        .map((input) => input.value.asset.asBoxVal())
+        .toList();
+
+    final outputAssets = transaction.outputs
+        .where((output) => output.value.hasAsset())
+        .map((output) => output.value.asset.asBoxVal())
+        .toList();
+
+    Value_Group groupGivenMintedStatements(AssetMintingStatement stm) {
+      return transaction.inputs
+          .where((input) => input.address == stm.groupTokenUtxo && input.value.hasGroup())
+          .map((input) => input.value.group)
+          .first;
+    }
+
+    Value_Series seriesGivenMintedStatements(AssetMintingStatement stm) {
+      return transaction.inputs
+          .where((input) => input.address == stm.seriesTokenUtxo && input.value.hasSeries())
+          .map((input) => input.value.series)
+          .first;
+    }
+
+    final mintedAsset = transaction.mintingStatements.map((stm) {
+      final series = seriesGivenMintedStatements(stm);
+      return Value(
+          asset: Value_Asset(
+        groupId: groupGivenMintedStatements(stm).groupId,
+        seriesId: series.seriesId,
+        quantity: stm.quantity,
+        fungibility: series.fungibility,
+      ));
+    }).toList();
+
+    Either<Exception, Map<String, BigInt>> tupleAndGroup(List<Value> s) {
+      try {
+        final Map<String, List<BigInt>> grouped = {};
+
+        for (final v in s) {
+          final key = '${v.typeIdentifier}-${v.fungibility()}-${v.quantityDescriptor()}';
+
+          grouped[key] = grouped[key] ?? [];
+          grouped[key]!.add(v.quantity.toBigInt());
+        }
+
+        final Map<String, BigInt> summed = {};
+
+        grouped.forEach((key, value) {
+          summed[key] = value.reduce((a, b) => a + b);
+        });
+
+        return Either.right(summed);
+      } on Exception catch (e) {
+        return Either.left(e);
+      }
+    }
+
+    final input = tupleAndGroup(inputAssets);
+    final minted = tupleAndGroup(mintedAsset);
+    final output = tupleAndGroup(outputAssets);
+
+    if (input.isLeft || minted.isLeft || output.isLeft) {
+      return Either.left(TransactionSyntaxError.insufficientInputFunds(
+        transaction.inputs.map((input) => input.value).toList(),
+        transaction.outputs.map((output) => output.value).toList(),
+      ));
+    }
+
+    final a = input.getOrElse({});
+    final b = minted.getOrElse({});
+
+    final keySetResult = {...a, ...b}.length == output.getOrElse({}).keys.length;
+    final compareResult = output.getOrElse({}).keys.every(
+          (k) =>
+              (input.getOrElse({})[k] ?? BigInt.zero) + (minted.getOrElse({})[k] ?? BigInt.zero) ==
+              output.getOrElse({})[k],
+        );
+
+    return keySetResult && compareResult
+        ? Either.unit()
+        : Either.left(TransactionSyntaxError.insufficientInputFunds(
+            transaction.inputs.map((input) => input.value).toList(),
+            transaction.outputs.map((output) => output.value).toList(),
+          ));
+  }
+}

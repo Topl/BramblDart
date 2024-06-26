@@ -86,7 +86,7 @@ class TransactionCostCalculator<F> {
       case Proof_Value.threshold:
         return c.txBindCost + c.thresholdCost + proof.threshold.responses.map(proofCost).sum;
       case Proof_Value.not:
-        return c.txBindCost + c.notCost + this.proofCost(proof);
+        return c.txBindCost + c.notCost + proofCost(proof);
       case Proof_Value.and:
         return c.txBindCost + c.andCost + proofCost(proof.and.left) + proofCost(proof.and.right);
       case Proof_Value.or:
