@@ -25,10 +25,7 @@ import '../../common/types/byte_string.dart';
 import '../../utils/extensions.dart';
 import '../codecs/address_codecs.dart';
 import '../common/contains_evidence.dart';
-import '../syntax/group_policy_syntax.dart';
-import '../syntax/series_policy_syntax.dart';
 import '../syntax/syntax.dart';
-import '../syntax/token_type_identifier_syntax.dart';
 import 'builder_error.dart';
 
 /// Defines a builder for [IoTransaction]s
@@ -373,7 +370,6 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     ));
   }
 
-  @override
   Future<Either<BuilderError, IoTransaction>> buildSimpleSeriesMintingTransaction(
     Txo registrationTxo,
     Lock_Predicate registrationLock,
@@ -554,7 +550,6 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     throw UnimplementedError();
   }
 
-  @override
   Future<Either<BuilderError, IoTransaction>> buildSimpleAssetMintingTransaction(
       AssetMintingStatement mintingStatement,
       Txo groupTxo,
