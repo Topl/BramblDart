@@ -168,7 +168,9 @@ extension ContainsErrorExtension on List<TransactionSyntaxError> {
             (TransactionSyntaxErrorType.invalidProofType) =>
               (error as InvalidProofTypeError).proof == (match as InvalidProofTypeError).proof &&
                   error.proposition == match.proposition,
-            (TransactionSyntaxErrorType.invalidDataLength) => true
+            (TransactionSyntaxErrorType.invalidDataLength) => true,
+            // TODO: Handle this case.
+           (TransactionSyntaxErrorType.invalidUpdateProposal) => true
           };
           if (cond) return true; // return only if conditional is true
         }
