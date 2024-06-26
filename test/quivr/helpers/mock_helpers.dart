@@ -33,7 +33,7 @@ class MockHelpers {
     final Map<String, ParsableDataInterface> mapOfInterfaces = {};
 
     final Map<String, SignatureVerifier> mapOfSigningRoutines = {
-      signatureString: SignatureVerifier<SignatureVerification>((v) {
+      signatureString: SignatureVerifier((v) {
         if (VerySecureSignatureRoutine.verify(v.signature.value.toUint8List(), v.message.value.toUint8List(),
             v.verificationKey.ed25519.value.toUint8List())) {
           return QuivrResult<SignatureVerification>.right(v);
@@ -44,7 +44,7 @@ class MockHelpers {
     };
 
     final Map<String, DigestVerifier> mapOfHashingRoutines = {
-      hashString: DigestVerifier<DigestVerification>((v) {
+      hashString: DigestVerifier((v) {
         final test = Blake2b256().hash(Uint8List.fromList(v.preimage.input + v.preimage.salt));
         if (v.digest.value.toUint8List() == test) {
           return QuivrResult<DigestVerification>.right(v);

@@ -37,7 +37,7 @@ class DynamicContext {
       return QuivrResult.left(ContextError.failedToFindDigestVerifier());
     }
 
-    final result = verifier.validate(verification) as QuivrResult<DigestVerification>;
+    final result = verifier.validate(verification);
     if (result.isLeft) return result;
 
     return QuivrResult<DigestVerification>.right(result.right);
@@ -52,7 +52,7 @@ class DynamicContext {
       return QuivrResult.left(ContextError.failedToFindSignatureVerifier());
     }
 
-    final result = verifier.validate(verification) as QuivrResult<SignatureVerification>;
+    final result = verifier.validate(verification);
     if (result.isLeft) return result;
 
     return QuivrResult<SignatureVerification>.right(result.right);
