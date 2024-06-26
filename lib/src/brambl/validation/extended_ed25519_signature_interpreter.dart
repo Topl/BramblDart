@@ -23,12 +23,14 @@ class ExtendedEd25519SignatureInterpreter implements SignatureVerifier {
       )) {
         return Either.right(t);
       } else {
-        // TODO(ultimaterex): replace with correct error. Verification failed.
-        return Either.left(ValidationError.lockedPropositionIsUnsatisfiable());
+        return Either.left(ValidationError.lockedPropositionIsUnsatisfiable(
+          context: "ExtendedEd verification Failed: $t",
+        ));
       }
     } else {
-      // TODO(ultimaterex): replace with correct error. SignatureVerification is malformed.
-      return Either.left(ValidationError.lockedPropositionIsUnsatisfiable());
+      return Either.left(ValidationError.lockedPropositionIsUnsatisfiable(
+        context: "verificationkey is not extendedEd25519: $t",
+      ));
     }
   }
 
