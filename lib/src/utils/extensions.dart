@@ -8,6 +8,7 @@ import 'package:brambldart/src/crypto/signing/signing.dart' as spec;
 import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:fixnum/fixnum.dart';
+import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
 
 import '../common/functional/either.dart';
@@ -421,5 +422,15 @@ extension WithResultExtension<T> on T {
   /// fluent style. implementation similar to Scala's map function.
   B withResult<B>(B Function(T) f) {
     return f(this);
+  }
+}
+
+extension Uint32Extensions on UInt32Value {
+  BigInt toBigInt() {
+    // Access the underlying integer value
+    final int intValue = value;
+
+    // Convert to BigInt
+    return BigInt.from(intValue);
   }
 }

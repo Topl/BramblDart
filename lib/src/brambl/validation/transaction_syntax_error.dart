@@ -61,6 +61,7 @@ class TransactionSyntaxError implements ValidationError {
   static InvalidProofTypeError invalidProofType(Proposition proposition, Proof proof) =>
       InvalidProofTypeError(proposition, proof);
   static InvalidDataLengthError invalidDataLength() => InvalidDataLengthError();
+  static InvalidUpdateProposal invalidUpdateProposal(List<Value_UpdateProposal> outs) => InvalidUpdateProposal(outs);
 
   @override
   String toString() {
@@ -77,7 +78,8 @@ enum TransactionSyntaxErrorType {
   nonPositiveOutputValue,
   insufficientInputFunds,
   invalidProofType,
-  invalidDataLength
+  invalidDataLength,
+  invalidUpdateProposal,
 }
 
 /// A Syntax error indicating that this transaction does not contain at least 1 input.
@@ -133,4 +135,8 @@ class InvalidProofTypeError extends TransactionSyntaxError {
 /// A Syntax error indicating that the size of this transaction is invalid.
 class InvalidDataLengthError extends TransactionSyntaxError {
   InvalidDataLengthError() : super(TransactionSyntaxErrorType.invalidDataLength, null);
+}
+
+class InvalidUpdateProposal extends TransactionSyntaxError {
+  InvalidUpdateProposal(List<Value_UpdateProposal> outs) : super(TransactionSyntaxErrorType.invalidUpdateProposal, outs);
 }
