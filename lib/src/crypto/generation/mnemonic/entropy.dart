@@ -36,32 +36,26 @@ class Entropy {
   /// The [language] parameter is the language of the mnemonic string.
   ///
   /// Returns an [Either] object that contains either an [EntropyFailure] object or a list of strings.
-  static Future<Either<EntropyFailure, List<String>>> toMnemonicString(
-      Entropy entropy,
+  static Future<Either<EntropyFailure, List<String>>> toMnemonicString(Entropy entropy,
       {Language language = const English()}) async {
     final sizeResult = sizeFromEntropyLength(entropy.value.length);
     if (sizeResult.isLeft) return Either.left(sizeResult.left);
     final size = sizeResult.right!;
 
-    final phraseResult = await Phrase.fromEntropy(
-        entropy: entropy, size: size, language: language);
+    final phraseResult = await Phrase.fromEntropy(entropy: entropy, size: size, language: language);
     if (phraseResult.isLeft) {
-      return Either.left(EntropyFailure.phraseToEntropyFailure(
-          context: phraseResult.left.toString()));
+      return Either.left(EntropyFailure.phraseToEntropyFailure(context: phraseResult.left.toString()));
     }
     final phrase = phraseResult.right!;
 
     return Either.right(phrase.value);
   }
 
-  static Future<Either<EntropyFailure, Entropy>> fromMnemonicString(
-      String mnemonic,
+  static Future<Either<EntropyFailure, Entropy>> fromMnemonicString(String mnemonic,
       {Language language = const English()}) async {
-    final phraseResult =
-        await Phrase.validated(words: mnemonic, language: language);
+    final phraseResult = await Phrase.validated(words: mnemonic, language: language);
     if (phraseResult.isLeft) {
-      return Either.left(EntropyFailure.phraseToEntropyFailure(
-          context: phraseResult.left.toString()));
+      return Either.left(EntropyFailure.phraseToEntropyFailure(context: phraseResult.left.toString()));
     }
     final phrase = phraseResult.right!;
 
@@ -70,8 +64,7 @@ class Entropy {
   }
 
   static Entropy fromUuid(Uuid uuid) {
-    final bytes =
-        Uint8List.fromList(uuid.v4().replaceAll('-', '').split('').map((c) {
+    final bytes = Uint8List.fromList(uuid.v4().replaceAll('-', '').split('').map((c) {
       return int.parse(c, radix: 16);
     }).toList());
     return Entropy(bytes);
@@ -86,8 +79,7 @@ class Entropy {
     return Either.right(entropy);
   }
 
-  static Either<EntropyFailure, MnemonicSize> sizeFromEntropyLength(
-      int entropyByteLength) {
+  static Either<EntropyFailure, MnemonicSize> sizeFromEntropyLength(int entropyByteLength) {
     switch (entropyByteLength) {
       case 16:
         return Either.right(const MnemonicSize.words12());
@@ -107,12 +99,7 @@ class Entropy {
   static Entropy unsafeFromPhrase(Phrase phrase) {
     final (binaryString) = Phrase.toBinaryString(phrase).$1;
 
-    final bytes = Uint8List.fromList(binaryString
-        .split('')
-        .toList()
-        .asMap()
-        .entries
-        .fold<List<int>>([], (acc, entry) {
+    final bytes = Uint8List.fromList(binaryString.split('').toList().asMap().entries.fold<List<int>>([], (acc, entry) {
       final index = entry.key;
       final value = entry.value;
       if (index % 8 == 0) {
@@ -148,9 +135,4 @@ class EntropyFailure implements Exception {
   }
 }
 
-enum EntropyFailureType {
-  invalidByteSize,
-  phraseToEntropyFailure,
-  wordListFailure,
-  invalidSizeMismatch
-}
+enum EntropyFailureType { invalidByteSize, phraseToEntropyFailure, wordListFailure, invalidSizeMismatch }

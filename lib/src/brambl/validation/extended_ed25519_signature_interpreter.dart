@@ -14,31 +14,26 @@ class ExtendedEd25519SignatureInterpreter implements SignatureVerifier {
   /// Returns the SignatureVerification object if the signature is valid, otherwise an error.
   @override
   QuivrResult<SignatureVerification> validate(t) {
-    if (t! is SignatureVerification) {
-      throw Exception('validation target is not a SignatureVerification');
-    }
-
-    // promote
-    final s = t as SignatureVerification;
-    if (s.verificationKey.hasExtendedEd25519()) {
-      final extendedVk = PublicKey.proto(s.verificationKey.extendedEd25519);
+    if (t.verificationKey.hasExtendedEd25519()) {
+      final extendedVk = PublicKey.proto(t.verificationKey.extendedEd25519);
       if (ExtendedEd25519().verify(
-        s.signature.value.toUint8List(),
-        s.message.value.toUint8List(),
+        t.signature.value.toUint8List(),
+        t.message.value.toUint8List(),
         extendedVk,
       )) {
-        return Either.right(s);
+        return Either.right(t);
       } else {
-        // TODO(ultimaterex): replace with correct error. Verification failed.
-        return Either.left(ValidationError.lockedPropositionIsUnsatisfiable());
+        return Either.left(ValidationError.lockedPropositionIsUnsatisfiable(
+          context: "ExtendedEd verification Failed: $t",
+        ));
       }
     } else {
-      // TODO(ultimaterex): replace with correct error. SignatureVerification is malformed.
-      return Either.left(ValidationError.lockedPropositionIsUnsatisfiable());
+      return Either.left(ValidationError.lockedPropositionIsUnsatisfiable(
+        context: "verificationkey is not extendedEd25519: $t",
+      ));
     }
   }
 
   @override
-  dynamic Function(dynamic p1) get definedFunction =>
-      throw UnimplementedError();
+  dynamic Function(dynamic p1) get definedFunction => throw UnimplementedError();
 }

@@ -24,20 +24,16 @@ extension ValueToQuantitySyntaxOps on Value {
     switch (whichValue()) {
       case Value_Value.lvl:
         return lvl.quantity;
+      case Value_Value.topl:
+        return topl.quantity;
+      case Value_Value.asset:
+        return asset.quantity;
       case Value_Value.group:
         return group.quantity;
       case Value_Value.series:
         return series.quantity;
-      case Value_Value.asset:
-        return asset.quantity;
-      case Value_Value.topl:
-        // return topl.quantity;
-        // TODO(ultimaterex): figure out if topl's should have a quantity
-        throw Exception('Topl does not have a quantity?');
-      case Value_Value.updateProposal:
-        throw Exception('UpdateProposal does not have a quantity');
-      case Value_Value.notSet:
-        throw Exception('Value is not set');
+      default:
+        throw Exception('Value does not have a quantity');
     }
   }
 
@@ -64,6 +60,13 @@ extension ValueToQuantitySyntaxOps on Value {
   }
 }
 
+extension ValueToQuantityDescriptorSyntax on Value {
+  QuantityDescriptorType? quantityDescriptor() => ValueToQuantityDescriptorSyntaxOps(this).quantityDescriptor;
+}
+
+extension ValueToFungibilitySyntax on Value {
+  FungibilityType? fungibility() => ValueToFungibilitySyntaxOps(this).fungibility;
+}
 
 class ValueToQuantityDescriptorSyntaxOps {
   ValueToQuantityDescriptorSyntaxOps(this.value);

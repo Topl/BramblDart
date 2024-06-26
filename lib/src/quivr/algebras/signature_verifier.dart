@@ -1,10 +1,13 @@
-import '../common/contextless_validation.dart';
-import '../common/quivr_result.dart';
+import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
-class SignatureVerifier<T> implements ContextlessValidation<T> {
+import '../../common/functional/either.dart';
+import '../common/contextless_validation.dart';
+import '../runtime/quivr_runtime_error.dart';
+
+class SignatureVerifier implements ContextlessValidation<QuivrRunTimeError, SignatureVerification> {
   SignatureVerifier(this.definedFunction);
-  final Function(T) definedFunction;
+  final Function(SignatureVerification T) definedFunction;
 
   @override
-  QuivrResult<T> validate(t) => definedFunction(t);
+  Either<QuivrRunTimeError, SignatureVerification> validate(t) => definedFunction(t);
 }

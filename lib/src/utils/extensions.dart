@@ -8,6 +8,7 @@ import 'package:brambldart/src/crypto/signing/signing.dart' as spec;
 import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
 import 'package:fixnum/fixnum.dart';
+import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
 import 'package:topl_common/proto/quivr/models/shared.pb.dart' as pb;
 
 import '../common/functional/either.dart';
@@ -91,9 +92,35 @@ extension BigIntExtensions on BigInt {
 }
 
 extension IntExtensions on int {
-  Uint8List get toBytes => Uint8List.fromList([this]);
+  Uint8List get toBytes => toUint8List;
+
+  // TODO: Flawed implementation
+  Int8List get toInt8List => Int8List.fromList([this]);
+
+  // TODO: Flawed implementation
+  Uint8List get toUint8List => Uint8List.fromList([this]);
 
   BigInt get toBigInt => BigInt.from(this);
+
+  //TODO(ultimaterex): SET TO LITTLE ENDIAN NOTATION AND REPLACE NON AUTO FLAWED INT TO UINT8LIST CONVERSION
+  // Uint8List get toUint8ListAuto {
+  //   if (this < 256) {
+  //     return toUint8List;
+  //   } else {
+  //     return BigInt.from(this).toUint8List().fromBigEndian().toUint8List();
+  //   }
+  // }
+
+  // seems to be a solid implementation
+  Uint8List get toUint8ListAuto {
+    final bytes = <int>[];
+    var value = this;
+    do {
+      bytes.add(value & 0xFF);
+      value >>= 8;
+    } while (value != 0);
+    return Uint8List.fromList(bytes);
+  }
 }
 
 extension Uint8ListExtension on Uint8List {
@@ -395,5 +422,15 @@ extension WithResultExtension<T> on T {
   /// fluent style. implementation similar to Scala's map function.
   B withResult<B>(B Function(T) f) {
     return f(this);
+  }
+}
+
+extension Uint32Extensions on UInt32Value {
+  BigInt toBigInt() {
+    // Access the underlying integer value
+    final int intValue = value;
+
+    // Convert to BigInt
+    return BigInt.from(intValue);
   }
 }

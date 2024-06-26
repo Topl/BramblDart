@@ -11,8 +11,7 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
   static const defaultName = "default";
 
   @override
-  Future<Either<WalletKeyException, Unit>> saveMainKeyVaultStore(
-      VaultStore mainKeyVaultStore, String? name) async {
+  Future<Either<WalletKeyException, Unit>> saveMainKeyVaultStore(VaultStore mainKeyVaultStore, String? name) async {
     final n = name ?? defaultName;
     if (n == 'error') {
       return Either.left(WalletKeyException.vaultStoreSave());
@@ -24,22 +23,20 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
   }
 
   @override
-  Future<Either<WalletKeyException, VaultStore>> getMainKeyVaultStore(
-      String? name) async {
+  Future<Either<WalletKeyException, VaultStore>> getMainKeyVaultStore(String? name) async {
     final n = name ?? defaultName;
     final json = mainKeyVaultStoreInstance[n];
     if (json == null) {
       return Either.left(WalletKeyException.vaultStoreNotInitialized());
     } else {
-      return VaultStore.fromJson(jsonDecode(json)).toOption().fold(
-          (p0) => Either.right(p0),
-          () => Either.left(WalletKeyException.decodeVaultStore()));
+      return VaultStore.fromJson(jsonDecode(json))
+          .toOption()
+          .fold((p0) => Either.right(p0), () => Either.left(WalletKeyException.decodeVaultStore()));
     }
   }
 
   @override
-  Future<Either<WalletKeyException, Unit>> updateMainKeyVaultStore(
-      VaultStore mainKeyVaultStore, String? name) async {
+  Future<Either<WalletKeyException, Unit>> updateMainKeyVaultStore(VaultStore mainKeyVaultStore, String? name) async {
     final n = name ?? defaultName;
     final json = mainKeyVaultStoreInstance[n];
     if (json == null) {
@@ -50,8 +47,7 @@ class MockWalletKeyApi extends WalletKeyApiAlgebra {
   }
 
   @override
-  Future<Either<WalletKeyException, Unit>> deleteMainKeyVaultStore(
-      String? name) async {
+  Future<Either<WalletKeyException, Unit>> deleteMainKeyVaultStore(String? name) async {
     final n = name ?? defaultName;
     final json = mainKeyVaultStoreInstance[n];
     if (json == null) {

@@ -21,16 +21,15 @@ class Blake2b256DigestInterpreter implements DigestVerifier {
     final p = t.preimage.input.toUint8List();
     final salt = t.preimage.salt.toUint8List();
     final testHash = Blake2b256().hash((p + salt).toUint8List());
+
     if (testHash.equals(d.toUint8List())) {
       return Either.right(t);
     } else {
-      // TODO(ultimaterex): replace with correct error. Verification failed.
       return Either.left(ValidationError.lockedPropositionIsUnsatisfiable());
     }
   }
 
   @override
   // TODO(ultimaterex): implement definedFunction
-  dynamic Function(dynamic p1) get definedFunction =>
-      throw UnimplementedError();
+  dynamic Function(dynamic p1) get definedFunction => throw UnimplementedError();
 }

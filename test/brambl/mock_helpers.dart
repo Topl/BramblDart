@@ -187,3 +187,6 @@ final assetSeriesFractionable =
     assetSeries.rebuild((p0) => p0.asset.quantityDescriptor = QuantityDescriptorType.FRACTIONABLE)..freeze();
 final assetSeriesAccumulator =
     assetSeries.rebuild((p0) => p0.asset.quantityDescriptor = QuantityDescriptorType.ACCUMULATOR)..freeze();
+
+
+/// todo: missing some helpers here:

@@ -1,3 +1,12 @@
+## 2.0.0-beta.0
+- [TSDK-657](https://topl.atlassian.net/browse/TSDK-657) Update To Mint Group, Series and Assets
+- [TSDK-629](https://topl.atlassian.net/browse/TSDK-629)  Extra service kit related tests
+- [TSDK-831](https://topl.atlassian.net/browse/TSDK-831) Integrate recent updates from ts/scala for beta 1
+- Various fixes to validations and extra validators added  
+- Improved implementation of Sha256DigestInterpreter  
+- Improvements to builder API's to simplify working with the SDK 
+
+
 ## 2.0.0-alpha.3
 - [TSDK-630] Bugfix for Language dictionary loading error
 - [TSDK-651] Fixes type check causing template builder to throw errors because of an unexpected inner proposition

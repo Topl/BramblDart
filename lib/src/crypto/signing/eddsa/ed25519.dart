@@ -29,8 +29,7 @@ class Ed25519 extends EC {
     throw UnimplementedError("Not checked");
   }
 
-  void generatePublicKey(Uint8List sk, int skOff, Uint8List pk, int pkOff,
-      {SHA512? digest}) {
+  void generatePublicKey(Uint8List sk, int skOff, Uint8List pk, int pkOff, {SHA512? digest}) {
     final d = digest ?? defaultDigest;
 
     final h = Uint8List(d.digestSize);
@@ -94,8 +93,7 @@ class Ed25519 extends EC {
 
     // Copy R and S values into signature array
     signature.setRange(signatureOffset, signatureOffset + POINT_BYTES, R);
-    signature.setRange(signatureOffset + POINT_BYTES,
-        signatureOffset + POINT_BYTES + SCALAR_BYTES, S);
+    signature.setRange(signatureOffset + POINT_BYTES, signatureOffset + POINT_BYTES + SCALAR_BYTES, S);
   }
 
   /// Computes the Ed25519 signature of a message using a private key.
@@ -223,8 +221,7 @@ class Ed25519 extends EC {
 
     // Extract the R and S components from the signature.
     final R = signature.sublist(signatureOffset, signatureOffset + POINT_BYTES);
-    final S = signature.sublist(
-        signatureOffset + POINT_BYTES, signatureOffset + SIGNATURE_SIZE);
+    final S = signature.sublist(signatureOffset + POINT_BYTES, signatureOffset + SIGNATURE_SIZE);
 
     // Check if the R and S components are valid.
     if (!checkPointVar(R)) return false;
@@ -285,17 +282,15 @@ class Ed25519 extends EC {
   }) {
     assert(sk.isNotEmpty, 'Secret key must not be empty');
     assert(skOffset >= 0, 'Secret key offset must be non-negative');
-    assert(skOffset + SECRET_KEY_SIZE <= sk.length,
-        'Secret key offset and length exceed the bounds of the secret key');
+    assert(skOffset + SECRET_KEY_SIZE <= sk.length, 'Secret key offset and length exceed the bounds of the secret key');
     // assert(message.isEmpty, 'Message must not be empty');
     assert(messageOffset >= 0, 'Message offset must be non-negative');
     assert(messageLength >= 0, 'Message length must be non-negative');
-    assert(messageOffset + messageLength <= message.length,
-        'Offset and Length exceed the bounds of the message');
+    assert(messageOffset + messageLength <= message.length, 'Offset and Length exceed the bounds of the message');
     assert(signature.isNotEmpty, 'Signature must not be Empty');
     assert(signatureOffset >= 0, 'Signature offset must be non-negative');
-    assert(signatureOffset + SIGNATURE_SIZE <= signature.length,
-        'Offset and length exceed the bounds of the signature');
+    assert(
+        signatureOffset + SIGNATURE_SIZE <= signature.length, 'Offset and length exceed the bounds of the signature');
 
     /// PORT NOTE: This is the Dart implementation of the `sign` function in the BramblSC library.
     /// The original implementation had 4 instances of the sign Function with different parameters.

@@ -9,8 +9,7 @@ sealed class QuivrRunTimeError implements Exception {
   /// its type is the same as the provided [type]. If they match, it returns `true`; otherwise, it returns `false`.
   bool checkForValidationError(ValidationErrorType type) {
     if (this is! ValidationError) {
-      throw StateError(
-          'Cannot check for ValidationError on non-ValidationError');
+      throw StateError('Cannot check for ValidationError on non-ValidationError');
     }
     return (this as ValidationError).type == type;
   }
@@ -47,22 +46,15 @@ class ValidationError extends QuivrRunTimeError {
   ValidationError(this.type, this.message, {this.proof, this.proposition});
 
   factory ValidationError.evaluationAuthorizationFailure(
-          {required Proof proof,
-          required Proposition proposition,
-          String? context}) =>
-      ValidationError(
-          ValidationErrorType.evaluationAuthorizationFailure, context,
+          {required Proof proof, required Proposition proposition, String? context}) =>
+      ValidationError(ValidationErrorType.evaluationAuthorizationFailure, context,
           proof: proof, proposition: proposition);
-  factory ValidationError.messageAuthorizationFailure(
-          {required Proof proof, String? context}) =>
-      ValidationError(ValidationErrorType.messageAuthorizationFailure, context,
-          proof: proof);
+  factory ValidationError.messageAuthorizationFailure({required Proof proof, String? context}) =>
+      ValidationError(ValidationErrorType.messageAuthorizationFailure, context, proof: proof);
   factory ValidationError.lockedPropositionIsUnsatisfiable({String? context}) =>
-      ValidationError(
-          ValidationErrorType.lockedPropositionIsUnsatisfiable, context);
+      ValidationError(ValidationErrorType.lockedPropositionIsUnsatisfiable, context);
   factory ValidationError.userProvidedInterfaceFailure({String? context}) =>
-      ValidationError(
-          ValidationErrorType.userProvidedInterfaceFailure, context);
+      ValidationError(ValidationErrorType.userProvidedInterfaceFailure, context);
 
   /// A message describing the Quivr error.
   final String? message;

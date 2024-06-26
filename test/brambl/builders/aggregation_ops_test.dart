@@ -215,8 +215,6 @@ Uint8List fromAccurateBigInt(BigInt bigInt) {
   return bytes;
 }
 
-
-
 Uint8List bigIntToUint8List(BigInt bigInt) {
   // Calculate the number of bytes needed to represent the BigInt
   final bytes = Uint8List((bigInt.bitLength + 7) ~/ 8 + 1);

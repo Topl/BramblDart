@@ -4,9 +4,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Scrypt Spec', () {
-    test(
-        'verify the same parameters (salt) and the same secret create the same key',
-        () {
+    test('verify the same parameters (salt) and the same secret create the same key', () {
       final params = SCryptParams.withGeneratedSalt();
       final sCrypt = SCrypt(params);
       final secret = "secret".toCodeUnitUint8List();
@@ -15,9 +13,7 @@ void main() {
       expect(derivedKey1.equals(derivedKey2), isTrue);
     });
 
-    test(
-        'verify different parameters (salt) for the same secret creates different keys',
-        () {
+    test('verify different parameters (salt) for the same secret creates different keys', () {
       final params1 = SCryptParams.withGeneratedSalt();
       var params2 = SCryptParams.withGeneratedSalt();
       while (params2.salt.equals(params1.salt)) {
@@ -31,9 +27,7 @@ void main() {
       expect(derivedKey1.equals(derivedKey2), isFalse);
     });
 
-    test(
-        'verify different secrets for the same parameters (salt) creates different keys',
-        () {
+    test('verify different secrets for the same parameters (salt) creates different keys', () {
       final params = SCryptParams.withGeneratedSalt();
       final sCrypt = SCrypt(params);
       final secret1 = 'secret'.toCodeUnitUint8List();

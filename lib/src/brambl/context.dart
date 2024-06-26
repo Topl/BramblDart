@@ -10,12 +10,8 @@ import '../quivr/runtime/dynamic_context.dart';
 import 'validation/blake2b256_digest_interpreter.dart';
 import 'validation/extended_ed25519_signature_interpreter.dart';
 
-final Map<String, DigestVerifier> _hashingRoutines = {
-  'Blake2b256': Blake2b256DigestInterpreter()
-};
-final Map<String, SignatureVerifier> _signingRoutines = {
-  'ExtendedEd25519': ExtendedEd25519SignatureInterpreter()
-};
+final Map<String, DigestVerifier> _hashingRoutines = {'Blake2b256': Blake2b256DigestInterpreter()};
+final Map<String, SignatureVerifier> _signingRoutines = {'ExtendedEd25519': ExtendedEd25519SignatureInterpreter()};
 final Map<String, ParsableDataInterface> _interfaces = {}; // Arbitrary
 
 Int64? _heightOf(String label, Datum? Function(String) heightDatums) {
