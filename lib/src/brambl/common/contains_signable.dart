@@ -5,7 +5,6 @@ import 'package:topl_common/proto/brambl/models/transaction/spent_transaction_ou
 import 'package:topl_common/proto/quivr/models/shared.pb.dart';
 
 import '../../../brambldart.dart';
-import '../../crypto/signing/eddsa/ec.dart';
 
 // Long -> longSignable -> longSignableEvidence -> longSignableEvidenceId
 // Long -> longSignable -> longSignableEvidence -> longSingableEvidenceSignable -> longSingableEvidenceSignableEvidence
@@ -25,6 +24,7 @@ class ContainsSignable {
     return ContainsSignable(SignableBytes(value: bytes.value));
   }
 
+  
   factory ContainsSignable.ioTransaction(IoTransaction iotx) {
     /// Strips the proofs from a SpentTransactionOutput.
     /// This is needed because the proofs are not part of the transaction's signable bytes
@@ -43,10 +43,11 @@ class ContainsSignable {
       }
     }
 
-    final x = iotx.rebuild((p0) {
-      p0.inputs.clear();
-      p0.inputs.addAll(iotx.inputs.map(stripInput));
-    });
+    // TODO: seems to be some issue with stripping  here
+    // final x = iotx.rebuild((p0) {
+    //   p0.inputs.clear();
+    //   p0.inputs.addAll(iotx.inputs.map(stripInput));
+    // });
 
     // copies then freezes not to impact the original object
     final updatedIotx = iotx.rebuild((p0) {

@@ -1,12 +1,14 @@
+import 'package:topl_common/proto/quivr/models/shared.pb.dart';
+
+import '../../common/functional/either.dart';
 import '../common/contextless_validation.dart';
+import '../runtime/quivr_runtime_error.dart';
 
-import '../common/quivr_result.dart';
-// todo: rework like in ts
-
-class DigestVerifier<T> implements ContextlessValidation<T> {
+class DigestVerifier implements ContextlessValidation<QuivrRunTimeError, DigestVerification> {
   const DigestVerifier(this.definedFunction);
-  final Function(T) definedFunction;
+
+  final Function(DigestVerification T) definedFunction;
 
   @override
-  QuivrResult<T> validate(t) => definedFunction(t);
+  Either<QuivrRunTimeError, DigestVerification> validate(t) => definedFunction(t);
 }

@@ -22,17 +22,6 @@ class ContainsEvidence {
     return ContainsEvidence(Evidence(digest: digest));
   }
 
-
-
-
-
-
-
-
-
-
-
-
   factory ContainsEvidence.merkleRootFromBlake2bEvidence(List list) {
     final leafDataList = list.asMap().entries.map((entry) {
       final bytes = ContainsImmutable.apply(entry.value).immutableBytes.value;
