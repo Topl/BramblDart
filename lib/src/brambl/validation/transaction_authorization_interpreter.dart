@@ -11,7 +11,7 @@ import '../../utils/helpers.dart';
 import 'transaction_authorization_error.dart';
 
 
-// TODO revisit logic?????
+// TODO revisit logic
 class TransactionAuthorizationInterpreter<F> {
   TransactionAuthorizationInterpreter(this.verifier);
   final Verifier verifier;
