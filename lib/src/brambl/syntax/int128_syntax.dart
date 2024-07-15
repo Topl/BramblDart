@@ -42,4 +42,6 @@ extension Int128Operations on Int128 {
   bool operator <=(Int128 other) {
     return toBigInt() <= other.toBigInt();
   }
+
+  String get show => toBigInt().toString();
 }

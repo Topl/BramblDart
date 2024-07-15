@@ -33,7 +33,8 @@ class SCrypt implements Kdf {
   @override
   Uint8List deriveKey(Uint8List secret) {
     final scrypt = Scrypt();
-    scrypt.init(ScryptParameters(params.n, params.r, params.p, params.dkLen, params.salt));
+    scrypt.init(ScryptParameters(
+        params.n, params.r, params.p, params.dkLen, params.salt));
     return scrypt.process(secret);
   }
 
@@ -51,7 +52,10 @@ class SCrypt implements Kdf {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is SCrypt && runtimeType == other.runtimeType && params == other.params;
+      identical(this, other) ||
+      other is SCrypt &&
+          runtimeType == other.runtimeType &&
+          params == other.params;
 
   @override
   int get hashCode => params.hashCode;
@@ -74,7 +78,7 @@ class SCryptParams extends Params {
   /// [dkLen] length of derived key. Defaults to 32.
   SCryptParams({
     required this.salt,
-    this.n = 262144,
+    this.n = 2, // TODO: Increase
     this.r = 8,
     this.p = 1,
     this.dkLen = 32,
@@ -123,5 +127,10 @@ class SCryptParams extends Params {
           dkLen == other.dkLen;
 
   @override
-  int get hashCode => hex.encode(salt).hashCode ^ n.hashCode ^ r.hashCode ^ p.hashCode ^ dkLen.hashCode;
+  int get hashCode =>
+      hex.encode(salt).hashCode ^
+      n.hashCode ^
+      r.hashCode ^
+      p.hashCode ^
+      dkLen.hashCode;
 }

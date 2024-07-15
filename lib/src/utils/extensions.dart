@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:brambldart/src/crypto/signing/ed25519/ed25519_spec.dart' as spec_e;
-import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart' as spec_xe;
+import 'package:brambldart/src/crypto/signing/ed25519/ed25519_spec.dart'
+    as spec_e;
+import 'package:brambldart/src/crypto/signing/extended_ed25519/extended_ed25519_spec.dart'
+    as spec_xe;
 import 'package:brambldart/src/crypto/signing/signing.dart' as spec;
 import 'package:collection/collection.dart';
 import 'package:convert/convert.dart';
@@ -26,7 +28,8 @@ extension StringExtension on String {
     return Int8List.fromList(bytes);
   }
 
-  (String, String) splitAt(int index) => (substring(0, index), substring(index));
+  (String, String) splitAt(int index) =>
+      (substring(0, index), substring(index));
 
   List<String> splitAtNewline() {
     return split('\n');
@@ -50,7 +53,13 @@ extension StringListExtension on List<String> {
 extension BigIntExtensions on BigInt {
   /// Converts a [BigInt] to a [Uint8List]
   /// Warning: Will drop the sign of the BigInt, resulting in invalid data for negative BigInts
-  Uint8List toUint8List() => toByteData().buffer.asUint8List();
+  /// In the case of BigInt(0), it will return a Uint8List with a single 0 byte: [0]
+  Uint8List toUint8List() {
+    assert(this >= BigInt.zero, 'Cannot convert negative BigInt to Uint8List');
+    return this == BigInt.zero
+        ? Uint8List(1)
+        : toByteData().buffer.asUint8List();
+  }
 
   /// Converts a [BigInt] to an [Int8List]
   Int8List toInt8List() => toByteData().buffer.asInt8List();
@@ -68,6 +77,21 @@ extension BigIntExtensions on BigInt {
     return data;
   }
 
+  static final _bigIntByteMask = BigInt.from(0xff);
+
+  Uint8List get bytesBigEndian {
+    BigInt number = this;
+    // Not handling negative numbers. Decide how you want to do that.
+    final int size = (bitLength + 7) >> 3;
+    final result = Uint8List(size);
+    for (int i = 0; i < size; i++) {
+      result[size - i - 1] = (number & _bigIntByteMask).toInt();
+      number = number >> 8;
+    }
+    return result;
+  }
+
+  // Little Endian
   Uint8List toTwosComplement() {
     // Calculate the number of bytes needed to represent the BigInt
     final bytes = Uint8List((bitLength + 7) ~/ 8 + 1);
@@ -89,6 +113,11 @@ extension BigIntExtensions on BigInt {
     }
     return bytes;
   }
+}
+
+extension Int64Extensions on Int64 {
+  // Converts this Int64 into a BigInt
+  BigInt get toBigInt => BigInt.parse(toString());
 }
 
 extension IntExtensions on int {
@@ -134,7 +163,8 @@ extension Uint8ListExtension on Uint8List {
   /// Returns a [BigInt] representation of the [Uint8List] in little-endian byte order.
   BigInt fromLittleEndian() {
     final reversed = this.reversed.toList();
-    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    final hex =
+        reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 
@@ -204,7 +234,8 @@ extension Int8ListExtension on Int8List {
 
   BigInt fromLittleEndian() {
     final reversed = this.reversed.toList();
-    final hex = reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+    final hex =
+        reversed.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
     return BigInt.parse(hex, radix: 16);
   }
 }
@@ -266,7 +297,8 @@ extension IterableExtensions<T> on Iterable<T> {
     return skip(length - count);
   }
 
-  Iterable<T> sortedAlphabetically(Comparable Function(T e) key) => toList()..sort((a, b) => key(a).compareTo(key(b)));
+  Iterable<T> sortedAlphabetically(Comparable Function(T e) key) =>
+      toList()..sort((a, b) => key(a).compareTo(key(b)));
 }
 
 extension IterableToUint8List on Iterable<int> {
@@ -363,7 +395,8 @@ extension CryptoVerificationKeyExtensions on spec.VerificationKey {
   pb.VerificationKey toProto() {
     if (this is spec_e.PublicKey) {
       final ePK = this as spec_e.PublicKey;
-      return pb.VerificationKey(ed25519: pb.VerificationKey_Ed25519Vk(value: ePK.bytes));
+      return pb.VerificationKey(
+          ed25519: pb.VerificationKey_Ed25519Vk(value: ePK.bytes));
     } else if (this is spec_xe.PublicKey) {
       final xePK = this as spec_xe.PublicKey;
       return pb.VerificationKey(
