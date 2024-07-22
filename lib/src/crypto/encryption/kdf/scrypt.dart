@@ -78,7 +78,7 @@ class SCryptParams extends Params {
   /// [dkLen] length of derived key. Defaults to 32.
   SCryptParams({
     required this.salt,
-    this.n = 2, // TODO: Increase
+    this.n = 262144,
     this.r = 8,
     this.p = 1,
     this.dkLen = 32,
