@@ -20,7 +20,7 @@ extension AssetAsBoxVal on Value_Asset {
 }
 
 extension ValueToQuantitySyntaxOps on Value {
-  Int128 get quantity {
+  Int128? get quantity {
     switch (whichValue()) {
       case Value_Value.lvl:
         return lvl.quantity;
@@ -33,7 +33,7 @@ extension ValueToQuantitySyntaxOps on Value {
       case Value_Value.series:
         return series.quantity;
       default:
-        throw Exception('Value does not have a quantity');
+        return null;
     }
   }
 
@@ -61,11 +61,13 @@ extension ValueToQuantitySyntaxOps on Value {
 }
 
 extension ValueToQuantityDescriptorSyntax on Value {
-  QuantityDescriptorType? quantityDescriptor() => ValueToQuantityDescriptorSyntaxOps(this).quantityDescriptor;
+  QuantityDescriptorType? quantityDescriptor() =>
+      ValueToQuantityDescriptorSyntaxOps(this).quantityDescriptor;
 }
 
 extension ValueToFungibilitySyntax on Value {
-  FungibilityType? fungibility() => ValueToFungibilitySyntaxOps(this).fungibility;
+  FungibilityType? fungibility() =>
+      ValueToFungibilitySyntaxOps(this).fungibility;
 }
 
 class ValueToQuantityDescriptorSyntaxOps {

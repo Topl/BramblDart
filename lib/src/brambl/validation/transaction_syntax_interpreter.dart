@@ -16,7 +16,8 @@ class TransactionSyntaxInterpreter {
   static const int maxDataLength = 15360;
   static const int shortMaxValue = 32767;
 
-  static Either<List<TransactionSyntaxError>, IoTransaction> validate(IoTransaction t) {
+  static Either<List<TransactionSyntaxError>, IoTransaction> validate(
+      IoTransaction t) {
     final errors = <TransactionSyntaxError>[];
     for (final validator in validators) {
       final result = validator(t);
@@ -52,14 +53,16 @@ class TransactionSyntaxInterpreter {
   ];
 
   /// Verify that this transaction contains at least one input
-  static Either<TransactionSyntaxError, Unit> nonEmptyInputsValidation(IoTransaction transaction) {
+  static Either<TransactionSyntaxError, Unit> nonEmptyInputsValidation(
+      IoTransaction transaction) {
     return transaction.inputs.isNotEmpty
         ? Either.right(const Unit())
         : Either.left(TransactionSyntaxError.emptyInputs());
   }
 
   /// Verify that this transaction does not spend the same box more than once
-  static ListEither<TransactionSyntaxError, Unit> distinctInputsValidation(IoTransaction transaction) {
+  static ListEither<TransactionSyntaxError, Unit> distinctInputsValidation(
+      IoTransaction transaction) {
     final duplicates = transaction.inputs
         .groupListsBy((input) => input.address)
         .entries
@@ -73,7 +76,8 @@ class TransactionSyntaxInterpreter {
 
   /// Verify that this transaction does not contain too many outputs. A transaction's outputs are referenced by index,
   /// but that index must be a Short value.
-  static Either<TransactionSyntaxError, Unit> maximumOutputsCountValidation(IoTransaction transaction) {
+  static Either<TransactionSyntaxError, Unit> maximumOutputsCountValidation(
+      IoTransaction transaction) {
     return transaction.outputs.length < shortMaxValue
         ? Either.right(const Unit())
         : Either.left(TransactionSyntaxError.excessiveOutputsCount());
@@ -81,22 +85,28 @@ class TransactionSyntaxInterpreter {
 
   /// Verify that the timestamp of the transaction is positive (greater than or equal to 0). Transactions _can_ be created
   /// in the past.
-  static Either<TransactionSyntaxError, Unit> nonNegativeTimestampValidation(IoTransaction transaction) {
+  static Either<TransactionSyntaxError, Unit> nonNegativeTimestampValidation(
+      IoTransaction transaction) {
     return transaction.datum.event.schedule.timestamp >= 0
         ? Either.right(const Unit())
-        : Either.left(TransactionSyntaxError.invalidTimestamp(transaction.datum.event.schedule.timestamp));
+        : Either.left(TransactionSyntaxError.invalidTimestamp(
+            transaction.datum.event.schedule.timestamp));
   }
 
   /// Verify that the schedule of the timestamp contains valid minimum and maximum slot values
-  static Either<TransactionSyntaxError, Unit> scheduleValidation(IoTransaction transaction) {
-    return transaction.datum.event.schedule.max >= transaction.datum.event.schedule.min &&
+  static Either<TransactionSyntaxError, Unit> scheduleValidation(
+      IoTransaction transaction) {
+    return transaction.datum.event.schedule.max >=
+                transaction.datum.event.schedule.min &&
             transaction.datum.event.schedule.min >= 0
         ? Either.right(const Unit())
-        : Either.left(TransactionSyntaxError.invalidSchedule(transaction.datum.event.schedule));
+        : Either.left(TransactionSyntaxError.invalidSchedule(
+            transaction.datum.event.schedule));
   }
 
   /// Verify that each transaction output contains a positive quantity (where applicable)
-  static ListEither<TransactionSyntaxError, Unit> positiveOutputValuesValidation(IoTransaction transaction) {
+  static ListEither<TransactionSyntaxError, Unit>
+      positiveOutputValuesValidation(IoTransaction transaction) {
     BigInt? getQuantity(Value value) {
       switch (value.whichValue()) {
         case Value_Value.lvl:
@@ -138,14 +148,17 @@ class TransactionSyntaxInterpreter {
   }
 
   /// Ensure the input value quantities exceed or equal the (non-minting) output value quantities
-  static Either<TransactionSyntaxError, Unit> sufficientFundsValidation(IoTransaction transaction) {
+  static Either<TransactionSyntaxError, Unit> sufficientFundsValidation(
+      IoTransaction transaction) {
     BigInt sumAll(List<Value> values) {
       if (values.isEmpty) return BigInt.zero;
       return values.map((value) => getQuantity(value)).reduce((a, b) => a + b);
     }
 
-    final inputsSum = sumAll(transaction.inputs.map((input) => input.value).toList());
-    final outputsSum = sumAll(transaction.outputs.map((output) => output.value).toList());
+    final inputsSum =
+        sumAll(transaction.inputs.map((input) => input.value).toList());
+    final outputsSum =
+        sumAll(transaction.outputs.map((output) => output.value).toList());
 
     return inputsSum >= outputsSum
         ? Either.unit()
@@ -158,7 +171,8 @@ class TransactionSyntaxInterpreter {
   /// Perform validation based on the quantities of boxes grouped by type
   ///
   /// @param f an extractor function which retrieves a BigInt from a Box.Value
-  static ListEither<TransactionSyntaxError, Unit> attestationValidation(IoTransaction transaction) {
+  static ListEither<TransactionSyntaxError, Unit> attestationValidation(
+      IoTransaction transaction) {
     final errors = <TransactionSyntaxError>[];
     for (final input in transaction.inputs) {
       final attestation = input.attestation;
@@ -181,8 +195,9 @@ class TransactionSyntaxInterpreter {
   /// (i.e. a DigitalSignature Proof that is associated with a HeightRange Proposition, this validation will fail)
   ///
   /// Preconditions: lock.challenges.length <= responses.length
-  static ListEither<TransactionSyntaxError, Unit> predicateLockProofTypeValidation(
-      Lock_Predicate lock, List<Proof> responses) {
+  static ListEither<TransactionSyntaxError, Unit>
+      predicateLockProofTypeValidation(
+          Lock_Predicate lock, List<Proof> responses) {
     final errors = <TransactionSyntaxError>[];
     for (int i = 0; i < lock.challenges.length; i++) {
       final challenge = lock.challenges[i];
@@ -199,7 +214,8 @@ class TransactionSyntaxInterpreter {
 
   /// Validate that the type of Proof matches the type of the given Proposition
   /// A Proof.Value.Empty type is considered valid for all Proposition types
-  static Either<TransactionSyntaxError, Unit> proofTypeMatch(Proposition proposition, Proof proof) {
+  static Either<TransactionSyntaxError, Unit> proofTypeMatch(
+      Proposition proposition, Proof proof) {
     switch ((proposition.whichValue(), proof.whichValue())) {
       // Empty proofs are valid for all Proposition types
       case (_, Proof_Value.notSet):
@@ -220,7 +236,8 @@ class TransactionSyntaxInterpreter {
         // cascade all preceding cases to this case
         return Either.unit();
       default:
-        return Either.left(TransactionSyntaxError.invalidProofType(proposition, proof));
+        return Either.left(
+            TransactionSyntaxError.invalidProofType(proposition, proof));
     }
   }
 
@@ -228,13 +245,19 @@ class TransactionSyntaxInterpreter {
   /// @see [[https://topl.atlassian.net/browse/BN-708]]
   /// @param transaction transaction
   /// @return
-  static Either<TransactionSyntaxError, Unit> dataLengthValidation(IoTransaction transaction) {
-    return ContainsImmutable.ioTransaction(transaction).immutableBytes.value.length <= maxDataLength
+  static Either<TransactionSyntaxError, Unit> dataLengthValidation(
+      IoTransaction transaction) {
+    return ContainsImmutable.ioTransaction(transaction)
+                .immutableBytes
+                .value
+                .length <=
+            maxDataLength
         ? Either.unit()
         : Either.left(TransactionSyntaxError.invalidDataLength());
   }
 
-  static Either<TransactionSyntaxError, Unit> assetEqualFundsValidation(IoTransaction transaction) {
+  static Either<TransactionSyntaxError, Unit> assetEqualFundsValidation(
+      IoTransaction transaction) {
     final inputAssets = transaction.inputs
         .where((input) => input.value.hasAsset())
         .map((input) => input.value.asset.asBoxVal())
@@ -247,14 +270,16 @@ class TransactionSyntaxInterpreter {
 
     Value_Group groupGivenMintedStatements(AssetMintingStatement stm) {
       return transaction.inputs
-          .where((input) => input.address == stm.groupTokenUtxo && input.value.hasGroup())
+          .where((input) =>
+              input.address == stm.groupTokenUtxo && input.value.hasGroup())
           .map((input) => input.value.group)
           .first;
     }
 
     Value_Series seriesGivenMintedStatements(AssetMintingStatement stm) {
       return transaction.inputs
-          .where((input) => input.address == stm.seriesTokenUtxo && input.value.hasSeries())
+          .where((input) =>
+              input.address == stm.seriesTokenUtxo && input.value.hasSeries())
           .map((input) => input.value.series)
           .first;
     }
@@ -275,10 +300,11 @@ class TransactionSyntaxInterpreter {
         final Map<String, List<BigInt>> grouped = {};
 
         for (final v in s) {
-          final key = '${v.typeIdentifier}-${v.fungibility()}-${v.quantityDescriptor()}';
+          final key =
+              '${v.typeIdentifier}-${v.fungibility()}-${v.quantityDescriptor()}';
 
           grouped[key] = grouped[key] ?? [];
-          grouped[key]!.add(v.quantity.toBigInt());
+          grouped[key]!.add(v.quantity!.toBigInt());
         }
 
         final Map<String, BigInt> summed = {};
@@ -307,10 +333,12 @@ class TransactionSyntaxInterpreter {
     final a = input.getOrElse({});
     final b = minted.getOrElse({});
 
-    final keySetResult = {...a, ...b}.length == output.getOrElse({}).keys.length;
+    final keySetResult =
+        {...a, ...b}.length == output.getOrElse({}).keys.length;
     final compareResult = output.getOrElse({}).keys.every(
           (k) =>
-              (input.getOrElse({})[k] ?? BigInt.zero) + (minted.getOrElse({})[k] ?? BigInt.zero) ==
+              (input.getOrElse({})[k] ?? BigInt.zero) +
+                  (minted.getOrElse({})[k] ?? BigInt.zero) ==
               output.getOrElse({})[k],
         );
 
@@ -333,10 +361,17 @@ class TransactionSyntaxInterpreter {
   ///
   /// @param transaction - transaction
   /// @return
-  static Either<TransactionSyntaxError, Unit> groupEqualFundsValidation(IoTransaction transaction) {
-    final groupsIn = transaction.inputs.where((i) => i.value.hasGroup()).map((input) => input.value.group).toList();
+  static Either<TransactionSyntaxError, Unit> groupEqualFundsValidation(
+      IoTransaction transaction) {
+    final groupsIn = transaction.inputs
+        .where((i) => i.value.hasGroup())
+        .map((input) => input.value.group)
+        .toList();
 
-    final groupsOut = transaction.outputs.where((i) => i.value.hasGroup()).map((output) => output.value.group).toList();
+    final groupsOut = transaction.outputs
+        .where((i) => i.value.hasGroup())
+        .map((output) => output.value.group)
+        .toList();
 
     final gIds = {
       ...groupsIn.map((group) => group.groupId),
@@ -345,7 +380,9 @@ class TransactionSyntaxInterpreter {
     };
 
     final res = gIds.every((gId) {
-      if (!transaction.groupPolicies.map((policy) => policy.event.computeId).contains(gId)) {
+      if (!transaction.groupPolicies
+          .map((policy) => policy.event.computeId)
+          .contains(gId)) {
         return groupsIn
                 .where((group) => group.groupId == gId)
                 .map((group) => group.quantity.toBigInt())
@@ -383,7 +420,8 @@ class TransactionSyntaxInterpreter {
   ///
   /// @param transaction The IoTransaction to validate.
   /// @return Either a TransactionSyntaxError if validation fails or Unit if validation passes.
-  static ListEither<TransactionSyntaxError, Unit> seriesEqualFundsValidation(IoTransaction transaction) {
+  static ListEither<TransactionSyntaxError, Unit> seriesEqualFundsValidation(
+      IoTransaction transaction) {
     final seriesIn = transaction.inputs
         .where((input) => input.value.whichValue() == Value_Value.series)
         .map((input) => input.value.series)
@@ -402,7 +440,8 @@ class TransactionSyntaxInterpreter {
 
     final sIdsOnMintingStatements = transaction.inputs
         .where((input) =>
-            transaction.mintingStatements.any((statement) => statement.seriesTokenUtxo == input.address) &&
+            transaction.mintingStatements.any(
+                (statement) => statement.seriesTokenUtxo == input.address) &&
             input.value.whichValue() == Value_Value.series)
         .map((input) => input.value.series.seriesId)
         .toSet();
@@ -414,7 +453,8 @@ class TransactionSyntaxInterpreter {
                 .map((series) => series.quantity.value.toBigInt)
                 .fold<BigInt>(BigInt.zero, (sum, quantity) => sum + quantity) >=
             BigInt.zero;
-      } else if (!transaction.seriesPolicies.any((policy) => policy.event.computeId == sId)) {
+      } else if (!transaction.seriesPolicies
+          .any((policy) => policy.event.computeId == sId)) {
         final seriesInSum = seriesIn
             .where((series) => series.seriesId == sId)
             .map((series) => series.quantity.value.toBigInt)
@@ -451,10 +491,12 @@ class TransactionSyntaxInterpreter {
   ///
   /// @param transaction The IoTransaction to validate.
   /// @return Either a TransactionSyntaxError if validation fails or Unit if validation passes.
-  static Either<TransactionSyntaxError, Unit> assetNoRepeatedUtxosValidation(IoTransaction transaction) {
+  static Either<TransactionSyntaxError, Unit> assetNoRepeatedUtxosValidation(
+      IoTransaction transaction) {
     final mintingStatementsValidation = transaction.mintingStatements
         .map((stm) => (stm.groupTokenUtxo, stm.seriesTokenUtxo))
-        .fold(<TransactionOutputAddress, List<TransactionOutputAddress>>{}, (acc, utxo) {
+        .fold(<TransactionOutputAddress, List<TransactionOutputAddress>>{},
+            (acc, utxo) {
           final (k, v) = utxo;
           if (acc.containsKey(k)) {
             acc[k] = [...acc[k]!, v];
@@ -465,14 +507,19 @@ class TransactionSyntaxInterpreter {
         })
         .entries
         .where((element) => element.value.length > 1)
-        .map((addressMap) => TransactionSyntaxError.duplicateInput(addressMap.key));
+        .map((addressMap) =>
+            TransactionSyntaxError.duplicateInput(addressMap.key));
 
     /// replace with do notation at some point
-    final groupPolicies = transaction.groupPolicies.map((policy) => policy.event.registrationUtxo);
-    final seriesPolicies = transaction.seriesPolicies.map((policy) => policy.event.registrationUtxo);
+    final groupPolicies = transaction.groupPolicies
+        .map((policy) => policy.event.registrationUtxo);
+    final seriesPolicies = transaction.seriesPolicies
+        .map((policy) => policy.event.registrationUtxo);
     final concat = [...groupPolicies, ...seriesPolicies];
-    final reducer = concat.fold<Map<TransactionOutputAddress, List<TransactionOutputAddress>>>(
-        <TransactionOutputAddress, List<TransactionOutputAddress>>{}, (acc, utxo) {
+    final reducer = concat
+        .fold<Map<TransactionOutputAddress, List<TransactionOutputAddress>>>(
+            <TransactionOutputAddress, List<TransactionOutputAddress>>{},
+            (acc, utxo) {
       if (acc.containsKey(utxo)) {
         acc[utxo] = [...acc[utxo]!, utxo];
       } else {
@@ -481,7 +528,9 @@ class TransactionSyntaxInterpreter {
       return acc;
     });
 
-    final policiesValidation = reducer.entries.where((element) => element.value.length > 1).map((addressMap) {
+    final policiesValidation = reducer.entries
+        .where((element) => element.value.length > 1)
+        .map((addressMap) {
       return TransactionSyntaxError.duplicateInput(addressMap.key);
     });
 
@@ -491,22 +540,27 @@ class TransactionSyntaxInterpreter {
     return errors.isEmpty ? Either.unit() : Either.left(errors.first);
   }
 
-  static List<SpentTransactionOutput> _mintingInputsProjection(IoTransaction transaction) {
+  static List<SpentTransactionOutput> _mintingInputsProjection(
+      IoTransaction transaction) {
     return transaction.inputs
         .where((stxo) =>
             !(stxo.value.whichValue() == Value_Value.topl) &&
             !(stxo.value.whichValue() == Value_Value.asset) &&
             (!(stxo.value.whichValue() == Value_Value.lvl) ||
-                transaction.groupPolicies.any((policy) => policy.event.registrationUtxo == stxo.address) ||
-                transaction.seriesPolicies.any((policy) => policy.event.registrationUtxo == stxo.address)))
+                transaction.groupPolicies.any((policy) =>
+                    policy.event.registrationUtxo == stxo.address) ||
+                transaction.seriesPolicies.any(
+                    (policy) => policy.event.registrationUtxo == stxo.address)))
         .toList();
   }
 
-  static List<UnspentTransactionOutput> _mintingOutputsProjection(IoTransaction transaction) {
+  static List<UnspentTransactionOutput> _mintingOutputsProjection(
+      IoTransaction transaction) {
     final groupIdsOnMintedStatements = transaction.inputs
         .where((input) =>
             input.value.whichValue() == Value_Value.group &&
-            transaction.mintingStatements.any((statement) => statement.groupTokenUtxo == input.address))
+            transaction.mintingStatements
+                .any((statement) => statement.groupTokenUtxo == input.address))
         .map((input) {
       if (input.value.whichValue() == Value_Value.group) {
         return input.value.group.groupId;
@@ -516,7 +570,8 @@ class TransactionSyntaxInterpreter {
     final seriesIdsOnMintedStatements = transaction.inputs
         .where((input) =>
             input.value.whichValue() == Value_Value.series &&
-            transaction.mintingStatements.any((statement) => statement.seriesTokenUtxo == input.address))
+            transaction.mintingStatements
+                .any((statement) => statement.seriesTokenUtxo == input.address))
         .map((input) {
       if (input.value.whichValue() == Value_Value.series) {
         return input.value.series.seriesId;
@@ -538,12 +593,15 @@ class TransactionSyntaxInterpreter {
                   return policy.event.computeId == utxo.value.series.seriesId;
                 })) &&
             (!utxo.value.hasAsset() ||
-                (groupIdsOnMintedStatements.contains(utxo.value.asset.groupId) &&
-                    seriesIdsOnMintedStatements.contains(utxo.value.asset.seriesId))))
+                (groupIdsOnMintedStatements
+                        .contains(utxo.value.asset.groupId) &&
+                    seriesIdsOnMintedStatements
+                        .contains(utxo.value.asset.seriesId))))
         .toList();
   }
 
-  static Either<TransactionSyntaxError, Unit> mintingValidation(IoTransaction transaction) {
+  static Either<TransactionSyntaxError, Unit> mintingValidation(
+      IoTransaction transaction) {
     final projectedTransaction = IoTransaction(
       inputs: _mintingInputsProjection(transaction),
       outputs: _mintingOutputsProjection(transaction),
@@ -563,9 +621,12 @@ class TransactionSyntaxInterpreter {
       return <Value_Series>[];
     }).toList();
 
-    bool registrationInPolicyContainsLvls(TransactionOutputAddress registrationUtxo) {
-      return projectedTransaction.inputs.any(
-          (stxo) => stxo.value.hasLvl() && stxo.value.lvl.quantity > 0.toInt128() && stxo.address == registrationUtxo);
+    bool registrationInPolicyContainsLvls(
+        TransactionOutputAddress registrationUtxo) {
+      return projectedTransaction.inputs.any((stxo) =>
+          stxo.value.hasLvl() &&
+          stxo.value.lvl.quantity > 0.toInt128() &&
+          stxo.address == registrationUtxo);
     }
 
     final bool validGroups = groups.every((group) =>
@@ -574,14 +635,16 @@ class TransactionSyntaxInterpreter {
             registrationInPolicyContainsLvls(policy.event.registrationUtxo)) &&
         group.quantity > 0.toInt128());
 
-    final bool validSeries = series.every((series) => transaction.seriesPolicies.any((policy) =>
-        policy.event.computeId == series.seriesId &&
-        registrationInPolicyContainsLvls(policy.event.registrationUtxo) &&
-        series.quantity > 0.toInt128()));
+    final bool validSeries = series.every((series) => transaction.seriesPolicies
+        .any((policy) =>
+            policy.event.computeId == series.seriesId &&
+            registrationInPolicyContainsLvls(policy.event.registrationUtxo) &&
+            series.quantity > 0.toInt128()));
 
     final bool validAssets = transaction.mintingStatements.every((ams) {
       final maybeSeries = transaction.inputs
-          .where((input) => input.value.hasSeries() && input.address == ams.seriesTokenUtxo)
+          .where((input) =>
+              input.value.hasSeries() && input.address == ams.seriesTokenUtxo)
           .map((input) {
         if (input.value.hasSeries()) {
           return input.value.series;
@@ -590,7 +653,9 @@ class TransactionSyntaxInterpreter {
 
       if (maybeSeries != null) {
         final sIn = transaction.inputs
-            .where((input) => input.value.hasSeries() && input.value.series.seriesId == maybeSeries.seriesId)
+            .where((input) =>
+                input.value.hasSeries() &&
+                input.value.series.seriesId == maybeSeries.seriesId)
             .fold<BigInt>(BigInt.zero, (sum, input) {
           if (input.value.hasSeries()) {
             return sum + input.value.series.quantity.toBigInt();
@@ -599,7 +664,9 @@ class TransactionSyntaxInterpreter {
         });
 
         final sOut = transaction.outputs
-            .where((output) => output.value.hasSeries() && output.value.series.seriesId == maybeSeries.seriesId)
+            .where((output) =>
+                output.value.hasSeries() &&
+                output.value.series.seriesId == maybeSeries.seriesId)
             .fold<BigInt>(BigInt.zero, (sum, output) {
           if (output.value.hasSeries()) {
             return sum + output.value.series.quantity.toBigInt();
@@ -609,21 +676,27 @@ class TransactionSyntaxInterpreter {
 
         final burned = sIn - sOut;
 
-        final quantity = transaction.mintingStatements.fold<BigInt>(BigInt.zero, (sum, ams) {
+        final quantity =
+            transaction.mintingStatements.fold<BigInt>(BigInt.zero, (sum, ams) {
           final filterSeries = transaction.inputs
-              .where((input) => input.address == ams.seriesTokenUtxo && input.value.hasSeries())
+              .where((input) =>
+                  input.address == ams.seriesTokenUtxo &&
+                  input.value.hasSeries())
               .map((input) {
             if (input.value.hasSeries()) {
               return input.value.series;
             }
           }).where((series) => series?.seriesId == maybeSeries.seriesId);
 
-          return sum + (filterSeries.isEmpty ? BigInt.zero : ams.quantity.toBigInt());
+          return sum +
+              (filterSeries.isEmpty ? BigInt.zero : ams.quantity.toBigInt());
         });
 
         final amsq = ams.quantity.toBigInt();
 
-        return amsq <= maybeSeries.quantity.toBigInt() * maybeSeries.tokenSupply.toBigInt() &&
+        return amsq <=
+                maybeSeries.quantity.toBigInt() *
+                    maybeSeries.tokenSupply.toBigInt() &&
             amsq % maybeSeries.tokenSupply.toBigInt() == BigInt.zero &&
             burned * maybeSeries.tokenSupply.toBigInt() == quantity;
       } else {
@@ -641,7 +714,8 @@ class TransactionSyntaxInterpreter {
     }
   }
 
-  static Either<TransactionSyntaxError, Unit> updateProposalValidation(IoTransaction transaction) {
+  static Either<TransactionSyntaxError, Unit> updateProposalValidation(
+      IoTransaction transaction) {
     final upsOut = transaction.outputs
         .map((e) {
           if (e.value.hasUpdateProposal()) {
@@ -669,6 +743,8 @@ class TransactionSyntaxInterpreter {
           up.kesKeyMinutes.toBigInt() > 0.toBigInt;
     });
 
-    return isValid ? Either.unit() : Either.left(TransactionSyntaxError.invalidUpdateProposal(upsOut));
+    return isValid
+        ? Either.unit()
+        : Either.left(TransactionSyntaxError.invalidUpdateProposal(upsOut));
   }
 }
