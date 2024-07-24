@@ -1,6 +1,9 @@
 /// exports all Crypto libraries
 library brambldart.crypto;
 
+/// Encryption.KDF
+export 'encryption/kdf/scrypt.dart';
+
 /// Encryption
 export 'encryption/mac.dart';
 export 'encryption/vault_store.dart';
