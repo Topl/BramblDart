@@ -25,7 +25,7 @@ export 'syntax/syntax.dart';
 
 /// --- Utils ---
 export 'utils/encoding.dart';
-export 'utils/grpc/grpc.dart';
+export 'utils/grpc/channel_factory.dart';
 export 'utils/proto_converters.dart';
 export 'wallet/credentialler.dart';
 
