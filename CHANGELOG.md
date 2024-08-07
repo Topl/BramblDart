@@ -1,3 +1,9 @@
+## 2.0.0-beta.1
+- Improved GRPC channel API with new channel_factory and helpers
+- Scrypt is made available via export
+- Fixed various codec and json mismatches
+- Proposition_template json now writes Int64 as string
+
 ## 2.0.0-beta.0
 - [TSDK-657](https://topl.atlassian.net/browse/TSDK-657) Update To Mint Group, Series and Assets
 - [TSDK-629](https://topl.atlassian.net/browse/TSDK-629)  Extra service kit related tests
