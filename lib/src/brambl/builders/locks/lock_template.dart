@@ -19,6 +19,8 @@ sealed class LockTemplate {
         throw Exception('Unknown lock type: $type');
     }
   }
+
+  Map<String, dynamic> toJson();
 }
 
 final class LockType {
@@ -35,8 +37,9 @@ class PredicateTemplate implements LockTemplate {
 
   factory PredicateTemplate.fromJson(Map<String, dynamic> json) {
     final threshold = json['threshold'] as int;
-    final innerTemplates =
-        (json['innerTemplates'] as List<dynamic>).map((e) => PropositionTemplate.fromJson(e)).toList();
+    final innerTemplates = (json['innerTemplates'] as List<dynamic>)
+        .map((e) => PropositionTemplate.fromJson(e))
+        .toList();
     return PredicateTemplate(innerTemplates, threshold);
   }
   List<PropositionTemplate> innerTemplates;
@@ -44,7 +47,8 @@ class PredicateTemplate implements LockTemplate {
 
   @override
   Either<BuilderError, Lock> build(List<VerificationKey> entityVks) {
-    final result = ThresholdTemplate(innerTemplates, threshold).build(entityVks);
+    final result =
+        ThresholdTemplate(innerTemplates, threshold).build(entityVks);
     return result.flatMap((ip) {
       if (ip.hasThreshold()) {
         final innerPropositions = ip.threshold.challenges;
@@ -56,7 +60,8 @@ class PredicateTemplate implements LockTemplate {
               threshold: threshold),
         ));
       } else {
-        return Either.left(UnableToBuildPropositionTemplate('Unexpected inner proposition type: ${ip.runtimeType}'));
+        return Either.left(UnableToBuildPropositionTemplate(
+            'Unexpected inner proposition type: ${ip.runtimeType}'));
       }
     });
   }
