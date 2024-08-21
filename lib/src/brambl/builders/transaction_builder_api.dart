@@ -656,7 +656,11 @@ class TransactionBuilderApi implements TransactionBuilderApiDefinition {
     final d = await datum();
     final stxos = _buildStxos(filteredTxos, stxoAttestation);
     // TODO: implement _buildUtxos helper
-    final utxos = txos.map((txo) => txo.transactionOutput).toList();
+    final utxos = txos
+        .map((txo) => txo.transactionOutput.value)
+        .map((v) =>
+            UnspentTransactionOutput(address: recipientLockAddress, value: v))
+        .toList();
     return Either.right(IoTransaction(inputs: stxos, outputs: utxos, datum: d));
   }
 
