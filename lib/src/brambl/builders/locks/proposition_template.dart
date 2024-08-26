@@ -194,7 +194,7 @@ class DigestTemplate implements PropositionTemplate {
   factory DigestTemplate.fromJson(Map<String, dynamic> json) {
     return DigestTemplate(
       json['routine'] as String,
-      Digest.fromBuffer(json['digest'] as List<int>),
+      Digest.fromBuffer((json['digest'] as List<dynamic>).cast<int>()),
     );
   }
   final String routine;

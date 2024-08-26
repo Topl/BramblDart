@@ -147,11 +147,11 @@ sealed class WalletApiDefinition {
   ///
   /// [keyPair] - The Main Key Pair to derive the child key pair from.
   /// [xFellowship] - The first path index of the child key pair to derive. Represents the fellowship index.
-  /// [yContract] - The second path index of the child key pair to derive. Represents the contract index.
+  /// [yTemplate] - The second path index of the child key pair to derive. Represents the template index.
   ///
   /// Returns the protobuf encoded keys of the child key pair.
   KeyPair deriveChildKeysPartial(
-      KeyPair keyPair, int xFellowship, int yContract);
+      KeyPair keyPair, int xFellowship, int yTemplate);
 
   /// Derives a child verification key pair one step down from a parent verification key. Note that this is a Soft
   /// Derivation.
@@ -320,14 +320,14 @@ class WalletApi extends WalletApiDefinition {
 
   @override
   KeyPair deriveChildKeysPartial(
-      KeyPair keyPair, int xFellowship, int yContract) {
+      KeyPair keyPair, int xFellowship, int yTemplate) {
     assert(keyPair.sk.hasExtendedEd25519(),
         "keyPair must be an extended Ed25519 key");
     assert(keyPair.vk.hasExtendedEd25519(),
         "keyPair must be an extended Ed25519 key");
 
     final xCoordinate = HardenedIndex(xFellowship);
-    final yCoordinate = SoftIndex(yContract);
+    final yCoordinate = SoftIndex(yTemplate);
 
     final sk = x_spec.SecretKey.proto(keyPair.sk.extendedEd25519);
     final kp =

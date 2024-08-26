@@ -7,9 +7,11 @@ import 'package:topl_common/proto/google/protobuf/wrappers.pb.dart';
 import '../../common/types/byte_string.dart';
 
 extension TokenTypeIdentifierExtension on Value {
-  ValueToTypeIdentifierSyntaxOps get toTypeIdentifierSyntaxOps => ValueToTypeIdentifierSyntaxOps(this);
+  ValueToTypeIdentifierSyntaxOps get toTypeIdentifierSyntaxOps =>
+      ValueToTypeIdentifierSyntaxOps(this);
 
-  ValueTypeIdentifier get typeIdentifier => ValueToTypeIdentifierSyntaxOps(this).typeIdentifier;
+  ValueTypeIdentifier get typeIdentifier =>
+      ValueToTypeIdentifierSyntaxOps(this).typeIdentifier;
 }
 
 class ValueToTypeIdentifierSyntaxOps {
@@ -44,19 +46,26 @@ class ValueToTypeIdentifierSyntaxOps {
         }
 
         // if neither groupAlloy or seriesAlloy is provided, the groupId and seriesId are used to identify instead
-        else if (a.hasGroupId() && a.hasSeriesId() && !a.hasGroupAlloy() && a.hasSeriesAlloy()) {
+        else if (a.hasGroupId() &&
+            a.hasSeriesId() &&
+            !a.hasGroupAlloy() &&
+            !a.hasSeriesAlloy()) {
           return AssetType(gId.value.asByteString, sId.value.asByteString);
         }
 
         /// INVALID CASES
         else if (a.hasGroupAlloy() && a.hasSeriesAlloy()) {
-          throw Exception("Both groupAlloy and seriesAlloy cannot exist in an asset");
+          throw Exception(
+              "Both groupAlloy and seriesAlloy cannot exist in an asset");
         } else if (!a.hasGroupAlloy() && !a.hasSeriesAlloy()) {
-          throw Exception("Both groupId and seriesId must be provided for non-alloy assets");
+          throw Exception(
+              "Both groupId and seriesId must be provided for non-alloy assets");
         } else if (!a.hasSeriesId() && a.hasGroupAlloy()) {
-          throw Exception("seriesId must be provided when groupAlloy is used in an asset");
+          throw Exception(
+              "seriesId must be provided when groupAlloy is used in an asset");
         } else if (!a.hasGroupId() && a.hasSeriesAlloy()) {
-          throw Exception("groupId must be provided when seriesAlloy is used in an asset");
+          throw Exception(
+              "groupId must be provided when seriesAlloy is used in an asset");
         }
       default:
         return const UnknownType();
@@ -82,7 +91,9 @@ class LvlType implements ValueTypeIdentifier {
   const LvlType();
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is LvlType && runtimeType == other.runtimeType;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LvlType && runtimeType == other.runtimeType;
 
   @override
   int get hashCode => 0;
@@ -98,7 +109,9 @@ class ToplType implements ValueTypeIdentifier {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ToplType && runtimeType == other.runtimeType && stakingRegistration == other.stakingRegistration;
+      other is ToplType &&
+          runtimeType == other.runtimeType &&
+          stakingRegistration == other.stakingRegistration;
 
   @override
   int get hashCode => stakingRegistration.hashCode;
@@ -114,7 +127,10 @@ class GroupType implements ValueTypeIdentifier {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is GroupType && runtimeType == other.runtimeType && groupId == other.groupId;
+      identical(this, other) ||
+      other is GroupType &&
+          runtimeType == other.runtimeType &&
+          groupId == other.groupId;
 
   @override
   int get hashCode => groupId.hashCode;
@@ -129,7 +145,10 @@ class SeriesType implements ValueTypeIdentifier {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is SeriesType && runtimeType == other.runtimeType && seriesId == other.seriesId;
+      identical(this, other) ||
+      other is SeriesType &&
+          runtimeType == other.runtimeType &&
+          seriesId == other.seriesId;
 
   @override
   int get hashCode => seriesId.hashCode;
@@ -168,7 +187,9 @@ class UnknownType implements ValueTypeIdentifier {
   const UnknownType();
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is UnknownType && runtimeType == other.runtimeType;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UnknownType && runtimeType == other.runtimeType;
 
   @override
   int get hashCode => 0;

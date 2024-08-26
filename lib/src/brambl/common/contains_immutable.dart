@@ -81,6 +81,11 @@ class ContainsImmutable {
   factory ContainsImmutable.nullable(ContainsImmutable? nullable) =>
       nullable ?? [0xff].immutable;
 
+  /// Ensures an [ImmutableBytes] from a nullable [ContainsImmutable], only when the given cond is true
+  /// TODO: All potentially null protobuf fields need to be checked for nullability
+  factory ContainsImmutable.nullableTest(bool cond, t) =>
+      cond ? ContainsImmutable.apply(t) : [0xff].immutable;
+
   /// Ensures an [ImmutableBytes] from a optional [ContainsImmutable]
   factory ContainsImmutable.option(Option<ContainsImmutable> option) =>
       option.isDefined ? option.value : [0xff].immutable;
@@ -216,15 +221,19 @@ class ContainsImmutable {
       ContainsImmutable.stakingRegistration(v.registration);
 
   factory ContainsImmutable.assetValue(Value_Asset asset) =>
-      ContainsImmutable.groupIdentifier(asset.groupId) +
-      ContainsImmutable.seriesIdValue(asset.seriesId) +
+      ContainsImmutable.nullableTest(asset.hasGroupId(), asset.groupId) +
+      ContainsImmutable.nullableTest(asset.hasSeriesId(), asset.seriesId) +
       ContainsImmutable.int128(asset.quantity) +
-      asset.groupAlloy.value.immutable +
-      asset.seriesAlloy.value.immutable +
-      ContainsImmutable.fungibility(asset.fungibility) +
+      ContainsImmutable.nullableTest(
+          asset.hasGroupAlloy(), asset.groupAlloy.value.immutable) +
+      ContainsImmutable.nullableTest(
+          asset.hasSeriesAlloy(), asset.seriesAlloy.value.immutable) +
+      ContainsImmutable.apply(asset.fungibility) +
       ContainsImmutable.quantityDescriptor(asset.quantityDescriptor) +
-      ContainsImmutable.struct(asset.ephemeralMetadata) +
-      asset.commitment.value.immutable;
+      ContainsImmutable.nullableTest(
+          asset.hasEphemeralMetadata(), asset.ephemeralMetadata) +
+      ContainsImmutable.nullableTest(
+          asset.hasCommitment(), asset.commitment.value.immutable);
 
   factory ContainsImmutable.seriesValue(Value_Series vs) =>
       ContainsImmutable.seriesIdValue(vs.seriesId) +
