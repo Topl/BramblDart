@@ -1,3 +1,8 @@
+## 2.0.0-beta.2
+- Contract was renamed to Template
+- Codecs updated to reflect BramblSc
+- TransactionBuilderApi partial updates
+
 ## 2.0.0-beta.1
 - Improved GRPC channel API with new channel_factory and helpers
 - Scrypt is made available via export
